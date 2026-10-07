@@ -1,0 +1,35 @@
+{
+  "name": "@kobalab/majiang-core",
+  "version": "1.4.1",
+  "description": "麻雀基本ライブラリ",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./dev": "./dev/index.js"
+  },
+  "scripts": {
+    "test": "mocha -u tdd",
+    "test:cover": "nyc -r lcov -r text npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kobalab/majiang-core.git"
+  },
+  "keywords": [
+    "麻雀",
+    "電脳麻将"
+  ],
+  "author": "Satoshi Kobayashi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kobalab/majiang-core/issues"
+  },
+  "homepage": "https://github.com/kobalab/majiang-core#readme",
+  "devDependencies": {
+    "mocha": "^11.7.5",
+    "nyc": "^18.0.0"
+  }
+}
