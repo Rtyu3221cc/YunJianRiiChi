@@ -442,9 +442,7 @@ namespace YunJian.Riichi
                 var point=table.Camera.WorldToScreenPoint(box.transform.TransformPoint(box.center+Vector3.Scale(box.size/2,new Vector3(x,y,z))));
                 var gui=viewport.FromScreen(point,Screen.height);min=Vector2.Min(min,gui);max=Vector2.Max(max,gui);
             }
-            float glow=.72f+.22f*Mathf.Sin(Time.unscaledTime*5);Color yellow=new Color(1,.91f,.23f,glow);
             Rect r=Rect.MinMaxRect(min.x-3,min.y-3,max.x+3,max.y+3);
-            Fill(new Rect(r.x,r.y,r.width,3),yellow);Fill(new Rect(r.x,r.yMax-3,r.width,3),yellow);Fill(new Rect(r.x,r.y,3,r.height),yellow);Fill(new Rect(r.xMax-3,r.y,3,r.height),yellow);
             var arrow=effects.Art("response-arrow");if(arrow!=null) {var old=GUI.color;GUI.color=new Color(1,.9f,.2f);GUI.DrawTexture(new Rect(r.center.x-13,r.y-22+Mathf.Sin(Time.unscaledTime*5)*2,26,20),arrow,ScaleMode.ScaleToFit);GUI.color=old;}
         }
         void DrawResult()

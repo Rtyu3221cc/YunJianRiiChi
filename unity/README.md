@@ -1,5 +1,11 @@
 # 云间日麻 Unity 三维客户端
 
+## 0.5.5 描边、响应光圈与手牌避让
+
+安装 `../dist/yunjian-riichi-unity-0.5.5.apk`，versionCode 6。
+
+复用原版 224 顶点描边网格、描边颜色和 `effect_zhishi` 对应的 `majiangkuang` 光圈纹理；光圈位于牌底的桌面空间。自己手牌根据副露实际屏幕投影向左避让，拔北牌朝桌心并沿侧边排列。资源来源及本项目着色器适配见 `../ARTWORK.md`。最新构建脚本输出 `Builds/yunjian-riichi-unity-0.5.5.apk`。
+
 ## 0.5.4 吃碰布局与原始动作
 
 安装 `../dist/yunjian-riichi-unity-0.5.4.apk`，同包名覆盖更新，versionCode 5。
@@ -45,7 +51,7 @@ Unity Android APK 交付副本在上一级 `dist`。构建为 IL2CPP ARM64 + ARM
 2. Hub 中“添加现有项目”，选择这个 `unity` 文件夹。工程已升级并实测 **6000.6.4f1**；使用其他版本需要重新导入和验证。
 3. 首次导入后会自动创建 `Assets/Scenes/Table.unity`。若未出现，点击菜单 **云间日麻 → 创建或打开牌桌场景**。
 4. 点击 **云间日麻 → 验证资源与房间协议**。通过后 Console 应显示 `RIICHI UNITY VALIDATION PASS`。这一步同时检验 C# 编译和导入资源，不代替运行时验证。
-5. 英文路径下可点击 **云间日麻 → 配置安卓构建**，然后 **云间日麻 → 构建安卓 APK**。含中文的项目路径请使用下方构建脚本，它会将文件复制到英文临时构建目录，并将输出取回 `Builds/yunjian-riichi-unity-0.5.4.apk`。
+5. 英文路径下可点击 **云间日麻 → 配置安卓构建**，然后 **云间日麻 → 构建安卓 APK**。含中文的项目路径请使用下方构建脚本，它会将文件复制到英文临时构建目录，并将输出取回 `Builds/yunjian-riichi-unity-0.5.5.apk`。
 
 Unity APK 使用独立包名 `com.yunjian.riichi.unity`，可和原有 Android/WebView 版并存，各自保存自己的牌桌。测试 Unity 手机房主前先退出同机旧版房主，避免同时占用 8765 端口。开发版 target API 32 沿用旧版离线分发约定，未进行应用商店发布适配。
 

@@ -25,6 +25,7 @@ namespace YunJian.Riichi
         Font font;
         Transform cameraHand;
         Transform responseTarget;
+        Transform selfMelds;
         readonly Dictionary<int, List<Transform>> riverTiles = new Dictionary<int, List<Transform>>();
         readonly TileGeometry geometry = new TileGeometry();
 
@@ -100,7 +101,7 @@ namespace YunJian.Riichi
         public void Clear()
         {
             foreach (Transform t in content) { t.gameObject.SetActive(false); Destroy(t.gameObject); }
-            handTiles.Clear(); handBase.Clear(); riverTiles.Clear(); responseTarget = null; cameraHand = null; state = null;
+            handTiles.Clear(); handBase.Clear(); riverTiles.Clear(); responseTarget = null; selfMelds = null; cameraHand = null; state = null;
         }
         public int RelativeSeat(int i) => (i - state.you + state.n) % state.n;
         float Angle(int i)
@@ -149,7 +150,25 @@ namespace YunJian.Riichi
             // Source hand camera: orthographic size 9, 2.54-high quad, x scale .62.
             HandCamera.orthographicSize = 9;
             float scale = Mathf.Min(safeHeight, 18 * aspect * safeWidth * .9f / handSpan);
-            float x = ((safe.center.x / Screen.width) - .5f) * 18 * aspect;
+            float centerX = safe.center.x;
+            if (selfMelds != null && selfMelds.childCount > 0)
+            {
+                // The concealed hand uses an overlay camera. Reserve the actual
+                // projected meld footprint so it cannot cover exposed tiles.
+                float right = safe.xMax;
+                foreach (var box in selfMelds.GetComponentsInChildren<BoxCollider>())
+                for (int corner = 0; corner < 8; corner++)
+                {
+                    var offset = Vector3.Scale(box.size * .5f, new Vector3((corner & 1) == 0 ? -1 : 1, (corner & 2) == 0 ? -1 : 1, (corner & 4) == 0 ? -1 : 1));
+                    float px = Camera.WorldToScreenPoint(box.transform.TransformPoint(box.center + offset)).x;
+                    right = Mathf.Min(right, px - 18 * Screen.height / 780f);
+                }
+                float left = safe.xMin + safe.width * .08f;
+                scale = Mathf.Min(scale, Mathf.Max(1, right - left) * 18 * aspect / Screen.width / handSpan);
+                float half = handSpan * scale / (18 * aspect) * Screen.width * .5f;
+                centerX = Mathf.Clamp(safe.center.x - safe.width * .025f * Mathf.Min(2, state.players[state.you].melds.Length), left + half, right - half);
+            }
+            float x = ((centerX / Screen.width) - .5f) * 18 * aspect;
             float bottom = -9 + safe.y / Screen.height * 18;
             cameraHand.position = new Vector3(x, bottom + (OriginalTiles.HandHeight / 2 + .12f) * scale, 0);
             cameraHand.rotation = Quaternion.identity;
@@ -214,7 +233,10 @@ namespace YunJian.Riichi
                     var tile=Tile(parent, r.tile, new Vector3(cursor + width / 2, 0, -1.48f - start / 6 * .45f), .33f, .44f, false, r.riichi);
                     tile.name="River "+(start+j)+" "+r.tile;rendered.Add(tile);
                     if(state.phase=="reaction" && state.pending!=null && state.pending.kind=="discard" && state.pending.from==seatIndex && start+j==visible.Length-1)
+                    {
                         responseTarget=tile;
+                        original.CreateResponseGlow(tile, .33f);
+                    }
                     cursor += width + .015f;
                 }
             }
@@ -254,6 +276,7 @@ namespace YunJian.Riichi
             float cursor = angle < -45 ? 3.50f : 4.20f;
             float meldZ = Mathf.Abs(angle)>135 ? -3.50f : p == state.players[state.you] ? -4.10f : -4.20f;
             var root=new GameObject("Exposed melds").transform;root.SetParent(parent,false);parent=root;
+            if (index == state.you) selfMelds = root;
             // Read backwards so the first meld remains nearest the player's right edge.
             foreach (string meld in p.melds)
             {
@@ -290,7 +313,13 @@ namespace YunJian.Riichi
             // Source babei anchor lies inward of, and separate from, the meld corner.
             var north=new GameObject("Extracted North").transform;north.SetParent(parent.parent,false);
             bool self=index==state.you;
-            for (int i = 0; i < p.nuki; i++) Tile(north, "z4", new Vector3(self ? -3.35f-i*.37f : 2.65f+i*.37f, .02f, -3.08f), .35f, .51f);
+            for (int i = 0; i < p.nuki; i++)
+            {
+                var tile = Tile(north, "z4", new Vector3(self ? -3.35f : 2.0f, .02f, self ? -3.08f+i*.37f : -2.70f-i*.37f), .35f, .51f);
+                // Rotate the glyph toward the table, with North tiles stacked
+                // along the side of each seat rather than across the corner.
+                tile.localRotation = Quaternion.Euler(0, self ? 90 : -90, 0);
+            }
         }
         void OnDestroy()
         {

@@ -10,10 +10,12 @@ namespace YunJian.Riichi
     public sealed class OriginalTiles : IDisposable
     {
         [Serializable] class MeshData { public float[] vertices, normals, uv; public int[] body, face; }
+        [Serializable] class OutlineData { public float[] vertices,color; public int[] triangles;public float scale; }
         public const float HandHeight = 2.54f, HandWidth = HandHeight * .62f;
         public readonly float TableLength, TableDepth;
-        readonly Mesh tableMesh, handMesh;
-        readonly Material shell;
+        readonly Mesh tableMesh, handMesh, outlineMesh, glowMesh;
+        readonly Material shell, outline, glow;
+        readonly float outlineScale;
         readonly Dictionary<string, Material> materials = new Dictionary<string, Material>();
         readonly Dictionary<string, RenderTexture> doraTextures = new Dictionary<string, RenderTexture>();
         Camera doraCamera;
@@ -33,6 +35,13 @@ namespace YunJian.Riichi
             TableLength = tableMesh.bounds.size.z; TableDepth = tableMesh.bounds.size.y;
             shell = new Material(Shader.Find("YunJian/OriginalTileBody")) { mainTexture = Texture("table-back") };
             shell.SetFloat("_Depth", TableDepth);
+            var edge=JsonUtility.FromJson<OutlineData>(Resources.Load<TextAsset>("Majsoul/OriginalTile/outline").text);
+            var edgeVertices=new Vector3[edge.vertices.Length/3];
+            for(int i=0;i<edgeVertices.Length;i++)edgeVertices[i]=new Vector3(-edge.vertices[i*3],edge.vertices[i*3+2]+depth/2,edge.vertices[i*3+1])/width;
+            outlineMesh=new Mesh {name="Original maque_outline 031",vertices=edgeVertices,triangles=edge.triangles};outlineMesh.RecalculateBounds();
+            outlineScale=edge.scale;outline=new Material(Shader.Find("YunJian/OriginalTileOutline")) {color=new Color(edge.color[0],edge.color[1],edge.color[2],edge.color[3])};
+            glowMesh=new Mesh {name="Ground particle quad",vertices=new[]{new Vector3(-.5f,0,-.5f),new Vector3(-.5f,0,.5f),new Vector3(.5f,0,.5f),new Vector3(.5f,0,-.5f)},uv=new[]{new Vector2(0,0),new Vector2(0,1),new Vector2(1,1),new Vector2(1,0)},triangles=new[]{0,1,2,0,2,3}};
+            glowMesh.RecalculateBounds();glow=new Material(Shader.Find("YunJian/ResponseGlow")) {mainTexture=Resources.Load<Texture2D>("Majsoul/Actions/response-glow")};
             handMesh = new Mesh { name = "Original orthographic hand quad",
                 vertices = new[] { new Vector3(-HandWidth/2,-HandHeight/2,0), new Vector3(-HandWidth/2,HandHeight/2,0), new Vector3(HandWidth/2,HandHeight/2,0), new Vector3(HandWidth/2,-HandHeight/2,0) },
                 uv = new[] { new Vector2(0,0), new Vector2(0,1), new Vector2(1,1), new Vector2(1,0) }, triangles = new[] { 0,1,2,0,2,3 } };
@@ -76,9 +85,21 @@ namespace YunJian.Riichi
             if (hidden) { model.localRotation = Quaternion.Euler(0,0,180); model.localPosition = Vector3.up * TableDepth * width; }
             model.gameObject.AddComponent<MeshFilter>().sharedMesh = tableMesh;
             model.gameObject.AddComponent<MeshRenderer>().sharedMaterials = new[] { shell, Face(hidden ? "z5" : tile, false) };
+            var edge=new GameObject("Original tile outline").transform;edge.SetParent(model,false);edge.localScale=Vector3.one*outlineScale;
+            edge.gameObject.AddComponent<MeshFilter>().sharedMesh=outlineMesh;
+            var edgeRenderer=edge.gameObject.AddComponent<MeshRenderer>();edgeRenderer.sharedMaterial=outline;edgeRenderer.shadowCastingMode=ShadowCastingMode.Off;
             var box = root.gameObject.AddComponent<BoxCollider>(); box.center = Vector3.up * TableDepth * width / 2; box.size = new Vector3(width, TableDepth * width, TableLength * width);
             if (opacity < 1) { root.localScale = Vector3.one * .8f; root.localPosition -= Vector3.up * .04f; }
             return root;
+        }
+        public void CreateResponseGlow(Transform tile,float width)
+        {
+            var light=new GameObject("Original response ground glow").transform;light.SetParent(tile,false);
+            light.localPosition=Vector3.up*.006f;
+            // The source image includes its bloom margins; align its inner ring to the foot.
+            light.localScale=new Vector3(width*2.67f,1,width*TableLength*1.80f);
+            light.gameObject.AddComponent<MeshFilter>().sharedMesh=glowMesh;
+            var renderer=light.gameObject.AddComponent<MeshRenderer>();renderer.sharedMaterial=glow;renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;
         }
         public Transform CreateStandingBack(Transform parent, Vector3 position, float width)
         {
@@ -116,6 +137,6 @@ namespace YunJian.Riichi
             root.gameObject.SetActive(false); UnityEngine.Object.Destroy(root.gameObject);
             doraTextures[key] = target; return target;
         }
-        public void Dispose() { UnityEngine.Object.Destroy(tableMesh); UnityEngine.Object.Destroy(handMesh); UnityEngine.Object.Destroy(shell); foreach (var m in materials.Values) UnityEngine.Object.Destroy(m); foreach (var t in doraTextures.Values) { t.Release(); UnityEngine.Object.Destroy(t); } if (doraCamera != null) UnityEngine.Object.Destroy(doraCamera.gameObject); }
+        public void Dispose() { UnityEngine.Object.Destroy(tableMesh); UnityEngine.Object.Destroy(handMesh);UnityEngine.Object.Destroy(outlineMesh);UnityEngine.Object.Destroy(glowMesh); UnityEngine.Object.Destroy(shell);UnityEngine.Object.Destroy(outline);UnityEngine.Object.Destroy(glow); foreach (var m in materials.Values) UnityEngine.Object.Destroy(m); foreach (var t in doraTextures.Values) { t.Release(); UnityEngine.Object.Destroy(t); } if (doraCamera != null) UnityEngine.Object.Destroy(doraCamera.gameObject); }
     }
 }

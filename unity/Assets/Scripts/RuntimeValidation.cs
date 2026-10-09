@@ -26,7 +26,7 @@ namespace YunJian.Riichi
                 if (!next) break;
                 yield return run.Current;
             }
-            File.WriteAllText(Path.Combine(folder, "passed.txt"), "Actual Unity Play mode: live AI room, delayed second-click discard, raycast, 3/4-seat rendering, safe-area pointer roundtrips, 4 resolutions, 8 role clips, called-river removal, grouped chi choices, all 4 discard hand directions at 15 time samples with opaque materials, call cut-ins, event dedup/reconnect. Fixture screenshots are synthetic layout scenes, not replays.");
+            File.WriteAllText(Path.Combine(folder, "passed.txt"), "Actual Unity Play mode: live AI room, delayed second-click discard, raycast, 3/4-seat rendering, safe-area pointer roundtrips, 4 resolutions, 8 role clips, called-river removal, grouped chi choices, all 4 discard hand directions at 15 time samples with opaque materials, call cut-ins, event dedup/reconnect; original 224-vertex outlines, model-foot response glow in 4 directions, 0-4 own melds without hand overlap at 4 resolutions, and 4 inward-facing North tiles per seat. Fixture screenshots are synthetic layout scenes, not replays.");
             Debug.Log("RIICHI UNITY PLAY PASS"); EditorApplication.Exit(0);
         }
         IEnumerator Run()
@@ -135,10 +135,45 @@ namespace YunJian.Riichi
                 }
             }
             SetGameResolution(1688,780);
+            // Vary legally sized concealed hands independently of the action
+            // fixtures, including four melds and four extracted North tiles.
+            var layoutFixture=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"effects.json")));
+            layoutFixture.phase="play";layoutFixture.pending=null;layoutFixture.drawn=null;
+            for(int i=0;i<layoutFixture.n;i++)layoutFixture.players[i].nuki=i==0?2:i>=2?1:0;
+            var hand=new[]{"s3","s4","s6","s8","s8","s9","z5","z6","z6","z7","p2","p3","p4","p5"};
+            var meldChoices=new[]{"p555+","z666-","s123-","m777="};
+            for(int count=0;count<=4;count++)
+            {
+                layoutFixture.players[0].melds=meldChoices.Take(count).ToArray();
+                layoutFixture.hand=hand.Take(14-count*3).ToArray();
+                layoutFixture.options=layoutFixture.hand.Distinct().Select(t=>new Choice {id="discard:"+t,kind="discard",tile=t}).ToArray();
+                client.ShowValidationFixture(layoutFixture);yield return null;
+                foreach(var resolution in new[]{new Vector2(1280,720),new Vector2(1688,780),new Vector2(2760,1256),new Vector2(844,390)})
+                {
+                    SetGameResolution((int)resolution.x,(int)resolution.y);
+                    for(int frame=0;frame<8;frame++)yield return null;
+                    table.FitCamera(resolution.x/resolution.y);Physics.SyncTransforms();
+                    ValidateHandMeldGap(table,layoutFixture);
+                    ValidateNorth(table,layoutFixture);
+                    if(resolution.x==1688)Capture(table,Path.Combine(folder,"meld-layout-"+count+".png"),1688,780);
+                }
+            }
+            // North has four physical copies: test four extracted tiles at
+            // each seat separately instead of showing sixteen in one scene.
+            for(int owner=0;owner<layoutFixture.n;owner++)
+            {
+                for(int i=0;i<layoutFixture.n;i++)layoutFixture.players[i].nuki=i==owner?4:0;
+                client.ShowValidationFixture(layoutFixture);yield return null;
+                ValidateNorth(table,layoutFixture);
+                Capture(table,Path.Combine(folder,"north-seat-"+owner+".png"),844,390);
+            }
+            SetGameResolution(1688,780);
             var effectFixture=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"effects.json")));
             client.ShowValidationFixture(effectFixture);yield return null;Physics.SyncTransforms();
             ValidatePresentation(table,effectFixture);
             Require(table.ResponseTarget!=null,"Response discard is not highlighted");
+            var groundGlow=table.ResponseTarget.Find("Original response ground glow");
+            Require(groundGlow!=null && Mathf.Abs(groundGlow.position.y-.006f)<.001f && groundGlow.GetComponent<MeshRenderer>().sharedMaterial.shader.name=="YunJian/ResponseGlow","Response glow is not attached to the tile foot");
             Require(client.ActionRects(1298,600).Length==3,"Multiple chi choices must share one action button");
             var fx=GetComponent<TableEffects>();
             for(int frame=0;frame<8;frame++)yield return null;
@@ -150,8 +185,11 @@ namespace YunJian.Riichi
             client.ValidationChooseActionKind("chi");Require(client.ValidationChoosingKind==null,"Chi selection cannot be closed");
             for(int seat=0;seat<4;seat++)
             {
+                effectFixture.pending.from=seat;
                 effectFixture.last=new LastDiscard {from=seat,tile=effectFixture.players[seat].river.Last().tile};
                 client.ShowValidationFixture(effectFixture);yield return null;
+                Require(table.ResponseTarget.parent.name=="Seat "+seat && table.ResponseTarget.Find("Original response ground glow")!=null,"Directional model-foot glow missing");
+                Capture(table,Path.Combine(folder,"response-glow-"+seat+".png"),1688,780);
                 fx.ValidationPlay(seat,"discard",effectFixture.players[seat].river.Last().tile);
                 yield return null;yield return null;
                 Require(fx.ActiveSeat==seat && GameObject.Find("Original discard hand seat "+seat)!=null,"Missing directional discard hand");
@@ -183,6 +221,8 @@ namespace YunJian.Riichi
         static void ValidatePresentation(TableRenderer table, RoomView view)
         {
             var publicRoot = GameObject.Find("PublicTableState").transform;
+            foreach(var edge in publicRoot.GetComponentsInChildren<MeshFilter>().Where(m=>m.name=="Original tile outline"))
+                Require(edge.sharedMesh.vertexCount==224 && edge.GetComponent<MeshRenderer>().sharedMaterial.shader.name=="YunJian/OriginalTileOutline","Original outline mesh/material missing");
             for (int i = 0; i < view.n; i++)
             {
                 var renderedSeat=publicRoot.Find("Seat "+i);
@@ -238,6 +278,38 @@ namespace YunJian.Riichi
             Require(lights == 1, "Turn light missing or duplicated");
             Require(hub.Find("Hub seat " + view.players[view.turn].wind).Find("Turn light") != null, "Turn light follows wrong seat");
             Destroy(plate);
+        }
+        static void ValidateHandMeldGap(TableRenderer table,RoomView view)
+        {
+            var root=GameObject.Find("PublicTableState").transform;
+            var hand=root.Find("Camera-facing hand").GetComponentsInChildren<BoxCollider>();
+            float right=float.MinValue;
+            foreach(var box in hand)foreach(var corner in Corners(box))
+            {
+                var screen=table.HandCamera.WorldToViewportPoint(corner);
+                Require(screen.x>0 && screen.x<1 && screen.y>0 && screen.y<1,"Adaptive hand is clipped");
+                right=Mathf.Max(right,screen.x);
+            }
+            var melds=root.Find("Seat "+view.you+"/Exposed melds").GetComponentsInChildren<BoxCollider>();
+            if(melds.Length==0)return;
+            float left=float.MaxValue;
+            foreach(var box in melds)foreach(var corner in Corners(box))left=Mathf.Min(left,table.Camera.WorldToViewportPoint(corner).x);
+            Require(right+8f/Screen.width<left,"Concealed hand covers an exposed meld: "+view.players[view.you].melds.Length);
+        }
+        static void ValidateNorth(TableRenderer table,RoomView view)
+        {
+            var root=GameObject.Find("PublicTableState").transform;
+            for(int seat=0;seat<view.n;seat++)
+            {
+                var north=root.Find("Seat "+seat+"/Extracted North");
+                Require(north.childCount==view.players[seat].nuki,"North tile count changed");
+                foreach(Transform tile in north)
+                {
+                    var inward=Vector3.ProjectOnPlane(-tile.position,Vector3.up).normalized;
+                    Require(Vector3.Dot(tile.forward,inward)>.45f,"Extracted North glyph faces away from table");
+                    Require(Mathf.Abs(tile.localPosition.x-(seat==view.you?-3.35f:2.0f))<.001f,"North tiles do not stack along the seat edge");
+                }
+            }
         }
         static void CaptureHub(string file)
         {

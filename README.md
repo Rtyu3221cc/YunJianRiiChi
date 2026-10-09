@@ -1,8 +1,19 @@
 # 云间日麻 0.5.0
 
+## Unity 0.5.5 描边、响应光圈与副露避让
+
+最新安卓包：[下载 Unity 0.5.5 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/raw/refs/heads/main/dist/yunjian-riichi-unity-0.5.5.apk)，versionCode 6，可覆盖此前 Unity 试玩版。
+
+- 响应牌复用原版 `majiangkuang` 发光纹理，在模型底部渲染随桌面透视变化的加色光圈，保留上方箭头。
+- 桌面麻将和竖立暗牌接入原版 `maque_outline` 描边网格及 `mjp_outline` 颜色，增加细暗色轮廓。
+- 吃碰后手牌向左移动，按实际投影为副露保留空间；多组副露时等比适配，避免遮挡或拉伸。
+- 各家拔北牌朝向桌心，沿座位侧边依次排列。
+
+运行截图见 `dist/previews/unity-0.5.5-*`；来源及适配边界见 [ARTWORK.md](ARTWORK.md) 与 [渲染对照](docs/麻将渲染对照.md)，检查结果见 [验证记录](dist/验证记录-unity-0.5.5.txt)。安卓真机触控与热点联机待实测。
+
 ## Unity 0.5.4 吃碰布局与动作
 
-最新安卓包：[下载 Unity 0.5.4 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/raw/refs/heads/main/dist/yunjian-riichi-unity-0.5.4.apk)，versionCode 5，可覆盖此前 Unity 试玩版。
+此版本安卓包：[下载 Unity 0.5.4 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/raw/refs/heads/main/dist/yunjian-riichi-unity-0.5.4.apk)，versionCode 5，可覆盖此前 Unity 试玩版。
 
 - 被吃、碰、杠取走的牌不再留在牌河中；保留规则引擎中的历史记录，显示按剩余牌重新排布。副露移到各家手牌外侧的角落，左右对手手牌外移，拔北牌独立摆放。
 - 吃、碰、杠、荣和、自摸、立直、拔北与跳过使用原始提示图。响应牌有黄色边框和箭头，多种吃牌组合先展开牌面供选择。

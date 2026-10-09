@@ -39,9 +39,9 @@ if ($unityTask.ExitCode -ne 0) { throw "Unity validation failed (exit $($unityTa
 if ($Mode -ne 'Android') {
  $markerTask = if ($Mode -eq 'Play') { 'RIICHI UNITY PLAY PASS' } else { 'RIICHI UNITY VALIDATION PASS' }
  if (!(Select-String -LiteralPath $logTask -SimpleMatch $markerTask -Quiet)) { throw 'Unity exited without the validation success marker.' }
-} elseif (!(Test-Path -LiteralPath (Join-Path $projectTask 'Builds/yunjian-riichi-unity-0.5.4.apk'))) { throw 'Unity did not produce the Android APK.' }
+} elseif (!(Test-Path -LiteralPath (Join-Path $projectTask 'Builds/yunjian-riichi-unity-0.5.5.apk'))) { throw 'Unity did not produce the Android APK.' }
 if ($Mode -eq 'Android' -and $projectTask -ne $originalProjectTask) {
  New-Item -ItemType Directory -Force (Join-Path $originalProjectTask 'Builds') | Out-Null
- Copy-Item -LiteralPath (Join-Path $projectTask 'Builds/yunjian-riichi-unity-0.5.4.apk') -Destination (Join-Path $originalProjectTask 'Builds/yunjian-riichi-unity-0.5.4.apk') -Force
+ Copy-Item -LiteralPath (Join-Path $projectTask 'Builds/yunjian-riichi-unity-0.5.5.apk') -Destination (Join-Path $originalProjectTask 'Builds/yunjian-riichi-unity-0.5.5.apk') -Force
 }
 Get-Content -LiteralPath $logTask -Tail 20

@@ -46,3 +46,10 @@ Unity 0.5.2 补充原 APK 的 chang、ju、word_left、number_left、number_scor
 - 导入脚本 `scripts/import-reference-actions.py` 解码原 Laya 二进制数据、采样 Hermite 曲线，并离线烘焙 931 顶点、15 帧的网格动画。坐标转换保留正确三角面朝向；运行时插值播放，不透明手部材质不依赖原版 Laya 着色器。
 - 原始数据格式参照 [LayaAir-v1 官方解析器](https://github.com/layabox/LayaAir-v1/tree/master/src/d3/src/laya/d3)。原游戏脚本未打包到本工程，C# 代码负责公共事件去重、方向变换、布局与按钮行为；当前切入默认使用一姬素材。
 - 素材权利仍归原权利人。正常构建使用已转换的本地文件，无需 UnityPy、原 APK 或联网下载。
+
+## Unity 0.5.5 麻将描边与模型底部指示器
+
+- 麻将描边使用用户提供 APK 内的 `maque_outline` Mesh 031（pathID 7551034896308475998），224 个顶点；沿用原预制体子节点缩放 1.047。颜色读取 `myassets/necessary/material/mjp_outline.mat` 的 `_OutlineColor`，RGB 均为 0.283018887。
+- 光圈来自 `myassets/scenes/mj/mjtable/texture/majiangkuang.png`，保持原始 256×256 像素。原 `effect_mingpaizhishi/effect_zhishi/3d/prefab/effect_zhishi.prefab` 的 `kuang` 使用该加色粒子材质。当前将原纹理放到牌底的桌面平面上，按模型脚印缩放，黄色加色并轻微脉动；箭头继续使用已有原素材。
+- 来源容器、输出 SHA-256、描边颜色与缩放记录见 `unity/Assets/Resources/Majsoul/OriginalTile/outline-provenance.json`；导入脚本 `scripts/import-reference-outlines.py`。
+- 原版编译着色器未作为源码移植。`OriginalTileOutline.shader` 用扩展网格背面实现轮廓，`ResponseGlow.shader` 实现加色纹理；动态位置、手牌避让与拔北方向由 C# 适配。
