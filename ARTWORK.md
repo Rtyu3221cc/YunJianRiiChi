@@ -17,3 +17,24 @@
 `voice/*.wav` 是预先使用本机 Microsoft Huihui Desktop 中文语音生成的 39 段 PCM 单声道音频，不是雀魂角色配音。文本清单见 `voice-lines.json`（“荣和”采用“荣胡”文本以得到胡牌读音），可选重新生成工具为 `scripts/generate-voice.ps1`。运行时只播放内置文件，不调用手机 TTS 服务。
 
 用户自选头像在设备上居中裁切、重新编码为 128×128 JPEG，仅同步处理后的头像，不打包进开发版源码或安装包。
+
+## 0.5.0 资源与来源
+
+- APK 新增：`table/score-hub.png` 来自 `myassets/scenes/mj/mjtable/texture/bg.png`；一姬表情头像来自 `myassets/deco/character/yiji/face/smallhead1.png`；Unity 中文字体来自 `myassets/fonts/common/simhei.ttf`。输出路径、原容器与 SHA-256 见 `app/src/main/assets/majsoul-assets.json`。
+- Unity 平放牌面使用 APK 默认 `mjp.png` 图集的 37 个牌面区，手牌继续使用已有 `hand.png` 切图，显示源与头像一致。
+- 补充的默认桌布来自雀魂官方公开资源：`https://game.maj-soul.com/1/v0.10.1.w/scene/Assets/Resource/tablecloth/tablecloth_default/Table_Dif.jpg`，原图转为本地 `table/cloth.png`。原图 SHA-256 见 `table/cloth-source.json`。它是默认蓝色桌面与木框，不是角色专用桌布。
+- 音频全部使用同一角色一姬：官方公开资源 `https://game.maj-soul.com/1/v0.10.1.w/audio/sound/yiji/act_*.mp3`。包含吃、碰、杠、立直、两立直、自摸、荣和和拔北，共 8 段。每段 URL、输出路径、事件映射与 SHA-256 见 `voice-manifest.json`。资源索引核对版本为 `resversion0.11.252.w.json`。
+- 一姬配音与默认桌布不是从此 APK 提取的：它们通过官方公开索引补充。运行时仅使用本地文件，无官方登录、更新或联网下载流程。
+- 旧版 39 个合成 WAV 保留在源码中，当前角色清单不引用它们；不会在一姬配音间混播。普通出牌不播合成牌名。
+- 未发布到 GitHub；本次仅进行本地资源接入与试玩包构建。
+
+## Unity 0.5.2 参考外观
+
+- 西瓜桌布：官方资源 https://game.maj-soul.com/1/v0.10.1.w/scene/Assets/Resource/tablecloth/tablecloth_chigua/Table_Dif.jpg ，保持原始 JPEG 随 Unity 包离线加载。
+- 宝牌框、蓝色按钮、提示开关和默认头像框：来自用户提供的 Majsoul_4.0.16_MC.apk；精确资源路径、导出文件和 SHA-256 见 unity/Assets/Resources/Majsoul/reference-skin.json，导入脚本为 scripts/import-reference-skin.py。
+- 桌面麻将使用原 APK 的 mjp_new 网格、法线与 UV；手牌使用独立正交层和原手牌图集。模型及图集来源见 unity/Assets/Resources/Majsoul/OriginalTile/provenance.json。显示适配、简化材质和 UI 排版由项目代码实现。新增素材权利仍归原权利人。
+- 本次修改仅接入 Unity 客户端；运行时无需加载原 APK 或联网获取素材。
+
+### 宝牌栏与计分盘图集
+
+Unity 0.5.2 补充原 APK 的 chang、ju、word_left、number_left、number_score、dir 及 w_0..w_9。用于局数、余牌、方位、点数、供托和本场显示。导入脚本为 scripts/import-reference-hud.py，原材质 UV 与 UI 槽位参数在 unity/Assets/Resources/Majsoul/Hud。宝牌预览由导入的麻将模型离屏渲染，已移除“云”字牌背占位。

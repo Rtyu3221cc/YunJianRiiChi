@@ -47,9 +47,9 @@ if (!(Test-Path build/local-signing.jks)) {
  & "$javaHomeTask\bin\keytool.exe" -genkeypair -keystore build/local-signing.jks -storepass local-riichi -keypass local-riichi -alias local -keyalg RSA -keysize 2048 -validity 10000 -dname 'CN=LAN Riichi Local Build' -noprompt
  Check-Build
 }
-& "$javaHomeTask\bin\java.exe" -jar "$bt\lib\apksigner.jar" sign --ks build/local-signing.jks --ks-pass pass:local-riichi --key-pass pass:local-riichi --out dist/yunjian-riichi-0.4.0.apk build/aligned.apk
+& "$javaHomeTask\bin\java.exe" -jar "$bt\lib\apksigner.jar" sign --ks build/local-signing.jks --ks-pass pass:local-riichi --key-pass pass:local-riichi --out dist/yunjian-riichi-0.5.0.apk build/aligned.apk
 Check-Build
-& "$javaHomeTask\bin\java.exe" -jar "$bt\lib\apksigner.jar" verify --verbose dist/yunjian-riichi-0.4.0.apk
+& "$javaHomeTask\bin\java.exe" -jar "$bt\lib\apksigner.jar" verify --verbose dist/yunjian-riichi-0.5.0.apk
 Check-Build
-Get-FileHash -Algorithm SHA256 dist/yunjian-riichi-0.4.0.apk | Format-List
+Get-FileHash -Algorithm SHA256 dist/yunjian-riichi-0.5.0.apk | Format-List
 

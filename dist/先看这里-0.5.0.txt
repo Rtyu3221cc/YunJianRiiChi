@@ -1,0 +1,14 @@
+云间日麻 0.5.0
+
+直接试玩：安装 yunjian-riichi-0.5.0.apk，这是现有 Android/WebView 版。
+已加入一姬同角色动作配音、雀魂默认桌布，修复立直棒、横置牌重叠与两次点击出牌，放大并调整副露与拔北。
+所有手机请统一版本。沿用原包名和本机签名，可覆盖安装；请保留原存档。
+
+Unity：源码包内 unity 文件夹可添加到 Unity Hub，步骤见 unity/README.md。
+安装 Unity 6 时勾选 Android Build Support、SDK & NDK Tools、OpenJDK。
+已在 Unity 6000.6.4f1 完成导入、C# 编译与实际 AI 房间出牌测试。
+Unity 试玩包：yunjian-riichi-unity-0.5.0.apk，独立包名，可与旧版并存。
+安卓真机、热点联机及后台行为尚未验证。
+
+已执行及未执行的测试见 验证记录-0.5.0.txt；预览截图使用合成布局场景，不是真实牌谱。
+table-0.5.0-* 是 WebView 界面；unity-table-* 是 Unity 摄像机输出，不包含界面叠层。

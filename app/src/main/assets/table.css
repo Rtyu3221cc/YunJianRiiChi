@@ -47,3 +47,34 @@
 .profile-editor{display:flex;align-items:center;gap:20px;margin-bottom:22px}.profile-editor>img{width:88px;height:88px;object-fit:cover;border:2px solid #d8bd7c;border-radius:10px;flex-shrink:0}.profile-editor .note{margin:10px 0 0}.voice-switch{display:flex;align-items:center;gap:10px;padding:12px 0}.voice-switch input{width:20px;height:20px;accent-color:#d7b675}.volume-label{display:flex;align-items:center;gap:20px;margin:12px 0}.volume-label input{flex:1;accent-color:#d7b675}.seat .avatar{overflow:hidden}.seat .avatar img{width:100%;height:100%;object-fit:cover;display:block}
 @media(max-height:440px){.profile-editor{margin-bottom:8px}.profile-editor>img{width:64px;height:64px}.voice-switch{padding:6px 0}.header-right{gap:5px}#preferences{padding:8px;font-size:12px}}
 @media(max-height:440px){.sheet:has(.profile-editor){padding:18px 24px}.sheet:has(.profile-editor) .eyebrow{margin-bottom:8px}.sheet:has(.profile-editor) h2{font-size:22px;margin-bottom:12px}.sheet:has(.profile-editor) .note{margin-bottom:10px;line-height:1.5;font-size:12px}.sheet:has(.profile-editor) .profile-editor .note{margin:8px 0 0}.sheet:has(.profile-editor) .volume-label{margin:8px 0}}
+
+/* 0.5: a horizontal declaration tile reserves its actual width. */
+.game .river-area{width:184px;height:176px}
+.game .river,.game .river.long{display:flex;flex-direction:column;gap:2px;width:184px;margin:0;transform:none}
+.game .river-row{display:flex;align-items:flex-end;gap:2px;height:42px;flex-shrink:0}
+.game .river-slot{display:flex;align-items:center;justify-content:center;width:26px;height:42px;flex:none}
+.game .river-slot.declaration{width:42px;height:42px}
+.game .river .tile.riichi{transform:rotate(90deg);flex-shrink:0}
+.game .river.long{transform:scale(.8);transform-origin:top center}
+.riichi-deposit{position:absolute;left:50%;top:46%;width:78px;height:8px;z-index:5;pointer-events:none}
+.riichi-deposit i{display:block;width:78px;height:8px;border:1px solid #c8bd9a;border-radius:2px;background:radial-gradient(circle at center,#bd353b 2px,transparent 3px),#fff5d8;box-shadow:0 3px 2px #0007}
+.riichi-deposit.bottom{transform:translate(-50%,98px)}
+.riichi-deposit.top{transform:translate(-50%,-106px)}
+.riichi-deposit.left{transform:translate(-140px,-50%) rotate(90deg)}
+.riichi-deposit.right{transform:translate(62px,-50%) rotate(90deg)}
+.game .table-melds.bottom{right:21%;bottom:205px;max-width:410px;flex-wrap:wrap;justify-content:flex-end;gap:12px}
+.game .table-melds .meld{--meld-w:34px;--meld-h:49px;padding-top:11px}
+.game .table-melds .tile.small{--tile-w:34px;--tile-h:49px}
+.game .table-melds .north-counter .tile.small{--tile-w:34px;--tile-h:49px}
+.north-counter{gap:6px;font-size:19px}
+.game .table-melds.top{left:27%;top:62px}
+.game .table-melds.left{left:22%;top:69%}
+.game .table-melds.right{right:22%;top:21%}
+.game .actions{right:12%;bottom:137px;max-width:780px;flex-wrap:wrap;gap:10px}
+.game .actions button{min-width:76px;min-height:65px;font-size:22px}
+.game .hand-zone{bottom:8px}
+.game .center-board{background:#2c293b url("table/score-hub.png") center/100% 100% no-repeat;border:0;border-radius:0;box-shadow:0 4px 9px #071f2490}
+.game .center-board:before{display:none}
+.game .center-core{background:#16333be8;border-color:#55546b;border-radius:4px}
+.game .table-surface{background:#245d4a url("table/cloth.png") center/100% 100% no-repeat}
+.game .table-surface:after{opacity:.12}

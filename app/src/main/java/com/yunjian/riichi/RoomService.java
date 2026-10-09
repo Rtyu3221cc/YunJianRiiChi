@@ -68,10 +68,14 @@ public class RoomService extends Service {
   else if("GET".equals(method)&&(path.equals("/")||path.equals("/index.html")))data=asset("index.html");
   else if("GET".equals(method)&&path.equals("/style.css")){type="text/css; charset=utf-8";data=asset("style.css");}
   else if("GET".equals(method)&&path.equals("/table.css")){type="text/css; charset=utf-8";data=asset("table.css");}
+  else if("GET".equals(method)&&path.equals("/table-layout.js")){type="text/javascript; charset=utf-8";data=asset("table-layout.js");}
+  else if("GET".equals(method)&&path.equals("/voice-manifest.js")){type="text/javascript; charset=utf-8";data=asset("voice-manifest.js");}
+  else if("GET".equals(method)&&path.equals("/table/cloth.png")){type="image/png";data=asset("table/cloth.png");}
+  else if("GET".equals(method)&&path.equals("/table/score-hub.png")){type="image/png";data=asset("table/score-hub.png");}
   else if("GET".equals(method)&&(path.equals("/portraits/yiji.png")||path.equals("/portraits/erjietang.png"))){type="image/png";data=asset(path.substring(1));}
   else if("GET".equals(method)&&path.equals("/felt.svg")){type="image/svg+xml";data=asset("felt.svg");}
   else if("GET".equals(method)&&path.matches("/tiles/(?:[mps][0-9]|z[1-7])\\.png")){type="image/png";data=asset(path.substring(1));}
-  else if("GET".equals(method)&&path.matches("/voice/(?:[mps][0-9]|z[1-7]|ron|tsumo)\\.wav")){type="audio/wav";data=asset(path.substring(1));}
+  else if("GET".equals(method)&&path.matches("/voice/(?:[mps][0-9]|z[1-7]|ron|tsumo|yiji-[a-z0-9_-]+)\\.(?:wav|mp3)")){type=path.endsWith(".mp3")?"audio/mpeg":"audio/wav";data=asset(path.substring(1));}
   else if("GET".equals(method)&&path.equals("/voice.js")){type="text/javascript; charset=utf-8";data=asset("voice.js");}
   else if("GET".equals(method)&&path.equals("/client.js")){type="text/javascript; charset=utf-8";data=asset("client.js");}
   else if("GET".equals(method)&&path.equals("/LICENSE-core.txt")){type="text/plain; charset=utf-8";data=asset("LICENSE-core.txt");}
