@@ -1,5 +1,15 @@
 # 云间日麻 Unity 三维客户端
 
+## 0.5.3 对手竖立手牌与计分盘
+
+安装 `../dist/yunjian-riichi-unity-0.5.3.apk`，同包名覆盖更新，versionCode 4。
+
+- 对手暗牌沿用原始麻将模型，站在短边上，红色牌背朝桌心；修正落地高度、碰撞盒和贴地阴影。暗杠、牌河和副露继续平放。
+- 原始计分盘底图保持完整 UV；点数、方位、中央上下窗口与回合灯放在同一根节点，按座位统一旋转。点数提高到 19.2px 字高，中心位置为 (128,192)，完整放在黑色区域；回合灯改成黄色渐变梯形。
+- Play 验证检查三麻/四麻每个观察座位的对手手牌数量、竖立尺寸、牌背方向、落地高度，以及负分/六位点数槽位和当前回合灯归属。四种横屏尺寸同时检查对手与自身手牌边界和选牌射线。
+
+构建脚本输出 `Builds/yunjian-riichi-unity-0.5.3.apk`；旧版本说明及原始资源证据保留在下方。实现复用了原始模型与图集，布局及材质适配边界仍见 `../docs/麻将渲染对照.md`。
+
 ## 0.5.2 原始麻将显示方式
 
 安装 `../dist/yunjian-riichi-unity-0.5.2.apk`，同包名覆盖更新 Unity 0.5.0 / 0.5.1，versionCode 为 3。
@@ -16,7 +26,7 @@ Unity Play 验证覆盖三麻/四麻及 1280×720、1688×780、2760×1256、844
 
 已通过 Unity 6000.6.4f1 的 C# 编译、实际 Play 模式和布局验证。Android 构建与真机状态见交付验证记录。
 
-Unity Android APK 已构建至 `Builds/yunjian-riichi-unity-0.5.2.apk`，交付副本在上一级 `dist`。IL2CPP ARM64 + ARMv7、APK v2 签名、16 KB ZIP 对齐、内置离线素材和手机房主/JNI 类检查通过。当前未连接 Android 测试设备，尚未完成真机运行和热点联机验证。APK 使用本机开发签名。
+Unity Android APK 已构建至 `Builds/yunjian-riichi-unity-0.5.3.apk`，交付副本在上一级 `dist`。IL2CPP ARM64 + ARMv7、APK v2 签名、16 KB ZIP 对齐、内置离线素材和手机房主/JNI 类检查通过。当前未连接 Android 测试设备，尚未完成真机运行和热点联机验证。APK 使用本机开发签名。
 
 ## 安装后打开
 
@@ -24,7 +34,7 @@ Unity Android APK 已构建至 `Builds/yunjian-riichi-unity-0.5.2.apk`，交付�
 2. Hub 中“添加现有项目”，选择这个 `unity` 文件夹。工程已升级并实测 **6000.6.4f1**；使用其他版本需要重新导入和验证。
 3. 首次导入后会自动创建 `Assets/Scenes/Table.unity`。若未出现，点击菜单 **云间日麻 → 创建或打开牌桌场景**。
 4. 点击 **云间日麻 → 验证资源与房间协议**。通过后 Console 应显示 `RIICHI UNITY VALIDATION PASS`。这一步同时检验 C# 编译和导入资源，不代替运行时验证。
-5. 英文路径下可点击 **云间日麻 → 配置安卓构建**，然后 **云间日麻 → 构建安卓 APK**。含中文的项目路径请使用下方构建脚本，它会将文件复制到英文临时构建目录，并将输出取回 `Builds/yunjian-riichi-unity-0.5.2.apk`。
+5. 英文路径下可点击 **云间日麻 → 配置安卓构建**，然后 **云间日麻 → 构建安卓 APK**。含中文的项目路径请使用下方构建脚本，它会将文件复制到英文临时构建目录，并将输出取回 `Builds/yunjian-riichi-unity-0.5.3.apk`。
 
 Unity APK 使用独立包名 `com.yunjian.riichi.unity`，可和原有 Android/WebView 版并存，各自保存自己的牌桌。测试 Unity 手机房主前先退出同机旧版房主，避免同时占用 8765 端口。开发版 target API 32 沿用旧版离线分发约定，未进行应用商店发布适配。
 

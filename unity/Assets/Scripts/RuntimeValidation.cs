@@ -72,7 +72,19 @@ namespace YunJian.Riichi
             {
                 string prefix = pressure ? "" : "preview-";
                 var fixture = JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder, (pressure ? "fixture-" : "preview-") + n + ".json")));
+                if (pressure)
+                {
+                    int originalYou = fixture.you, originalTurn = fixture.turn;
+                    for (int you = 0; you < n; you++)
+                    {
+                        fixture.you = you; fixture.turn = (you+1)%n;
+                        client.ShowValidationFixture(fixture); yield return null; Physics.SyncTransforms();
+                        ValidatePresentation(table, fixture);
+                    }
+                    fixture.you = originalYou; fixture.turn = originalTurn;
+                }
                 client.ShowValidationFixture(fixture); yield return null; Physics.SyncTransforms();
+                ValidatePresentation(table, fixture);
                 Require(table.Camera.GetComponent<AudioListener>() != null, "Missing audio listener");
                 if (pressure) Require(GameObject.Find("Riichi 1000") != null, "Missing deposited riichi stick");
                 foreach (var item in FindObjectsByType<TileTarget>(FindObjectsSortMode.None))
@@ -86,6 +98,15 @@ namespace YunJian.Riichi
                     SetGameResolution((int)resolution.x, (int)resolution.y);
                     for (int frame = 0; frame < 8; frame++) yield return null;
                     table.FitCamera(resolution.x / resolution.y); Physics.SyncTransforms();
+                    foreach (var t in GameObject.Find("PublicTableState").GetComponentsInChildren<BoxCollider>())
+                    {
+                        if (t.name != "Standing concealed hand") continue;
+                        foreach (var corner in Corners(t))
+                        {
+                            var v = table.Camera.WorldToViewportPoint(corner);
+                            Require(v.z > 0 && v.x > 0 && v.x < 1 && v.y > 0 && v.y < 1, "Opponent hand clipped at " + suffix);
+                        }
+                    }
                     foreach (var item in FindObjectsByType<TileTarget>(FindObjectsSortMode.None))
                     {
                         var box = item.GetComponentInChildren<BoxCollider>();
@@ -104,6 +125,8 @@ namespace YunJian.Riichi
                         Require(Physics.Raycast(table.HandCamera.ScreenPointToRay(screenPoint), out var pick, 100) && pick.collider.GetComponentInParent<TileTarget>() == item, "Hand picking failed at " + suffix);
                     }
                     Capture(table, Path.Combine(folder, prefix + "table-" + n + "-" + suffix + ".png"), (int)resolution.x, (int)resolution.y);
+                    if (!pressure && resolution.x == 1280)
+                        CaptureHub(Path.Combine(folder, "score-hub-" + n + ".png"));
                     string fullFile = Path.Combine(folder, prefix + "ui-" + n + "-" + suffix + ".png");
                     if (File.Exists(fullFile)) File.Delete(fullFile);
                     ScreenCapture.CaptureScreenshot(fullFile);
@@ -111,6 +134,70 @@ namespace YunJian.Riichi
                     Require(File.Exists(fullFile), "Full game-view capture failed at " + suffix);
                 }
             }
+        }
+        static void ValidatePresentation(TableRenderer table, RoomView view)
+        {
+            var publicRoot = GameObject.Find("PublicTableState").transform;
+            for (int i = 0; i < view.n; i++)
+            {
+                if (i == view.you) continue;
+                var seat = publicRoot.Find("Seat " + i);
+                var tiles = seat.Cast<Transform>().Where(t => t.name == "Standing concealed hand").ToArray();
+                Require(tiles.Length == view.players[i].count, "Concealed hand count changed");
+                foreach (var t in tiles)
+                {
+                    var box = t.GetComponent<BoxCollider>(); var model = t.Find("Original tile");
+                    Require(box.size.y > box.size.x && box.size.y > box.size.z * 1.9f, "Opponent tile is lying flat");
+                    Vector3 inward = Vector3.ProjectOnPlane(-t.position, Vector3.up).normalized;
+                    Require(Vector3.Dot(model.TransformDirection(Vector3.down), inward) > .8f, "Concealed back faces away from table");
+                    Require(Mathf.Abs(box.bounds.min.y) < .001f, "Standing tile floats or sinks into cloth");
+                }
+            }
+            var hub = publicRoot.Find("Score hub");
+            Require(hub != null && hub.Find("Score plate") != null, "Missing score plate");
+            // Check the real plate pixels, rather than only an estimated slot.
+            var previous = RenderTexture.active; var target = RenderTexture.GetTemporary(256,256);
+            Graphics.Blit(Resources.Load<Texture2D>("Majsoul/Table/score-hub"),target); RenderTexture.active = target;
+            var plate = new Texture2D(256,256,TextureFormat.RGB24,false);
+            plate.ReadPixels(new Rect(0,0,256,256),0,0); plate.Apply();
+            RenderTexture.active = previous; RenderTexture.ReleaseTemporary(target);
+            var dark = plate.GetPixel(128,65);
+            int lights = 0;
+            foreach (var player in view.players)
+            {
+                var seat = hub.Find("Hub seat " + player.wind); Require(seat != null, "Missing hub seat");
+                foreach (Transform glyph in seat)
+                {
+                    if (glyph.name == "Turn light") { lights++; continue; }
+                    if (glyph.name != "Hub glyph number_score") continue;
+                    float x = (glyph.localPosition.x / ReferenceScoreHub.Size + .5f) * 256;
+                    float y = (.5f - glyph.localPosition.z / ReferenceScoreHub.Size) * 256;
+                    float w = glyph.localScale.x / ReferenceScoreHub.Size * 256;
+                    float h = glyph.localScale.y / ReferenceScoreHub.Size * 256;
+                    Require(x-w/2 >= 78 && x+w/2 <= 178 && y-h/2 >= 176 && y+h/2 <= 204, "Score leaves its dark recess");
+                    foreach (float dx in new[] { -.5f,.5f }) foreach (float dy in new[] { -.5f,.5f })
+                    {
+                        var point = hub.InverseTransformPoint(glyph.TransformPoint(new Vector3(dx,dy,0)));
+                        int px = Mathf.RoundToInt((point.x/ReferenceScoreHub.Size+.5f)*255);
+                        int py = Mathf.RoundToInt((point.z/ReferenceScoreHub.Size+.5f)*255);
+                        var color = plate.GetPixel(px,py);
+                        Require(Mathf.Abs(color.r-dark.r)+Mathf.Abs(color.g-dark.g)+Mathf.Abs(color.b-dark.b) < .08f, "Score overlaps the grey frame: " + player.wind);
+                    }
+                }
+            }
+            Require(lights == 1, "Turn light missing or duplicated");
+            Require(hub.Find("Hub seat " + view.players[view.turn].wind).Find("Turn light") != null, "Turn light follows wrong seat");
+            Destroy(plate);
+        }
+        static void CaptureHub(string file)
+        {
+            var camera = new GameObject("Score hub validation camera").AddComponent<Camera>();
+            camera.transform.position = new Vector3(0, 3, -1.4f); camera.transform.LookAt(new Vector3(0,.092f,0));
+            camera.orthographic = true; camera.orthographicSize = 1.14f; camera.cullingMask = ~(1 << 12 | 1 << 13);
+            var active = RenderTexture.active; var target = new RenderTexture(900,800,24); var pixels = new Texture2D(900,800,TextureFormat.RGB24,false);
+            camera.targetTexture = target; camera.Render(); RenderTexture.active = target;
+            pixels.ReadPixels(new Rect(0,0,900,800),0,0); pixels.Apply(); File.WriteAllBytes(file,pixels.EncodeToPNG());
+            RenderTexture.active = active; target.Release(); Destroy(target); Destroy(pixels); camera.gameObject.SetActive(false); Destroy(camera.gameObject);
         }
         static System.Collections.Generic.IEnumerable<Vector3> Corners(BoxCollider collider)
         {

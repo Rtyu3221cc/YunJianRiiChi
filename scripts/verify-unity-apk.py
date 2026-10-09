@@ -5,7 +5,7 @@ from pathlib import Path
 from zipfile import ZipFile
 
 root = Path(__file__).resolve().parent.parent
-apk = root / 'unity/Builds/yunjian-riichi-unity-0.5.2.apk'
+apk = root / 'unity/Builds/yunjian-riichi-unity-0.5.3.apk'
 assets = root / 'app/src/main/assets'
 with ZipFile(apk) as archive:
     assert archive.testzip() is None
@@ -31,6 +31,6 @@ with ZipFile(apk) as archive:
 dist = root / 'dist'
 output = dist / apk.name
 output.write_bytes(apk.read_bytes())
-(dist / 'SHA256-unity-0.5.2.txt').write_text(hashlib.sha256(output.read_bytes()).hexdigest().upper() + '  ' + output.name + '\n', encoding='utf8')
+(dist / 'SHA256-unity-0.5.3.txt').write_text(hashlib.sha256(output.read_bytes()).hexdigest().upper() + '  ' + output.name + '\n', encoding='utf8')
 print('PASS: APK ZIP integrity, current offline asset bytes, phone host/JNI classes, ARM64 + ARMv7, original tile atlases and compiled shaders.')
 print(output.name, output.stat().st_size, hashlib.sha256(output.read_bytes()).hexdigest())

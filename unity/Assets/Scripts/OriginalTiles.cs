@@ -80,6 +80,21 @@ namespace YunJian.Riichi
             if (opacity < 1) { root.localScale = Vector3.one * .8f; root.localPosition -= Vector3.up * .04f; }
             return root;
         }
+        public Transform CreateStandingBack(Transform parent, Vector3 position, float width)
+        {
+            // A player's concealed hand stands on its short edge, with the back
+            // facing the table centre (+Z in seat space). Face-down kans still
+            // use CreateTable and must keep their horizontal pose.
+            var root = CreateTable(parent, "", position, width, true, false, 1);
+            root.name = "Standing concealed hand";
+            var model = root.Find("Original tile");
+            model.localRotation = Quaternion.Euler(-90, 0, 0);
+            model.localPosition = new Vector3(0, TableLength * width / 2, TableDepth * width / 2);
+            var box = root.GetComponent<BoxCollider>();
+            box.center = Vector3.up * TableLength * width / 2;
+            box.size = new Vector3(width, TableLength * width, TableDepth * width);
+            return root;
+        }
         public Texture DoraTexture(string tile)
         {
             string key = string.IsNullOrEmpty(tile) ? "back" : tile;

@@ -80,14 +80,6 @@ namespace YunJian.Riichi
             return go;
         }
         public Texture2D TileTexture(string tile) => Resources.Load<Texture2D>("Majsoul/TableTiles/" + tile) ?? Resources.Load<Texture2D>("Majsoul/Tiles/" + tile);
-        void HubTexture()
-        {
-            var texture = Resources.Load<Texture2D>("Majsoul/Table/score-hub"); if (texture == null) return;
-            if (!faces.TryGetValue("score-hub", out var mat)) { mat = new Material(Shader.Find("Unlit/Transparent")); mat.mainTexture = texture; mat.renderQueue = 2450; faces["score-hub"] = mat; }
-            var quad = GameObject.CreatePrimitive(PrimitiveType.Quad); quad.name = "Majsoul score hub"; quad.transform.SetParent(content, false);
-            quad.transform.localPosition = new Vector3(0, .092f, 0); quad.transform.localRotation = Quaternion.Euler(90, 0, 0); quad.transform.localScale = new Vector3(2.05f, 2.05f, 1);
-            quad.GetComponent<Renderer>().sharedMaterial = mat; Destroy(quad.GetComponent<Collider>());
-        }
         public Texture2D Portrait(PlayerView p)
         {
             if (!string.IsNullOrEmpty(p.avatar))
@@ -163,13 +155,11 @@ namespace YunJian.Riichi
         {
             Clear(); state = view;
             if (state.phase != "play" && state.phase != "reaction") return;
-            HubTexture();
-            scoreHub.Center(content, state);
+            var hub = scoreHub.Create(content, state);
             for (int i = 0; i < state.players.Length; i++)
             {
                 var p = state.players[i]; var seat = Seat(i);
-                scoreHub.Seat(seat, p);
-                if (state.turn == i) Cube("Turn light", seat, new Vector3(0, .12f, -.96f), new Vector3(.65f, .025f, .04f), gold);
+                scoreHub.Seat(hub, p, Angle(i), state.turn == i);
                 DrawRiver(seat, p);
                 bool deposited = p.riichi > 0 && !(state.pending != null && state.pending.riichi && state.pending.from == i);
                 if (deposited)
@@ -179,7 +169,14 @@ namespace YunJian.Riichi
                 }
                 DrawMelds(seat, p);
                 if (i == state.you) DrawHand();
-                else for (int j = 0; j < p.count; j++) Tile(seat, "", new Vector3((j - (p.count - 1) / 2f) * .31f, 0, -3.35f), .29f, .45f, true);
+                else for (int j = 0; j < p.count; j++)
+                {
+                    var tile = original.CreateStandingBack(seat, new Vector3((j - (p.count - 1) / 2f) * .31f, 0, -3.35f), .29f);
+                    var shadow = new GameObject("Standing hand contact shadow"); shadow.transform.SetParent(tile, false);
+                    shadow.transform.localPosition = new Vector3(.018f, .002f, -.022f);
+                    shadow.AddComponent<MeshFilter>().sharedMesh = geometry.Get(.31f, original.TableDepth * .29f + .04f, true);
+                    var sr = shadow.AddComponent<MeshRenderer>(); sr.sharedMaterial = contactShadow; sr.shadowCastingMode = ShadowCastingMode.Off;
+                }
             }
         }
         void DrawRiver(Transform parent, PlayerView p)
