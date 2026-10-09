@@ -1,8 +1,19 @@
-# 云间日麻 0.5.0
+# 云间日麻
+
+## Unity 0.5.7 计分盘出牌指示灯
+
+最新安卓包：[下载 Unity 0.5.7 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.7/yunjian-riichi-unity-0.5.7.apk)，versionCode 8，与原 Unity 包签名一致，可覆盖更新。
+
+- 回合灯使用雀魂原始 `particle_shining` 短梯形纹理，保留高亮边缘和柔光；移除旧的代码生成常亮宽灯条。
+- 按原两层粒子颜色、加色混合及 1 秒透明度曲线淡入、停留、淡出。原纹理和粒子配置适配现有 Unity 计分盘；坐标和尺寸换算见素材来源记录。
+- 相同座位和局数的数据刷新保持闪烁相位，换回合重新开始，避免轮询导致动画反复重置。
+- 验证覆盖四方向实际渲染、暗/亮/淡出截图及刷新连续性；原有三/四人布局、选牌和手部动作检查继续通过。安卓真机效果待实测。
+
+预览见 [亮阶段截图](dist/previews/unity-0.5.7-turn-light-0-0.45.png)，完整检查见 [0.5.7 验证记录](dist/验证记录-unity-0.5.7.txt)，素材来源见 [ARTWORK.md](ARTWORK.md)。
 
 ## Unity 0.5.6 手部动画补全与操作修正
 
-最新安卓包：[下载 Unity 0.5.6 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.6/yunjian-riichi-unity-0.5.6.apk)，versionCode 7，可覆盖此前 Unity 试玩版。
+此版本安卓包：[下载 Unity 0.5.6 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.6/yunjian-riichi-unity-0.5.6.apk)，versionCode 7，可覆盖此前 Unity 试玩版。
 
 - 立直宣言牌改用原版 `Anim_Dapai_heng-LiQiPai` 横置动作：打出与立直喊字**同时**开始，宣言成立后接着由手部把立直棒放进计分盘槽位。表现层拆成手部与喊字两条通道，手部动作排队、喊字独立播放，不再互相推迟。
 - 吃、碰、杠与三麻拔北接入原版 `Fulu_Ani-Fulu` 副露动作；落牌瞬间在副露锚点叠加原版 `bang` 加色撞击闪光，0.38 秒内扩散淡出。

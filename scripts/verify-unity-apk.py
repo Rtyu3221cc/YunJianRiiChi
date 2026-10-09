@@ -1,11 +1,12 @@
 """Verify the phone host and offline assets inside the finished Unity APK."""
 import hashlib
 import re
+import sys
 from pathlib import Path
 from zipfile import ZipFile
 
 root = Path(__file__).resolve().parent.parent
-apk = root / 'unity/Builds/yunjian-riichi-unity-0.5.6.apk'
+apk = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else root / 'unity/Builds/yunjian-riichi-unity-0.5.7.apk'
 assets = root / 'app/src/main/assets'
 with ZipFile(apk) as archive:
     assert archive.testzip() is None
@@ -35,12 +36,19 @@ with ZipFile(apk) as archive:
         source = root / 'unity/Assets/Resources/Majsoul/Actions' / (name+'.png')
         guid = re.search(r'guid: (\w+)', Path(str(source) + '.meta').read_text()).group(1)
         assert 'assets/bin/Data/' + guid in names, 'Missing action texture: ' + name
+    for name in ['turn-light.png', 'turn-light-source.json']:
+        source = root / 'unity/Assets/Resources/Majsoul/Hud' / name
+        guid = re.search(r'guid: (\w+)', Path(str(source) + '.meta').read_text()).group(1)
+        assert 'assets/bin/Data/' + guid in names, 'Missing turn indicator asset: ' + name
+        if name.endswith('.json'):
+            assert source.read_bytes() in archive.read('assets/bin/Data/' + guid), 'Stale turn indicator source'
     shader_data = b''.join(archive.read(n) for n in names if 'globalgamemanagers.assets' in n)
-    for shader in [b'YunJian/OriginalHand', b'YunJian/OriginalTileBody', b'YunJian/OriginalTileOutline', b'YunJian/ResponseGlow', b'YunJian/TableCloth']:
+    for shader in [b'YunJian/OriginalHand', b'YunJian/OriginalTileBody', b'YunJian/OriginalTileOutline', b'YunJian/ResponseGlow', b'YunJian/TurnLight', b'YunJian/TableCloth']:
         assert shader in shader_data, 'Missing compiled shader: ' + repr(shader)
 dist = root / 'dist'
 output = dist / apk.name
 output.write_bytes(apk.read_bytes())
-(dist / 'SHA256-unity-0.5.6.txt').write_text(hashlib.sha256(output.read_bytes()).hexdigest().upper() + '  ' + output.name + '\n', encoding='utf8')
-print('PASS: APK ZIP integrity, current offline assets, phone host/JNI, ARM64 + ARMv7, original tile atlases, exact hand animation bytes, action textures and compiled shaders.')
+checksum = 'SHA256-unity-0.5.7.txt' if len(sys.argv) == 1 else 'SHA256-' + output.stem + '.txt'
+(dist / checksum).write_text(hashlib.sha256(output.read_bytes()).hexdigest().upper() + '  ' + output.name + '\n', encoding='utf8')
+print('PASS: APK ZIP integrity, current offline assets, phone host/JNI, ARM64 + ARMv7, original tile atlases, exact hand animation bytes, action textures, original turn-light assets and compiled shaders.')
 print(output.name, output.stat().st_size, hashlib.sha256(output.read_bytes()).hexdigest())

@@ -1,0 +1,199 @@
+{
+  "source": "User-provided Majsoul_4.0.16_MC.apk",
+  "prefab": {
+    "path": "myassets/scenes/mj/mjtable/prefab/scene_mj.prefab / man/ind",
+    "bundle": "assets/Android/9ux7zauuw_@zz1dbm8@hb99$qthjfheeg@_528ac4a34d9c89388261.majset"
+  },
+  "texture": {
+    "path": "myassets/scenes/mj/mjtable/texture/particle_shining.png",
+    "bundle": "assets/Android/9ux7zauuw_@zz1dbm8@hb99$ug0xzxlffh$_c6d0290ce4e3a3fca003.majset",
+    "width": 86,
+    "height": 86,
+    "sha256": "deb4469640a080108b6abd6ca491c055222a2cb53115834a9867d6a90228bf4a"
+  },
+  "layers": [
+    {
+      "name": "Particle System",
+      "transform": {
+        "m_LocalPosition": {
+          "x": 0.5400000214576721,
+          "y": -1.475000023841858,
+          "z": 0.0026000000070780516
+        },
+        "m_LocalRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0,
+          "w": 1.0
+        },
+        "m_LocalScale": {
+          "x": 0.1899999976158142,
+          "y": -0.15000000596046448,
+          "z": 0.1899999976158142
+        }
+      },
+      "duration": 1.0,
+      "loop": true,
+      "playOnAwake": true,
+      "lifetime": 1.0,
+      "speed": 0.0,
+      "size": 0.4399999976158142,
+      "sizeY": 0.07000000029802322,
+      "color": {
+        "r": 0.875,
+        "g": 0.6035369634628296,
+        "b": 0.019301488995552063,
+        "a": 1.0
+      },
+      "alphaKeys": [
+        {
+          "time": 0.0,
+          "alpha": 0.0
+        },
+        {
+          "time": 0.32646677347981995,
+          "alpha": 1.0
+        },
+        {
+          "time": 0.6205844205386435,
+          "alpha": 1.0
+        },
+        {
+          "time": 1.0,
+          "alpha": 0.0
+        }
+      ],
+      "emissionRate": 0.0,
+      "burst": {
+        "time": 0,
+        "count": 1.0
+      },
+      "renderer": {
+        "mode": 2,
+        "flip": {
+          "x": 0.0,
+          "y": 1.0,
+          "z": 0.0
+        },
+        "materials": [
+          {
+            "m_FileID": 1,
+            "m_PathID": -4506197018604355072
+          }
+        ]
+      }
+    },
+    {
+      "name": "Particle System (2)",
+      "transform": {
+        "m_LocalPosition": {
+          "x": 0.5400000214576721,
+          "y": -1.475000023841858,
+          "z": 0.00260000117123127
+        },
+        "m_LocalRotation": {
+          "x": -0.0,
+          "y": -0.0,
+          "z": -0.0,
+          "w": 1.0
+        },
+        "m_LocalScale": {
+          "x": 0.1899999976158142,
+          "y": -0.15000000596046448,
+          "z": 0.1899999976158142
+        }
+      },
+      "duration": 1.0,
+      "loop": true,
+      "playOnAwake": true,
+      "lifetime": 1.0,
+      "speed": 0.0,
+      "size": 0.4399999976158142,
+      "sizeY": 0.07000000029802322,
+      "color": {
+        "r": 0.875,
+        "g": 0.39108774065971375,
+        "b": 0.019301488995552063,
+        "a": 1.0
+      },
+      "alphaKeys": [
+        {
+          "time": 0.0,
+          "alpha": 0.0
+        },
+        {
+          "time": 0.32646677347981995,
+          "alpha": 1.0
+        },
+        {
+          "time": 0.6205844205386435,
+          "alpha": 1.0
+        },
+        {
+          "time": 1.0,
+          "alpha": 0.0
+        }
+      ],
+      "emissionRate": 0.0,
+      "burst": {
+        "time": 0,
+        "count": 1.0
+      },
+      "renderer": {
+        "mode": 2,
+        "flip": {
+          "x": 0.0,
+          "y": 1.0,
+          "z": 0.0
+        },
+        "materials": [
+          {
+            "m_FileID": 1,
+            "m_PathID": -4506197018604355072
+          }
+        ]
+      }
+    }
+  ],
+  "webMaterial": {
+    "url": "https://game.maj-soul.com/1/v0.10.237.w/scene/Assets/Resource/effect/texture/player_indicator/particle_shining.lmat",
+    "data": {
+      "version": "LAYAMATERIAL:01",
+      "props": {
+        "name": "particle_shining",
+        "cull": 0,
+        "blend": 1,
+        "srcBlend": 770,
+        "dstBlend": 1,
+        "alphaTest": false,
+        "depthWrite": false,
+        "renderQueue": 3000,
+        "textures": [
+          {
+            "name": "diffuseTexture",
+            "path": "particle_shining.png",
+            "params": {
+              "wrap": 1,
+              "mipmap": false
+            }
+          }
+        ],
+        "vectors": [
+          {
+            "name": "tintColor",
+            "value": [
+              0.5,
+              0.5,
+              0.5,
+              0.913
+            ]
+          }
+        ],
+        "defines": [
+          "ADDTIVEFOG"
+        ]
+      }
+    }
+  },
+  "portNotes": "Original particle texture, two start colors, 1-second burst/lifetime, alpha keys and additive blend. The horizontal billboard is represented by a table-plane mesh particle; pose/size are adapted to the existing normalized hub (center 128,216; quad 84x66). Polling preserves the particle cycle while seat and round are unchanged."
+}

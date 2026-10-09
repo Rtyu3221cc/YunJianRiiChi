@@ -21,11 +21,11 @@ namespace YunJian.Riichi.Editor
             Require(Resources.Load<TextAsset>("Majsoul/OriginalTile/mesh") != null, "Missing original tile mesh/UV data");
             foreach (var name in new[] { "hand-face", "hand-back", "table-face", "table-back" })
                 Require(Resources.Load<Texture2D>("Majsoul/OriginalTile/" + name) != null, "Missing original atlas " + name);
-            foreach (var name in new[] { "chang", "ju", "word_left", "number_left", "number_score", "dir", "w_0" })
+            foreach (var name in new[] { "chang", "ju", "word_left", "number_left", "number_score", "dir", "w_0", "turn-light" })
                 Require(Resources.Load<Texture2D>("Majsoul/Hud/" + name) != null, "Missing original HUD atlas " + name);
             foreach (var name in new[] { "btn_leave", "btn_settings", "replay_collect", "left_top", "headframe-default", "ob_ting_off_btn", "ob_ting_on_btn" })
                 Require(Resources.Load<Texture2D>("Majsoul/UI/" + name) != null, "Missing HUD skin " + name);
-            foreach (var name in new[] { "YunJian/OriginalHand", "YunJian/OriginalTileBody", "YunJian/OriginalTileOutline", "YunJian/ResponseGlow", "YunJian/TableCloth", "Unlit/Transparent" })
+            foreach (var name in new[] { "YunJian/OriginalHand", "YunJian/OriginalTileBody", "YunJian/OriginalTileOutline", "YunJian/ResponseGlow", "YunJian/TurnLight", "YunJian/TableCloth", "Unlit/Transparent" })
                 Require(Shader.Find(name) != null && (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null || Shader.Find(name).isSupported), "Missing/unsupported skin shader " + name);
             Require(Resources.Load<Texture2D>("Majsoul/Table/score-hub") != null, "Missing score hub");
             foreach (var name in new[] { "op_chi","op_peng","op_gang","op_hu","op_zimo","op_lizhi","op_babei","op_liuju","op_x","shout_horizontal","shout_vertical","shout_peng","shout_chi","shout_gang","yiji-full","response-arrow","response-glow","hand-skin","hand-nails" })

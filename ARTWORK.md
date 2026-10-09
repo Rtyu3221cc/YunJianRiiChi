@@ -62,3 +62,9 @@ Unity 0.5.2 补充原 APK 的 chang、ju、word_left、number_left、number_scor
 - 鸣牌撞击特效来自 `scene/effect_mingpai_default.lh`（包裹 `effect_chipeng`）：`ci` 粒子使用 `effect/texture/effect_fulu/bang.png`，`smoke` 粒子使用同目录 `smoke.png`，材质为加色混合（`srcBlend` 770 / `dstBlend` 1，关闭深度写入）。本项目只取这两张原始贴图，粒子与淡出由 C# 实现，未移植原版编译着色器。
 - 回合灯使用计分盘底图 `score-hub.png` 中点数槽下方 y 210–222 的凹槽，立直棒使用其下方 y 224–240 的槽位；两处都是原底图自带的结构，不是新绘制的贴图。
 - 以上来源的原始 URL、字节数与 SHA-256 记录在 `unity/Assets/Resources/Majsoul/Actions/hand-provenance.json` 与 `meld-effect-provenance.json`。素材权利仍归原权利人。
+
+## Unity 0.5.7 计分盘回合灯修正
+
+- `Hud/turn-light.png` 是用户提供 APK 中 `myassets/scenes/mj/mjtable/texture/particle_shining.png` 的原始 86×86 图像，保留透明度。
+- 两层原粒子颜色、1 秒循环寿命、零速发射和透明度曲线来自 `scene_mj.prefab` 的 `man/ind`。混合方式与 Tint 核对了雀魂公开原材质；来源与 SHA-256 见 `Hud/turn-light-source.json`，导入脚本为 `scripts/import-reference-turn-light.py`。
+- `ReferenceScoreHub.cs` 使用 Unity 原生粒子系统；`TurnLight.shader` 适配原加色材质。灯条在本项目盘面上的姿态、尺寸与轮询相位保持由 C# 负责，未包含原客户端完整游戏脚本。素材权利仍归原权利人。

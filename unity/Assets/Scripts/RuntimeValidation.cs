@@ -26,7 +26,7 @@ namespace YunJian.Riichi
                 if (!next) break;
                 yield return run.Current;
             }
-            File.WriteAllText(Path.Combine(folder, "passed.txt"), "Actual Unity Play mode: live AI room, delayed second-click discard, raycast, 3/4-seat rendering, safe-area pointer roundtrips, 4 resolutions, 8 role clips, called-river removal, grouped chi choices, all 4 discard hand directions at 15 time samples with opaque materials, call cut-ins, event dedup/reconnect; original 224-vertex outlines, model-foot response glow in 4 directions, 0-4 own melds without hand overlap at 4 resolutions, and 4 inward-facing North tiles per seat. Fixture screenshots are synthetic layout scenes, not replays.");
+            File.WriteAllText(Path.Combine(folder, "passed.txt"), "Actual Unity Play mode: live AI room, delayed second-click discard, raycast, 3/4-seat rendering, safe-area pointer roundtrips, 4 resolutions, 8 role clips, called-river removal, grouped chi choices, all 4 discard hand directions at 15 time samples with opaque materials, call cut-ins, event dedup/reconnect; original 224-vertex outlines, model-foot response glow in 4 directions, 0-4 own melds without hand overlap at 4 resolutions, and 4 inward-facing North tiles per seat. Original turn-light particles: four directions, rendered fade/peak/fade, one-second looping and stable phase across polling. Fixture screenshots are synthetic layout scenes, not replays.");
             Debug.Log("RIICHI UNITY PLAY PASS"); EditorApplication.Exit(0);
         }
         IEnumerator Run()
@@ -134,6 +134,8 @@ namespace YunJian.Riichi
                     Require(File.Exists(fullFile), "Full game-view capture failed at " + suffix);
                 }
             }
+            var turnProbe = ValidateTurnLight(client);
+            while (turnProbe.MoveNext()) yield return turnProbe.Current;
             SetGameResolution(1688,780);
             // Vary legally sized concealed hands independently of the action
             // fixtures, including four melds and four extracted North tiles.
@@ -204,8 +206,8 @@ namespace YunJian.Riichi
                 Capture(table,Path.Combine(folder,"response-glow-"+seat+".png"),1688,780);
                 fx.ValidationPlay(seat,"discard",effectFixture.players[seat].river.Last().tile);
                 yield return null;yield return null;
-                Require(fx.ActiveSeat==seat && GameObject.Find("Original discard hand seat "+seat)!=null,"Missing directional discard hand");
-                var handRenderer=GameObject.Find("Original discard hand seat "+seat).GetComponentInChildren<MeshRenderer>();
+                Require(fx.ActiveSeat==seat && GameObject.Find("Original hand seat "+seat)!=null,"Missing directional discard hand");
+                var handRenderer=GameObject.Find("Original hand seat "+seat).GetComponentInChildren<MeshRenderer>();
                 foreach(var material in handRenderer.sharedMaterials)Require(material.GetTag("RenderType",false)=="Opaque" && material.renderQueue<2500,"Discard hand uses transparent material");
                 Capture(table,Path.Combine(folder,"discard-hand-"+seat+".png"),1688,780);
                 for(int sample=0;sample<15;sample++)
@@ -384,7 +386,50 @@ namespace YunJian.Riichi
                 }
             }
         }
-        static void CaptureHub(string file)
+        IEnumerator ValidateTurnLight(RiichiClient client)
+        {
+            var view = JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"preview-4.json")));
+            for (int seat=0;seat<4;seat++)
+            {
+                view.turn=seat; client.ShowValidationFixture(view); yield return null;
+                var hub=GameObject.Find("PublicTableState").transform.Find("Score hub");
+                var light=hub.Find("Hub seat "+view.players[seat].wind+"/Turn light");
+                Require(light!=null,"Indicator did not follow turn "+seat);
+                var particles=light.GetComponentsInChildren<ParticleSystem>();
+                Require(particles.Length==2,"Original indicator needs both particle layers");
+                var sample=new ParticleSystem.Particle[2];
+                for(int frame=0;frame<10 && particles[0].GetParticles(sample)==0;frame++) yield return null;
+                Require(particles[0].GetParticles(sample)==1,"Indicator burst is missing");
+                float before=1-sample[0].remainingLifetime;
+                yield return new WaitForSeconds(.12f);
+                client.ShowValidationFixture(view); yield return null;
+                light=GameObject.Find("PublicTableState").transform.Find("Score hub/Hub seat "+view.players[seat].wind+"/Turn light");
+                particles=light.GetComponentsInChildren<ParticleSystem>();
+                Require(particles[0].GetParticles(sample)==1,"Polling removed the indicator particle");
+                float elapsed=Mathf.Repeat((1-sample[0].remainingLifetime)-before,1);
+                Require(elapsed>.06f && elapsed<.4f,"Polling restarted the indicator blink");
+                float dark=0,bright=0,ending=0;
+                foreach (float phase in new[] {.01f,.45f,.99f})
+                {
+                    foreach (var particle in particles)
+                    {
+                        particle.Stop(false,ParticleSystemStopBehavior.StopEmittingAndClear);
+                        particle.Simulate(phase,false,true,false);
+                        Require(particle.GetParticles(sample)==1,"Indicator disappeared during its one-second lifetime");
+                    }
+                    // Simulation updates the CPU particles immediately; allow the
+                    // renderer a frame to upload the new particle vertex stream.
+                    yield return null;
+                    float luminance=CaptureHub(Path.Combine(folder,"turn-light-"+seat+"-"+phase.ToString("0.00",System.Globalization.CultureInfo.InvariantCulture)+".png"),light.position);
+                    if (phase<.1f) dark=luminance; else if (phase<.5f) bright=luminance; else ending=luminance;
+                }
+                Debug.Log("TURN PARTICLE PIXELS "+seat+" dark="+dark+" peak="+bright+" end="+ending);
+                Require(bright>dark+.3f,"Indicator particle is not visibly blinking at seat "+seat);
+                Require(Mathf.Abs(ending-dark)<.15f,"Indicator does not fade back down at seat "+seat);
+            }
+            Debug.Log("RIICHI TURN LIGHT PASS: four directions, two original particle layers, rendered fade/peak/fade and stable polling phase.");
+        }
+        static float CaptureHub(string file,Vector3? samplePoint=null)
         {
             var camera = new GameObject("Score hub validation camera").AddComponent<Camera>();
             camera.transform.position = new Vector3(0, 3, -1.4f); camera.transform.LookAt(new Vector3(0,.092f,0));
@@ -392,7 +437,18 @@ namespace YunJian.Riichi
             var active = RenderTexture.active; var target = new RenderTexture(900,800,24); var pixels = new Texture2D(900,800,TextureFormat.RGB24,false);
             camera.targetTexture = target; camera.Render(); RenderTexture.active = target;
             pixels.ReadPixels(new Rect(0,0,900,800),0,0); pixels.Apply(); File.WriteAllBytes(file,pixels.EncodeToPNG());
+            float luminance=0;
+            if (samplePoint.HasValue)
+            {
+                var point=camera.WorldToScreenPoint(samplePoint.Value);
+                for(int x=-1;x<=1;x++)for(int y=-1;y<=1;y++)
+                {
+                    var color=pixels.GetPixel(Mathf.RoundToInt(point.x)+x,Mathf.RoundToInt(point.y)+y);
+                    luminance+=(color.r+color.g+color.b)/9;
+                }
+            }
             RenderTexture.active = active; target.Release(); Destroy(target); Destroy(pixels); camera.gameObject.SetActive(false); Destroy(camera.gameObject);
+            return luminance;
         }
         static System.Collections.Generic.IEnumerable<Vector3> Corners(BoxCollider collider)
         {

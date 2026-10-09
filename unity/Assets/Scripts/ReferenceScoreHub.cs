@@ -10,7 +10,9 @@ namespace YunJian.Riichi
         public const float Size = 2.05f;
         readonly Dictionary<string, Material> materials = new Dictionary<string, Material>();
         Mesh plateMesh, lightMesh;
-        Texture2D lightTexture;
+        Material lightMaterial;
+        int lightSeat = -1, lightRound = -1;
+        float lightStarted;
         static Vector3 Point(float x, float y, float lift = 0) => new Vector3((x / 256 - .5f) * Size, lift, (.5f - y / 256) * Size);
         Material Material(string path, Rect uv, int queue)
         {
@@ -50,6 +52,12 @@ namespace YunJian.Riichi
         }
         public Transform Create(Transform parent, RoomView state)
         {
+            // Polling redraws the hub. Keep the original one-second particle phase
+            // until the active seat or round changes, rather than restarting it.
+            if (state.turn != lightSeat || state.round != lightRound)
+            {
+                lightSeat = state.turn; lightRound = state.round; lightStarted = Time.time;
+            }
             var root = new GameObject("Score hub").transform; root.SetParent(parent, false); root.localPosition = new Vector3(0, .092f, 0);
             MeshObject(root, "Score plate", Plate(), Material("Table/score-hub", new Rect(0,0,1,1), 2450));
             float height = 23, charWidth = height * 29 / 35, digitWidth = height * 17 / 31;
@@ -65,25 +73,58 @@ namespace YunJian.Riichi
             var root = new GameObject("Hub seat " + player.wind).transform; root.SetParent(hub, false); root.localRotation = Quaternion.Euler(0, angle, 0);
             Digits(root,"number_score",player.score.ToString(),128,192,11.69f,19.2f,true);
             Glyph(root,"dir",new Rect(player.wind / 4f,0,.245f,1),32,224,31,31);
-            if (current)
+            if (current) CreateTurnLight(root);
+        }
+        void CreateTurnLight(Transform seat)
+        {
+            if (lightMesh == null)
             {
-                if (lightMesh == null)
-                {
-                    // The plate texture carries a recessed slot immediately below the
-                    // score; the indicator fills that slot rather than sitting lower.
-                    lightMesh = new Mesh { name = "Inset turn light",
-                        vertices = new[] { Point(70,210,.003f), Point(74,222,.003f), Point(186,222,.003f), Point(190,210,.003f) },
-                        uv = new[] { Vector2.up, Vector2.zero, Vector2.right, Vector2.one }, triangles = new[] { 0,2,1,0,3,2 } };
-                    lightMesh.RecalculateBounds();
-                    lightTexture = new Texture2D(1,16,TextureFormat.RGBA32,false) { name = "Amber turn indicator", wrapMode = TextureWrapMode.Clamp };
-                    for (int y = 0; y < 16; y++)
-                        lightTexture.SetPixel(0,y,Color.Lerp(new Color(1,.58f,.06f),new Color(1,.96f,.60f),y/15f));
-                    lightTexture.Apply();
-                }
-                var m = Material("Hud/turn-light", new Rect(0,0,1,1), 2460);
-                m.mainTexture = lightTexture;
-                MeshObject(root, "Turn light", lightMesh, m);
+                // A rectangular particle quad uses the original transparent mask.
+                // Pose/size are mapped to this project's 256px score-plate plane;
+                // the short trapezoid and soft edge are in particle_shining.png.
+                float width = 84f / 256 * Size, height = 66f / 256 * Size;
+                lightMesh = new Mesh { name = "Original turn particle quad",
+                    vertices = new[] { new Vector3(-width/2,0,height/2), new Vector3(-width/2,0,-height/2),
+                        new Vector3(width/2,0,-height/2), new Vector3(width/2,0,height/2) },
+                    uv = new[] { Vector2.up, Vector2.zero, Vector2.right, Vector2.one },
+                    triangles = new[] { 0,2,1,0,3,2 } };
+                lightMesh.RecalculateBounds(); lightMesh.RecalculateNormals();
+                lightMaterial = new Material(Shader.Find("YunJian/TurnLight")) {
+                    name = "Original particle_shining", mainTexture = Resources.Load<Texture2D>("Majsoul/Hud/turn-light"), renderQueue = 3000 };
             }
+            var root = new GameObject("Turn light").transform; root.SetParent(seat,false);
+            root.localPosition = Point(128,216,.003f);
+            // These are the two original ind particle systems from scene_mj.
+            CreateLightParticle(root,"Particle System",new Color(.875f,.603536963f,.019301489f,1));
+            CreateLightParticle(root,"Particle System (2)",new Color(.875f,.391087711f,.019301489f,1));
+        }
+        void CreateLightParticle(Transform root,string name,Color color)
+        {
+            var go = new GameObject(name); go.transform.SetParent(root,false);
+            var particle = go.AddComponent<ParticleSystem>(); particle.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
+            var main = particle.main;
+            main.duration = 1; main.loop = true; main.prewarm = false;
+            main.startLifetime = 1; main.startSpeed = 0; main.startSize = 1; main.startColor = color;
+            main.simulationSpace = ParticleSystemSimulationSpace.Local; main.maxParticles = 11;
+            var shape = particle.shape; shape.enabled = false; // Original zero-sized box.
+            var emission = particle.emission; emission.rateOverTime = 0;
+            emission.SetBursts(new[] { new ParticleSystem.Burst(0,1) });
+            var gradient = new Gradient();
+            gradient.SetKeys(new[] { new GradientColorKey(Color.white,0),new GradientColorKey(Color.white,1) },
+                new[] { new GradientAlphaKey(0,0),new GradientAlphaKey(1,21395f/65535),
+                    new GradientAlphaKey(1,40670f/65535),new GradientAlphaKey(0,1) });
+            var lifetime = particle.colorOverLifetime; lifetime.enabled = true; lifetime.color = gradient;
+            var renderer = go.GetComponent<ParticleSystemRenderer>();
+            renderer.renderMode = ParticleSystemRenderMode.Mesh; renderer.mesh = lightMesh;
+            renderer.alignment = ParticleSystemRenderSpace.Local;
+            renderer.enableGPUInstancing = false;
+            renderer.SetActiveVertexStreams(new List<ParticleSystemVertexStream> {
+                ParticleSystemVertexStream.Position,ParticleSystemVertexStream.Color,ParticleSystemVertexStream.UV });
+            renderer.sharedMaterial = lightMaterial; renderer.shadowCastingMode = ShadowCastingMode.Off; renderer.receiveShadows = false;
+            // The original horizontal billboard has a fixed table-plane normal.
+            // A mesh particle keeps that plane while the hub is rotated per seat.
+            particle.Simulate(Mathf.Repeat(Time.time-lightStarted,1),false,true,false);
+            particle.Play(false);
         }
         void Digits(Transform parent,string atlas,string text,float x,float y,float w,float h,bool score)
         {
@@ -97,7 +138,7 @@ namespace YunJian.Riichi
         {
             foreach (var m in materials.Values) Object.Destroy(m);
             Object.Destroy(plateMesh); Object.Destroy(lightMesh);
-            Object.Destroy(lightTexture);
+            Object.Destroy(lightMaterial);
         }
     }
 }

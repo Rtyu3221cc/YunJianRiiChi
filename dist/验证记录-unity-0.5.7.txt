@@ -1,0 +1,18 @@
+云间日麻 Unity 0.5.7 验证记录（2026-10-09）
+
+新增：原始短梯形灯纹理、双层加色粒子、1 秒淡入/停留/淡出曲线、轮询相位保持。
+包名：com.yunjian.riichi.unity；versionName 0.5.7；versionCode 8。
+最低 Android 8.0（API 26），target SDK 32，compile SDK 36。
+APK：yunjian-riichi-unity-0.5.7.apk；大小 47,464,686 字节。
+SHA-256：80AC600426053A68AD4CC168FB9732F9F67911E2D71D9E508FAE0F3E7A7AB521。
+
+已完成：
+- Unity 6000.6.4f1 编译和资源检查；指示灯实现的实际 Play 检查覆盖四方向、暗/亮/淡出相机像素与相同视图刷新相位连续性。
+- 原有实时 AI 房间、延迟第二次点击出牌、射线选牌、三/四人布局、四种分辨率、手部与副露动作回归通过。本次正式包仅在已通过功能检查的实现上提升版本号。
+- 0.5.7 IL2CPP ARM64 + ARMv7 构建、ZIP 完整性、离线资源逐字节、JNI/手机房主、手部动画、灯纹理/配置与编译 shader 检查通过。
+- v2 签名与 16KB ZIP 对齐通过；签名证书与 0.5.6 一致。
+- Node 规则、AI 与协议测试：独立发布检出 57/57 通过。
+
+12 张四向合成布局截图位于 dist/previews/unity-0.5.7-turn-light-*.png。
+原始资源与适配范围见 ARTWORK.md、docs/麻将渲染对照.md 与 Hud/turn-light-source.json。
+安卓真机安装、触控及热点联机未执行。

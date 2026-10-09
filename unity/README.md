@@ -1,5 +1,18 @@
 # 云间日麻 Unity 三维客户端
 
+## 0.5.7 计分盘出牌指示灯
+
+最新安卓包：[下载 Unity 0.5.7 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.7/yunjian-riichi-unity-0.5.7.apk)，versionCode 8，与原 Unity 包签名一致，可覆盖更新。
+
+- 回合灯使用雀魂原始 `particle_shining` 短梯形纹理，保留高亮边缘和柔光；移除旧的代码生成常亮宽灯条。
+- 按原两层粒子颜色、加色混合及 1 秒透明度曲线淡入、停留、淡出。原纹理和粒子配置适配现有 Unity 计分盘；坐标和尺寸换算见素材来源记录。
+- 相同座位和局数的数据刷新保持闪烁相位，换回合重新开始，避免轮询导致动画反复重置。
+- 验证覆盖四方向实际渲染、暗/亮/淡出截图及刷新连续性；原有三/四人布局、选牌和手部动作检查继续通过。安卓真机效果待实测。
+
+预览见 [亮阶段截图](../dist/previews/unity-0.5.7-turn-light-0-0.45.png)，完整检查见 [0.5.7 验证记录](../dist/验证记录-unity-0.5.7.txt)，素材来源见 [ARTWORK.md](../ARTWORK.md)。
+
+构建脚本当前输出 `Builds/yunjian-riichi-unity-0.5.7.apk`。
+
 ## 0.5.6 手部动画补全与操作修正
 
 安装 [yunjian-riichi-unity-0.5.6.apk](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.6/yunjian-riichi-unity-0.5.6.apk)，同包名覆盖更新，versionCode 7。
@@ -11,7 +24,7 @@
 - 回合灯与立直棒对齐 `score-hub.png` 原有凹槽；立直棒另需抬高到盘面之上，否则会被盘面遮挡。
 - 新导入脚本 `../scripts/import-hand-animations.py`（四个手部动画）与 `../scripts/import-meld-effect.py`（撞击贴图）。
 
-构建脚本输出 `Builds/yunjian-riichi-unity-0.5.6.apk`。安卓真机触控、声音和热点联机待实测。
+0.5.6 构建脚本输出 `Builds/yunjian-riichi-unity-0.5.6.apk`。安卓真机触控、声音和热点联机待实测。
 
 ## 0.5.5 描边、响应光圈与手牌避让
 
