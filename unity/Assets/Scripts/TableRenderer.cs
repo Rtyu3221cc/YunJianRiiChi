@@ -29,6 +29,7 @@ namespace YunJian.Riichi
         readonly Dictionary<int, List<Transform>> riverTiles = new Dictionary<int, List<Transform>>();
         readonly Dictionary<int, Transform> stickAnchors = new Dictionary<int, Transform>();
         readonly Dictionary<int, Transform> meldAnchors = new Dictionary<int, Transform>();
+        readonly Dictionary<int, List<Transform>> northTiles = new Dictionary<int, List<Transform>>();
         readonly TileGeometry geometry = new TileGeometry();
 
         void Awake()
@@ -103,7 +104,7 @@ namespace YunJian.Riichi
         public void Clear()
         {
             foreach (Transform t in content) { t.gameObject.SetActive(false); Destroy(t.gameObject); }
-            handTiles.Clear(); handBase.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); responseTarget = null; selfMelds = null; cameraHand = null; state = null;
+            handTiles.Clear(); handBase.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); northTiles.Clear(); responseTarget = null; selfMelds = null; cameraHand = null; state = null;
         }
         public int RelativeSeat(int i) => (i - state.you + state.n) % state.n;
         float Angle(int i)
@@ -177,6 +178,19 @@ namespace YunJian.Riichi
         // animations carry their object to.
         public Transform StickTarget(int seat) => stickAnchors.TryGetValue(seat, out var stick) ? stick : null;
         public Vector3 StickPoint(int seat) { var stick = StickTarget(seat); return stick != null ? stick.position : Quaternion.Euler(0, Angle(seat), 0) * new Vector3(0, .105f, -.833f); }
+        // A committed nuki event carries a one-based extraction count. Older hosts
+        // omit it, in which case their newest North remains a compatible target.
+        public Transform NorthTarget(int seat, int extraction = 0)
+        {
+            if (!northTiles.TryGetValue(seat, out var tiles) || tiles.Count == 0) return null;
+            int index = extraction > 0 ? extraction - 1 : tiles.Count - 1;
+            return index >= 0 && index < tiles.Count ? tiles[index] : null;
+        }
+        public Vector3 NorthPoint(int seat, int extraction = 0)
+        {
+            var tile = NorthTarget(seat, extraction);
+            return tile != null ? tile.position : Quaternion.Euler(0, Angle(seat), 0) * new Vector3(seat == state.you ? -3.35f : 2, .02f, seat == state.you ? -3.08f : -2.70f);
+        }
         public Transform MeldTarget(int seat) => meldAnchors.TryGetValue(seat, out var meld) ? meld : null;
         public Vector3 MeldPoint(int seat) { var meld = MeldTarget(seat); return meld != null ? meld.position : Quaternion.Euler(0, Angle(seat), 0) * new Vector3(0, .02f, -4.15f); }
         public static RiverTile[] VisibleRiver(PlayerView player) => player.river.Where(r=>!r.called).ToArray();
@@ -393,12 +407,14 @@ namespace YunJian.Riichi
             // Source babei anchor lies inward of, and separate from, the meld corner.
             var north=new GameObject("Extracted North").transform;north.SetParent(parent.parent,false);
             bool self=index==state.you;
+            var extracted = new List<Transform>(); northTiles[index] = extracted;
             for (int i = 0; i < p.nuki; i++)
             {
                 var tile = Tile(north, "z4", new Vector3(self ? -3.35f : 2.0f, .02f, self ? -3.08f+i*.37f : -2.70f-i*.37f), .35f, .51f);
                 // Rotate the glyph toward the table, with North tiles stacked
                 // along the side of each seat rather than across the corner.
                 tile.localRotation = Quaternion.Euler(0, self ? 90 : -90, 0);
+                extracted.Add(tile);
             }
         }
         void OnDestroy()

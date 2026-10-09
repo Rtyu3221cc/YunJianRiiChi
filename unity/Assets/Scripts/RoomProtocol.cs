@@ -30,7 +30,7 @@ namespace YunJian.Riichi
     [Serializable] public class PendingView { public int from; public string tile, kind; public bool riichi; public int[] waiting; }
     [Serializable] public class Choice { public string id, kind, tile, meld; }
     // 'riichi' marks the declaration discard so the client plays the sideways clip.
-    [Serializable] public class PublicSound { public int id, seat; public string kind, tile; public bool riichi; }
+    [Serializable] public class PublicSound { public int id, seat, nuki; public string kind, tile; public bool riichi; }
     [Serializable] public class ResultView { public string title; public int[] delta; public bool matchOver, repeat; public WinDetail[] details; }
     [Serializable] public class WinDetail { public string name, hand, tile; public bool ron; public ScoreDetail score; }
     // 'fanshu' can be numeric or '*' upstream, so keep yaku parsing out of JsonUtility.

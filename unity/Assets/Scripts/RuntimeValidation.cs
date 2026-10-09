@@ -26,7 +26,7 @@ namespace YunJian.Riichi
                 if (!next) break;
                 yield return run.Current;
             }
-            File.WriteAllText(Path.Combine(folder, "passed.txt"), "Actual Unity Play mode: live AI room, delayed second-click discard, raycast, 3/4-seat rendering, safe-area pointer roundtrips, 4 resolutions, 8 role clips, called-river removal, grouped chi choices, all 4 discard hand directions at 15 time samples with opaque materials, call cut-ins, event dedup/reconnect; original 224-vertex outlines, model-foot response glow in 4 directions, 0-4 own melds without hand overlap at 4 resolutions, and 4 inward-facing North tiles per seat. Original turn-light particles: four directions, rendered fade/peak/fade, one-second looping and stable phase across polling. Fixture screenshots are synthetic layout scenes, not replays.");
+            File.WriteAllText(Path.Combine(folder, "passed.txt"), "Actual Unity Play mode: live AI room, delayed second-click discard, raycast, 3/4-seat rendering, safe-area pointer roundtrips, 4 resolutions, 8 role clips, called-river removal, grouped chi choices, all 4 discard hand directions at 15 time samples with opaque materials, call cut-ins, event dedup/reconnect; original 224-vertex outlines, model-foot response glow in 4 directions, 0-4 own melds without hand overlap at 4 resolutions, and 4 inward-facing North tiles per seat. Original turn-light particles: four directions, rendered fade/peak/fade, one-second looping and stable phase across polling. North extraction: all three viewer seats/directions, original cut-in, carried tile/landing match, independent previous North and meld visibility, nine visible flutter petals, survival across polling/hand completion, cleanup and event dedup/reconnect. Fixture screenshots are synthetic layout scenes, not replays.");
             Debug.Log("RIICHI UNITY PLAY PASS"); EditorApplication.Exit(0);
         }
         IEnumerator Run()
@@ -134,6 +134,8 @@ namespace YunJian.Riichi
                     Require(File.Exists(fullFile), "Full game-view capture failed at " + suffix);
                 }
             }
+            var northProbe = ValidateNorthEffects(client);
+            while (northProbe.MoveNext()) yield return northProbe.Current;
             var turnProbe = ValidateTurnLight(client);
             while (turnProbe.MoveNext()) yield return turnProbe.Current;
             SetGameResolution(1688,780);
@@ -385,6 +387,78 @@ namespace YunJian.Riichi
                     Require(Mathf.Abs(tile.localPosition.x-(seat==view.you?-3.35f:2.0f))<.001f,"North tiles do not stack along the seat edge");
                 }
             }
+        }
+        IEnumerator ValidateNorthEffects(RiichiClient client)
+        {
+            var table=GetComponent<TableRenderer>();var fx=GetComponent<TableEffects>();
+            var view=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"preview-3.json")));
+            view.phase="play";view.pending=null;view.options=new Choice[0];
+            SetGameResolution(1688,780);
+            // Synthetic presentation views exercise public committed nuki events.
+            for(int you=0;you<3;you++)for(int relative=0;relative<3;relative++)
+            {
+                int seat=(you+relative)%3;view.you=you;
+                for(int i=0;i<3;i++) {view.players[i].nuki=i==seat?2:0;view.players[i].melds=new[]{"p555+"};}
+                view.audioRoom="north-validation-"+you+"-"+seat;view.audioSeq=20;view.audioEvents=new PublicSound[0];
+                client.ShowValidationFixture(view);yield return null;
+                fx.ValidationFreeze=true;fx.ValidationTime=.28f;fx.Accept(view);
+                view.audioSeq=21;view.audioEvents=new[]{new PublicSound{id=21,kind="nuki",seat=seat,tile="z4",nuki=2}};
+                fx.Accept(view);yield return null;yield return null;
+                int spawned=fx.SpawnedNorthEffects;
+                Require(fx.ValidationKind=="nuki" && fx.ValidationCallKind=="nuki","North hand/cut-in did not start together");
+                Require(fx.Art("shout_babei")!=null && fx.Art("yiji-full")!=null,"North cut-in lost the existing Ichihime art");
+                Require(fx.ValidationAnimatedTile!=null && fx.ValidationAnimatedTile.name=="z4","North hand has no carried North tile");
+                Require(fx.ValidationTarget==table.NorthTarget(seat,2) && !table.NorthTarget(seat,2).gameObject.activeSelf,"North hand hides the wrong landing tile");
+                Require(table.NorthTarget(seat,1).gameObject.activeSelf && table.MeldTarget(seat).gameObject.activeSelf,"North hand hid an earlier North or a meld");
+                Require(fx.ValidationPetals==null,"North petals started before landing");
+                if(you==0)
+                {
+                    ScreenCapture.CaptureScreenshot(Path.Combine(folder,"north-call-"+relative+".png"));yield return new WaitForSecondsRealtime(.12f);
+                }
+                fx.ValidationTime=.60f;yield return null;yield return null;
+                var handRenderer=GameObject.Find("Original hand seat "+seat).GetComponentInChildren<MeshRenderer>();
+                Require(VisibleEffectPixels(table,handRenderer)>30,"North hand mesh never reaches the visible table");
+                if(you==0)Capture(table,Path.Combine(folder,"north-hand-"+relative+".png"),1688,780);
+                // Real polling rebuilds table objects without resetting the effect.
+                table.Render(view);fx.Accept(view);yield return null;yield return null;
+                Require(!table.NorthTarget(seat,2).gameObject.activeSelf && table.NorthTarget(seat,1).gameObject.activeSelf,"Polling duplicated the moving North");
+                fx.ValidationTime=fx.ValidationHandoff;yield return null;yield return null;
+                Require(Vector3.Distance(fx.ValidationAnimatedTile.position,table.NorthPoint(seat,2))<.002f,"Carried North does not land at the extracted tile");
+                Require(Quaternion.Angle(fx.ValidationAnimatedTile.rotation,table.NorthTarget(seat,2).rotation)<.1f,"North glyph snaps during hand-off");
+                Require(!fx.ValidationAnimatedTile.gameObject.activeSelf && table.NorthTarget(seat,2).gameObject.activeSelf,"North tile hand-off failed");
+                Require(fx.ValidationPetals!=null && fx.SpawnedNorthEffects==spawned+1,"North landing did not spawn exactly one burst");
+                var petals=fx.ValidationPetals;
+                fx.ValidationTime=1.1f;yield return null;yield return null;
+                Require(fx.ValidationKind==null && fx.ValidationPetals==petals && petals.ParticleCount==9,"Petals did not outlive the hand");
+                Require(Vector3.Distance(petals.transform.position,table.NorthPoint(seat,2)+Vector3.up*.14f)<.001f,"Petals detached from the extracted North");
+                Require(VisibleEffectPixels(table,petals.GetComponent<ParticleSystemRenderer>())>12,"Native sakura particles are invisible to the table camera");
+                if(you==0)Capture(table,Path.Combine(folder,"north-petals-"+relative+".png"),1688,780);
+                table.Render(view);fx.Accept(view);yield return null;yield return null;
+                Require(fx.ValidationPetals==petals && fx.SpawnedNorthEffects==spawned+1 && table.NorthTarget(seat,2).gameObject.activeSelf,"Polling restarted/hid landed North petals");
+                fx.ValidationTime=2.5f;yield return null;yield return null;
+                Require(fx.ValidationPetals==null && fx.SpawnedNorthEffects==spawned+1,"North petals leaked or respawned");
+                fx.Reset();fx.Accept(view);yield return null;
+                Require(!fx.IsAnimating && fx.ValidationPetals==null,"Reconnect replayed a historical North extraction");
+            }
+            // Event indices keep two closely queued extractions on their own tiles.
+            view.you=0;view.players[0].nuki=3;client.ShowValidationFixture(view);yield return null;
+            fx.ValidationPlay(0,"nuki");yield return null;
+            Require(fx.ValidationAnimatedTile!=null && fx.ValidationTarget==table.NorthTarget(0,3),"Legacy North event without a tile is not compatible");
+            fx.Reset();view.audioRoom="north-index-validation";view.audioSeq=30;view.audioEvents=new PublicSound[0];fx.Accept(view);
+            fx.ValidationTime=.28f;view.audioSeq=31;view.audioEvents=new[]{new PublicSound{id=31,seat=0,kind="nuki",tile="z4",nuki=2}};fx.Accept(view);yield return null;
+            Require(fx.ValidationTarget==table.NorthTarget(0,2) && table.NorthTarget(0,3).gameObject.activeSelf,"Queued North event targeted a later extraction");
+            fx.ValidationFreeze=false;fx.Reset();
+        }
+        static int VisibleEffectPixels(TableRenderer table,Renderer effectRenderer)
+        {
+            var camera=table.Camera;var previous=camera.targetTexture;var active=RenderTexture.active;
+            var target=new RenderTexture(1688,780,24);var pixels=new Texture2D(1688,780,TextureFormat.RGB24,false);
+            camera.targetTexture=target;table.HandCamera.targetTexture=target;table.FitCamera(1688f/780);
+            effectRenderer.enabled=false;camera.Render();table.HandCamera.Render();table.GetComponent<TableEffects>().RenderOverlay(target);RenderTexture.active=target;
+            pixels.ReadPixels(new Rect(0,0,1688,780),0,0);pixels.Apply();var before=pixels.GetPixels32();
+            effectRenderer.enabled=true;camera.Render();table.HandCamera.Render();table.GetComponent<TableEffects>().RenderOverlay(target);pixels.ReadPixels(new Rect(0,0,1688,780),0,0);pixels.Apply();var after=pixels.GetPixels32();
+            int visible=0;for(int i=0;i<before.Length;i++)if(Mathf.Abs(after[i].r-before[i].r)+Mathf.Abs(after[i].g-before[i].g)+Mathf.Abs(after[i].b-before[i].b)>20)visible++;
+            camera.targetTexture=previous;table.HandCamera.targetTexture=null;RenderTexture.active=active;target.Release();Destroy(target);Destroy(pixels);return visible;
         }
         IEnumerator ValidateTurnLight(RiichiClient client)
         {

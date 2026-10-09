@@ -1,8 +1,19 @@
 # 云间日麻
 
+## Unity 0.5.8 拔北动作与樱花花瓣
+
+最新安卓包：[下载 Unity 0.5.8 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.8/yunjian-riichi-unity-0.5.8.apk)，versionCode 9，与此前 Unity 包同签名，可覆盖更新。
+
+- 拔北显示原始“拔北”喊字，继续使用吃碰时的一姬立绘和语音。
+- 手中带着北牌，沿用原 Fulu 手部动作，并将落牌关键帧对准本次拔出的北牌；已有北牌和副露保持可见。
+- 北牌落下后，九片粉色樱花花瓣向上飘散、翻转并淡出。花瓣使用原安装包的 4×4 樱花贴图，发射节奏与位置适配当前牌桌。
+- 公共拔北事件携带 `z4` 和拔北次序；轮询、重连不会重复播放，旧房主省略这些字段也能显示北牌动作。
+
+预览：[拔北提示](dist/previews/unity-0.5.8-north-call-0.png)、[手部动作](dist/previews/unity-0.5.8-north-hand-0.png)、[落牌花瓣](dist/previews/unity-0.5.8-north-petals-0.png)。检查范围见 [0.5.8 验证记录](dist/验证记录-unity-0.5.8.txt)，素材来源见 [ARTWORK.md](ARTWORK.md)。安卓真机效果待实测。
+
 ## Unity 0.5.7 计分盘出牌指示灯
 
-最新安卓包：[下载 Unity 0.5.7 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.7/yunjian-riichi-unity-0.5.7.apk)，versionCode 8，与原 Unity 包签名一致，可覆盖更新。
+此版本安卓包：[下载 Unity 0.5.7 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.7/yunjian-riichi-unity-0.5.7.apk)，versionCode 8，与原 Unity 包签名一致，可覆盖更新。
 
 - 回合灯使用雀魂原始 `particle_shining` 短梯形纹理，保留高亮边缘和柔光；移除旧的代码生成常亮宽灯条。
 - 按原两层粒子颜色、加色混合及 1 秒透明度曲线淡入、停留、淡出。原纹理和粒子配置适配现有 Unity 计分盘；坐标和尺寸换算见素材来源记录。

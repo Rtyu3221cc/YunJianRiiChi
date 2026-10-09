@@ -68,3 +68,10 @@ Unity 0.5.2 补充原 APK 的 chang、ju、word_left、number_left、number_scor
 - `Hud/turn-light.png` 是用户提供 APK 中 `myassets/scenes/mj/mjtable/texture/particle_shining.png` 的原始 86×86 图像，保留透明度。
 - 两层原粒子颜色、1 秒循环寿命、零速发射和透明度曲线来自 `scene_mj.prefab` 的 `man/ind`。混合方式与 Tint 核对了雀魂公开原材质；来源与 SHA-256 见 `Hud/turn-light-source.json`，导入脚本为 `scripts/import-reference-turn-light.py`。
 - `ReferenceScoreHub.cs` 使用 Unity 原生粒子系统；`TurnLight.shader` 适配原加色材质。灯条在本项目盘面上的姿态、尺寸与轮询相位保持由 C# 负责，未包含原客户端完整游戏脚本。素材权利仍归原权利人。
+
+## Unity 0.5.8 拔北表现
+
+- 喊字继续使用原 APK 的 `shout_babei`，立绘继续使用已有 `yiji-full`，语音继续使用一姬拔北音频；没有替换成用户截图里的另一套角色皮肤。
+- 手部沿用已烘焙的 `Fulu_Ani-Fulu` 网格动画，0.9 秒动作、0.7 秒落牌。C# 对齐其 `node_tile` 落牌位置和北牌朝向；事件携带公开北牌与拔北次序，目标与吃碰副露分开。
+- `Actions/north-petals.png` 直接导出自用户提供 APK 的 `myassets/necessary/texture/yinghua2.png`，原始 256×256 RGBA、4×4 帧。导入脚本 `scripts/import-reference-north.py`；容器、pathID、哈希和适配说明见 `Actions/north-effect-source.json`。
+- `NorthPetals.cs` 和 `NorthPetal.shader` 用 Unity 原生粒子显示翻转的花瓣，九片单次发射、1.1–1.5 秒寿命、上飘与淡出，放在本次拔出的北牌上方。发射器和时序为当前项目的参考图适配，未把大厅的循环飘花预制体或原客户端完整代码搬进运行时。素材权利仍归原权利人。

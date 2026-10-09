@@ -32,7 +32,10 @@ namespace YunJian.Riichi
         Clip clip;
         Mesh mesh;
         Material body, nails;
-        Transform motion, animatedTile, targetTile, targetStick, meldTarget, impact;
+        Transform motion, animatedTile, targetTile, targetStick, meldTarget, northTarget, impact;
+        readonly List<NorthPetals> northEffects = new List<NorthPetals>();
+        bool handedOff;
+        public int SpawnedNorthEffects { get; private set; }
         float impactStarted;
         Camera overlay;
         public int PlayedEvents { get; private set; }
@@ -61,7 +64,7 @@ namespace YunJian.Riichi
         }
         public void Reset()
         {
-            Finish(); FinishCall(); EndImpact(); handEvents.Clear(); callEvents.Clear(); room = null; cursor = 0; last = Time.unscaledTime;
+            Finish(); FinishCall(); EndImpact(); EndNorthEffects(); handEvents.Clear(); callEvents.Clear(); room = null; cursor = 0; last = Time.unscaledTime;
         }
         public void Accept(RoomView view)
         {
@@ -70,7 +73,7 @@ namespace YunJian.Riichi
             bool stale = Time.unscaledTime-last >= 8; last = Time.unscaledTime;
             var fresh = (view.audioEvents ?? new PublicSound[0]).Where(e => e.id > cursor).OrderBy(e => e.id).ToArray();
             cursor = Math.Max(cursor, view.audioSeq);
-            if (stale) { Finish(); FinishCall(); handEvents.Clear(); callEvents.Clear(); return; }
+            if (stale) { Finish(); FinishCall(); EndNorthEffects(); handEvents.Clear(); callEvents.Clear(); return; }
             foreach (var item in fresh)
             {
                 if (item.seat < 0 || item.seat >= view.n) continue;
@@ -113,21 +116,25 @@ namespace YunJian.Riichi
         }
         void Begin(PublicSound item)
         {
-            current=item; started=Time.unscaledTime; PlayedEvents++;
+            current=item; started=Time.unscaledTime; handedOff=false; PlayedEvents++;
             string stem=ClipFor(item); if (stem==null) return;
             LoadClip(stem);
             bool stick=item.kind=="riichi-stick";
             motion = new GameObject("Original hand seat "+item.seat).transform;
             if(overlay==null) {overlay=new GameObject("Discard hand overlay camera").AddComponent<Camera>();overlay.transform.SetParent(table.Camera.transform,false);}
             ConfigureOverlay();overlay.enabled=true;
-            Vector3 anchor=stick ? table.StickPoint(item.seat) : MeldKinds.Contains(item.kind) ? table.MeldPoint(item.seat) : table.DiscardPoint(item.seat,item.tile);
+            Vector3 anchor=stick ? table.StickPoint(item.seat) : item.kind=="nuki" ? table.NorthPoint(item.seat,item.nuki) : MeldKinds.Contains(item.kind) ? table.MeldPoint(item.seat) : table.DiscardPoint(item.seat,item.tile);
             motion.position=anchor+Vector3.up*.12f;
             motion.rotation=Quaternion.Euler(0,table.SeatAngle(item.seat)+180,0);
             motion.localScale=Vector3.one*(.33f/.02947767f*.9f);
+            // Fulu's node_tile is offset from its root; align its settle keyframe
+            // with the event's North tile, including the inward-facing glyph.
+            if (item.kind=="nuki") motion.position -= motion.TransformVector(TilePoint(Handoff));
             var hand=new GameObject("Source hand mesh");hand.layer=14;hand.transform.SetParent(motion,false);
             hand.AddComponent<MeshFilter>().sharedMesh=mesh;
             var renderer=hand.AddComponent<MeshRenderer>();renderer.sharedMaterials=new[]{body,nails};renderer.shadowCastingMode=ShadowCastingMode.Off;
             animatedTile = stick ? table.CreateEffectStick()
+                        : item.kind=="nuki" ? table.CreateEffectTile("z4")
                         : string.IsNullOrEmpty(item.tile) ? null : table.CreateEffectTile(item.tile);
             if (animatedTile != null)
             {
@@ -141,21 +148,63 @@ namespace YunJian.Riichi
             float elapsed=ValidationFreeze?ValidationTime:Time.unscaledTime-started;
             if(elapsed>=Handoff) return;
             if (current.kind=="riichi-stick") targetStick=table.StickTarget(current.seat);
+            else if (current.kind=="nuki") northTarget=table.NorthTarget(current.seat,current.nuki);
             else if (MeldKinds.Contains(current.kind)) meldTarget=table.MeldTarget(current.seat);
             else targetTile=table.FindDiscard(current.seat,current.tile);
             if (targetTile!=null) targetTile.gameObject.SetActive(false);
             if (targetStick!=null) targetStick.gameObject.SetActive(false);
             if (meldTarget!=null) meldTarget.gameObject.SetActive(false);
+            if (northTarget!=null) northTarget.gameObject.SetActive(false);
         }
         void Finish()
         {
             if (targetTile!=null) targetTile.gameObject.SetActive(true);
             if (targetStick!=null) targetStick.gameObject.SetActive(true);
             if (meldTarget!=null) meldTarget.gameObject.SetActive(true);
+            if (northTarget!=null) northTarget.gameObject.SetActive(true);
             if (motion!=null) { motion.gameObject.SetActive(false); Destroy(motion.gameObject); }
             if (animatedTile!=null) { animatedTile.gameObject.SetActive(false); Destroy(animatedTile.gameObject); }
-            motion=null;animatedTile=null;targetTile=null;targetStick=null;meldTarget=null;current=null;
+            motion=null;animatedTile=null;targetTile=null;targetStick=null;meldTarget=null;northTarget=null;current=null;
             if(overlay!=null)overlay.enabled=false;
+        }
+        Vector3 TilePoint(float elapsed)
+        {
+            float frame=Mathf.Clamp01(elapsed/PlayLength)*(clip.data.frames-1);
+            int a=(int)frame,b=Mathf.Min(a+1,clip.data.frames-1); float t=frame-a;
+            return Vector3.Lerp(new Vector3(clip.data.tilePoints[a*3],clip.data.tilePoints[a*3+1],clip.data.tilePoints[a*3+2]),new Vector3(clip.data.tilePoints[b*3],clip.data.tilePoints[b*3+1],clip.data.tilePoints[b*3+2]),t);
+        }
+        void CompleteHandoff()
+        {
+            if (handedOff) return; handedOff=true;
+            if (animatedTile!=null) animatedTile.gameObject.SetActive(false);
+            if (targetTile!=null) targetTile.gameObject.SetActive(true);
+            if (targetStick!=null) targetStick.gameObject.SetActive(true);
+            if (meldTarget!=null) meldTarget.gameObject.SetActive(true);
+            if (northTarget!=null) northTarget.gameObject.SetActive(true);
+            if (current.kind=="nuki")
+            {
+                var petals = new GameObject("North sakura seat "+current.seat).AddComponent<NorthPetals>();
+                petals.transform.SetParent(transform,false);
+                float now = ValidationFreeze ? Handoff : started+Handoff;
+                petals.Initialize(table.NorthPoint(current.seat,current.nuki),table.SeatAngle(current.seat),now,(uint)(current.id+SpawnedNorthEffects+1));
+                northEffects.Add(petals); SpawnedNorthEffects++;
+            }
+            else if (MeldKinds.Contains(current.kind)) SpawnImpact();
+        }
+        void EndNorthEffects()
+        {
+            foreach(var petals in northEffects) if(petals!=null) {petals.gameObject.SetActive(false);Destroy(petals.gameObject);}
+            northEffects.Clear();
+        }
+        void UpdateNorthEffects()
+        {
+            float now=ValidationFreeze?ValidationTime:Time.unscaledTime;
+            for(int i=northEffects.Count-1;i>=0;i--)
+            {
+                var petals=northEffects[i]; float age=petals==null?NorthPetals.Lifetime:now-petals.StartedAt;
+                if(age>=NorthPetals.Lifetime) {if(petals!=null){petals.gameObject.SetActive(false);Destroy(petals.gameObject);}northEffects.RemoveAt(i);}
+                else petals.Sample(age);
+            }
         }
         // A meld lands with the original additive impact flash; it outlives the hand.
         void SpawnImpact()
@@ -201,9 +250,9 @@ namespace YunJian.Riichi
         {
             if (current==null && handEvents.Count>0) Begin(handEvents.Dequeue());
             if (call==null && callEvents.Count>0) BeginCall(callEvents.Dequeue());
-            UpdateImpact();
+            UpdateImpact(); UpdateNorthEffects();
             float elapsed=ValidationFreeze?ValidationTime:Time.unscaledTime-started;
-            if (current!=null && elapsed >= PlayLength) Finish();
+            if (current!=null && elapsed >= PlayLength) { CompleteHandoff(); Finish(); }
             if (call!=null && (ValidationFreeze?ValidationTime:Time.unscaledTime-callStarted) >= 1.05f) FinishCall();
             if (current==null || motion==null || clip==null) return;
             elapsed=ValidationFreeze?ValidationTime:Time.unscaledTime-started;
@@ -212,20 +261,15 @@ namespace YunJian.Riichi
             mesh.vertices=clip.frameVertices;mesh.normals=clip.frameNormals;mesh.RecalculateBounds();
             if(animatedTile!=null)
             {
-                Vector3 p=Vector3.Lerp(new Vector3(clip.data.tilePoints[a*3],clip.data.tilePoints[a*3+1],clip.data.tilePoints[a*3+2]),new Vector3(clip.data.tilePoints[b*3],clip.data.tilePoints[b*3+1],clip.data.tilePoints[b*3+2]),t);
+                Vector3 p=TilePoint(elapsed);
                 animatedTile.position=motion.TransformPoint(p)-Vector3.up*.12f;
                 // A declared riichi tile lies sideways in the river, matching CreateTable.
                 bool stick=current.kind=="riichi-stick";
-                animatedTile.rotation=Quaternion.Euler(0,table.SeatAngle(current.seat)+(!stick&&current.riichi?90f:0f),0);
-                if (elapsed>Handoff)
-                {
-                    if (impact == null && MeldKinds.Contains(current.kind) && current.kind != "nuki") SpawnImpact();
-                    animatedTile.gameObject.SetActive(false);
-                    if (targetTile!=null)targetTile.gameObject.SetActive(true);
-                    if (targetStick!=null)targetStick.gameObject.SetActive(true);
-                    if (meldTarget!=null)meldTarget.gameObject.SetActive(true);
-                }
+                animatedTile.rotation=current.kind=="nuki" && table.NorthTarget(current.seat,current.nuki)!=null
+                    ? table.NorthTarget(current.seat,current.nuki).rotation
+                    : Quaternion.Euler(0,table.SeatAngle(current.seat)+(!stick&&current.riichi?90f:0f),0);
             }
+            if (elapsed>=Handoff) CompleteHandoff();
         }
         static string CallArt(string kind)
         {
@@ -249,7 +293,7 @@ namespace YunJian.Riichi
 #if UNITY_EDITOR
         public void ValidationPlay(int seat,string kind,string tile=null,bool riichi=false)
         {
-            Finish();FinishCall();handEvents.Clear();callEvents.Clear();ValidationFreeze=true;ValidationTime=.28f;
+            Finish();FinishCall();EndNorthEffects();handEvents.Clear();callEvents.Clear();ValidationFreeze=true;ValidationTime=.28f;
             Begin(new PublicSound {seat=seat,kind=kind,tile=tile,riichi=riichi});
             if (CallArt(kind)!=null) BeginCall(new PublicSound {seat=seat,kind=kind,tile=tile,riichi=riichi});
         }
@@ -259,9 +303,11 @@ namespace YunJian.Riichi
         public float ValidationHandoff => Handoff;
         public Transform ValidationAnimatedTile => animatedTile;
         public Transform ValidationImpact => impact;
-        public Transform ValidationTarget => targetTile!=null?targetTile:targetStick!=null?targetStick:meldTarget;
+        public Transform ValidationTarget => targetTile!=null?targetTile:targetStick!=null?targetStick:northTarget!=null?northTarget:meldTarget;
+        public NorthPetals ValidationPetals => northEffects.LastOrDefault();
+        public string ValidationCallKind => call==null?null:call.kind;
         public float ValidationCallAlpha => call==null?0f:Mathf.Clamp01((ValidationFreeze?ValidationTime:Time.unscaledTime-callStarted)/.12f);
 #endif
-        void OnDestroy() { Finish();FinishCall();EndImpact();if(overlay!=null)Destroy(overlay.gameObject);if(mesh!=null)Destroy(mesh);if(body!=null)Destroy(body);if(nails!=null)Destroy(nails); }
+        void OnDestroy() { Finish();FinishCall();EndImpact();EndNorthEffects();if(overlay!=null)Destroy(overlay.gameObject);if(mesh!=null)Destroy(mesh);if(body!=null)Destroy(body);if(nails!=null)Destroy(nails); }
     }
 }

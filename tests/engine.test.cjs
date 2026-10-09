@@ -29,6 +29,14 @@ test('ankan gives rinshan, extra dora, and cancels ippatsu',()=>{const r=fixture
 test('kakan can be robbed; original pon retained',()=>{const r=fixture();r.s.players[0].hand='p123s123z1122m3,m333+';r.s.players[1].hand='m12p123s123z11222';r.s.players[1].river=[];action(r,0,'kan:m333+3');assert(r.options(1).some(a=>a.kind==='ron'));action(r,1,'ron');resolvePass(r);assert(r.s.result.details[0].score.hupai.some(y=>y.name==='槍槓'));assert.equal(r.s.players[0].kans,0)});
 test('kokushi may rob ankan; ordinary hands cannot',()=>{const r=fixture();r.s.players[0].hand='m111p123s123z1122m1';r.s.players[1].hand='m9p19s19z11234567';r.s.players[1].river=[];action(r,0,'kan:m1111');assert(r.options(1).some(a=>a.kind==='ron'));action(r,1,'ron');resolvePass(r);assert(r.s.result.details[0].score.damanguan)});
 test('sanma North extraction, dora multiplicity and riichi restriction',()=>{const r=fixture(3);r.s.players[0].hand='p123456s123z1122z4';r.s.players[1].ippatsu=true;const n=r.remain();action(r,0,'nuki');resolvePass(r);assert.equal(r.s.players[0].nuki,1);assert.equal(r.remain(),n-1);assert.equal(r.s.drawKind,'nuki');assert(r.h(0).menqian);assert(!r.s.players[1].ippatsu);const q=fixture(3);q.s.turn=1;q.s.players[1].hand='p123456s123z44p78p9*';q.s.players[1].riichi=1;assert(!q.options(1).some(a=>a.kind==='nuki'));});
+test('committed North event carries public tile and extraction index once',()=>{
+ const r=fixture(3);r.s.players[0].hand='p123456s123z1122z4';r.s.players[0].nuki=1;
+ const before=r.s.audioSeq;action(r,0,'nuki');resolvePass(r);
+ const events=r.view(1).audioEvents.filter(e=>e.id>before&&e.kind==='nuki');
+ assert.equal(events.length,1);assert.equal(events[0].tile,'z4');assert.equal(events[0].seat,0);assert.equal(events[0].nuki,2);
+ assert.deepEqual(r.view(2).audioEvents.filter(e=>e.kind==='nuki'),r.view(1).audioEvents.filter(e=>e.kind==='nuki'));
+
+});
 test('sanma extracted North contributes bonus but preserves natural yaku',()=>{const r=fixture(3);r.s.turn=1;r.s.players[1].hand='p123456s123z1112z2';r.s.players[1].nuki=2;r.s.indicators[0]='z3';const score=r.score(1);assert.equal(score.hupai.find(y=>y.name==='拔北宝牌').fanshu,4);assert.equal(score.delta.reduce((a,b)=>a+b),0)});
 test('sanma one-man indicator means nine-man dora',()=>{const r=fixture(3);r.s.turn=1;r.s.players[1].hand='m99p123456s123z11z1';r.s.indicators[0]='m1';assert.equal(r.score(1).hupai.find(y=>y.name==='ドラ').fanshu,2)});
 test('sanma tsumo-loss removes north payment, ron remains full',()=>{const r=fixture(3);r.s.turn=1;r.s.players[1].hand='p123456s123z1112z2';const san=r.score(1);const full=M.Util.hule(r.h(1),null,M.Util.hule_param({menfeng:1,baopai:['z4']}));assert.equal(san.delta[0],full.fenpei[0]);assert.equal(san.delta[2],full.fenpei[2]);assert.equal(san.delta[1],-san.delta[0]-san.delta[2]);});
