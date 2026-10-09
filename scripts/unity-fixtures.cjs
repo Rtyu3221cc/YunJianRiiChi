@@ -37,3 +37,14 @@ for(const n of [3,4]){
  // Synthetic stress fixture, not a legal hand or replay.
  fs.writeFileSync(`build/unity-smoke/fixture-${n}.json`,JSON.stringify(view));
 }
+// Explicit synthetic scene for call UI, all four hand directions and exposed sets.
+const effects=JSON.parse(fs.readFileSync('build/unity-smoke/preview-4.json'));
+effects.phase='reaction';effects.turn=3;effects.pending={from:3,tile:'p5',kind:'discard',waiting:[0]};
+effects.last={from:3,tile:'p5'};
+effects.players.forEach((p,i)=>{
+ p.melds=[i%2?'s123-':'p555+'];p.count=10;p.nuki=0;
+ p.river=[{tile:'z1'},{tile:'p5',called:true},{tile:'p3'},{tile:'s6'},{tile:'p7'},{tile:'z5'},{tile:'p5'}];
+});
+effects.hand=effects.hand.slice(0,10);effects.drawn=null;effects.players[0].nuki=2;
+effects.options=[{id:'chi:p345-',kind:'chi',meld:'p345-'},{id:'chi:p456-',kind:'chi',meld:'p456-'},{id:'pon:p555-',kind:'pon',meld:'p555-'},{id:'pass',kind:'pass'}];
+fs.writeFileSync('build/unity-smoke/effects.json',JSON.stringify(effects));

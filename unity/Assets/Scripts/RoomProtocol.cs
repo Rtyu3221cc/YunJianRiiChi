@@ -14,6 +14,7 @@ namespace YunJian.Riichi
         public Choice[] options = new Choice[0];
         public PublicSound[] audioEvents = new PublicSound[0];
         public PendingView pending;
+        public LastDiscard last;
         public ResultView result;
     }
     [Serializable] public class PlayerView
@@ -25,6 +26,7 @@ namespace YunJian.Riichi
         public RiverTile[] river = new RiverTile[0];
     }
     [Serializable] public class RiverTile { public string tile; public bool riichi, called, tsumogiri; }
+    [Serializable] public class LastDiscard { public int from; public string tile; }
     [Serializable] public class PendingView { public int from; public string tile, kind; public bool riichi; public int[] waiting; }
     [Serializable] public class Choice { public string id, kind, tile, meld; }
     [Serializable] public class PublicSound { public int id, seat; public string kind, tile; }

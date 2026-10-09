@@ -29,8 +29,8 @@ namespace YunJian.Riichi.Editor
             PlayerSettings.companyName = "YunJian";
             PlayerSettings.productName = "云间日麻 3D";
             PlayerSettings.SetApplicationIdentifier(UnityEditor.Build.NamedBuildTarget.Android, "com.yunjian.riichi.unity");
-            PlayerSettings.bundleVersion = "0.5.3";
-            PlayerSettings.Android.bundleVersionCode = 4;
+            PlayerSettings.bundleVersion = "0.5.4";
+            PlayerSettings.Android.bundleVersionCode = 5;
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel26;
             // Local, offline distribution: matches the existing phone-hosted service.
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel32;
@@ -62,7 +62,7 @@ namespace YunJian.Riichi.Editor
             if (!File.Exists("Assets/Scenes/Table.unity")) CreateScene();
             Configure();
             Directory.CreateDirectory("Builds");
-            var report = BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, "Builds/yunjian-riichi-unity-0.5.3.apk", BuildTarget.Android, BuildOptions.None);
+            var report = BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, "Builds/yunjian-riichi-unity-0.5.4.apk", BuildTarget.Android, BuildOptions.None);
             if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded) throw new System.Exception("Android build failed");
         }
     }
@@ -76,6 +76,7 @@ namespace YunJian.Riichi.Editor
             t.textureCompression = TextureImporterCompression.Uncompressed;
             t.maxTextureSize = 2048;
             t.alphaIsTransparency = true;
+            if(assetPath.StartsWith("Assets/Resources/Majsoul/Actions/"))t.npotScale=TextureImporterNPOTScale.None;
         }
     }
     // Unity otherwise chooses compileSdk from targetSdk. Use the installed modern

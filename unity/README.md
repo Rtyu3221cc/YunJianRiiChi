@@ -1,5 +1,16 @@
 # 云间日麻 Unity 三维客户端
 
+## 0.5.4 吃碰布局与原始动作
+
+安装 `../dist/yunjian-riichi-unity-0.5.4.apk`，同包名覆盖更新，versionCode 5。
+
+- 被取走的舍牌从牌河显示中移除，保留引擎历史记录；四方副露放到外侧角落，左右暗牌外移，拔北牌独立摆放。
+- 使用原始操作按钮、黄色响应箭头、角色切入背景与操作喊字，多种吃牌组合展开牌面供选择。
+- 原始手部、皮肤与 Dapai 曲线转换为 Unity 网格动画，四方出牌均播放；修正三角面朝向并使用不透明材质。
+- 原始资源与本项目代码边界见 `../docs/麻将渲染对照.md`。Play 验证覆盖四方手部各 15 个时间采样、移除已被吃碰牌、选择组合、事件去重和重连；示例图片为合成公共布局。
+
+构建脚本输出 `Builds/yunjian-riichi-unity-0.5.4.apk`。安卓真机触控、声音和热点联机待实测。
+
 ## 0.5.3 对手竖立手牌与计分盘
 
 安装 `../dist/yunjian-riichi-unity-0.5.3.apk`，同包名覆盖更新，versionCode 4。
@@ -26,7 +37,7 @@ Unity Play 验证覆盖三麻/四麻及 1280×720、1688×780、2760×1256、844
 
 已通过 Unity 6000.6.4f1 的 C# 编译、实际 Play 模式和布局验证。Android 构建与真机状态见交付验证记录。
 
-Unity Android APK 已构建至 `Builds/yunjian-riichi-unity-0.5.3.apk`，交付副本在上一级 `dist`。IL2CPP ARM64 + ARMv7、APK v2 签名、16 KB ZIP 对齐、内置离线素材和手机房主/JNI 类检查通过。当前未连接 Android 测试设备，尚未完成真机运行和热点联机验证。APK 使用本机开发签名。
+Unity Android APK 交付副本在上一级 `dist`。构建为 IL2CPP ARM64 + ARMv7；签名、对齐和离线资源检查结果见对应版本验证记录。当前未连接 Android 测试设备，尚未完成真机运行和热点联机验证。APK 使用本机开发签名。
 
 ## 安装后打开
 
@@ -34,7 +45,7 @@ Unity Android APK 已构建至 `Builds/yunjian-riichi-unity-0.5.3.apk`，交付�
 2. Hub 中“添加现有项目”，选择这个 `unity` 文件夹。工程已升级并实测 **6000.6.4f1**；使用其他版本需要重新导入和验证。
 3. 首次导入后会自动创建 `Assets/Scenes/Table.unity`。若未出现，点击菜单 **云间日麻 → 创建或打开牌桌场景**。
 4. 点击 **云间日麻 → 验证资源与房间协议**。通过后 Console 应显示 `RIICHI UNITY VALIDATION PASS`。这一步同时检验 C# 编译和导入资源，不代替运行时验证。
-5. 英文路径下可点击 **云间日麻 → 配置安卓构建**，然后 **云间日麻 → 构建安卓 APK**。含中文的项目路径请使用下方构建脚本，它会将文件复制到英文临时构建目录，并将输出取回 `Builds/yunjian-riichi-unity-0.5.3.apk`。
+5. 英文路径下可点击 **云间日麻 → 配置安卓构建**，然后 **云间日麻 → 构建安卓 APK**。含中文的项目路径请使用下方构建脚本，它会将文件复制到英文临时构建目录，并将输出取回 `Builds/yunjian-riichi-unity-0.5.4.apk`。
 
 Unity APK 使用独立包名 `com.yunjian.riichi.unity`，可和原有 Android/WebView 版并存，各自保存自己的牌桌。测试 Unity 手机房主前先退出同机旧版房主，避免同时占用 8765 端口。开发版 target API 32 沿用旧版离线分发约定，未进行应用商店发布适配。
 
@@ -61,7 +72,7 @@ node desktop.cjs
 - 三维牌桌、透视摄像机、麻将实体厚度、四方暗牌与牌河、当前回合提示。
 - 单次点击选中，再次点击同一实体牌出牌；切换牌只更改选中，点击时间没有上限。
 - 立直横置牌按实际宽度排列，供托交付后在座位前显示立直棒。
-- 吃碰明杠、暗杠、加杠和拔北的显示；副露牌组在手牌前方，加杠牌使用独立高度。
+- 吃碰明杠、暗杠、加杠和拔北的显示；副露牌组在手牌外侧角落，加杠牌使用独立高度。
 - 单人 AI 练习、手机开房与加入、恢复座位、AI 添加/移除、结算确认、下一局。
 - 同一角色一姬的吃/碰/杠/立直/两立直/自摸/荣和/拔北音频，独立音量与静音、前后台与重连去重。
 - 自定义头像由房间公共视图读取并显示；Unity 本轮尚未实现相册头像编辑器。原有 Android/WebView 版头像编辑器保留。
@@ -74,6 +85,7 @@ node desktop.cjs
 - `Assets/Scripts/TableRenderer.cs`：真正的三维麻将与桌面布局。
 - `Assets/Scripts/RoomProtocol.cs`：只接收服务端 `Room.view()` 返回的脱敏玩家视图。
 - `Assets/Scripts/RoleVoice.cs`：同一角色的离线音频与事件去重。
+- `Assets/Scripts/TableEffects.cs`：原始手部动画、角色操作切入与公共事件去重。
 - `Android/UnityHostBridge.java`：启动已有手机房主服务；编译插件位于 `Assets/Plugins/Android/riichi-host.androidlib`。
 - `Assets/Resources/Majsoul`：37 张手牌、37 张平放牌面、头像、中文字体、默认桌布、计分盘及角色音频。
 
@@ -115,4 +127,4 @@ Android 库接入按 [Unity 官方 Android Library 插件文档](https://docs.un
 
 ## 仍需实测
 
-Android 真机安装与触摸选牌、扬声器音频播放、Android Service 启动、真实热点双手机互通、断线恢复及后台行为。当前牌桌基于原生几何体与静态材质，尚未制作角色手部、摸牌和出牌过渡动画。
+Android 真机安装与触摸选牌、扬声器音频播放、Android Service 启动、真实热点双手机互通、断线恢复及后台行为。当前已接入四向出牌手部及操作切入；摸牌、角色专属皮肤和其他完整动画系统仍未接入。

@@ -8,7 +8,7 @@
 
 图片权利归原权利人。此来源说明不授予任何再分发或商业使用许可。
 
-桌布、桌框、牌背、计分盘、页面排版与交互由本项目实现。全部图片随 APK 打包，运行时不读取原安装包、不联网下载。原始大型 APK 不包含在交付压缩包中。
+早期版本的桌布、桌框、牌背和计分盘由本项目绘制；后续接入的原始资源分别列在下方。全部资源随 APK 打包，运行时不读取原安装包、不联网下载。原始大型 APK 不包含在交付压缩包中。
 
 资源通过 UnityPy 1.25.4 读取本地 Unity AssetBundle，版本回退值为 2022.3.62f2c1。牌面裁剪记录见 `app/src/main/assets/tile-assets.json`。源码包含已处理图片，正常构建无需 UnityPy 或原 APK。若已有导出的手牌图集，可运行 `python scripts/slice-reference-tiles.py <hand.png路径>` 重新裁剪（需要 Pillow）。
 
@@ -26,7 +26,7 @@
 - 音频全部使用同一角色一姬：官方公开资源 `https://game.maj-soul.com/1/v0.10.1.w/audio/sound/yiji/act_*.mp3`。包含吃、碰、杠、立直、两立直、自摸、荣和和拔北，共 8 段。每段 URL、输出路径、事件映射与 SHA-256 见 `voice-manifest.json`。资源索引核对版本为 `resversion0.11.252.w.json`。
 - 一姬配音与默认桌布不是从此 APK 提取的：它们通过官方公开索引补充。运行时仅使用本地文件，无官方登录、更新或联网下载流程。
 - 旧版 39 个合成 WAV 保留在源码中，当前角色清单不引用它们；不会在一姬配音间混播。普通出牌不播合成牌名。
-- 未发布到 GitHub；本次仅进行本地资源接入与试玩包构建。
+- 此处描述 0.5.0 的本地资源接入；后续发布状态以 GitHub 提交为准。
 
 ## Unity 0.5.2 参考外观
 
@@ -38,3 +38,11 @@
 ### 宝牌栏与计分盘图集
 
 Unity 0.5.2 补充原 APK 的 chang、ju、word_left、number_left、number_score、dir 及 w_0..w_9。用于局数、余牌、方位、点数、供托和本场显示。导入脚本为 scripts/import-reference-hud.py，原材质 UV 与 UI 槽位参数在 unity/Assets/Resources/Majsoul/Hud。宝牌预览由导入的麻将模型离屏渲染，已移除“云”字牌背占位。
+
+## Unity 0.5.4 手部与操作提示
+
+- 吃、碰、杠、和牌、立直、拔北、流局、跳过按钮、操作喊字、切入背景及一姬立绘，来自用户提供 APK 的 mj_main_chs / mj_main_common 图集与 yiji/full。响应箭头来自 effect_mingpaizhishi；原图用于加色粒子材质，导入时将黑底转换为透明度以适配 GUI。
+- 默认女性手部模型 Hand_Skin-hand.lm、17 骨骼绑定、Dapai_Ani-Dapai.lani 出牌曲线及皮肤/指甲贴图，来自雀魂官方公开资源。精确 URL、资源容器与所有输出 SHA-256 记录在 `unity/Assets/Resources/Majsoul/Actions/provenance.json`。
+- 导入脚本 `scripts/import-reference-actions.py` 解码原 Laya 二进制数据、采样 Hermite 曲线，并离线烘焙 931 顶点、15 帧的网格动画。坐标转换保留正确三角面朝向；运行时插值播放，不透明手部材质不依赖原版 Laya 着色器。
+- 原始数据格式参照 [LayaAir-v1 官方解析器](https://github.com/layabox/LayaAir-v1/tree/master/src/d3/src/laya/d3)。原游戏脚本未打包到本工程，C# 代码负责公共事件去重、方向变换、布局与按钮行为；当前切入默认使用一姬素材。
+- 素材权利仍归原权利人。正常构建使用已转换的本地文件，无需 UnityPy、原 APK 或联网下载。

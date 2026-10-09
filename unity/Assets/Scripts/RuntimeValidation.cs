@@ -26,7 +26,7 @@ namespace YunJian.Riichi
                 if (!next) break;
                 yield return run.Current;
             }
-            File.WriteAllText(Path.Combine(folder, "passed.txt"), "Actual Unity Play mode: live AI room, delayed second-click discard, raycast, 3/4-seat rendering, uniform UI scale and safe-area pointer roundtrips, 16:9/phone-wide layout, 8 role clips. Fixture screenshots are synthetic layout scenes, not replays.");
+            File.WriteAllText(Path.Combine(folder, "passed.txt"), "Actual Unity Play mode: live AI room, delayed second-click discard, raycast, 3/4-seat rendering, safe-area pointer roundtrips, 4 resolutions, 8 role clips, called-river removal, grouped chi choices, all 4 discard hand directions at 15 time samples with opaque materials, call cut-ins, event dedup/reconnect. Fixture screenshots are synthetic layout scenes, not replays.");
             Debug.Log("RIICHI UNITY PLAY PASS"); EditorApplication.Exit(0);
         }
         IEnumerator Run()
@@ -134,12 +134,62 @@ namespace YunJian.Riichi
                     Require(File.Exists(fullFile), "Full game-view capture failed at " + suffix);
                 }
             }
+            SetGameResolution(1688,780);
+            var effectFixture=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"effects.json")));
+            client.ShowValidationFixture(effectFixture);yield return null;Physics.SyncTransforms();
+            ValidatePresentation(table,effectFixture);
+            Require(table.ResponseTarget!=null,"Response discard is not highlighted");
+            Require(client.ActionRects(1298,600).Length==3,"Multiple chi choices must share one action button");
+            var fx=GetComponent<TableEffects>();
+            for(int frame=0;frame<8;frame++)yield return null;
+            ScreenCapture.CaptureScreenshot(Path.Combine(folder,"response-ui.png"));yield return new WaitForSecondsRealtime(.2f);
+            int choiceVersion=effectFixture.version;
+            client.ValidationChooseActionKind("chi");yield return null;
+            Require(client.ValidationChoosingKind=="chi" && !client.Busy && client.State.version==choiceVersion,"Multiple chi choices submitted without selection");
+            ScreenCapture.CaptureScreenshot(Path.Combine(folder,"response-choices.png"));yield return new WaitForSecondsRealtime(.2f);
+            client.ValidationChooseActionKind("chi");Require(client.ValidationChoosingKind==null,"Chi selection cannot be closed");
+            for(int seat=0;seat<4;seat++)
+            {
+                effectFixture.last=new LastDiscard {from=seat,tile=effectFixture.players[seat].river.Last().tile};
+                client.ShowValidationFixture(effectFixture);yield return null;
+                fx.ValidationPlay(seat,"discard",effectFixture.players[seat].river.Last().tile);
+                yield return null;yield return null;
+                Require(fx.ActiveSeat==seat && GameObject.Find("Original discard hand seat "+seat)!=null,"Missing directional discard hand");
+                var handRenderer=GameObject.Find("Original discard hand seat "+seat).GetComponentInChildren<MeshRenderer>();
+                foreach(var material in handRenderer.sharedMaterials)Require(material.GetTag("RenderType",false)=="Opaque" && material.renderQueue<2500,"Discard hand uses transparent material");
+                Capture(table,Path.Combine(folder,"discard-hand-"+seat+".png"),1688,780);
+                for(int sample=0;sample<15;sample++)
+                {
+                    fx.ValidationTime=sample*.60f/14;yield return null;yield return null;
+                    Capture(table,Path.Combine(folder,"hand-"+seat+"-frame-"+sample.ToString("D2")+".png"),1688,780);
+                }
+                fx.Accept(effectFixture);yield return null;
+                var visibleTarget=table.FindDiscard(seat,effectFixture.last.tile);
+                Require(visibleTarget!=null && visibleTarget.gameObject.activeSelf,"Polling hid the released discard again");
+                fx.ValidationPlay(seat,"pon");yield return null;yield return null;
+                ScreenCapture.CaptureScreenshot(Path.Combine(folder,"call-pon-"+seat+".png"));yield return new WaitForSecondsRealtime(.2f);
+            }
+            fx.ValidationFreeze=false;fx.Reset();
+            effectFixture.last=new LastDiscard {from=3,tile="p5"};effectFixture.players[3].river.Last().called=true;effectFixture.pending=null;effectFixture.phase="play";
+            client.ShowValidationFixture(effectFixture);yield return null;
+            Require(table.ResponseTarget==null && table.FindDiscard(3,"p5")==null,"Claimed discard is still a response/animation target");
+            ValidatePresentation(table,effectFixture);
+            effectFixture.audioRoom="presentation-validation";effectFixture.audioSeq=10;effectFixture.audioEvents=new PublicSound[0];fx.Accept(effectFixture);
+            effectFixture.audioSeq=11;effectFixture.audioEvents=new[]{new PublicSound {id=11,seat=1,kind="pon"}};int played=fx.PlayedEvents;
+            fx.Accept(effectFixture);yield return null;fx.Accept(effectFixture);yield return null;
+            Require(fx.PlayedEvents==played+1,"Duplicate state replayed call effect");fx.Reset();fx.Accept(effectFixture);yield return null;
+            Require(!fx.IsAnimating,"Reconnect replayed historical effect");
         }
         static void ValidatePresentation(TableRenderer table, RoomView view)
         {
             var publicRoot = GameObject.Find("PublicTableState").transform;
             for (int i = 0; i < view.n; i++)
             {
+                var renderedSeat=publicRoot.Find("Seat "+i);
+                int riverCount=renderedSeat.Cast<Transform>().Count(t=>t.name.StartsWith("River ",StringComparison.Ordinal));
+                Require(riverCount==view.players[i].river.Count(r=>!r.called),"Claimed tile remains in the river");
+                var melds=renderedSeat.Find("Exposed melds");
+                foreach(Transform piece in melds)Require(piece.localPosition.z <= -3.5f,"Melds are still inside concealed hand row");
                 if (i == view.you) continue;
                 var seat = publicRoot.Find("Seat " + i);
                 var tiles = seat.Cast<Transform>().Where(t => t.name == "Standing concealed hand").ToArray();
@@ -218,7 +268,7 @@ namespace YunJian.Riichi
             Camera camera = table.Camera;
             var previous = camera.targetTexture; var active = RenderTexture.active;
             var target = new RenderTexture(w, h, 24); var pixels = new Texture2D(w, h, TextureFormat.RGB24, false);
-            camera.targetTexture = target; table.HandCamera.targetTexture = target; table.FitCamera(w / (float)h); camera.Render(); table.HandCamera.Render(); RenderTexture.active = target;
+            camera.targetTexture = target; table.HandCamera.targetTexture = target; table.FitCamera(w / (float)h); camera.Render(); table.HandCamera.Render(); table.GetComponent<TableEffects>().RenderOverlay(target); RenderTexture.active = target;
             pixels.ReadPixels(new Rect(0, 0, w, h), 0, 0); pixels.Apply(); File.WriteAllBytes(file, pixels.EncodeToPNG());
             camera.targetTexture = previous; table.HandCamera.targetTexture = null; RenderTexture.active = active; target.Release(); Destroy(target); Destroy(pixels);
         }

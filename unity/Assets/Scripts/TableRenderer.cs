@@ -24,6 +24,8 @@ namespace YunJian.Riichi
         Texture2D shadowTexture;
         Font font;
         Transform cameraHand;
+        Transform responseTarget;
+        readonly Dictionary<int, List<Transform>> riverTiles = new Dictionary<int, List<Transform>>();
         readonly TileGeometry geometry = new TileGeometry();
 
         void Awake()
@@ -36,7 +38,7 @@ namespace YunJian.Riichi
             Camera.fieldOfView = 28; Camera.nearClipPlane = .1f; Camera.farClipPlane = 50;
             Camera.clearFlags = CameraClearFlags.SolidColor; Camera.backgroundColor = Color.black;
             Camera.allowMSAA = true; QualitySettings.antiAliasing = 4;
-            Camera.cullingMask &= ~((1 << 12) | (1 << 13));
+            Camera.cullingMask &= ~((1 << 12) | (1 << 13) | (1 << 14));
             HandCamera = new GameObject("Original orthographic hand camera").AddComponent<Camera>();
             HandCamera.transform.position = new Vector3(0, 0, -30);
             HandCamera.orthographic = true; HandCamera.orthographicSize = 9;
@@ -98,7 +100,7 @@ namespace YunJian.Riichi
         public void Clear()
         {
             foreach (Transform t in content) { t.gameObject.SetActive(false); Destroy(t.gameObject); }
-            handTiles.Clear(); handBase.Clear(); cameraHand = null; state = null;
+            handTiles.Clear(); handBase.Clear(); riverTiles.Clear(); responseTarget = null; cameraHand = null; state = null;
         }
         public int RelativeSeat(int i) => (i - state.you + state.n) % state.n;
         float Angle(int i)
@@ -106,6 +108,25 @@ namespace YunJian.Riichi
             int d = RelativeSeat(i);
             return d == 0 ? 0 : d == 1 ? (state.n == 3 ? 180 : -90) : d == state.n - 1 ? 90 : 180;
         }
+        public float SeatAngle(int i) => Angle(i);
+        public Transform CreateEffectTile(string tile) => original.CreateTable(null,tile,Vector3.zero,.33f,false,false,1);
+        public Transform FindDiscard(int seat, string tile)
+        {
+            // A delayed event must never hide an older identical discard after a call.
+            if(state.last==null || state.last.from!=seat || state.last.tile!=tile) return null;
+            var river=state.players[seat].river;
+            if(river.Length==0 || river[river.Length-1].called || river[river.Length-1].tile!=tile) return null;
+            if (!riverTiles.TryGetValue(seat,out var tiles)) return null;
+            return tiles.LastOrDefault(t=>t!=null && t.name.EndsWith(" "+tile,StringComparison.Ordinal));
+        }
+        public Vector3 DiscardPoint(int seat,string tile)
+        {
+            Transform target=null;
+            if(riverTiles.TryGetValue(seat,out var tiles))target=tiles.LastOrDefault(t=>t!=null && t.name.EndsWith(" "+tile,StringComparison.Ordinal));
+            return target!=null?target.position:Quaternion.Euler(0,Angle(seat),0)*new Vector3(-.895f,0,-1.48f);
+        }
+        public Transform ResponseTarget => responseTarget;
+        public static RiverTile[] VisibleRiver(PlayerView player) => player.river.Where(r=>!r.called).ToArray();
         Transform Seat(int i)
         {
             var t = new GameObject("Seat " + i).transform; t.SetParent(content, false); t.localRotation = Quaternion.Euler(0, Angle(i), 0); return t;
@@ -160,7 +181,7 @@ namespace YunJian.Riichi
             {
                 var p = state.players[i]; var seat = Seat(i);
                 scoreHub.Seat(hub, p, Angle(i), state.turn == i);
-                DrawRiver(seat, p);
+                DrawRiver(seat, p, i);
                 bool deposited = p.riichi > 0 && !(state.pending != null && state.pending.riichi && state.pending.from == i);
                 if (deposited)
                 {
@@ -171,7 +192,8 @@ namespace YunJian.Riichi
                 if (i == state.you) DrawHand();
                 else for (int j = 0; j < p.count; j++)
                 {
-                    var tile = original.CreateStandingBack(seat, new Vector3((j - (p.count - 1) / 2f) * .31f, 0, -3.35f), .29f);
+                    float edge = Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f ? 4.34f : 3.35f;
+                    var tile = original.CreateStandingBack(seat, new Vector3(-1.86f + j*.31f, 0, -edge), .29f);
                     var shadow = new GameObject("Standing hand contact shadow"); shadow.transform.SetParent(tile, false);
                     shadow.transform.localPosition = new Vector3(.018f, .002f, -.022f);
                     shadow.AddComponent<MeshFilter>().sharedMesh = geometry.Get(.31f, original.TableDepth * .29f + .04f, true);
@@ -179,16 +201,20 @@ namespace YunJian.Riichi
                 }
             }
         }
-        void DrawRiver(Transform parent, PlayerView p)
+        void DrawRiver(Transform parent, PlayerView p, int seatIndex)
         {
-            for (int start = 0; start < p.river.Length; start += 6)
+            var visible = VisibleRiver(p); var rendered = new List<Transform>();riverTiles[seatIndex]=rendered;
+            for (int start = 0; start < visible.Length; start += 6)
             {
-                var row = p.river.Skip(start).Take(6).ToArray();
+                var row = visible.Skip(start).Take(6).ToArray();
                 float cursor = -1.06f;
                 for (int j = 0; j < row.Length; j++)
                 {
                     var r = row[j]; float width = r.riichi ? .44f : .33f;
-                    Tile(parent, r.tile, new Vector3(cursor + width / 2, 0, -1.48f - start / 6 * .45f), .33f, .44f, false, r.riichi, r.called ? .3f : 1);
+                    var tile=Tile(parent, r.tile, new Vector3(cursor + width / 2, 0, -1.48f - start / 6 * .45f), .33f, .44f, false, r.riichi);
+                    tile.name="River "+(start+j)+" "+r.tile;rendered.Add(tile);
+                    if(state.phase=="reaction" && state.pending!=null && state.pending.kind=="discard" && state.pending.from==seatIndex && start+j==visible.Length-1)
+                        responseTarget=tile;
                     cursor += width + .015f;
                 }
             }
@@ -223,8 +249,11 @@ namespace YunJian.Riichi
         }
         void DrawMelds(Transform parent, PlayerView p)
         {
-            float cursor = 3.6f;
-            float meldZ = p == state.players[state.you] ? -2.93f : -2.75f;
+            // Source scene_mj ming anchors: .375/.377 metres, scaled to tile width.
+            int index=Array.IndexOf(state.players,p);float angle=Angle(index);
+            float cursor = angle < -45 ? 3.50f : 4.20f;
+            float meldZ = Mathf.Abs(angle)>135 ? -3.50f : p == state.players[state.you] ? -4.10f : -4.20f;
+            var root=new GameObject("Exposed melds").transform;root.SetParent(parent,false);parent=root;
             // Read backwards so the first meld remains nearest the player's right edge.
             foreach (string meld in p.melds)
             {
@@ -258,7 +287,10 @@ namespace YunJian.Riichi
                 for (int j = 0; j < pieces.Count; j++) Tile(parent, meld[0].ToString() + pieces[j].Item1, new Vector3(cursor + j * .37f, .02f, meldZ), .35f, .51f, pieces[j].Item3);
                 cursor -= .16f;
             }
-            for (int i = 0; i < p.nuki; i++) Tile(parent, "z4", new Vector3(1.3f + i * .37f, .02f, -2.1f), .35f, .51f);
+            // Source babei anchor lies inward of, and separate from, the meld corner.
+            var north=new GameObject("Extracted North").transform;north.SetParent(parent.parent,false);
+            bool self=index==state.you;
+            for (int i = 0; i < p.nuki; i++) Tile(north, "z4", new Vector3(self ? -3.35f-i*.37f : 2.65f+i*.37f, .02f, -3.08f), .35f, .51f);
         }
         void OnDestroy()
         {

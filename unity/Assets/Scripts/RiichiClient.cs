@@ -23,6 +23,8 @@ namespace YunJian.Riichi
         float nextPoll, volume = .8f;
         TableRenderer table;
         RoleVoice voice;
+        TableEffects effects;
+        string choosingKind;
         GUIStyle label, title, button, field, small;
         GUIStyle caption, centered, tableButton;
         TableViewport viewport;
@@ -39,13 +41,21 @@ namespace YunJian.Riichi
             validationSession = true; endpoint = "http://127.0.0.1:8765";
             secret = hostSecret; token = ""; nickname = "Unity运行验证";
             players = 3; generation++;
-            StartCoroutine(CreateOrRecover(true));
+            StartCoroutine(CreateValidationPractice());
+        }
+        IEnumerator CreateValidationPractice()
+        {
+            // This endpoint is the dedicated local test host, never a phone save.
+            yield return Send(new RequestBody {op="recoverHost",host=secret});
+            if(State!=null && State.host)yield return Send(new RequestBody {op="close"});
+            yield return CreateOrRecover(true);
         }
         public void ShowValidationFixture(RoomView fixture)
         {
             StopAllCoroutines(); Busy = false; State = fixture; active = true; page = "home";
             nextPoll = float.PositiveInfinity; SelectedIndex = -1; SelectedAction = null;
             table.Render(fixture);
+            effects.Reset();choosingKind=null;
         }
 #endif
 
@@ -55,6 +65,7 @@ namespace YunJian.Riichi
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
             Screen.orientation = ScreenOrientation.LandscapeLeft;
             table = gameObject.AddComponent<TableRenderer>(); table.Client = this;
+            effects = gameObject.AddComponent<TableEffects>();
             voice = gameObject.AddComponent<RoleVoice>();
             nickname = PlayerPrefs.GetString("riichi.name", "旅人");
             endpoint = PlayerPrefs.GetString("riichi.server", endpoint);
@@ -100,7 +111,7 @@ namespace YunJian.Riichi
             if (SelectedIndex == index && SelectedAction == action) { SelectedAction = null; SelectedIndex = -1; Act(action); }
             else { SelectedIndex = index; SelectedAction = action; table.SelectHand(index); }
         }
-        public void Act(string id) { StartCoroutine(Send(new RequestBody { op = "action", action = id })); }
+        public void Act(string id) { choosingKind=null;StartCoroutine(Send(new RequestBody { op = "action", action = id })); }
         IEnumerator Send(RequestBody req, Action success = null, bool poll = false)
         {
             if (Busy) yield break;
@@ -145,6 +156,8 @@ namespace YunJian.Riichi
                         if (SelectedAction != null && !State.options.Any(x => x.id == SelectedAction)) { SelectedAction = null; SelectedIndex = -1; }
                         if (!State.options.Any(x => x.kind == "riichi")) RiichiMode = false;
                         if (changed) table.Render(State);
+                        effects.Accept(State);
+                        if(choosingKind!=null && !State.options.Any(x=>x.kind==choosingKind)) choosingKind=null;
                     }
                 }
                 success?.Invoke();
@@ -171,7 +184,7 @@ namespace YunJian.Riichi
         void EnterHome()
         {
             generation++; active = false; State = null; SelectedAction = null; SelectedIndex = -1; RiichiMode = false;
-            page = "home"; table.Clear(); voice.Reset();
+            page = "home"; table.Clear(); voice.Reset();effects.Reset();choosingKind=null;
         }
         void StartRoom(bool practice)
         {
@@ -363,20 +376,76 @@ namespace YunJian.Riichi
             ShadowLabel(new Rect(4, h - 31, 76, 18), "出牌提示", centered, new Color(.66f, .75f, .92f));
             if (RiichiMode) GUI.Label(new Rect(w * .5f - 210, h - 105, 420, 22), "选牌后再点一次 · 立直打出", centered);
             if (State.furiten) GUI.Label(new Rect(22, h - 58, 175, 28), "振听 · 暂不可荣和", caption);
-            float ax = w - 24;
-            var actions = State.options.Where(x => x.kind != "discard" && x.kind != "riichi").Reverse().ToArray();
-            int row = 0;
-            foreach (var action in actions)
+            DrawResponseMarker();
+            DrawActionButtons(w,h);
+            effects.DrawCall(w,h,State.n);
+        }
+        bool ActionButton(Rect r,string sprite,string tooltip)
+        {
+            var a=GUI.matrix.MultiplyPoint3x4(new Vector3(r.x,r.y,0));var b=GUI.matrix.MultiplyPoint3x4(new Vector3(r.xMax,r.yMax,0));
+            uiButtons.Add(Rect.MinMaxRect(a.x,a.y,b.x,b.y));
+            var image=effects.Art(sprite);if(image!=null)GUI.DrawTexture(r,image,ScaleMode.ScaleToFit);
+            bool old=GUI.enabled;GUI.enabled&=!Busy;bool clicked=GUI.Button(r,new GUIContent("",tooltip),GUIStyle.none);GUI.enabled=old;return clicked;
+        }
+        public Rect[] ActionRects(float width,float height)
+        {
+            int count=State.options.Where(x=>x.kind!="discard" && x.kind!="riichi").Select(x=>x.kind).Distinct().Count()+(State.options.Any(x=>x.kind=="riichi")?1:0);
+            float buttonWidth=Mathf.Min(156,(width*.62f-20)/Mathf.Max(1,count));
+            return Enumerable.Range(0,count).Select(i=>new Rect(width-100-(count-i)*buttonWidth,height-168,buttonWidth-5,72)).ToArray();
+        }
+        void ChooseActionKind(string kind)
+        {
+            if(Busy)return;
+            var choices=State.options.Where(x=>x.kind==kind).ToArray();
+            if(choices.Length==1)Act(choices[0].id);
+            else if(choices.Length>1)choosingKind=choosingKind==kind?null:kind;
+        }
+#if UNITY_EDITOR
+        public string ValidationChoosingKind => choosingKind;
+        public void ValidationChooseActionKind(string kind) => ChooseActionKind(kind);
+#endif
+        void DrawActionButtons(float width,float height)
+        {
+            var groups=State.options.Where(x=>x.kind!="discard" && x.kind!="riichi").GroupBy(x=>x.kind).OrderBy(g=>g.Key=="pass"?1:0).ToArray();
+            var rects=ActionRects(width,height);int index=0;
+            if(State.options.Any(x=>x.kind=="riichi"))
             {
-                float width = string.IsNullOrEmpty(action.meld) ? 100 : 160;
-                if (ax - width < w * .5f) { ax = w - 24; row++; }
-                ax -= width;
-                if (Button(new Rect(ax, h - 199 - row * 62, width - 8, 54), ActionName(action.kind) + (string.IsNullOrEmpty(action.meld) ? "" : "\n" + MeldName(action.meld)))) Act(action.id);
+                if(ActionButton(rects[index++],"op_lizhi",RiichiMode?"取消立直":"立直")) {RiichiMode=!RiichiMode;SelectedAction=null;SelectedIndex=-1;table.Render(State);}
             }
-            if (State.options.Any(x => x.kind == "riichi") && Button(new Rect(w - 152, h - 135, 128, 46), RiichiMode ? "取消立直" : "立直"))
+            foreach(var group in groups)
             {
-                RiichiMode = !RiichiMode; SelectedAction = null; SelectedIndex = -1; table.Render(State);
+                string sprite=group.Key=="chi"?"op_chi":group.Key=="pon"?"op_peng":group.Key=="kan"||group.Key=="minkan"?"op_gang":group.Key=="ron"?"op_hu":group.Key=="tsumo"?"op_zimo":group.Key=="nuki"?"op_babei":group.Key=="abort9"?"op_liuju":"op_x";
+                if(ActionButton(rects[index++],sprite,ActionName(group.Key)))
+                {
+                    ChooseActionKind(group.Key);
+                }
             }
+            if(choosingKind==null)return;
+            var choices=State.options.Where(x=>x.kind==choosingKind).ToArray();float choiceWidth=126;float total=Mathf.Min(width*.82f,choices.Length*choiceWidth);
+            float x=width-100-total,y=height-258;
+            var bg=effects.Art("bg_chipengchoose");if(bg!=null)GUI.DrawTexture(new Rect(x-8,y-8,total+16,84),bg,ScaleMode.StretchToFill);
+            for(int i=0;i<choices.Length;i++)
+            {
+                Rect r=new Rect(x+i*total/choices.Length,y,total/choices.Length-4,66);
+                var a=GUI.matrix.MultiplyPoint3x4(new Vector3(r.x,r.y,0));var b=GUI.matrix.MultiplyPoint3x4(new Vector3(r.xMax,r.yMax,0));uiButtons.Add(Rect.MinMaxRect(a.x,a.y,b.x,b.y));
+                var meld=choices[i].meld;var digits=meld.Skip(1).Where(char.IsDigit).ToArray();float tw=Mathf.Min(38,(r.width-8)/Mathf.Max(1,digits.Length));
+                for(int j=0;j<digits.Length;j++)GUI.DrawTexture(new Rect(r.center.x-digits.Length*tw/2+j*tw,r.y+4,tw-1,53),table.TileTexture(meld[0].ToString()+digits[j]),ScaleMode.ScaleToFit);
+                bool old=GUI.enabled;GUI.enabled&=!Busy;if(GUI.Button(r,"",GUIStyle.none))Act(choices[i].id);GUI.enabled=old;
+            }
+        }
+        void DrawResponseMarker()
+        {
+            var target=table.ResponseTarget;if(target==null)return;
+            var box=target.GetComponent<BoxCollider>();Vector2 min=new Vector2(float.MaxValue,float.MaxValue),max=new Vector2(float.MinValue,float.MinValue);
+            foreach(int x in new[]{-1,1})foreach(int y in new[]{-1,1})foreach(int z in new[]{-1,1})
+            {
+                var point=table.Camera.WorldToScreenPoint(box.transform.TransformPoint(box.center+Vector3.Scale(box.size/2,new Vector3(x,y,z))));
+                var gui=viewport.FromScreen(point,Screen.height);min=Vector2.Min(min,gui);max=Vector2.Max(max,gui);
+            }
+            float glow=.72f+.22f*Mathf.Sin(Time.unscaledTime*5);Color yellow=new Color(1,.91f,.23f,glow);
+            Rect r=Rect.MinMaxRect(min.x-3,min.y-3,max.x+3,max.y+3);
+            Fill(new Rect(r.x,r.y,r.width,3),yellow);Fill(new Rect(r.x,r.yMax-3,r.width,3),yellow);Fill(new Rect(r.x,r.y,3,r.height),yellow);Fill(new Rect(r.xMax-3,r.y,3,r.height),yellow);
+            var arrow=effects.Art("response-arrow");if(arrow!=null) {var old=GUI.color;GUI.color=new Color(1,.9f,.2f);GUI.DrawTexture(new Rect(r.center.x-13,r.y-22+Mathf.Sin(Time.unscaledTime*5)*2,26,20),arrow,ScaleMode.ScaleToFit);GUI.color=old;}
         }
         void DrawResult()
         {
@@ -425,7 +494,7 @@ namespace YunJian.Riichi
         {
             switch (kind) { case "ron": return "荣和"; case "tsumo": return "自摸"; case "pon": return "碰"; case "chi": return "吃"; case "kan": case "minkan": return "杠"; case "nuki": return "拔北"; case "abort9": return "九种九牌"; case "pass": return "过"; default: return kind; }
         }
-        void OnApplicationPause(bool pause) { voice.Suspend(pause); }
+        void OnApplicationPause(bool pause) { voice.Suspend(pause);effects.Reset(); }
         void OnDestroy() { bridge?.Dispose(); }
     }
 }

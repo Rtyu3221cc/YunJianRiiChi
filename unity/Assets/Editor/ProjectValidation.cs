@@ -27,6 +27,9 @@ namespace YunJian.Riichi.Editor
             foreach (var name in new[] { "YunJian/OriginalHand", "YunJian/OriginalTileBody", "YunJian/TableCloth", "Unlit/Transparent" })
                 Require(Shader.Find(name) != null && (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null || Shader.Find(name).isSupported), "Missing/unsupported skin shader " + name);
             Require(Resources.Load<Texture2D>("Majsoul/Table/score-hub") != null, "Missing score hub");
+            foreach (var name in new[] { "op_chi","op_peng","op_gang","op_hu","op_zimo","op_lizhi","op_babei","op_liuju","op_x","shout_horizontal","shout_vertical","shout_peng","shout_chi","shout_gang","yiji-full","response-arrow","hand-skin","hand-nails" })
+                Require(Resources.Load<Texture2D>("Majsoul/Actions/"+name)!=null,"Missing action art "+name);
+            Require(Resources.Load<TextAsset>("Majsoul/Actions/discard-hand")!=null && Resources.Load<TextAsset>("Majsoul/Actions/discard-hand-frames")!=null,"Missing original discard animation");
             Require(Resources.Load<Font>("Majsoul/Font/game") != null, "Missing Chinese font");
             var manifest = JsonUtility.FromJson<VoiceManifest>(Resources.Load<TextAsset>("Majsoul/voice-manifest").text);
             Require(manifest.provider == "yiji", "Active pack must be the one-role Ichihime pack");

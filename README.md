@@ -1,8 +1,18 @@
 # 云间日麻 0.5.0
 
+## Unity 0.5.4 吃碰布局与动作
+
+最新安卓包：[下载 Unity 0.5.4 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/raw/refs/heads/main/dist/yunjian-riichi-unity-0.5.4.apk)，versionCode 5，可覆盖此前 Unity 试玩版。
+
+- 被吃、碰、杠取走的牌不再留在牌河中；保留规则引擎中的历史记录，显示按剩余牌重新排布。副露移到各家手牌外侧的角落，左右对手手牌外移，拔北牌独立摆放。
+- 吃、碰、杠、荣和、自摸、立直、拔北与跳过使用原始提示图。响应牌有黄色边框和箭头，多种吃牌组合先展开牌面供选择。
+- 四个方向使用原始手部模型、皮肤和出牌动画数据，碰等操作显示原始一姬角色切入与文字特效。修正模型面朝向，手掌、手腕和手臂采用不透明材质，避免局部穿透缺失。
+
+预览见 `dist/previews/unity-0.5.4-*`；素材来源见 [ARTWORK.md](ARTWORK.md)，原始资源与适配边界见 [渲染对照](docs/麻将渲染对照.md)。动画和操作提示由当前工程的 C# 事件逻辑实现。验证记录见 [0.5.4 验证记录](dist/验证记录-unity-0.5.4.txt)；安卓真机触控与热点联机仍待实测。
+
 ## Unity 0.5.3 对手竖立手牌与计分盘
 
-最新安卓包：[下载 Unity 0.5.3 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/raw/refs/heads/main/dist/yunjian-riichi-unity-0.5.3.apk)，versionCode 4，可覆盖 Unity 0.5.0–0.5.2。
+此版本安卓包：[下载 Unity 0.5.3 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/raw/refs/heads/main/dist/yunjian-riichi-unity-0.5.3.apk)，versionCode 4，可覆盖 Unity 0.5.0–0.5.2。
 
 对手手牌使用已有原始麻将网格竖立，牌背朝桌心、牌面朝所属玩家；暗杠、牌河仍按各自规则平放。计分盘完整保留原底图和字符图集，底图、点数、方位与黄色渐变回合灯共用坐标和座位旋转，放大点数字体并重新对齐槽位。
 
