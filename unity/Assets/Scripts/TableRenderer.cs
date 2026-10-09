@@ -30,6 +30,7 @@ namespace YunJian.Riichi
         readonly Dictionary<int, Transform> stickAnchors = new Dictionary<int, Transform>();
         readonly Dictionary<int, Transform> meldAnchors = new Dictionary<int, Transform>();
         readonly Dictionary<int, List<Transform>> northTiles = new Dictionary<int, List<Transform>>();
+        readonly Dictionary<int, Transform> winningTiles = new Dictionary<int, Transform>();
         readonly TileGeometry geometry = new TileGeometry();
 
         void Awake()
@@ -104,7 +105,7 @@ namespace YunJian.Riichi
         public void Clear()
         {
             foreach (Transform t in content) { t.gameObject.SetActive(false); Destroy(t.gameObject); }
-            handTiles.Clear(); handBase.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); northTiles.Clear(); responseTarget = null; selfMelds = null; cameraHand = null; state = null;
+            handTiles.Clear(); handBase.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); northTiles.Clear(); winningTiles.Clear(); responseTarget = null; selfMelds = null; cameraHand = null; state = null;
         }
         public int RelativeSeat(int i) => (i - state.you + state.n) % state.n;
         float Angle(int i)
@@ -260,7 +261,7 @@ namespace YunJian.Riichi
         public void Render(RoomView view)
         {
             Clear(); state = view;
-            if (state.phase != "play" && state.phase != "reaction") return;
+            if (state.phase != "play" && state.phase != "reaction" && state.phase != "result") return;
             var hub = scoreHub.Create(content, state);
             for (int i = 0; i < state.players.Length; i++)
             {
@@ -281,7 +282,7 @@ namespace YunJian.Riichi
                 }
                 DrawMelds(seat, p);
                 if (i == state.you) DrawHand();
-                else for (int j = 0; j < p.count; j++)
+                else for (int j = 0; j < p.count - (SelfDrawWinner(i) != null ? 1 : 0); j++)
                 {
                     float edge = Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f ? 4.34f : 3.35f;
                     var tile = original.CreateStandingBack(seat, new Vector3(-1.86f + j*.31f, 0, -edge), .29f);
@@ -290,6 +291,36 @@ namespace YunJian.Riichi
                     shadow.AddComponent<MeshFilter>().sharedMesh = geometry.Get(.31f, original.TableDepth * .29f + .04f, true);
                     var sr = shadow.AddComponent<MeshRenderer>(); sr.sharedMaterial = contactShadow; sr.shadowCastingMode = ShadowCastingMode.Off;
                 }
+            }
+            DrawWinningTiles();
+        }
+        WinDetail SelfDrawWinner(int seat) => state.phase=="result" ? state.result?.details?.FirstOrDefault(d=>d.seat==seat && !d.ron) : null;
+        public Transform WinningTarget(PublicSound item)
+        {
+            if(item.kind=="ron" && (string.IsNullOrEmpty(item.winSource) || item.winSource=="discard"))return FindDiscard(item.from,item.tile);
+            return winningTiles.TryGetValue(item.seat,out var tile)?tile:null;
+        }
+        public Vector3 WinningPoint(PublicSound item)
+        {
+            var tile=WinningTarget(item);if(tile!=null)return tile.position;
+            int seat=item.kind=="ron"?item.from:item.seat;
+            return item.kind=="ron"?DiscardPoint(seat,item.tile):Quaternion.Euler(0,Angle(seat),0)*new Vector3(1.85f,.02f,-2.95f);
+        }
+        void DrawWinningTiles()
+        {
+            if(state.phase!="result" || state.result?.details==null)return;
+            var robbed=new Dictionary<string,Transform>();
+            foreach(var d in state.result.details)
+            {
+                if(string.IsNullOrEmpty(d.tile) || d.seat<0 || d.seat>=state.n)continue;
+                if(d.ron && (string.IsNullOrEmpty(d.winSource) || d.winSource=="discard"))continue;
+                string key=d.from+":"+d.winSource+":"+d.tile;
+                if(d.ron && robbed.TryGetValue(key,out var shared)){winningTiles[d.seat]=shared;continue;}
+                int seat=d.ron?d.from:d.seat;
+                Vector3 point=d.ron ? (d.winSource=="nuki"?NorthPoint(seat)+Quaternion.Euler(0,Angle(seat),0)*new Vector3(0,0,.4f):MeldPoint(seat)+Vector3.up*.16f) : Quaternion.Euler(0,Angle(seat),0)*new Vector3(1.85f,.02f,-2.95f);
+                var tile=original.CreateTable(content,d.tile,point,.33f,false,false,1);
+                tile.name="Winning tile "+d.seat+" "+d.tile;tile.rotation=Quaternion.Euler(0,Angle(seat),0);winningTiles[d.seat]=tile;
+                if(d.ron)robbed[key]=tile;
             }
         }
         void DrawRiver(Transform parent, PlayerView p, int seatIndex)
@@ -319,6 +350,7 @@ namespace YunJian.Riichi
         {
             cameraHand = new GameObject("Camera-facing hand").transform; cameraHand.SetParent(content, false);
             var hand = state.hand.ToList();
+            var winner=SelfDrawWinner(state.you);if(winner!=null){int winAt=hand.LastIndexOf(winner.tile);if(winAt>=0)hand.RemoveAt(winAt);}
             if (!string.IsNullOrEmpty(state.drawn)) { int at = hand.LastIndexOf(state.drawn); if (at >= 0) { hand.RemoveAt(at); hand.Add(state.drawn); } }
             const float pitch = OriginalTiles.HandWidth;
             float width = (hand.Count - 1) * pitch + (!string.IsNullOrEmpty(state.drawn) ? .4f : 0);
@@ -328,7 +360,7 @@ namespace YunJian.Riichi
             bool choosing = choices.Length > 0;
             for (int i = 0; i < hand.Count; i++)
             {
-                bool drawn = !string.IsNullOrEmpty(state.drawn) && i == hand.Count - 1;
+                bool drawn = winner==null && !string.IsNullOrEmpty(state.drawn) && i == hand.Count - 1;
                 var choice = choices.FirstOrDefault(a => a.tile == hand[i] && a.id.EndsWith("_", StringComparison.Ordinal) == drawn);
                 Vector3 pos = new Vector3(-width / 2 + i * pitch + (drawn ? .4f : 0), 0, 0);
                 var tile = original.CreateHand(cameraHand, hand[i], pos);

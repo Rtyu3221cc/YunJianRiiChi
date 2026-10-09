@@ -11,7 +11,7 @@ function avatar(value){check(typeof value==='string'&&value.length<=12288&&(valu
 function player(name,token){return {name,avatar:"",token:token||randomHex(18),recovery:randomHex(6),score:0,hand:'',river:[],riichi:0,ippatsu:false,nuki:0,temp:false,permanent:false,kans:0,ready:false,requests:[]}}
 class Room{
  constructor(host,save,snapshot){this.host=host;this.save=save||(()=>{});this.s=snapshot?JSON.parse(snapshot):null;this.seen={};}
- sound(kind,seat,tile,riichi,nuki){const s=this.s;s.audioSeq=(s.audioSeq||0)+1;s.audioEvents=(s.audioEvents||[]).concat({id:s.audioSeq,kind,seat,tile:tile||null,riichi:!!riichi,...(nuki?{nuki}:{}),at:Date.now()}).slice(-24);}
+ sound(kind,seat,tile,riichi,nuki,win){const s=this.s;s.audioSeq=(s.audioSeq||0)+1;s.audioEvents=(s.audioEvents||[]).concat({id:s.audioSeq,kind,seat,tile:tile||null,riichi:!!riichi,...(nuki?{nuki}:{}),...(win?{from:win.from,winSource:win.kind}:{}),at:Date.now()}).slice(-24);}
  addBot(){const s=this.s;check(s.players.length<s.n,'座位已满');let n=1;while(s.players.some(p=>p.name==='AI · '+n))n++;const p=player('AI · '+n);p.bot=true;s.players.push(p);}
  tick(){
   const s=this.s;if(!s||!g.RiichiAI||!['play','reaction'].includes(s.phase))return {ok:true,idle:true};
@@ -134,7 +134,8 @@ class Room{
   const s=this.s,delta=s.players.map(()=>0),details=[];
   for(let k=0;k<winners.length;k++){
    const i=winners[k],r=this.score(i,from,tile,kind,k===0?s.sticks:0);check(r,'和牌条件已变化');
-   this.sound(from===null?'tsumo':'ron',i);r.delta.forEach((v,j)=>delta[j]+=v);details.push({seat:i,name:s.players[i].name,hand:s.players[i].hand,tile:from===null?this.h(i)._zimo:tile,ron:from!==null,score:r,nuki:s.players[i].nuki,ura:s.players[i].riichi?s.ura.slice(0,1+this.totalKans()):[]});
+   const winTile=from===null?this.h(i)._zimo:tile,winFrom=from===null?i:from,winSource=from===null?'tsumo':kind;
+   this.sound(from===null?'tsumo':'ron',i,winTile,false,0,{from:winFrom,kind:winSource});r.delta.forEach((v,j)=>delta[j]+=v);details.push({seat:i,from:winFrom,winSource,name:s.players[i].name,hand:s.players[i].hand,tile:from===null?this.h(i)._zimo:tile,ron:from!==null,score:r,nuki:s.players[i].nuki,ura:s.players[i].riichi?s.ura.slice(0,1+this.totalKans()):[]});
   }
   s.sticks=0;this.finish({title:from===null?'自摸':winners.length===2?'双响 · 荣和':'荣和',delta,details,repeat:winners.includes(s.dealer),draw:false});
  }

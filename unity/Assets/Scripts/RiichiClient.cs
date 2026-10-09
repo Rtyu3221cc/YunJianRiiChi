@@ -275,12 +275,12 @@ namespace YunJian.Riichi
         void OnGUI()
         {
             Styles(); uiButtons.Clear(); var previous = GUI.matrix;
-            bool playing = active && State != null && (State.phase == "play" || State.phase == "reaction");
+            bool playing = active && State != null && (State.phase == "play" || State.phase == "reaction" || (State.phase == "result" && effects.ShowWinPresentation));
             viewport = TableViewport.Fit(Screen.width, Screen.height, Screen.safeArea, playing);
             GUI.matrix = viewport.Matrix;
             if (State == null || !active) DrawHome();
             else if (State.phase == "lobby") DrawLobby();
-            else if (State.phase == "result") DrawResult();
+            else if (State.phase == "result" && !effects.ShowWinPresentation) DrawResult();
             else DrawTableUI();
             // Dialogs retain their own centered, uniformly scaled canvas.
             GUI.matrix = TableViewport.Fit(Screen.width, Screen.height, Screen.safeArea, false).Matrix;
@@ -370,7 +370,7 @@ namespace YunJian.Riichi
                 ShadowLabel(new Rect(anchor.x - 35, anchor.y + 64, 132, 19), p.v.name, centered, Color.white);
                 ShadowLabel(new Rect(anchor.x - 35, anchor.y + 82, 132, 19), "东南西北"[p.v.wind] + "家 · " + p.v.score, centered, new Color(.69f, .77f, .94f));
             }
-            string status = State.phase == "reaction" ? (State.options.Length > 0 ? "请选择操作" : "等待其他玩家响应") : State.turn == State.you ? "轮到你出牌" : State.players[State.turn].name + " 的回合";
+            string status = State.phase == "result" ? State.result.title : State.phase == "reaction" ? (State.options.Length > 0 ? "请选择操作" : "等待其他玩家响应") : State.turn == State.you ? "轮到你出牌" : State.players[State.turn].name + " 的回合";
             if (showHints || State.phase == "reaction") ShadowLabel(new Rect(w * .5f - 210, h - 128, 420, 26), status, centered, Color.white);
             if (SkinButton(new Rect(24, h - 66, 36, 36), showHints ? "ob_ting_on_btn" : "ob_ting_off_btn", "切换出牌提示")) showHints = !showHints;
             ShadowLabel(new Rect(4, h - 31, 76, 18), "出牌提示", centered, new Color(.66f, .75f, .92f));

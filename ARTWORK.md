@@ -75,3 +75,12 @@ Unity 0.5.2 补充原 APK 的 chang、ju、word_left、number_left、number_scor
 - 手部沿用已烘焙的 `Fulu_Ani-Fulu` 网格动画，0.9 秒动作、0.7 秒落牌。C# 对齐其 `node_tile` 落牌位置和北牌朝向；事件携带公开北牌与拔北次序，目标与吃碰副露分开。
 - `Actions/north-petals.png` 直接导出自用户提供 APK 的 `myassets/necessary/texture/yinghua2.png`，原始 256×256 RGBA、4×4 帧。导入脚本 `scripts/import-reference-north.py`；容器、pathID、哈希和适配说明见 `Actions/north-effect-source.json`。
 - `NorthPetals.cs` 和 `NorthPetal.shader` 用 Unity 原生粒子显示翻转的花瓣，九片单次发射、1.1–1.5 秒寿命、上飘与淡出，放在本次拔出的北牌上方。发射器和时序为当前项目的参考图适配，未把大厅的循环飘花预制体或原客户端完整代码搬进运行时。素材权利仍归原权利人。
+
+
+## Unity 0.5.9 荣和、自摸与默认胡牌特效
+
+- 荣和、自摸使用原 APK 中文图集的 `show_rong`、`show_zimo`，继续使用已有一姬立绘和音频。
+- 原 `Zimo_Anim-Zimo.lani` 在同一原手部骨架上烘焙成 28 帧、30 Hz、0.9 秒动作，0.8667 秒交接胡牌。原官方公共资源补齐 APK 资源目录未提供的动画文件，来自官方 Yo-star CDN；模型、骨骼、蒙皮材质继续使用已导入资源。
+- 默认 `effect_hupai_default.lh` 七层配置及加色材质来自雀魂官方公共资源；`yuanqiu2`、`shanguang`、`bao`、`kuosan` 贴图直接从用户 APK 导出，`Light2`、`thunder`、`lizi` 缺失原文件由官方 CDN 补齐。容器、pathID、URL、哈希见 `Actions/win-source.json`，导入脚本 `scripts/import-reference-win.py`。
+- `WinTileEffect.cs` 与 `WinParticle.shader` 使用原七层的寿命、颜色、发射量、透明度、尺寸曲线和图集，在 Unity 原生粒子中适配坐标、平面朝向及尺度；每次胡牌保证发射源配置的最大 burst 数。自摸动作完整曲线保留，较大手臂摆幅适配到本牌桌单位；落牌目标、播放队列、轮询去重和延后结算由本工程 C# 实现。未将雀魂客户端整套运行脚本复制进工程。
+- 所有运行资源已本地打包，离线牌桌无需访问 CDN。素材权利仍归原权利人。

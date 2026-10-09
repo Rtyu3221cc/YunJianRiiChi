@@ -14,7 +14,7 @@ namespace YunJian.Riichi
         // Every clip is baked from the same public mesh, UVs and triangle groups; only
         // the sampled frames, the carried-object path and the timing differ.
         sealed class Clip { public HandData data; public Vector3[][] vertices, normals; public Vector3[] frameVertices, frameNormals; }
-        const string NormalClip="discard-hand", RiichiClip="riichi-hand", StickClip="lizhi-hand", MeldClip="fulu-hand";
+        const string NormalClip="discard-hand", RiichiClip="riichi-hand", StickClip="lizhi-hand", MeldClip="fulu-hand", TsumoClip="tsumo-hand";
         // Majsoul ships no dedicated nuki clip (the hand set is exactly Dapai, LiQiPai,
         // Zimo, Fulu and LiZhi), so extracting North reuses the meld motion.
         static readonly string[] MeldKinds={"chi","pon","kan","nuki"};
@@ -33,6 +33,11 @@ namespace YunJian.Riichi
         Mesh mesh;
         Material body, nails;
         Transform motion, animatedTile, targetTile, targetStick, meldTarget, northTarget, impact;
+        readonly List<WinTileEffect> winEffects = new List<WinTileEffect>();
+        readonly HashSet<string> winningBursts = new HashSet<string>();
+        public int SpawnedWinEffects { get; private set; }
+        static bool IsWin(PublicSound e) => e!=null && (e.kind=="ron" || e.kind=="tsumo");
+        public bool ShowWinPresentation => IsWin(current) || IsWin(call) || handEvents.Any(IsWin) || callEvents.Any(IsWin) || winEffects.Count>0;
         readonly List<NorthPetals> northEffects = new List<NorthPetals>();
         bool handedOff;
         public int SpawnedNorthEffects { get; private set; }
@@ -53,6 +58,7 @@ namespace YunJian.Riichi
         {
             if (item.kind == "discard") return item.riichi ? RiichiClip : NormalClip;
             if (item.kind == "riichi-stick") return StickClip;
+            if (item.kind == "tsumo") return TsumoClip;
             return MeldKinds.Contains(item.kind) ? MeldClip : null;
         }
 
@@ -64,7 +70,7 @@ namespace YunJian.Riichi
         }
         public void Reset()
         {
-            Finish(); FinishCall(); EndImpact(); EndNorthEffects(); handEvents.Clear(); callEvents.Clear(); room = null; cursor = 0; last = Time.unscaledTime;
+            Finish(); FinishCall(); EndImpact(); EndNorthEffects(); EndWinEffects(); winningBursts.Clear(); handEvents.Clear(); callEvents.Clear(); room = null; cursor = 0; last = Time.unscaledTime;
         }
         public void Accept(RoomView view)
         {
@@ -73,10 +79,17 @@ namespace YunJian.Riichi
             bool stale = Time.unscaledTime-last >= 8; last = Time.unscaledTime;
             var fresh = (view.audioEvents ?? new PublicSound[0]).Where(e => e.id > cursor).OrderBy(e => e.id).ToArray();
             cursor = Math.Max(cursor, view.audioSeq);
-            if (stale) { Finish(); FinishCall(); EndNorthEffects(); handEvents.Clear(); callEvents.Clear(); return; }
+            if (stale) { Finish(); FinishCall(); EndNorthEffects(); EndWinEffects(); handEvents.Clear(); callEvents.Clear(); return; }
+            if(view.phase!="result" && !ShowWinPresentation)winningBursts.Clear();
+            if(fresh.Any(IsWin) && !ShowWinPresentation) {Finish();FinishCall();EndImpact();EndNorthEffects();handEvents.Clear();callEvents.Clear();}
             foreach (var item in fresh)
             {
                 if (item.seat < 0 || item.seat >= view.n) continue;
+                if(IsWin(item) && string.IsNullOrEmpty(item.tile))
+                {
+                    var detail=view.result?.details?.FirstOrDefault(d=>d.seat==item.seat);
+                    if(detail!=null){item.tile=detail.tile;item.from=detail.ron?(view.last?.from??detail.from):item.seat;item.winSource=detail.winSource;}
+                }
                 if (ClipFor(item) != null) handEvents.Enqueue(item);
                 if (CallArt(item.kind) != null) callEvents.Enqueue(item);
             }
@@ -123,13 +136,14 @@ namespace YunJian.Riichi
             motion = new GameObject("Original hand seat "+item.seat).transform;
             if(overlay==null) {overlay=new GameObject("Discard hand overlay camera").AddComponent<Camera>();overlay.transform.SetParent(table.Camera.transform,false);}
             ConfigureOverlay();overlay.enabled=true;
-            Vector3 anchor=stick ? table.StickPoint(item.seat) : item.kind=="nuki" ? table.NorthPoint(item.seat,item.nuki) : MeldKinds.Contains(item.kind) ? table.MeldPoint(item.seat) : table.DiscardPoint(item.seat,item.tile);
+            Vector3 anchor=item.kind=="tsumo" ? table.WinningPoint(item) : stick ? table.StickPoint(item.seat) : item.kind=="nuki" ? table.NorthPoint(item.seat,item.nuki) : MeldKinds.Contains(item.kind) ? table.MeldPoint(item.seat) : table.DiscardPoint(item.seat,item.tile);
             motion.position=anchor+Vector3.up*.12f;
             motion.rotation=Quaternion.Euler(0,table.SeatAngle(item.seat)+180,0);
-            motion.localScale=Vector3.one*(.33f/.02947767f*.9f);
+            // Zimo lifts the whole original arm; fit its larger sweep to this table.
+            motion.localScale=Vector3.one*(.33f/.02947767f*(item.kind=="tsumo"?.36f:.9f));
             // Fulu's node_tile is offset from its root; align its settle keyframe
             // with the event's North tile, including the inward-facing glyph.
-            if (item.kind=="nuki") motion.position -= motion.TransformVector(TilePoint(Handoff));
+            if (item.kind=="nuki" || item.kind=="tsumo") motion.position -= motion.TransformVector(TilePoint(Handoff));
             var hand=new GameObject("Source hand mesh");hand.layer=14;hand.transform.SetParent(motion,false);
             hand.AddComponent<MeshFilter>().sharedMesh=mesh;
             var renderer=hand.AddComponent<MeshRenderer>();renderer.sharedMaterials=new[]{body,nails};renderer.shadowCastingMode=ShadowCastingMode.Off;
@@ -148,6 +162,7 @@ namespace YunJian.Riichi
             float elapsed=ValidationFreeze?ValidationTime:Time.unscaledTime-started;
             if(elapsed>=Handoff) return;
             if (current.kind=="riichi-stick") targetStick=table.StickTarget(current.seat);
+            else if (current.kind=="tsumo") targetTile=table.WinningTarget(current);
             else if (current.kind=="nuki") northTarget=table.NorthTarget(current.seat,current.nuki);
             else if (MeldKinds.Contains(current.kind)) meldTarget=table.MeldTarget(current.seat);
             else targetTile=table.FindDiscard(current.seat,current.tile);
@@ -189,7 +204,23 @@ namespace YunJian.Riichi
                 petals.Initialize(table.NorthPoint(current.seat,current.nuki),table.SeatAngle(current.seat),now,(uint)(current.id+SpawnedNorthEffects+1));
                 northEffects.Add(petals); SpawnedNorthEffects++;
             }
+            else if (current.kind=="tsumo") SpawnWin(current,ValidationFreeze?Handoff:started+Handoff);
             else if (MeldKinds.Contains(current.kind)) SpawnImpact();
+        }
+        void SpawnWin(PublicSound item,float now)
+        {
+            if(string.IsNullOrEmpty(item.tile))return;
+            string key=item.from+":"+item.winSource+":"+item.tile;
+            if(!winningBursts.Add(key))return;
+            var effect=new GameObject("Original winning tile effect "+key).AddComponent<WinTileEffect>();effect.transform.SetParent(transform,false);
+            effect.Initialize(table.WinningPoint(item),table.SeatAngle(item.kind=="ron"?item.from:item.seat),now,(uint)(item.id+1));
+            winEffects.Add(effect);SpawnedWinEffects++;
+        }
+        void EndWinEffects(){foreach(var e in winEffects)if(e!=null){e.gameObject.SetActive(false);Destroy(e.gameObject);}winEffects.Clear();}
+        void UpdateWinEffects()
+        {
+            float now=ValidationFreeze?ValidationTime:Time.unscaledTime;
+            for(int i=winEffects.Count-1;i>=0;i--){var e=winEffects[i];float age=e==null?WinTileEffect.Lifetime:now-e.StartedAt;if(age>=WinTileEffect.Lifetime){if(e!=null){e.gameObject.SetActive(false);Destroy(e.gameObject);}winEffects.RemoveAt(i);}else e.Sample(age);}
         }
         void EndNorthEffects()
         {
@@ -235,7 +266,7 @@ namespace YunJian.Riichi
                 impactRenderer.sharedMaterial.SetColor("_Tint", new Color(fade, fade * .95f, fade * .82f, 1f));
             impact.rotation = Quaternion.LookRotation(impact.position - table.Camera.transform.position, Vector3.up);
         }
-        void BeginCall(PublicSound item) { call=item; callStarted=Time.unscaledTime; }
+        void BeginCall(PublicSound item) { call=item; callStarted=Time.unscaledTime; if(item.kind=="ron")SpawnWin(item,ValidationFreeze?0:callStarted); }
         void FinishCall() { call=null; }
         void ConfigureOverlay()
         {
@@ -250,7 +281,7 @@ namespace YunJian.Riichi
         {
             if (current==null && handEvents.Count>0) Begin(handEvents.Dequeue());
             if (call==null && callEvents.Count>0) BeginCall(callEvents.Dequeue());
-            UpdateImpact(); UpdateNorthEffects();
+            UpdateImpact(); UpdateNorthEffects(); UpdateWinEffects();
             float elapsed=ValidationFreeze?ValidationTime:Time.unscaledTime-started;
             if (current!=null && elapsed >= PlayLength) { CompleteHandoff(); Finish(); }
             if (call!=null && (ValidationFreeze?ValidationTime:Time.unscaledTime-callStarted) >= 1.05f) FinishCall();
@@ -293,7 +324,7 @@ namespace YunJian.Riichi
 #if UNITY_EDITOR
         public void ValidationPlay(int seat,string kind,string tile=null,bool riichi=false)
         {
-            Finish();FinishCall();EndNorthEffects();handEvents.Clear();callEvents.Clear();ValidationFreeze=true;ValidationTime=.28f;
+            Finish();FinishCall();EndNorthEffects();EndWinEffects();winningBursts.Clear();handEvents.Clear();callEvents.Clear();ValidationFreeze=true;ValidationTime=.28f;
             Begin(new PublicSound {seat=seat,kind=kind,tile=tile,riichi=riichi});
             if (CallArt(kind)!=null) BeginCall(new PublicSound {seat=seat,kind=kind,tile=tile,riichi=riichi});
         }
@@ -304,10 +335,11 @@ namespace YunJian.Riichi
         public Transform ValidationAnimatedTile => animatedTile;
         public Transform ValidationImpact => impact;
         public Transform ValidationTarget => targetTile!=null?targetTile:targetStick!=null?targetStick:northTarget!=null?northTarget:meldTarget;
+        public WinTileEffect ValidationWin => winEffects.LastOrDefault();
         public NorthPetals ValidationPetals => northEffects.LastOrDefault();
         public string ValidationCallKind => call==null?null:call.kind;
         public float ValidationCallAlpha => call==null?0f:Mathf.Clamp01((ValidationFreeze?ValidationTime:Time.unscaledTime-callStarted)/.12f);
 #endif
-        void OnDestroy() { Finish();FinishCall();EndImpact();EndNorthEffects();if(overlay!=null)Destroy(overlay.gameObject);if(mesh!=null)Destroy(mesh);if(body!=null)Destroy(body);if(nails!=null)Destroy(nails); }
+        void OnDestroy() { Finish();FinishCall();EndImpact();EndNorthEffects();EndWinEffects();if(overlay!=null)Destroy(overlay.gameObject);if(mesh!=null)Destroy(mesh);if(body!=null)Destroy(body);if(nails!=null)Destroy(nails); }
     }
 }

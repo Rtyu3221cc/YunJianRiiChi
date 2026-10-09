@@ -64,3 +64,20 @@ test('random playable full hands preserve physical tiles and total points',()=>{
   assert(steps<650,'hand did not finish');conservation(r);assert.equal(r.s.phase,'result');
  }
 });
+
+test('tsumo event carries public winning tile and source for every peer',()=>{
+ for(const n of [3,4]){const r=fixture(n);r.s.turn=1;r.s.players[1].hand='p123456s123z1112z2';const seq=r.s.audioSeq;action(r,1,'tsumo');
+ const e=r.view(0).audioEvents.filter(e=>e.id>seq);assert.equal(e.length,1);assert.deepEqual([e[0].kind,e[0].seat,e[0].tile,e[0].from,e[0].winSource],['tsumo',1,'z2',1,'tsumo']);
+ for(let i=0;i<n;i++)assert.deepEqual(r.view(i).audioEvents,r.view(0).audioEvents);assert.equal(r.s.result.details[0].tile,'z2');}
+});
+test('double ron emits each winner on the same source tile; triple ron emits no win',()=>{
+ for(const count of [2,3]){const r=fixture();for(let i=1;i<=count;i++){r.s.players[i].hand='p123456s123z1112';r.s.players[i].river=[];}const seq=r.s.audioSeq;r.react(0,'z2');for(let i=1;i<=count;i++)action(r,i,'ron');resolvePass(r);
+ const e=r.view(0).audioEvents.filter(e=>e.id>seq && e.kind==='ron');assert.equal(e.length,count===3?0:2);for(const event of e)assert.deepEqual([event.tile,event.from,event.winSource],['z2',0,'discard']);}
+});
+test('robbed kakan event targets added tile rather than previous discard or whole meld',()=>{
+ const r=fixture();r.s.players[0].hand='p123s123z1122m3,m333+';r.s.players[1].hand='m12p123s123z11222';r.s.players[1].river=[];r.s.last={from:2,tile:'p9'};const seq=r.s.audioSeq;
+ action(r,0,'kan:m333+3');action(r,1,'ron');resolvePass(r);const e=r.view(2).audioEvents.filter(e=>e.id>seq&&e.kind==='ron');assert.equal(e.length,1);assert.deepEqual([e[0].tile,e[0].from,e[0].winSource],['m3',0,'kakan']);assert.equal(r.s.result.details[0].winSource,'kakan');
+});
+test('ordinary ron publishes exact tile and source without exposing private wall',()=>{
+ const r=fixture();r.s.players[1].hand='m123p123s123z3334';r.s.players[1].river=[];r.react(0,'z4');action(r,1,'ron');resolvePass(r);const e=r.view(0).audioEvents.find(e=>e.kind==='ron');assert.deepEqual([e.tile,e.from,e.winSource],['z4',0,'discard']);assert(!('wall' in r.view(0)));assert.equal(r.s.result.details[0].from,0);
+});

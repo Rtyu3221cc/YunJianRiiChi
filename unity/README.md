@@ -1,8 +1,19 @@
 # 云间日麻 Unity 三维客户端
 
+## Unity 0.5.9 荣和、自摸与胡牌特效
+
+最新安卓包：[下载 Unity 0.5.9 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.9/yunjian-riichi-unity-0.5.9.apk)，versionCode 10，与此前 Unity 包同签名，可覆盖更新。
+
+- 荣和、自摸显示雀魂原始喊字，继续使用吃碰的一姬立绘和语音。
+- 自摸接入原 `Zimo_Anim-Zimo` 手部动作，携带实际胡牌并准确落牌；荣和在放铳牌上播放特效。
+- 胡牌显示原默认七层光效，保留原贴图、颜色、寿命和透明度/尺寸曲线；抢杠与抢北使用被抢的牌作为目标，双响分别提示两名赢家。
+- 牌桌播完提示、动作及胡牌特效后再显示结算；刷新不重播，重连跳过历史事件。
+
+预览：[荣和提示](../dist/previews/unity-0.5.9-win-3-ron-call-0.png)、[自摸提示与手部](../dist/previews/unity-0.5.9-win-3-tsumo-call-0.png)、[胡牌特效](../dist/previews/unity-0.5.9-win-3-tsumo-effect-0.png)。素材与 Unity 适配范围见 [ARTWORK.md](../ARTWORK.md)，检查见 [0.5.9 验证记录](../dist/验证记录-unity-0.5.9.txt)。安卓真机效果待实测。
+
 ## 0.5.8 拔北动作与樱花花瓣
 
-最新安卓包：[下载 Unity 0.5.8 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.8/yunjian-riichi-unity-0.5.8.apk)，versionCode 9，与此前 Unity 包同签名，可覆盖更新。
+此版本安卓包：[下载 Unity 0.5.8 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.8/yunjian-riichi-unity-0.5.8.apk)，versionCode 9，与此前 Unity 包同签名，可覆盖更新。
 
 - 拔北显示原始“拔北”喊字，继续使用吃碰时的一姬立绘和语音。
 - 手中带着北牌，沿用原 Fulu 手部动作，并将落牌关键帧对准本次拔出的北牌；已有北牌和副露保持可见。
@@ -11,7 +22,7 @@
 
 预览：[拔北提示](../dist/previews/unity-0.5.8-north-call-0.png)、[手部动作](../dist/previews/unity-0.5.8-north-hand-0.png)、[落牌花瓣](../dist/previews/unity-0.5.8-north-petals-0.png)。检查范围见 [0.5.8 验证记录](../dist/验证记录-unity-0.5.8.txt)，素材来源见 [ARTWORK.md](../ARTWORK.md)。安卓真机效果待实测。
 
-构建脚本当前输出 `Builds/yunjian-riichi-unity-0.5.8.apk`。
+构建脚本当前输出 `Builds/yunjian-riichi-unity-0.5.9.apk`。
 
 ## 0.5.7 计分盘出牌指示灯
 

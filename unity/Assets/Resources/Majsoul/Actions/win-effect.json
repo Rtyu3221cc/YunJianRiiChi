@@ -1,0 +1,570 @@
+{
+  "layers": [
+    {
+      "name": "ground_yuan",
+      "position": [
+        0,
+        0.005,
+        0.01
+      ],
+      "rotation": [
+        -0.7071068,
+        0,
+        0,
+        -0.7071068
+      ],
+      "duration": 1,
+      "delay": 0,
+      "lifeMin": 1.8,
+      "lifeMax": 1.8,
+      "sizeMin": 0.7,
+      "sizeMax": 0.7,
+      "speedMin": 0,
+      "speedMax": 0,
+      "rotationMin": 0,
+      "rotationMax": 0,
+      "color": [
+        0.4862745,
+        0.7647059,
+        0.9333333,
+        1
+      ],
+      "gravity": 0,
+      "maxParticles": 1,
+      "seed": 2583722095,
+      "rate": 0,
+      "bursts": [
+        {
+          "time": 0,
+          "min": 0,
+          "max": 1
+        }
+      ],
+      "renderMode": 2,
+      "stretch": 2,
+      "texture": "win-yuanqiu2",
+      "tint": [
+        0.4852941,
+        0.4852941,
+        0.4852941,
+        0.5
+      ],
+      "alpha": [
+        {
+          "time": 0,
+          "value": 1
+        },
+        {
+          "time": 0.20589,
+          "value": 1
+        },
+        {
+          "time": 0.402945,
+          "value": 0
+        },
+        {
+          "time": 1,
+          "value": 0
+        }
+      ],
+      "size": [
+        {
+          "time": 0,
+          "value": 0
+        },
+        {
+          "time": 0.03928445,
+          "value": 0.9496914
+        },
+        {
+          "time": 1,
+          "value": 1
+        }
+      ],
+      "shape": -1,
+      "radius": 0.01,
+      "coneAngle": 0,
+      "tiles": [
+        1,
+        1
+      ]
+    },
+    {
+      "name": "bao_shin",
+      "position": [
+        0,
+        0.005,
+        0.01
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        -1
+      ],
+      "duration": 0.5,
+      "delay": 0,
+      "lifeMin": 0.3,
+      "lifeMax": 0.3,
+      "sizeMin": 0.5,
+      "sizeMax": 0.5,
+      "speedMin": 0,
+      "speedMax": 0,
+      "rotationMin": 0,
+      "rotationMax": 0,
+      "color": [
+        0.5294118,
+        0.7098039,
+        1,
+        1
+      ],
+      "gravity": 0,
+      "maxParticles": 12,
+      "seed": 626493127,
+      "rate": 5,
+      "bursts": [
+        {
+          "time": 0,
+          "min": 0,
+          "max": 2
+        }
+      ],
+      "renderMode": 2,
+      "stretch": 2,
+      "texture": "win-shanguang",
+      "tint": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "alpha": [
+        {
+          "time": 0,
+          "value": 1
+        },
+        {
+          "time": 0.20589,
+          "value": 1
+        },
+        {
+          "time": 0.402945,
+          "value": 0
+        },
+        {
+          "time": 1,
+          "value": 0
+        }
+      ],
+      "size": [
+        {
+          "time": 0,
+          "value": 0
+        },
+        {
+          "time": 0.03928445,
+          "value": 0.9496914
+        },
+        {
+          "time": 1,
+          "value": 1
+        }
+      ],
+      "shape": -1,
+      "radius": 0.01,
+      "coneAngle": 0,
+      "tiles": [
+        1,
+        1
+      ]
+    },
+    {
+      "name": "shexian",
+      "position": [
+        0,
+        0.005,
+        0.01
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        -1
+      ],
+      "duration": 0.5,
+      "delay": 0,
+      "lifeMin": 0.3,
+      "lifeMax": 0.3,
+      "sizeMin": 0.5,
+      "sizeMax": 0.5,
+      "speedMin": 0,
+      "speedMax": 0,
+      "rotationMin": 0,
+      "rotationMax": 0,
+      "color": [
+        0.7137255,
+        0.8941177,
+        1,
+        1
+      ],
+      "gravity": 0,
+      "maxParticles": 11,
+      "seed": 354162008,
+      "rate": 5,
+      "bursts": [
+        {
+          "time": 0,
+          "min": 0,
+          "max": 1
+        }
+      ],
+      "renderMode": 2,
+      "stretch": 2,
+      "texture": "win-bao",
+      "tint": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "alpha": [
+        {
+          "time": 0,
+          "value": 1
+        },
+        {
+          "time": 0.20589,
+          "value": 1
+        },
+        {
+          "time": 0.402945,
+          "value": 0
+        },
+        {
+          "time": 1,
+          "value": 0
+        }
+      ],
+      "size": [
+        {
+          "time": 0,
+          "value": 0
+        },
+        {
+          "time": 0.03928445,
+          "value": 0.9496914
+        },
+        {
+          "time": 1,
+          "value": 1
+        }
+      ],
+      "shape": -1,
+      "radius": 0.01,
+      "coneAngle": 0,
+      "tiles": [
+        3,
+        4
+      ]
+    },
+    {
+      "name": "lizi_down",
+      "position": [
+        0,
+        0.005,
+        0.01
+      ],
+      "rotation": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "duration": 0.8,
+      "delay": 0,
+      "lifeMin": 1,
+      "lifeMax": 1,
+      "sizeMin": 0.3,
+      "sizeMax": 0.3,
+      "speedMin": -0.1,
+      "speedMax": -0.1,
+      "rotationMin": -89.99999,
+      "rotationMax": -89.99999,
+      "color": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "gravity": 0,
+      "maxParticles": 5,
+      "seed": 2707501312,
+      "rate": 0,
+      "bursts": [
+        {
+          "time": 0,
+          "min": 0,
+          "max": 5
+        }
+      ],
+      "renderMode": 0,
+      "stretch": 5,
+      "texture": "win-Light2",
+      "tint": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "alpha": [
+        {
+          "time": 0,
+          "value": 1
+        },
+        {
+          "time": 0.402945,
+          "value": 0
+        },
+        {
+          "time": 1,
+          "value": 0
+        }
+      ],
+      "size": [
+        {
+          "time": 0,
+          "value": 1
+        },
+        {
+          "time": 0.4402748,
+          "value": 0.2995626
+        },
+        {
+          "time": 1,
+          "value": 0
+        }
+      ],
+      "shape": -1,
+      "radius": 0.01,
+      "coneAngle": 0,
+      "tiles": [
+        1,
+        1
+      ]
+    },
+    {
+      "name": "light",
+      "position": [
+        0,
+        0.005,
+        0.01
+      ],
+      "rotation": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "duration": 0.8,
+      "delay": 0,
+      "lifeMin": 0.4,
+      "lifeMax": 0.4,
+      "sizeMin": 0.18,
+      "sizeMax": 0.18,
+      "speedMin": -0.1,
+      "speedMax": -0.1,
+      "rotationMin": 0,
+      "rotationMax": 0,
+      "color": [
+        0.5450981,
+        0.8666667,
+        1,
+        1
+      ],
+      "gravity": 0,
+      "maxParticles": 3,
+      "seed": 622648896,
+      "rate": 0,
+      "bursts": [
+        {
+          "time": 0,
+          "min": 0,
+          "max": 3
+        }
+      ],
+      "renderMode": 1,
+      "stretch": 10,
+      "texture": "win-thunder",
+      "tint": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "alpha": [],
+      "size": [],
+      "shape": 3,
+      "radius": 0.01,
+      "coneAngle": 0,
+      "tiles": [
+        1,
+        4
+      ]
+    },
+    {
+      "name": "lizi",
+      "position": [
+        0,
+        0.005,
+        0.01
+      ],
+      "rotation": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "duration": 1,
+      "delay": 0,
+      "lifeMin": 0.7200001,
+      "lifeMax": 0.87,
+      "sizeMin": 0.02,
+      "sizeMax": 0.04,
+      "speedMin": 0.2,
+      "speedMax": 0.2,
+      "rotationMin": 0,
+      "rotationMax": 0,
+      "color": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "gravity": 0.05,
+      "maxParticles": 27,
+      "seed": 4054329568,
+      "rate": 0,
+      "bursts": [
+        {
+          "time": 0,
+          "min": 0,
+          "max": 11
+        },
+        {
+          "time": 0.15,
+          "min": 0,
+          "max": 11
+        },
+        {
+          "time": 0.3,
+          "min": 0,
+          "max": 5
+        }
+      ],
+      "renderMode": 0,
+      "stretch": 2,
+      "texture": "win-lizi",
+      "tint": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "alpha": [],
+      "size": [
+        {
+          "time": 0,
+          "value": 1
+        },
+        {
+          "time": 1,
+          "value": 0
+        }
+      ],
+      "shape": 1,
+      "radius": 0.01,
+      "coneAngle": 25,
+      "tiles": [
+        1,
+        1
+      ]
+    },
+    {
+      "name": "kuosan",
+      "position": [
+        0,
+        0.012,
+        0.01
+      ],
+      "rotation": [
+        -0.7071068,
+        0,
+        0,
+        -0.7071068
+      ],
+      "duration": 1,
+      "delay": 0,
+      "lifeMin": 0.3,
+      "lifeMax": 0.3,
+      "sizeMin": 1,
+      "sizeMax": 1,
+      "speedMin": 0,
+      "speedMax": 0,
+      "rotationMin": 0,
+      "rotationMax": 0,
+      "color": [
+        0.3529412,
+        0.7607843,
+        1,
+        1
+      ],
+      "gravity": 0,
+      "maxParticles": 5,
+      "seed": 2133098757,
+      "rate": 0,
+      "bursts": [
+        {
+          "time": 0,
+          "min": 2,
+          "max": 5
+        }
+      ],
+      "renderMode": 2,
+      "stretch": 2,
+      "texture": "win-kuosan",
+      "tint": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "alpha": [
+        {
+          "time": 0,
+          "value": 1
+        },
+        {
+          "time": 1,
+          "value": 0
+        }
+      ],
+      "size": [
+        {
+          "time": 0,
+          "value": 0
+        },
+        {
+          "time": 1,
+          "value": 1
+        }
+      ],
+      "shape": -1,
+      "radius": 0.01,
+      "coneAngle": 0,
+      "tiles": [
+        4,
+        4
+      ]
+    }
+  ]
+}

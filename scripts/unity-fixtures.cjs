@@ -48,3 +48,23 @@ effects.players.forEach((p,i)=>{
 effects.hand=effects.hand.slice(0,10);effects.drawn=null;effects.players[0].nuki=2;
 effects.options=[{id:'chi:p345-',kind:'chi',meld:'p345-'},{id:'chi:p456-',kind:'chi',meld:'p456-'},{id:'pon:p555-',kind:'pon',meld:'p555-'},{id:'pass',kind:'pass'}];
 fs.writeFileSync('build/unity-smoke/effects.json',JSON.stringify(effects));
+
+// Controlled legal win hands; synthetic presentation views, not recorded games.
+function winRoom(n){
+ const r=new Room('win');r.dispatch({op:'create',host:'win',name:'动画测试',n,rounds:1});
+ for(let i=1;i<n;i++)r.dispatch({op:'join',pin:r.s.pin,name:'玩家'+i});
+ r.dispatch({op:'start',token:r.s.players[0].token,version:r.s.version});
+ r.s.interrupted=true;r.s.wall=Array(30).fill('p9');r.s.indicators=Array(5).fill('z4');r.s.ura=Array(5).fill('z4');
+ r.s.players.forEach(p=>{p.hand='m19p147s258z12345';p.river=[{tile:'p2'}];});return r;
+}
+for(const n of [3,4])for(const kind of ['ron','tsumo'])for(let winner=0;winner<n;winner++){
+ const r=winRoom(n),from=(winner+1)%n;r.s.turn=kind==='tsumo'?winner:from;
+ r.s.players[winner].hand='p123456s123z1112'+(kind==='tsumo'?'z2':'');r.s.players[winner].river=[];
+ if(kind==='ron'){r.s.players[from].river.push({tile:'z2',called:false});r.s.last={from,tile:'z2'};}
+ const before=r.s.audioSeq;r.win([winner],kind==='ron'?from:null,kind==='ron'?'z2':null);
+ for(let you=0;you<2;you++){const v=r.view(you);v.audioEvents=v.audioEvents.filter(e=>e.id>before);fs.writeFileSync(`build/unity-smoke/win-${n}-${kind}-${winner}-${you}.json`,JSON.stringify(v));}
+}
+const doubled=winRoom(4);for(const i of [1,2]){doubled.s.players[i].hand='p123456s123z1112';doubled.s.players[i].river=[];}
+doubled.s.players[0].river.push({tile:'z2',called:false});doubled.s.last={from:0,tile:'z2'};
+const seq=doubled.s.audioSeq;doubled.win([1,2],0,'z2');const doubledView=doubled.view(0);doubledView.audioEvents=doubledView.audioEvents.filter(e=>e.id>seq);
+fs.writeFileSync('build/unity-smoke/win-double-ron.json',JSON.stringify(doubledView));

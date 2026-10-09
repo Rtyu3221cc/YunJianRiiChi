@@ -6,7 +6,7 @@ from pathlib import Path
 from zipfile import ZipFile
 
 root = Path(__file__).resolve().parent.parent
-apk = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else root / 'unity/Builds/yunjian-riichi-unity-0.5.8.apk'
+apk = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else root / 'unity/Builds/yunjian-riichi-unity-0.5.9.apk'
 assets = root / 'app/src/main/assets'
 with ZipFile(apk) as archive:
     assert archive.testzip() is None
@@ -28,11 +28,11 @@ with ZipFile(apk) as archive:
         assert 'assets/bin/Data/' + guid in names, 'Missing original tile atlas: ' + file.name
     for file in ['discard-hand.json', 'discard-hand-frames.bytes', 'riichi-hand.json', 'riichi-hand-frames.bytes',
                  'lizhi-hand.json', 'lizhi-hand-frames.bytes', 'fulu-hand.json', 'fulu-hand-frames.bytes',
-                 '../OriginalTile/outline.json']:
+                 'tsumo-hand.json', 'tsumo-hand-frames.bytes', 'win-effect.json', '../OriginalTile/outline.json']:
         source = root / 'unity/Assets/Resources/Majsoul/Actions' / file
         guid = re.search(r'guid: (\w+)', Path(str(source) + '.meta').read_text()).group(1)
         assert source.read_bytes() in archive.read('assets/bin/Data/' + guid), 'Missing/stale original hand data: ' + file
-    for name in ['response-glow', 'hand-skin', 'hand-nails', 'op_peng', 'op_chi', 'op_x', 'shout_peng', 'shout_babei', 'op_babei', 'north-petals', 'yiji-full']:
+    for name in ['show_rong', 'show_zimo', 'win-yuanqiu2', 'win-shanguang', 'win-bao', 'win-Light2', 'win-thunder', 'win-lizi', 'win-kuosan', 'response-glow', 'hand-skin', 'hand-nails', 'op_peng', 'op_chi', 'op_x', 'shout_peng', 'shout_babei', 'op_babei', 'north-petals', 'yiji-full']:
         source = root / 'unity/Assets/Resources/Majsoul/Actions' / (name+'.png')
         guid = re.search(r'guid: (\w+)', Path(str(source) + '.meta').read_text()).group(1)
         assert 'assets/bin/Data/' + guid in names, 'Missing action texture: ' + name
@@ -43,12 +43,12 @@ with ZipFile(apk) as archive:
         if name.endswith('.json'):
             assert source.read_bytes() in archive.read('assets/bin/Data/' + guid), 'Stale turn indicator source'
     shader_data = b''.join(archive.read(n) for n in names if 'globalgamemanagers.assets' in n)
-    for shader in [b'YunJian/OriginalHand', b'YunJian/OriginalTileBody', b'YunJian/OriginalTileOutline', b'YunJian/ResponseGlow', b'YunJian/TurnLight', b'YunJian/NorthPetal', b'YunJian/TableCloth']:
+    for shader in [b'YunJian/OriginalHand', b'YunJian/OriginalTileBody', b'YunJian/OriginalTileOutline', b'YunJian/ResponseGlow', b'YunJian/TurnLight', b'YunJian/NorthPetal', b'YunJian/WinParticle', b'YunJian/TableCloth']:
         assert shader in shader_data, 'Missing compiled shader: ' + repr(shader)
 dist = root / 'dist'
 output = dist / apk.name
 output.write_bytes(apk.read_bytes())
-checksum = 'SHA256-unity-0.5.8.txt' if len(sys.argv) == 1 else 'SHA256-' + output.stem + '.txt'
+checksum = 'SHA256-unity-0.5.9.txt' if len(sys.argv) == 1 else 'SHA256-' + output.stem + '.txt'
 (dist / checksum).write_text(hashlib.sha256(output.read_bytes()).hexdigest().upper() + '  ' + output.name + '\n', encoding='utf8')
 print('PASS: APK ZIP integrity, current offline assets, phone host/JNI, ARM64 + ARMv7, original tile atlases, exact hand animation bytes, action textures, original turn-light assets and compiled shaders.')
 print(output.name, output.stat().st_size, hashlib.sha256(output.read_bytes()).hexdigest())

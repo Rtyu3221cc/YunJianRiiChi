@@ -26,7 +26,7 @@ namespace YunJian.Riichi
                 if (!next) break;
                 yield return run.Current;
             }
-            File.WriteAllText(Path.Combine(folder, "passed.txt"), "Actual Unity Play mode: live AI room, delayed second-click discard, raycast, 3/4-seat rendering, safe-area pointer roundtrips, 4 resolutions, 8 role clips, called-river removal, grouped chi choices, all 4 discard hand directions at 15 time samples with opaque materials, call cut-ins, event dedup/reconnect; original 224-vertex outlines, model-foot response glow in 4 directions, 0-4 own melds without hand overlap at 4 resolutions, and 4 inward-facing North tiles per seat. Original turn-light particles: four directions, rendered fade/peak/fade, one-second looping and stable phase across polling. North extraction: all three viewer seats/directions, original cut-in, carried tile/landing match, independent previous North and meld visibility, nine visible flutter petals, survival across polling/hand completion, cleanup and event dedup/reconnect. Fixture screenshots are synthetic layout scenes, not replays.");
+            File.WriteAllText(Path.Combine(folder, "passed.txt"), "Actual Unity Play mode: live AI room, delayed second-click discard, raycast, 3/4-seat rendering, safe-area pointer roundtrips, 4 resolutions, 8 role clips, called-river removal, grouped chi choices, all 4 discard hand directions at 15 time samples with opaque materials, call cut-ins, event dedup/reconnect; original 224-vertex outlines, model-foot response glow in 4 directions, 0-4 own melds without hand overlap at 4 resolutions, and 4 inward-facing North tiles per seat. Original turn-light particles: four directions, rendered fade/peak/fade, one-second looping and stable phase across polling. North extraction: all three viewer seats/directions, original cut-in, carried tile/landing match, independent previous North and meld visibility, nine visible flutter petals, survival across polling/hand completion, cleanup and event dedup/reconnect. Win effects: original ron/tsumo cut-ins, Zimo hand and exact tile landing in all 3/4 directions and rotated viewers; seven-layer default win particles with visible camera pixels, delayed settlement, double ron, robbed tile targets and polling/reconnect cleanup. Fixture screenshots are synthetic layout scenes, not replays.");
             Debug.Log("RIICHI UNITY PLAY PASS"); EditorApplication.Exit(0);
         }
         IEnumerator Run()
@@ -134,6 +134,8 @@ namespace YunJian.Riichi
                     Require(File.Exists(fullFile), "Full game-view capture failed at " + suffix);
                 }
             }
+            var winProbe = ValidateWins(client);
+            while(winProbe.MoveNext())yield return winProbe.Current;
             var northProbe = ValidateNorthEffects(client);
             while (northProbe.MoveNext()) yield return northProbe.Current;
             var turnProbe = ValidateTurnLight(client);
@@ -388,6 +390,76 @@ namespace YunJian.Riichi
                 }
             }
         }
+        IEnumerator ValidateWins(RiichiClient client)
+        {
+            var table=GetComponent<TableRenderer>();var fx=GetComponent<TableEffects>();
+            SetGameResolution(1688,780);
+            foreach(int n in new[]{3,4})foreach(string kind in new[]{"ron","tsumo"})
+            for(int you=0;you<2;you++)for(int relative=0;relative<n;relative++)
+            {
+                int winner=(you+relative)%n;
+                var view=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"win-"+n+"-"+kind+"-"+winner+"-"+you+".json")));
+                var events=view.audioEvents;int seq=view.audioSeq;view.audioRoom="win-"+n+kind+you+winner;
+                view.audioEvents=new PublicSound[0];view.audioSeq=seq-1;client.ShowValidationFixture(view);yield return null;
+                fx.ValidationFreeze=true;fx.ValidationTime=.25f;fx.Accept(view);
+                int before=fx.SpawnedWinEffects;view.audioEvents=events;view.audioSeq=seq;fx.Accept(view);
+                Require(fx.ShowWinPresentation,"Result displayed before pending win cut-in");
+                yield return null;yield return null;
+                var e=events.Last(x=>x.kind==kind);var target=table.WinningTarget(e);
+                Require(target!=null && target.name.EndsWith(" "+e.tile),"Win animation targets the wrong tile");
+                Require(fx.ValidationCallKind==kind && fx.Art(kind=="ron"?"show_rong":"show_zimo")!=null && fx.Art("yiji-full")!=null,"Win cut-in missing or character changed");
+                if(you==0){ScreenCapture.CaptureScreenshot(Path.Combine(folder,"win-"+n+"-"+kind+"-call-"+relative+".png"));yield return new WaitForSecondsRealtime(.1f);}
+                if(kind=="tsumo")
+                {
+                    Require(fx.ValidationKind==kind && fx.ValidationAnimatedTile.name==e.tile && !target.gameObject.activeSelf,"Self draw hand did not carry the exact winning tile");
+                    Require(fx.ValidationWin==null,"Self draw effect starts before tile landing");
+                    fx.ValidationTime=.6f;yield return null;yield return null;
+                    var hand=GameObject.Find("Original hand seat "+winner).GetComponentInChildren<MeshRenderer>();
+                    Capture(table,Path.Combine(folder,"win-hand-probe-"+n+"-"+you+"-"+relative+".png"),1688,780);
+                    Require(VisibleEffectPixels(table,hand)>30,"Original Zimo hand is invisible: "+n+"/"+you+"/"+relative);
+                    if(you==0)Capture(table,Path.Combine(folder,"win-"+n+"-tsumo-hand-"+relative+".png"),1688,780);
+                    table.Render(view);fx.Accept(view);yield return null;
+                    Require(!table.WinningTarget(e).gameObject.activeSelf,"Polling duplicated the carried self draw tile");
+                    fx.ValidationTime=fx.ValidationHandoff;yield return null;yield return null;
+                    Require(Vector3.Distance(fx.ValidationAnimatedTile.position,table.WinningPoint(e))<.002f,"Self draw tile snaps at landing");
+                    Require(!fx.ValidationAnimatedTile.gameObject.activeSelf && table.WinningTarget(e).gameObject.activeSelf,"Self draw tile hand-off failed");
+                    fx.ValidationTime=1.02f;yield return null;yield return null;
+                    Require(fx.ValidationKind==null,"Zimo hand did not complete at its original duration");
+                }
+                else Require(fx.ValidationKind==null,"Ron incorrectly moved the winner's hand");
+                var effect=fx.ValidationWin;
+                Require(effect!=null && effect.LayerCount==7 && effect.ParticleCount>0 && fx.SpawnedWinEffects==before+1,"Original seven-layer win burst missing/duplicated");
+                Require(Vector3.Distance(effect.transform.position,table.WinningPoint(e)+Vector3.up*.045f)<.001f,"Win effect detached from winning tile");
+                int pixels=effect.GetComponentsInChildren<ParticleSystemRenderer>().Max(renderer=>VisibleEffectPixels(table,renderer));
+                Require(pixels>20,"Default win particles invisible on the actual camera");
+                if(you==0)Capture(table,Path.Combine(folder,"win-"+n+"-"+kind+"-effect-"+relative+".png"),1688,780);
+                table.Render(view);fx.Accept(view);yield return null;yield return null;
+                Require(fx.ValidationWin==effect && fx.SpawnedWinEffects==before+1 && fx.ShowWinPresentation,"Polling restarted win effect or exposed result too early");
+                fx.ValidationTime=3.1f;yield return null;yield return null;
+                Require(!fx.ShowWinPresentation && fx.ValidationWin==null,"Win result never becomes available or effect leaked");
+                fx.Reset();fx.Accept(view);yield return null;
+                Require(!fx.ShowWinPresentation && !fx.IsAnimating,"Reconnect replayed historical win");
+            }
+            // Double ron shares one discarded tile and one burst; both winners get a cut-in.
+            var multi=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"win-double-ron.json")));
+            var calls=multi.audioEvents;int lastId=multi.audioSeq;multi.audioRoom="double-ron";multi.audioSeq=lastId-2;multi.audioEvents=new PublicSound[0];client.ShowValidationFixture(multi);yield return null;
+            fx.ValidationTime=.2f;fx.Accept(multi);multi.audioEvents=calls;multi.audioSeq=lastId;fx.Accept(multi);yield return null;
+            int shared=fx.SpawnedWinEffects;Require(fx.ValidationCallKind=="ron","First double ron cut-in missing");
+            fx.ValidationTime=1.06f;yield return null;fx.ValidationTime=.2f;yield return null;
+            Require(fx.ValidationCallKind=="ron" && fx.SpawnedWinEffects==shared,"Second winner missing or shared discard flashes twice");
+            fx.Reset();
+            // Robbing a kan/nuki must use the public robbed tile, not an older discard.
+            foreach(string source in new[]{"kakan","ankan","nuki"})
+            {
+                multi.result.details=new[]{new WinDetail{seat=1,from=0,tile="z4",ron=true,winSource=source,score=new ScoreDetail(),name="Robbed tile fixture",hand="z4"}};
+                client.ShowValidationFixture(multi);yield return null;
+                var e=new PublicSound{seat=1,from=0,kind="ron",tile="z4",winSource=source};
+                Require(table.WinningTarget(e)!=null && table.WinningTarget(e)!=table.FindDiscard(0,"z4"),"Robbed tile targets an older river tile");
+            }
+            fx.ValidationFreeze=false;fx.Reset();
+            Debug.Log("RIICHI WIN EFFECT PASS: ron/tsumo in all three/four-seat directions and rotated viewers; original cut-ins, Zimo mesh pixels, exact landing, seven source particle layers and visible pixels; delayed result, polling/reconnect cleanup, double ron and robbed tile targets.");
+        }
+
         IEnumerator ValidateNorthEffects(RiichiClient client)
         {
             var table=GetComponent<TableRenderer>();var fx=GetComponent<TableEffects>();
