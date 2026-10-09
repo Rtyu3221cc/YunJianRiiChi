@@ -2,7 +2,7 @@
 
 ## 0.5.6 手部动画补全与操作修正
 
-安装 `../dist/yunjian-riichi-unity-0.5.6.apk`，同包名覆盖更新，versionCode 7。
+安装 [yunjian-riichi-unity-0.5.6.apk](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.6/yunjian-riichi-unity-0.5.6.apk)，同包名覆盖更新，versionCode 7。
 
 - 立直宣言牌播放原版 `Anim_Dapai_heng-LiQiPai` 横置动作（1.700 秒）；立直喊字与出牌同时开始，宣言成立后接 `Lizhi_Ani-LiZhi`（0.800 秒）把立直棒放进计分盘槽位。
 - 吃、碰、杠和拔北播放原版 `Fulu_Ani-Fulu`（0.900 秒）；落牌时在副露锚点叠加 `effect_chipeng` 的 `bang` 加色闪光。
@@ -15,13 +15,13 @@
 
 ## 0.5.5 描边、响应光圈与手牌避让
 
-安装 `../dist/yunjian-riichi-unity-0.5.5.apk`，versionCode 6。
+安装 [yunjian-riichi-unity-0.5.5.apk](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.5/yunjian-riichi-unity-0.5.5.apk)，versionCode 6。
 
 复用原版 224 顶点描边网格、描边颜色和 `effect_zhishi` 对应的 `majiangkuang` 光圈纹理；光圈位于牌底的桌面空间。自己手牌根据副露实际屏幕投影向左避让，拔北牌朝桌心并沿侧边排列。资源来源及本项目着色器适配见 `../ARTWORK.md`。最新构建脚本输出 `Builds/yunjian-riichi-unity-0.5.5.apk`。
 
 ## 0.5.4 吃碰布局与原始动作
 
-安装 `../dist/yunjian-riichi-unity-0.5.4.apk`，同包名覆盖更新，versionCode 5。
+安装 [yunjian-riichi-unity-0.5.4.apk](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.4/yunjian-riichi-unity-0.5.4.apk)，同包名覆盖更新，versionCode 5。
 
 - 被取走的舍牌从牌河显示中移除，保留引擎历史记录；四方副露放到外侧角落，左右暗牌外移，拔北牌独立摆放。
 - 使用原始操作按钮、黄色响应箭头、角色切入背景与操作喊字，多种吃牌组合展开牌面供选择。
@@ -32,7 +32,7 @@
 
 ## 0.5.3 对手竖立手牌与计分盘
 
-安装 `../dist/yunjian-riichi-unity-0.5.3.apk`，同包名覆盖更新，versionCode 4。
+安装 [yunjian-riichi-unity-0.5.3.apk](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.3/yunjian-riichi-unity-0.5.3.apk)，同包名覆盖更新，versionCode 4。
 
 - 对手暗牌沿用原始麻将模型，站在短边上，红色牌背朝桌心；修正落地高度、碰撞盒和贴地阴影。暗杠、牌河和副露继续平放。
 - 原始计分盘底图保持完整 UV；点数、方位、中央上下窗口与回合灯放在同一根节点，按座位统一旋转。点数提高到 19.2px 字高，中心位置为 (128,192)，完整放在黑色区域；回合灯改成黄色渐变梯形。
@@ -42,7 +42,7 @@
 
 ## 0.5.2 原始麻将显示方式
 
-安装 `../dist/yunjian-riichi-unity-0.5.2.apk`，同包名覆盖更新 Unity 0.5.0 / 0.5.1，versionCode 为 3。
+安装 [yunjian-riichi-unity-0.5.2.apk](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.2/yunjian-riichi-unity-0.5.2.apk)，同包名覆盖更新 Unity 0.5.0 / 0.5.1，versionCode 为 3。
 
 - 桌面麻将使用原 APK 的 `mjp_new` 模型、法线、UV 和两个子网格，宽高比约 0.753；只做坐标轴变换和整体等比缩放。
 - 手牌使用独立正交相机（原预制体 orthographicSize=9）、原始 800×516 手图集与 160×129 红色牌背层。原始平面 2.54×2.54，横向缩放 0.62，单牌单元 80×129；不再将桌面图贴到自制手牌模型上。

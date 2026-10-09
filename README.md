@@ -2,7 +2,7 @@
 
 ## Unity 0.5.6 手部动画补全与操作修正
 
-最新安卓包：[下载 Unity 0.5.6 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/raw/refs/heads/main/dist/yunjian-riichi-unity-0.5.6.apk)，versionCode 7，可覆盖此前 Unity 试玩版。
+最新安卓包：[下载 Unity 0.5.6 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.6/yunjian-riichi-unity-0.5.6.apk)，versionCode 7，可覆盖此前 Unity 试玩版。
 
 - 立直宣言牌改用原版 `Anim_Dapai_heng-LiQiPai` 横置动作：打出与立直喊字**同时**开始，宣言成立后接着由手部把立直棒放进计分盘槽位。表现层拆成手部与喊字两条通道，手部动作排队、喊字独立播放，不再互相推迟。
 - 吃、碰、杠与三麻拔北接入原版 `Fulu_Ani-Fulu` 副露动作；落牌瞬间在副露锚点叠加原版 `bang` 加色撞击闪光，0.38 秒内扩散淡出。
@@ -13,7 +13,7 @@
 
 ## Unity 0.5.5 描边、响应光圈与副露避让
 
-最新安卓包：[下载 Unity 0.5.5 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/raw/refs/heads/main/dist/yunjian-riichi-unity-0.5.5.apk)，versionCode 6，可覆盖此前 Unity 试玩版。
+最新安卓包：[下载 Unity 0.5.5 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.5/yunjian-riichi-unity-0.5.5.apk)，versionCode 6，可覆盖此前 Unity 试玩版。
 
 - 响应牌复用原版 `majiangkuang` 发光纹理，在模型底部渲染随桌面透视变化的加色光圈，保留上方箭头。
 - 桌面麻将和竖立暗牌接入原版 `maque_outline` 描边网格及 `mjp_outline` 颜色，增加细暗色轮廓。
@@ -24,7 +24,7 @@
 
 ## Unity 0.5.4 吃碰布局与动作
 
-此版本安卓包：[下载 Unity 0.5.4 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/raw/refs/heads/main/dist/yunjian-riichi-unity-0.5.4.apk)，versionCode 5，可覆盖此前 Unity 试玩版。
+此版本安卓包：[下载 Unity 0.5.4 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.4/yunjian-riichi-unity-0.5.4.apk)，versionCode 5，可覆盖此前 Unity 试玩版。
 
 - 被吃、碰、杠取走的牌不再留在牌河中；保留规则引擎中的历史记录，显示按剩余牌重新排布。副露移到各家手牌外侧的角落，左右对手手牌外移，拔北牌独立摆放。
 - 吃、碰、杠、荣和、自摸、立直、拔北与跳过使用原始提示图。响应牌有黄色边框和箭头，多种吃牌组合先展开牌面供选择。
@@ -34,7 +34,7 @@
 
 ## Unity 0.5.3 对手竖立手牌与计分盘
 
-此版本安卓包：[下载 Unity 0.5.3 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/raw/refs/heads/main/dist/yunjian-riichi-unity-0.5.3.apk)，versionCode 4，可覆盖 Unity 0.5.0–0.5.2。
+此版本安卓包：[下载 Unity 0.5.3 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.3/yunjian-riichi-unity-0.5.3.apk)，versionCode 4，可覆盖 Unity 0.5.0–0.5.2。
 
 对手手牌使用已有原始麻将网格竖立，牌背朝桌心、牌面朝所属玩家；暗杠、牌河仍按各自规则平放。计分盘完整保留原底图和字符图集，底图、点数、方位与黄色渐变回合灯共用坐标和座位旋转，放大点数字体并重新对齐槽位。
 
@@ -42,7 +42,7 @@
 
 ## Unity 0.5.2 原始麻将显示方式
 
-此版本安卓包：dist/yunjian-riichi-unity-0.5.2.apk。已检查用户提供的雀魂 APK，使用其中的桌面麻将网格及 UV；底部手牌采用原始手牌图集、牌背层和独立正交相机，替换估算比例的三维手牌。主相机沿用原预制体的 28 度视角及朝向，等比换算坐标单位。西瓜桌布、宝牌栏和头像边框保留。
+此版本安卓包：[下载 Unity 0.5.2 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.2/yunjian-riichi-unity-0.5.2.apk)。已检查用户提供的雀魂 APK，使用其中的桌面麻将网格及 UV；底部手牌采用原始手牌图集、牌背层和独立正交相机，替换估算比例的三维手牌。主相机沿用原预制体的 28 度视角及朝向，等比换算坐标单位。西瓜桌布、宝牌栏和头像边框保留。
 
 预览见 dist/previews/unity-0.5.2-*，具体证据及适配边界见 docs/麻将渲染对照.md，验证记录见 dist/验证记录-unity-0.5.2.txt。未进行安卓真机验证。
 
