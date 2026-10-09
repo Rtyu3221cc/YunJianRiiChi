@@ -5,7 +5,7 @@ from pathlib import Path
 from zipfile import ZipFile
 
 root = Path(__file__).resolve().parent.parent
-apk = root / 'unity/Builds/yunjian-riichi-unity-0.5.5.apk'
+apk = root / 'unity/Builds/yunjian-riichi-unity-0.5.6.apk'
 assets = root / 'app/src/main/assets'
 with ZipFile(apk) as archive:
     assert archive.testzip() is None
@@ -25,7 +25,9 @@ with ZipFile(apk) as archive:
     for file in (root / 'unity/Assets/Resources/Majsoul/OriginalTile').glob('*.png'):
         guid = re.search(r'guid: (\w+)', Path(str(file) + '.meta').read_text()).group(1)
         assert 'assets/bin/Data/' + guid in names, 'Missing original tile atlas: ' + file.name
-    for file in ['discard-hand.json', 'discard-hand-frames.bytes', '../OriginalTile/outline.json']:
+    for file in ['discard-hand.json', 'discard-hand-frames.bytes', 'riichi-hand.json', 'riichi-hand-frames.bytes',
+                 'lizhi-hand.json', 'lizhi-hand-frames.bytes', 'fulu-hand.json', 'fulu-hand-frames.bytes',
+                 '../OriginalTile/outline.json']:
         source = root / 'unity/Assets/Resources/Majsoul/Actions' / file
         guid = re.search(r'guid: (\w+)', Path(str(source) + '.meta').read_text()).group(1)
         assert source.read_bytes() in archive.read('assets/bin/Data/' + guid), 'Missing/stale original hand data: ' + file
@@ -39,6 +41,6 @@ with ZipFile(apk) as archive:
 dist = root / 'dist'
 output = dist / apk.name
 output.write_bytes(apk.read_bytes())
-(dist / 'SHA256-unity-0.5.5.txt').write_text(hashlib.sha256(output.read_bytes()).hexdigest().upper() + '  ' + output.name + '\n', encoding='utf8')
+(dist / 'SHA256-unity-0.5.6.txt').write_text(hashlib.sha256(output.read_bytes()).hexdigest().upper() + '  ' + output.name + '\n', encoding='utf8')
 print('PASS: APK ZIP integrity, current offline assets, phone host/JNI, ARM64 + ARMv7, original tile atlases, exact hand animation bytes, action textures and compiled shaders.')
 print(output.name, output.stat().st_size, hashlib.sha256(output.read_bytes()).hexdigest())

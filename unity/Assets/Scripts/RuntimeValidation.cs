@@ -174,6 +174,18 @@ namespace YunJian.Riichi
             Require(table.ResponseTarget!=null,"Response discard is not highlighted");
             var groundGlow=table.ResponseTarget.Find("Original response ground glow");
             Require(groundGlow!=null && Mathf.Abs(groundGlow.position.y-.006f)<.001f && groundGlow.GetComponent<MeshRenderer>().sharedMaterial.shader.name=="YunJian/ResponseGlow","Response glow is not attached to the tile foot");
+            // The marker belongs to this client's own legal calls: a lone pass, or no
+            // option at all, means another seat is deciding and nothing is highlighted.
+            var ownOptions=effectFixture.options;
+            effectFixture.options=new[]{new Choice {id="pass",kind="pass"}};
+            client.ShowValidationFixture(effectFixture);yield return null;Physics.SyncTransforms();
+            Require(table.ResponseTarget==null,"Response marker shown when only pass is available");
+            effectFixture.options=new Choice[0];
+            client.ShowValidationFixture(effectFixture);yield return null;Physics.SyncTransforms();
+            Require(table.ResponseTarget==null,"Response marker shown with no local option");
+            effectFixture.options=ownOptions;
+            client.ShowValidationFixture(effectFixture);yield return null;Physics.SyncTransforms();
+            Require(table.ResponseTarget!=null,"Response marker missing for a legal local call");
             Require(client.ActionRects(1298,600).Length==3,"Multiple chi choices must share one action button");
             var fx=GetComponent<TableEffects>();
             for(int frame=0;frame<8;frame++)yield return null;
@@ -207,6 +219,67 @@ namespace YunJian.Riichi
                 fx.ValidationPlay(seat,"pon");yield return null;yield return null;
                 ScreenCapture.CaptureScreenshot(Path.Combine(folder,"call-pon-"+seat+".png"));yield return new WaitForSecondsRealtime(.2f);
             }
+            // The riichi declaration uses the longer public LiQiPai clip, lies the
+            // carried tile sideways and only swaps in the river tile when it settles.
+            effectFixture.last=new LastDiscard {from=0,tile=effectFixture.players[0].river.Last().tile};
+            client.ShowValidationFixture(effectFixture);yield return null;Physics.SyncTransforms();
+            fx.ValidationPlay(0,"discard",effectFixture.players[0].river.Last().tile,true);
+            yield return null;yield return null;
+            Require(fx.ValidationRiichiDiscard,"Riichi discard did not select the declaration clip");
+            Require(Mathf.Abs(fx.ValidationPlayLength-1.70f)<.01f,"Riichi clip length is not the source length");
+            Require(Mathf.Abs(fx.ValidationHandoff-1.2667f)<.01f,"Riichi tile hand-off is not the settle time");
+            var carried=fx.ValidationAnimatedTile;
+            Require(carried!=null,"Riichi discard has no carried tile");
+            Require(Mathf.Abs(Mathf.DeltaAngle(carried.eulerAngles.y,table.SeatAngle(0)+90f))<.5f,"Riichi carried tile is not sideways");
+            for(int sample=0;sample<14;sample++)
+            {
+                fx.ValidationTime=Mathf.Min(sample*fx.ValidationPlayLength/14,fx.ValidationPlayLength-.03f);yield return null;yield return null;
+                Capture(table,Path.Combine(folder,"riichi-hand-"+sample.ToString("D2")+".png"),1688,780);
+            }
+            fx.ValidationTime=fx.ValidationHandoff+.05f;yield return null;yield return null;
+            Require(fx.ValidationAnimatedTile!=null && !fx.ValidationAnimatedTile.gameObject.activeSelf,"Carried riichi tile survived its hand-off");
+            // A meld plays the Fulu hand motion and reveals the newest meld at its settle time.
+            fx.ValidationPlay(1,"pon");
+            yield return null;yield return null;
+            Require(fx.ValidationKind=="pon" && GameObject.Find("Original hand seat 1")!=null,"Missing meld hand animation");
+            Require(Mathf.Abs(fx.ValidationPlayLength-.90f)<.01f && Mathf.Abs(fx.ValidationHandoff-.70f)<.01f,"Meld clip timing is wrong");
+            Capture(table,Path.Combine(folder,"meld-hand.png"),1688,780);
+            // Placing the riichi stick is its own motion after the declaration discard.
+            var stickFixture=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"effects.json")));
+            stickFixture.phase="play";stickFixture.pending=null;stickFixture.players[0].riichi=1;
+            stickFixture.last=new LastDiscard {from=0,tile=stickFixture.players[0].river.Last().tile};
+            client.ShowValidationFixture(stickFixture);yield return null;Physics.SyncTransforms();
+            Require(table.StickTarget(0)!=null,"Deposited riichi stick has no anchor");
+            fx.ValidationPlay(0,"riichi-stick");
+            yield return null;yield return null;
+            Require(fx.ValidationKind=="riichi-stick","Stick placement did not start");
+            Require(Mathf.Abs(fx.ValidationPlayLength-.80f)<.01f && Mathf.Abs(fx.ValidationHandoff-.50f)<.01f,"Stick clip timing is wrong");
+            var carriedStick=fx.ValidationAnimatedTile;
+            Require(carriedStick!=null && carriedStick.Find("Riichi 1000")!=null,"Carried riichi stick is missing");
+            Require(!table.StickTarget(0).gameObject.activeSelf,"Deposited stick was not hidden during placement");
+            for(int sample=0;sample<10;sample++)
+            {
+                fx.ValidationTime=Mathf.Min(sample*fx.ValidationPlayLength/10,fx.ValidationPlayLength-.03f);yield return null;yield return null;
+                Capture(table,Path.Combine(folder,"riichi-stick-"+sample.ToString("D2")+".png"),1688,780);
+            }
+            fx.ValidationTime=fx.ValidationHandoff+.05f;yield return null;yield return null;
+            Require(table.StickTarget(0).gameObject.activeSelf,"Deposited stick was not revealed after placement");
+            // Riichi mode dims exactly the tiles that would break tenpai.
+            var riichiFixture=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"effects.json")));
+            riichiFixture.phase="play";riichiFixture.pending=null;riichiFixture.turn=riichiFixture.you;
+            string keep=riichiFixture.hand[riichiFixture.hand.Length-1];riichiFixture.drawn=keep;
+            riichiFixture.options=new[]{new Choice{id="riichi:"+keep+"_",kind="riichi",tile=keep},new Choice{id="discard:"+keep+"_",kind="discard",tile=keep}};
+            client.ShowValidationFixture(riichiFixture);yield return null;
+            client.ValidationToggleRiichi(true);yield return null;
+            int dimmed=0;
+            for(int i=0;i<table.ValidationHandCount;i++)
+            {
+                bool playable=i==table.ValidationHandCount-1;
+                if(playable)Require(table.ValidationHandDim(i)==0f,"A discardable riichi tile was dimmed");
+                else { Require(table.ValidationHandDim(i)==1f,"An unplayable riichi tile was not dimmed"); dimmed++; }
+            }
+            Require(dimmed>0,"The riichi fixture dimmed no tile");
+            Capture(table,Path.Combine(folder,"riichi-dimmed.png"),1688,780);
             fx.ValidationFreeze=false;fx.Reset();
             effectFixture.last=new LastDiscard {from=3,tile="p5"};effectFixture.players[3].river.Last().called=true;effectFixture.pending=null;effectFixture.phase="play";
             client.ShowValidationFixture(effectFixture);yield return null;

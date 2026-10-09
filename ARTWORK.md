@@ -53,3 +53,12 @@ Unity 0.5.2 补充原 APK 的 chang、ju、word_left、number_left、number_scor
 - 光圈来自 `myassets/scenes/mj/mjtable/texture/majiangkuang.png`，保持原始 256×256 像素。原 `effect_mingpaizhishi/effect_zhishi/3d/prefab/effect_zhishi.prefab` 的 `kuang` 使用该加色粒子材质。当前将原纹理放到牌底的桌面平面上，按模型脚印缩放，黄色加色并轻微脉动；箭头继续使用已有原素材。
 - 来源容器、输出 SHA-256、描边颜色与缩放记录见 `unity/Assets/Resources/Majsoul/OriginalTile/outline-provenance.json`；导入脚本 `scripts/import-reference-outlines.py`。
 - 原版编译着色器未作为源码移植。`OriginalTileOutline.shader` 用扩展网格背面实现轮廓，`ResponseGlow.shader` 实现加色纹理；动态位置、手牌避让与拔北方向由 C# 适配。
+
+## Unity 0.5.6 立直棒、副露与撞击特效
+
+- 立直棒放置动画来自雀魂官方公开资源 `scene/Assets/Resource/table/hand/Lizhi_Ani-LiZhi.lani`（0.800 秒，30 fps，60 轨道），驱动骨骼 `Dum_Lizhi/node_liqibang`；与已有的手部网格和骨架共用同一套绑定。
+- 副露动画来自 `.../hand/Fulu_Ani-Fulu.lani`（0.900 秒，30 fps，60 轨道），驱动 `Dum_Majiang/node_tile`。吃、碰、杠与三麻拔北共用此动作。**雀魂手部动画全集只有 Dapai、LiQiPai、Zimo、Fulu、LiZhi 五个片段，没有拔北专用动画**——这一点由索引 144,521 条 key、APK 4,356 个 bundle、24 个 `hand_*.lh` 与 62 个手部 `.lani` 的完备枚举确认，不是搜索失败。
+- 两个片段与已有的出牌、立直出牌一起由 `scripts/import-hand-animations.py` 烘焙为 `discard-hand`、`riichi-hand`、`lizhi-hand`、`fulu-hand` 四组 JSON 与帧数据。脚本在写入前先逐字节复现已提交的 `discard-hand` 产物作为自检，自检不过则拒绝写出任何文件。
+- 鸣牌撞击特效来自 `scene/effect_mingpai_default.lh`（包裹 `effect_chipeng`）：`ci` 粒子使用 `effect/texture/effect_fulu/bang.png`，`smoke` 粒子使用同目录 `smoke.png`，材质为加色混合（`srcBlend` 770 / `dstBlend` 1，关闭深度写入）。本项目只取这两张原始贴图，粒子与淡出由 C# 实现，未移植原版编译着色器。
+- 回合灯使用计分盘底图 `score-hub.png` 中点数槽下方 y 210–222 的凹槽，立直棒使用其下方 y 224–240 的槽位；两处都是原底图自带的结构，不是新绘制的贴图。
+- 以上来源的原始 URL、字节数与 SHA-256 记录在 `unity/Assets/Resources/Majsoul/Actions/hand-provenance.json` 与 `meld-effect-provenance.json`。素材权利仍归原权利人。

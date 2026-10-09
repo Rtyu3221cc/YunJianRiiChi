@@ -403,6 +403,7 @@ namespace YunJian.Riichi
 #if UNITY_EDITOR
         public string ValidationChoosingKind => choosingKind;
         public void ValidationChooseActionKind(string kind) => ChooseActionKind(kind);
+        public void ValidationToggleRiichi(bool on) { RiichiMode = on; SelectedIndex = -1; SelectedAction = null; table.Render(State); }
 #endif
         void DrawActionButtons(float width,float height)
         {

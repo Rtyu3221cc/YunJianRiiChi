@@ -69,8 +69,10 @@ namespace YunJian.Riichi
             {
                 if (lightMesh == null)
                 {
+                    // The plate texture carries a recessed slot immediately below the
+                    // score; the indicator fills that slot rather than sitting lower.
                     lightMesh = new Mesh { name = "Inset turn light",
-                        vertices = new[] { Point(88,222,.003f), Point(91,230,.003f), Point(165,230,.003f), Point(168,222,.003f) },
+                        vertices = new[] { Point(70,210,.003f), Point(74,222,.003f), Point(186,222,.003f), Point(190,210,.003f) },
                         uv = new[] { Vector2.up, Vector2.zero, Vector2.right, Vector2.one }, triangles = new[] { 0,2,1,0,3,2 } };
                     lightMesh.RecalculateBounds();
                     lightTexture = new Texture2D(1,16,TextureFormat.RGBA32,false) { name = "Amber turn indicator", wrapMode = TextureWrapMode.Clamp };

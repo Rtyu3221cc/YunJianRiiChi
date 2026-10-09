@@ -27,6 +27,8 @@ namespace YunJian.Riichi
         Transform responseTarget;
         Transform selfMelds;
         readonly Dictionary<int, List<Transform>> riverTiles = new Dictionary<int, List<Transform>>();
+        readonly Dictionary<int, Transform> stickAnchors = new Dictionary<int, Transform>();
+        readonly Dictionary<int, Transform> meldAnchors = new Dictionary<int, Transform>();
         readonly TileGeometry geometry = new TileGeometry();
 
         void Awake()
@@ -101,7 +103,7 @@ namespace YunJian.Riichi
         public void Clear()
         {
             foreach (Transform t in content) { t.gameObject.SetActive(false); Destroy(t.gameObject); }
-            handTiles.Clear(); handBase.Clear(); riverTiles.Clear(); responseTarget = null; selfMelds = null; cameraHand = null; state = null;
+            handTiles.Clear(); handBase.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); responseTarget = null; selfMelds = null; cameraHand = null; state = null;
         }
         public int RelativeSeat(int i) => (i - state.you + state.n) % state.n;
         float Angle(int i)
@@ -111,6 +113,35 @@ namespace YunJian.Riichi
         }
         public float SeatAngle(int i) => Angle(i);
         public Transform CreateEffectTile(string tile) => original.CreateTable(null,tile,Vector3.zero,.33f,false,false,1);
+        // Original effect_chipeng ('ci' particle, effect_fulu/bang) is an additive flash;
+        // the shader's _Tint scales it to nothing for the fade-out. See
+        // Actions/meld-effect-provenance.json.
+        Mesh impactMesh;
+        public Transform CreateMeldImpact()
+        {
+            if (impactMesh == null)
+            {
+                impactMesh = new Mesh { name = "Meld impact quad",
+                    vertices = new[] { new Vector3(-.5f,-.5f,0), new Vector3(-.5f,.5f,0), new Vector3(.5f,.5f,0), new Vector3(.5f,-.5f,0) },
+                    uv = new[] { Vector2.zero, Vector2.up, Vector2.one, Vector2.right },
+                    triangles = new[] { 0,1,2,0,2,3 } };
+                impactMesh.RecalculateBounds();
+            }
+            var root = new GameObject("Meld impact").transform;
+            root.gameObject.AddComponent<MeshFilter>().sharedMesh = impactMesh;
+            var renderer = root.gameObject.AddComponent<MeshRenderer>();
+            renderer.sharedMaterial = new Material(Shader.Find("YunJian/ResponseGlow")) { mainTexture = Resources.Load<Texture2D>("Majsoul/Actions/meld-bang") };
+            renderer.shadowCastingMode = ShadowCastingMode.Off; renderer.receiveShadows = false;
+            return root;
+        }
+        // The carried stick mirrors the deposited one so the hand-off is seamless.
+        public Transform CreateEffectStick()
+        {
+            var root = new GameObject("Carried riichi stick").transform;
+            Cube("Riichi 1000", root, Vector3.zero, new Vector3(.74f, .045f, .075f), ivory);
+            Cube("Red dot", root, new Vector3(0, .024f, 0), new Vector3(.045f, .004f, .045f), red);
+            return root;
+        }
         public Transform FindDiscard(int seat, string tile)
         {
             // A delayed event must never hide an older identical discard after a call.
@@ -127,6 +158,27 @@ namespace YunJian.Riichi
             return target!=null?target.position:Quaternion.Euler(0,Angle(seat),0)*new Vector3(-.895f,0,-1.48f);
         }
         public Transform ResponseTarget => responseTarget;
+#if UNITY_EDITOR
+        // 0 = playable, 1 = dimmed by the riichi declaration filter.
+        public float ValidationHandDim(int index)
+        {
+            if (index < 0 || index >= handTiles.Count) return -1f;
+            var renderer = handTiles[index].GetComponentInChildren<MeshRenderer>();
+            if (renderer == null) return -1f;
+            var block = new MaterialPropertyBlock(); renderer.GetPropertyBlock(block);
+            return block.GetFloat("_Dim");
+        }
+        public int ValidationHandCount => handTiles.Count;
+#endif
+        // Room.view() returns options for this client alone, and the engine creates
+        // them only when a call is legal; a lone 'pass' is not a call.
+        bool SelfCanCall => state.options != null && state.options.Any(o => o.kind != "pass");
+        // The deposited riichi stick and the newest meld are the anchors that the hand
+        // animations carry their object to.
+        public Transform StickTarget(int seat) => stickAnchors.TryGetValue(seat, out var stick) ? stick : null;
+        public Vector3 StickPoint(int seat) { var stick = StickTarget(seat); return stick != null ? stick.position : Quaternion.Euler(0, Angle(seat), 0) * new Vector3(0, .105f, -.833f); }
+        public Transform MeldTarget(int seat) => meldAnchors.TryGetValue(seat, out var meld) ? meld : null;
+        public Vector3 MeldPoint(int seat) { var meld = MeldTarget(seat); return meld != null ? meld.position : Quaternion.Euler(0, Angle(seat), 0) * new Vector3(0, .02f, -4.15f); }
         public static RiverTile[] VisibleRiver(PlayerView player) => player.river.Where(r=>!r.called).ToArray();
         Transform Seat(int i)
         {
@@ -204,8 +256,14 @@ namespace YunJian.Riichi
                 bool deposited = p.riichi > 0 && !(state.pending != null && state.pending.riichi && state.pending.from == i);
                 if (deposited)
                 {
-                    Cube("Riichi 1000", seat, new Vector3(0, .06f, -1.13f), new Vector3(.74f, .045f, .075f), ivory);
-                    Cube("Red dot", seat, new Vector3(0, .084f, -1.13f), new Vector3(.045f, .004f, .045f), red);
+                    // Grouped per seat so a placement animation can hide and reveal it.
+                    var stick = new GameObject("Riichi stick seat " + i).transform; stick.SetParent(seat, false);
+                    // The plate's lower recessed slot holds the deposited stick; it has to sit
+                    // above the plate surface (hub root y = .092) instead of on the table.
+                    stick.localPosition = new Vector3(0, .105f, -.833f);
+                    Cube("Riichi 1000", stick, Vector3.zero, new Vector3(.74f, .045f, .075f), ivory);
+                    Cube("Red dot", stick, new Vector3(0, .024f, 0), new Vector3(.045f, .004f, .045f), red);
+                    stickAnchors[i] = stick;
                 }
                 DrawMelds(seat, p);
                 if (i == state.you) DrawHand();
@@ -232,7 +290,9 @@ namespace YunJian.Riichi
                     var r = row[j]; float width = r.riichi ? .44f : .33f;
                     var tile=Tile(parent, r.tile, new Vector3(cursor + width / 2, 0, -1.48f - start / 6 * .45f), .33f, .44f, false, r.riichi);
                     tile.name="River "+(start+j)+" "+r.tile;rendered.Add(tile);
-                    if(state.phase=="reaction" && state.pending!=null && state.pending.kind=="discard" && state.pending.from==seatIndex && start+j==visible.Length-1)
+                    // The marker belongs to the seat that can actually call, not to
+                    // every discard while any seat still has a pending decision.
+                    if(SelfCanCall && state.phase=="reaction" && state.pending!=null && state.pending.kind=="discard" && state.pending.from==seatIndex && start+j==visible.Length-1)
                     {
                         responseTarget=tile;
                         original.CreateResponseGlow(tile, .33f);
@@ -249,6 +309,9 @@ namespace YunJian.Riichi
             const float pitch = OriginalTiles.HandWidth;
             float width = (hand.Count - 1) * pitch + (!string.IsNullOrEmpty(state.drawn) ? .4f : 0);
             var choices = state.options.Where(x => x.kind == (Client.RiichiMode ? "riichi" : "discard")).ToArray();
+            // Only a seat that actually has a discard decision dims the tiles it cannot
+            // play; while another seat is acting every tile keeps its normal look.
+            bool choosing = choices.Length > 0;
             for (int i = 0; i < hand.Count; i++)
             {
                 bool drawn = !string.IsNullOrEmpty(state.drawn) && i == hand.Count - 1;
@@ -259,7 +322,17 @@ namespace YunJian.Riichi
                 foreach (var renderer in tile.GetComponentsInChildren<Renderer>()) { renderer.shadowCastingMode = ShadowCastingMode.Off; renderer.receiveShadows = false; }
                 handTiles.Add(tile); handBase.Add(pos);
                 if (choice != null) { var target = tile.gameObject.AddComponent<TileTarget>(); target.Index = i; target.Action = choice.id; }
-                else foreach (var collider in tile.GetComponentsInChildren<Collider>()) collider.enabled = false;
+                else
+                {
+                    // A tile that cannot be discarded right now is dimmed and unpickable,
+                    // so a riichi declaration only offers the tiles that keep tenpai.
+                    foreach (var collider in tile.GetComponentsInChildren<Collider>()) collider.enabled = false;
+                    if (choosing)
+                    {
+                        var dim = new MaterialPropertyBlock(); dim.SetFloat("_Dim", 1f);
+                        foreach (var handRenderer in tile.GetComponentsInChildren<MeshRenderer>()) handRenderer.SetPropertyBlock(dim);
+                    }
+                }
             }
             SelectHand(Client.SelectedIndex);
             FitCamera(Camera.aspect);
@@ -275,6 +348,7 @@ namespace YunJian.Riichi
             int index=Array.IndexOf(state.players,p);float angle=Angle(index);
             float cursor = angle < -45 ? 3.50f : 4.20f;
             float meldZ = Mathf.Abs(angle)>135 ? -3.50f : p == state.players[state.you] ? -4.10f : -4.20f;
+            Transform anchor=null;
             var root=new GameObject("Exposed melds").transform;root.SetParent(parent,false);parent=root;
             if (index == state.you) selfMelds = root;
             // Read backwards so the first meld remains nearest the player's right edge.
@@ -300,16 +374,22 @@ namespace YunJian.Riichi
                     foreach (var piece in pieces)
                     {
                         float w = piece.Item2 ? .53f : .37f;
-                        Tile(parent, meld[0].ToString() + piece.Item1, new Vector3(x + w / 2, .02f, meldZ), .35f, .51f, false, piece.Item2);
+                        var calledTile = Tile(parent, meld[0].ToString() + piece.Item1, new Vector3(x + w / 2, .02f, meldZ), .35f, .51f, false, piece.Item2);
+                        if (piece.Item2) anchor = calledTile;
                         if (added && piece.Item2) Tile(parent, meld[0].ToString() + extra, new Vector3(x + w / 2, .17f, meldZ), .35f, .51f, false, true);
                         x += w;
                     }
                     cursor = start - .16f; continue;
                 }
                 cursor -= pieces.Count * .37f;
-                for (int j = 0; j < pieces.Count; j++) Tile(parent, meld[0].ToString() + pieces[j].Item1, new Vector3(cursor + j * .37f, .02f, meldZ), .35f, .51f, pieces[j].Item3);
+                for (int j = 0; j < pieces.Count; j++)
+                {
+                    var concealed = Tile(parent, meld[0].ToString() + pieces[j].Item1, new Vector3(cursor + j * .37f, .02f, meldZ), .35f, .51f, pieces[j].Item3);
+                    if (anchor == null) anchor = concealed;
+                }
                 cursor -= .16f;
             }
+            if (anchor != null) meldAnchors[index] = anchor;
             // Source babei anchor lies inward of, and separate from, the meld corner.
             var north=new GameObject("Extracted North").transform;north.SetParent(parent.parent,false);
             bool self=index==state.you;

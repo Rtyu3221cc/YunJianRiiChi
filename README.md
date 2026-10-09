@@ -1,5 +1,16 @@
 # 云间日麻 0.5.0
 
+## Unity 0.5.6 手部动画补全与操作修正
+
+最新安卓包：[下载 Unity 0.5.6 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/raw/refs/heads/main/dist/yunjian-riichi-unity-0.5.6.apk)，versionCode 7，可覆盖此前 Unity 试玩版。
+
+- 立直宣言牌改用原版 `Anim_Dapai_heng-LiQiPai` 横置动作：打出与立直喊字**同时**开始，宣言成立后接着由手部把立直棒放进计分盘槽位。表现层拆成手部与喊字两条通道，手部动作排队、喊字独立播放，不再互相推迟。
+- 吃、碰、杠与三麻拔北接入原版 `Fulu_Ani-Fulu` 副露动作；落牌瞬间在副露锚点叠加原版 `bang` 加色撞击闪光，0.38 秒内扩散淡出。
+- 按下立直按钮后，只有保持听牌的牌维持原亮度，其余置灰且不可点选；**不是自己选牌时不置灰**，手牌也不再变半透明。
+- 回合灯移入计分盘点数槽下方的凹槽（盘面 y 210–222），立直棒放进其下方槽位（y 224–240），不再落在盘面之外。
+- 雀魂手部动画全集只有打牌、立直出牌、自摸、副露、立直棒五个片段，**没有拔北专用动画**，拔北因此复用副露动作。
+- 新增回归测试：立直出牌事件标记、响应选项归属、副露动作时长、立直棒交接时刻、手牌置灰。来源与 SHA-256 见 [ARTWORK.md](ARTWORK.md)。
+
 ## Unity 0.5.5 描边、响应光圈与副露避让
 
 最新安卓包：[下载 Unity 0.5.5 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/raw/refs/heads/main/dist/yunjian-riichi-unity-0.5.5.apk)，versionCode 6，可覆盖此前 Unity 试玩版。

@@ -1,5 +1,18 @@
 # 云间日麻 Unity 三维客户端
 
+## 0.5.6 手部动画补全与操作修正
+
+安装 `../dist/yunjian-riichi-unity-0.5.6.apk`，同包名覆盖更新，versionCode 7。
+
+- 立直宣言牌播放原版 `Anim_Dapai_heng-LiQiPai` 横置动作（1.700 秒）；立直喊字与出牌同时开始，宣言成立后接 `Lizhi_Ani-LiZhi`（0.800 秒）把立直棒放进计分盘槽位。
+- 吃、碰、杠和拔北播放原版 `Fulu_Ani-Fulu`（0.900 秒）；落牌时在副露锚点叠加 `effect_chipeng` 的 `bang` 加色闪光。
+- `TableEffects` 拆成手部与喊字两条独立通道，出牌动作不再把立直喊字推迟 1.7 秒。
+- 立直模式下不可打出的手牌置灰并禁用拾取，只在轮到自己选牌时生效；着色器 `_Dim` 只做去饱和压暗，不改变透明度。
+- 回合灯与立直棒对齐 `score-hub.png` 原有凹槽；立直棒另需抬高到盘面之上，否则会被盘面遮挡。
+- 新导入脚本 `../scripts/import-hand-animations.py`（四个手部动画）与 `../scripts/import-meld-effect.py`（撞击贴图）。
+
+构建脚本输出 `Builds/yunjian-riichi-unity-0.5.6.apk`。安卓真机触控、声音和热点联机待实测。
+
 ## 0.5.5 描边、响应光圈与手牌避让
 
 安装 `../dist/yunjian-riichi-unity-0.5.5.apk`，versionCode 6。
