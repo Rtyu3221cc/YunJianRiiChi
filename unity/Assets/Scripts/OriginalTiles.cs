@@ -18,7 +18,8 @@ namespace YunJian.Riichi
         readonly float outlineScale;
         readonly Dictionary<string, Material> materials = new Dictionary<string, Material>();
         readonly Dictionary<string, RenderTexture> doraTextures = new Dictionary<string, RenderTexture>();
-        Camera doraCamera;
+        readonly Dictionary<string, RenderTexture> handTextures = new Dictionary<string, RenderTexture>();
+        Camera doraCamera, handPreviewCamera;
         public OriginalTiles()
         {
             var d = JsonUtility.FromJson<MeshData>(Resources.Load<TextAsset>("Majsoul/OriginalTile/mesh").text);
@@ -56,8 +57,11 @@ namespace YunJian.Riichi
             if (hand)
             {
                 m = new Material(Shader.Find("YunJian/OriginalHand")) { mainTexture = Texture("hand-face") };
-                int row = "smpz".IndexOf(tile[0]), column = tile[1] - '0' - (tile[0] == 'z' ? 1 : 0);
-                m.mainTextureScale = new Vector2(.1f, .25f); m.mainTextureOffset = new Vector2(column * .1f, .75f - row * .25f);
+                if (string.IsNullOrEmpty(tile)) m.SetFloat("_FaceDown", 1);
+                else {
+                    int row = "smpz".IndexOf(tile[0]), column = tile[1] - '0' - (tile[0] == 'z' ? 1 : 0);
+                    m.mainTextureScale = new Vector2(.1f, .25f); m.mainTextureOffset = new Vector2(column * .1f, .75f - row * .25f);
+                }
                 m.SetTexture("_BackTex", Texture("hand-back"));
             }
             else
@@ -116,6 +120,31 @@ namespace YunJian.Riichi
             box.size = new Vector3(width, TableLength * width, TableDepth * width);
             return root;
         }
+        // UI_MJPai_Hand uses the selected gameplay hand face/back. Render that
+        // same material into a fixed-aspect target instead of importing old crops.
+        public Texture HandTexture(string tile)
+        {
+            string key = string.IsNullOrEmpty(tile) ? "back" : tile;
+            if (handTextures.TryGetValue(key, out var cached)) return cached;
+            if (handPreviewCamera == null) {
+                handPreviewCamera = new GameObject("Result hand preview camera").AddComponent<Camera>();
+                handPreviewCamera.enabled = false; handPreviewCamera.orthographic = true;
+                handPreviewCamera.orthographicSize = HandHeight / 2;
+                handPreviewCamera.clearFlags = CameraClearFlags.SolidColor; handPreviewCamera.backgroundColor = Color.clear;
+                handPreviewCamera.cullingMask = 1 << 14; handPreviewCamera.nearClipPlane = .1f; handPreviewCamera.farClipPlane = 10;
+            }
+            Vector3 origin = new Vector3(60,60,60);
+            var root = CreateHand(null, key == "back" ? null : tile, origin); root.gameObject.layer = 14;
+            handPreviewCamera.transform.position = origin + Vector3.back * 3;
+            var target = new RenderTexture(124, 200, 24, RenderTextureFormat.ARGB32) {
+                name = "Result hand " + key, filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp
+            };
+            target.Create(); var previous = RenderTexture.active;
+            handPreviewCamera.targetTexture = target; handPreviewCamera.Render(); handPreviewCamera.targetTexture = null;
+            RenderTexture.active = previous;
+            root.gameObject.SetActive(false); UnityEngine.Object.Destroy(root.gameObject);
+            handTextures[key] = target; return target;
+        }
         public Texture DoraTexture(string tile)
         {
             string key = string.IsNullOrEmpty(tile) ? "back" : tile;
@@ -137,6 +166,6 @@ namespace YunJian.Riichi
             root.gameObject.SetActive(false); UnityEngine.Object.Destroy(root.gameObject);
             doraTextures[key] = target; return target;
         }
-        public void Dispose() { UnityEngine.Object.Destroy(tableMesh); UnityEngine.Object.Destroy(handMesh);UnityEngine.Object.Destroy(outlineMesh);UnityEngine.Object.Destroy(glowMesh); UnityEngine.Object.Destroy(shell);UnityEngine.Object.Destroy(outline);UnityEngine.Object.Destroy(glow); foreach (var m in materials.Values) UnityEngine.Object.Destroy(m); foreach (var t in doraTextures.Values) { t.Release(); UnityEngine.Object.Destroy(t); } if (doraCamera != null) UnityEngine.Object.Destroy(doraCamera.gameObject); }
+        public void Dispose() { UnityEngine.Object.Destroy(tableMesh); UnityEngine.Object.Destroy(handMesh);UnityEngine.Object.Destroy(outlineMesh);UnityEngine.Object.Destroy(glowMesh); UnityEngine.Object.Destroy(shell);UnityEngine.Object.Destroy(outline);UnityEngine.Object.Destroy(glow); foreach (var m in materials.Values) UnityEngine.Object.Destroy(m); foreach (var t in doraTextures.Values) { t.Release(); UnityEngine.Object.Destroy(t); } foreach (var t in handTextures.Values) { t.Release(); UnityEngine.Object.Destroy(t); } if (doraCamera != null) UnityEngine.Object.Destroy(doraCamera.gameObject); if (handPreviewCamera != null) UnityEngine.Object.Destroy(handPreviewCamera.gameObject); }
     }
 }

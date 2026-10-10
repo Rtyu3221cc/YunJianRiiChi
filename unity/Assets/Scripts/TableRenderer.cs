@@ -14,6 +14,7 @@ namespace YunJian.Riichi
         OriginalTiles original;
         readonly ReferenceScoreHub scoreHub = new ReferenceScoreHub();
         public Texture DoraTexture(string tile) => original.DoraTexture(tile);
+        public Texture HandTexture(string tile) => original.HandTexture(tile);
         Transform content;
         RoomView state;
         readonly Dictionary<string, Material> faces = new Dictionary<string, Material>();

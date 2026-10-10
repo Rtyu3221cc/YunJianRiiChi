@@ -69,8 +69,8 @@ namespace YunJian.Riichi
         }
         void Tile(TableRenderer table,string tile,Rect r)
         {
-            // The hand atlas includes the original tile rim/back and colored glyphs.
-            var t=Resources.Load<Texture2D>("Majsoul/Tiles/"+tile)??table.TileTexture(tile);
+            // Share the actual gameplay atlas, tile rim and shader; fixed 0.62 aspect.
+            var t=table.HandTexture(tile);
             if(t!=null)GUI.DrawTexture(r,t,ScaleMode.ScaleToFit);
         }
         void Dora(RoomView v,TableRenderer table,string[] tiles,float x,float y,string title)
@@ -78,8 +78,8 @@ namespace YunJian.Riichi
             if(tiles==null || tiles.Length==0)return;
             Image(title,new Rect(x-80,y+4,76,36),ScaleMode.ScaleToFit);
             for(int i=0;i<5;i++){
-                if(i<tiles.Length)Tile(table,tiles[i],new Rect(x+i*29,y,28,42));
-                else {var old=GUI.color;GUI.color=new Color(.45f,.32f,.2f);GUI.DrawTexture(new Rect(x+i*29,y+2,26,38),Texture2D.whiteTexture);GUI.color=old;}
+                // Match the table HUD's indicators, including the selected back skin.
+                GUI.DrawTexture(new Rect(x+i*29,y,28,43.5f),table.DoraTexture(i<tiles.Length?tiles[i]:null),ScaleMode.ScaleToFit);
             }
         }
         void WinningHand(WinDetail d,TableRenderer table)
@@ -87,16 +87,16 @@ namespace YunJian.Riichi
             var tiles=(d.tiles??new string[0]).ToList();
             var melds=d.melds??new string[0];int count=tiles.Count+melds.Sum(m=>m.Skip(1).Count(char.IsDigit));
             float pitch=Mathf.Min(40,625f/Mathf.Max(14,count+2)),x=494;
-            var matrix=GUI.matrix;GUIUtility.RotateAroundPivot(-7,new Vector2(850,118));
-            foreach(var tile in tiles){Tile(table,tile,new Rect(x,85,pitch-1,pitch*1.45f));x+=pitch;}
+            var matrix=GUI.matrix;GUIUtility.RotateAroundPivot(-6,new Vector2(850,118));
+            foreach(var tile in tiles){Tile(table,tile,new Rect(x,85,pitch-1,pitch*1.5f));x+=pitch;}
             foreach(var meld in melds){x+=8;int n=0;var digits=meld.Skip(1).Where(char.IsDigit).ToArray();foreach(char c in digits){
                 // Concealed kans retain their face-down ends in the scoring hand.
                 if(digits.Length==4 && !meld.Any(ch=>ch=='+'||ch=='-'||ch=='=' ) && (n==0||n==3)){
-                    var old=GUI.color;GUI.color=new Color(.58f,.32f,.12f);GUI.DrawTexture(new Rect(x,89,pitch-2,pitch*1.35f),Texture2D.whiteTexture);GUI.color=old;
-                }else Tile(table,meld[0].ToString()+c,new Rect(x,85,pitch-1,pitch*1.45f));
+                    Tile(table,null,new Rect(x,85,pitch-1,pitch*1.5f));
+                }else Tile(table,meld[0].ToString()+c,new Rect(x,85,pitch-1,pitch*1.5f));
                 x+=pitch;n++;
             }}
-            Tile(table,d.tile,new Rect(x+22,85,pitch-1,pitch*1.45f));GUI.matrix=matrix;
+            Tile(table,d.tile,new Rect(x+22,85,pitch-1,pitch*1.5f));GUI.matrix=matrix;
         }
         void Details(RoomView v,TableRenderer table,TableEffects effects)
         {
@@ -107,7 +107,7 @@ namespace YunJian.Riichi
             WinningHand(d,table);
             Image("bg_nickname",new Rect(0,571,375,57));Label(new Rect(24,580,305,40),d.name,23,white);
             var word=effects.Art(d.ron?"show_rong":"show_zimo");if(word!=null)GUI.DrawTexture(new Rect(1122,137,115,75),word,ScaleMode.ScaleToFit);
-            GUIUtility.RotateAroundPivot(-7,new Vector2(870,380));
+            GUIUtility.RotateAroundPivot(-6,new Vector2(870,380));
             Dora(v,table,v.indicators,663,198,"bg_dora");Dora(v,table,d.ura,990,198,"bg_lidora");
             if(d.nuki>0)Label(new Rect(545,247,210,29),"拔北 × "+d.nuki,19,gold,TextAnchor.MiddleLeft);
             var yaku=d.yaku??new YakuDetail[0];int visible=Mathf.Clamp(Mathf.FloorToInt((age-.65f)/.32f),0,yaku.Length);

@@ -472,6 +472,40 @@ namespace YunJian.Riichi
                 yield return null;yield return null;ScreenCapture.CaptureScreenshot(Path.Combine(folder,"result-scores-"+(int)size.x+".png"));yield return new WaitForSecondsRealtime(.08f);
                 display.Observe(multi);Require(display.ShowingScores,"Polling restarted result presentation");
             }
+            // Compare the result texture to an actual gameplay hand mesh render.
+            var original=new OriginalTiles();var parityHand=original.CreateHand(null,"m9",new Vector3(50,50,50));
+            var handProbe=new GameObject("Settlement gameplay parity camera").AddComponent<Camera>();
+            handProbe.enabled=false;handProbe.orthographic=true;handProbe.orthographicSize=OriginalTiles.HandHeight/2;
+            handProbe.transform.position=new Vector3(50,50,45);handProbe.cullingMask=1<<12;
+            handProbe.clearFlags=CameraClearFlags.SolidColor;handProbe.backgroundColor=Color.clear;
+            var handTarget=new RenderTexture(124,200,24,RenderTextureFormat.ARGB32);handTarget.Create();
+            handProbe.targetTexture=handTarget;handProbe.Render();
+            var gameplay=ReadTile(handTarget,"result-gameplay-tile.png");
+            var result=ReadTile((RenderTexture)table.HandTexture("m9"),"result-shared-tile.png");
+            float error=0;for(int i=0;i<result.Length;i++)error+=Mathf.Abs(gameplay[i].r-result[i].r)+Mathf.Abs(gameplay[i].g-result[i].g)+Mathf.Abs(gameplay[i].b-result[i].b)+Mathf.Abs(gameplay[i].a-result[i].a);
+            Require(error/(result.Length*4)<3,"Settlement face/rim differs from gameplay mesh pixels");
+            int left=124,right=0,bottom=200,top=0,redPixels=0;
+            for(int y=0;y<200;y++)for(int x=0;x<124;x++){
+                var c=result[y*124+x];if(c.a>128){left=Mathf.Min(left,x);right=Mathf.Max(right,x);bottom=Mathf.Min(bottom,y);top=Mathf.Max(top,y);}
+                if(c.r>c.g*1.5f && c.r>c.b*1.5f && c.a>128)redPixels++;
+            }
+            float aspect=(right-left+1f)/(top-bottom+1f);Require(aspect>.60f && aspect<.65f && redPixels>100,"Settlement tile compressed or red face color missing");
+            var backPixels=ReadTile((RenderTexture)table.HandTexture(null),"result-shared-back.png");
+            Require(backPixels.Count(c=>c.a>128 && c.r>c.g*1.3f)>8000,"Concealed kan back lost the selected rose-red skin");
+            ReadTile((RenderTexture)table.DoraTexture(null),"result-dora-back.png");
+            parityHand.gameObject.SetActive(false);Destroy(parityHand.gameObject);Destroy(handProbe.gameObject);handTarget.Release();Destroy(handTarget);original.Dispose();
+            // Full scoring row with hidden kan ends and all five open indicators/ura.
+            var backView=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"win-double-ron.json")));
+            backView.audioRoom="result-backs";backView.result.details=new[]{backView.result.details[0]};
+            backView.result.details[0].tiles=new[]{"m1","m2","m3","p4","p5","p6","z1"};
+            backView.result.details[0].tile="z1";backView.result.details[0].melds=new[]{"s7777","z555+"};
+            backView.indicators=new[]{"p1","p2","p3","p4","p5"};backView.result.details[0].ura=new[]{"s1","s2","s3","s4","s5"};
+            foreach(Vector2 size in new[]{new Vector2(1688,780),new Vector2(844,390)}){
+                SetGameResolution((int)size.x,(int)size.y);client.ShowValidationFixture(backView);
+                var backDisplay=client.ValidationResult;backDisplay.Observe(backView);backDisplay.Freeze=true;backDisplay.FrozenAge=9;
+                yield return null;yield return null;ScreenCapture.CaptureScreenshot(Path.Combine(folder,"result-kan-"+(int)size.x+".png"));yield return new WaitForSecondsRealtime(.08f);
+            }
+            Debug.Log("RIICHI RESULT TILE PASS: 0.62 silhouette, actual gameplay mesh/result pixel parity, colored face, selected hand back and table dora back, concealed kan and five indicators at two sizes.");
             // Render native limit glyphs and six-digit points, including long multiple yakuman titles.
             SetGameResolution(844,390);
             var glyphView=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"win-double-ron.json")));
@@ -555,6 +589,13 @@ namespace YunJian.Riichi
             fx.ValidationTime=.28f;view.audioSeq=31;view.audioEvents=new[]{new PublicSound{id=31,seat=0,kind="nuki",tile="z4",nuki=2}};fx.Accept(view);yield return null;
             Require(fx.ValidationTarget==table.NorthTarget(0,2) && table.NorthTarget(0,3).gameObject.activeSelf,"Queued North event targeted a later extraction");
             fx.ValidationFreeze=false;fx.Reset();
+        }
+        Color32[] ReadTile(RenderTexture texture,string name)
+        {
+            var previous=RenderTexture.active;RenderTexture.active=texture;
+            var pixels=new Texture2D(texture.width,texture.height,TextureFormat.RGBA32,false);
+            pixels.ReadPixels(new Rect(0,0,texture.width,texture.height),0,0);pixels.Apply();RenderTexture.active=previous;
+            File.WriteAllBytes(Path.Combine(folder,name),pixels.EncodeToPNG());var result=pixels.GetPixels32();Destroy(pixels);return result;
         }
         static int VisibleEffectPixels(TableRenderer table,Renderer effectRenderer)
         {

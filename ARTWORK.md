@@ -92,3 +92,11 @@ Unity 0.5.2 补充原 APK 的 chang、ju、word_left、number_left、number_scor
 - 录像所用皮肤未作为独立特效预制体打包在这份 APK 中。`FlameSpiral.cs` 使用原火焰图集制作上升旋涡与环绕碎石，时序按用户视频适配；这是 Unity 中对该皮肤表现的还原，不是该皮肤完整脚本的直接复制。原旧火焰的竖直光层收短以避免穿到牌面下方。自摸保留原 0.9 秒手部曲线，接 0.87–1.14 秒背面翻正面，再于 1.24 秒触发特效。
 - `ResultPresentation.cs` 按录像拆成和牌展示和点数转移两阶段。一姬沿用原导入全身图，不跟随录像皮肤切换。公开结果新增的手牌、已公开副露、里宝牌及役种是房主在和牌后发布的计分数据；不会向对手提前泄露手牌或里宝牌。
 - 立直不可出牌使用原彩色图集，仅乘以亮度系数 0.5；不再转为灰度。
+
+## Unity 0.5.11 结算手牌与牌背
+
+`ResultPresentation` 不再使用早期 `Tiles/*.png` 结算裁切牌图。那些 PNG 的 NPOT 导入缩放导致运行时纹理比例偏窄，且结算的隐藏牌原为纯色占位块。现在 `OriginalTiles.HandTexture` 在固定 124×200 的透明 RenderTexture 中复用对局 `OriginalHand` 材质、`OriginalTile/hand-face.png` 默认牌面及 `hand-back.png` 玫瑰红牌框/背面；宽高比和 `CreateHand` 网格一致。材质新增默认关闭的背面采样开关，仅供结算暗杠两端使用，不改变对局花色或立直亮度。
+
+宝牌和里宝牌直接使用对局 HUD 已有的 `DoraTexture` 及同一套原三维网格、桌面牌面/玫瑰红背面贴图，包括未翻开的指示牌。视频中的猫图案来自其皮肤；本项目结算继续采用本项目对局已选的默认牌面/玫瑰红背面，不混用录像皮肤。
+
+用户 APK `assets/Android/$0qqs86vvx-2$d224jmac_a_pwwtzzeeg@_e4c587454fdfaad84e4a.majset` 中的 `UI_Win` 控件树提供 80×120 手牌槽、6°倾角、手牌容器 0.96 与宝牌容器 0.7 缩放；Unity 对应使用 40×60 和 29×43.5 牌槽并保持纹理原比例。逐像素验证结算纹理与实际 `CreateHand` 网格摄像机渲染一致。原资源路径仍见 `OriginalTile/provenance.json`。

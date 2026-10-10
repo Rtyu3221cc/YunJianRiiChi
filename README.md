@@ -1,5 +1,16 @@
 # 云间日麻
 
+## Unity 0.5.11 结算麻将牌修正
+
+安卓包：[下载 Unity 0.5.11 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.11/yunjian-riichi-unity-0.5.11.apk)，versionCode 12，同包名同签名覆盖更新。
+
+- 结算手牌复用对局的原牌面图集、红色边框与 shader，保持对局手牌宽高比 0.62；移除旧裁切图片被 Unity 导入缩放后拉窄的问题。
+- 宝牌/里宝牌复用对局 HUD 的三维牌渲染，包括未翻开的玫瑰红牌背；暗杠两端也使用原手牌背面图集，替换纯色占位块。
+- 对照用户视频和 APK `UI_Win` 原控件的 80×120 牌槽、6°倾角以及宝牌相对手牌的缩放，保持完整和牌与独立胡牌间距。继续使用对局的牌面/牌背和一姬立绘。
+- 实际对局手牌网格与结算纹理逐像素对照、宽高轮廓、红色花色、暗杠/五张宝牌及四分辨率结算检查通过。65 项规则/协议测试、Android 双架构打包、v2 签名和 16KB 对齐通过；安卓真机触控及热点联机未执行。
+
+预览：[修正后的结算](dist/previews/unity-0.5.11-result-hand-1688.png)、[暗杠及全部宝牌](dist/previews/unity-0.5.11-result-kan-1688.png)。详见 [验证记录](dist/验证记录-unity-0.5.11.txt) 与 [ARTWORK.md](ARTWORK.md)。
+
 ## Unity 0.5.10 录像对照优化
 
 最新安卓包：[下载 Unity 0.5.10 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.10/yunjian-riichi-unity-0.5.10.apk)，versionCode 11，同包名同签名，可覆盖更新。
