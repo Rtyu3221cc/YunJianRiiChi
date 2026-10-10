@@ -26,7 +26,7 @@ namespace YunJian.Riichi
                 if (!next) break;
                 yield return run.Current;
             }
-            File.WriteAllText(Path.Combine(folder, "passed.txt"), "Actual Unity Play mode: live AI room, delayed second-click discard, raycast, 3/4-seat rendering, safe-area pointer roundtrips, 4 resolutions, 8 role clips, called-river removal, grouped chi choices, all 4 discard hand directions at 15 time samples with opaque materials, call cut-ins, event dedup/reconnect; original 224-vertex outlines, model-foot response glow in 4 directions, 0-4 own melds without hand overlap at 4 resolutions, and 4 inward-facing North tiles per seat. Original turn-light particles: four directions, rendered fade/peak/fade, one-second looping and stable phase across polling. North extraction: all three viewer seats/directions, original cut-in, carried tile/landing match, independent previous North and meld visibility, nine visible flutter petals, survival across polling/hand completion, cleanup and event dedup/reconnect. Win effects: original ron/tsumo cut-ins, Zimo hand and exact tile landing in all 3/4 directions and rotated viewers; seven-layer default win particles with visible camera pixels, delayed settlement, double ron, robbed tile targets and polling/reconnect cleanup. Fixture screenshots are synthetic layout scenes, not replays.");
+            File.WriteAllText(Path.Combine(folder, "passed.txt"), "Actual Unity Play mode: live AI room, delayed second-click discard, raycast, 3/4-seat rendering, safe-area pointer roundtrips, 4 resolutions, 8 role clips, called-river removal, grouped chi choices, all 4 discard hand directions at 15 time samples with opaque materials, call cut-ins, event dedup/reconnect; original 224-vertex outlines, model-foot response glow in 4 directions, 0-4 own melds without hand overlap at 4 resolutions, and 4 inward-facing North tiles per seat. Original turn-light particles: four directions, rendered fade/peak/fade, one-second looping and stable phase across polling. North extraction: all three viewer seats/directions, original cut-in, carried tile/landing match, independent previous North and meld visibility, nine visible flutter petals, survival across polling/hand completion, cleanup and event dedup/reconnect. Win effects: original ron/tsumo cut-ins, Zimo hand and exact tile landing in all 3/4 directions and rotated viewers; eight-layer fire particles, video flame spiral and rubble with visible camera pixels, delayed settlement, double ron, robbed tile targets and polling/reconnect cleanup. Fixture screenshots are synthetic layout scenes, not replays.");
             Debug.Log("RIICHI UNITY PLAY PASS"); EditorApplication.Exit(0);
         }
         IEnumerator Run()
@@ -423,15 +423,15 @@ namespace YunJian.Riichi
                     fx.ValidationTime=fx.ValidationHandoff;yield return null;yield return null;
                     Require(Vector3.Distance(fx.ValidationAnimatedTile.position,table.WinningPoint(e))<.002f,"Self draw tile snaps at landing");
                     Require(!fx.ValidationAnimatedTile.gameObject.activeSelf && table.WinningTarget(e).gameObject.activeSelf,"Self draw tile hand-off failed");
-                    fx.ValidationTime=1.02f;yield return null;yield return null;
-                    Require(fx.ValidationKind==null,"Zimo hand did not complete at its original duration");
+                    fx.ValidationTime=1.55f;yield return null;yield return null;
+                    Require(fx.ValidationKind==null,"Zimo hand/face-down flip did not complete");
                 }
-                else Require(fx.ValidationKind==null,"Ron incorrectly moved the winner's hand");
+                else {Require(fx.ValidationKind==null,"Ron incorrectly moved the winner's hand");fx.ValidationTime=.55f;yield return null;yield return null;}
                 var effect=fx.ValidationWin;
-                Require(effect!=null && effect.LayerCount==7 && effect.ParticleCount>0 && fx.SpawnedWinEffects==before+1,"Original seven-layer win burst missing/duplicated");
+                Require(effect!=null && effect.LayerCount==8 && effect.ParticleCount>0 && fx.SpawnedWinEffects==before+1,"Original eight-layer fire burst missing/duplicated");
                 Require(Vector3.Distance(effect.transform.position,table.WinningPoint(e)+Vector3.up*.045f)<.001f,"Win effect detached from winning tile");
                 int pixels=effect.GetComponentsInChildren<ParticleSystemRenderer>().Max(renderer=>VisibleEffectPixels(table,renderer));
-                Require(pixels>20,"Default win particles invisible on the actual camera");
+                Require(pixels>20,"Fire win particles invisible on the actual camera");
                 if(you==0)Capture(table,Path.Combine(folder,"win-"+n+"-"+kind+"-effect-"+relative+".png"),1688,780);
                 table.Render(view);fx.Accept(view);yield return null;yield return null;
                 Require(fx.ValidationWin==effect && fx.SpawnedWinEffects==before+1 && fx.ShowWinPresentation,"Polling restarted win effect or exposed result too early");
@@ -457,7 +457,42 @@ namespace YunJian.Riichi
                 Require(table.WinningTarget(e)!=null && table.WinningTarget(e)!=table.FindDiscard(0,"z4"),"Robbed tile targets an older river tile");
             }
             fx.ValidationFreeze=false;fx.Reset();
-            Debug.Log("RIICHI WIN EFFECT PASS: ron/tsumo in all three/four-seat directions and rotated viewers; original cut-ins, Zimo mesh pixels, exact landing, seven source particle layers and visible pixels; delayed result, polling/reconnect cleanup, double ron and robbed tile targets.");
+            multi=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"win-double-ron.json")));
+            // Real result GUI at four display sizes: rows, full hand, point transfer and both ron winners.
+            foreach(Vector2 size in new[]{new Vector2(1280,720),new Vector2(1688,780),new Vector2(2760,1256),new Vector2(844,390)}){
+                SetGameResolution((int)size.x,(int)size.y);client.ShowValidationFixture(multi);
+                var display=client.ValidationResult;display.Observe(multi);display.Freeze=true;display.FrozenAge=9;
+                yield return null;yield return null;
+                ScreenCapture.CaptureScreenshot(Path.Combine(folder,"result-hand-"+(int)size.x+".png"));yield return new WaitForSecondsRealtime(.08f);
+                display.Advance(multi);display.FrozenAge=9;yield return null;
+                if(multi.result.details.Length>1){Require(display.WinnerIndex==1 && !display.ShowingScores,"Double ron second settlement missing");display.Advance(multi);}
+                Require(display.ShowingScores,"Settlement does not advance to score transfer");
+                display.FrozenAge=0;for(int i=0;i<multi.n;i++)Require(display.DisplayScore(multi,i)==ResultPresentation.Before(multi,i),"Score transfer starts at wrong total");
+                display.FrozenAge=3.5f;for(int i=0;i<multi.n;i++)Require(display.DisplayScore(multi,i)==multi.players[i].score,"Score transfer ends at wrong total");
+                yield return null;yield return null;ScreenCapture.CaptureScreenshot(Path.Combine(folder,"result-scores-"+(int)size.x+".png"));yield return new WaitForSecondsRealtime(.08f);
+                display.Observe(multi);Require(display.ShowingScores,"Polling restarted result presentation");
+            }
+            // Render native limit glyphs and six-digit points, including long multiple yakuman titles.
+            SetGameResolution(844,390);
+            var glyphView=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"win-double-ron.json")));
+            glyphView.result.details=new[]{glyphView.result.details[0]};
+            var limits=new[]{"满贯","跳满","倍满","三倍满","累计役满","役满","6倍役满"};
+            for(int i=0;i<limits.Length;i++){
+                glyphView.audioRoom="native-glyphs-"+i;var detail=glyphView.result.details[0];detail.limit=limits[i];
+                detail.score=new ScoreDetail{fanshu=13,fu=110,defen=624000,damanguan=i>=5?i-4:0};
+                client.ShowValidationFixture(glyphView);var glyphDisplay=client.ValidationResult;glyphDisplay.Observe(glyphView);glyphDisplay.Freeze=true;glyphDisplay.FrozenAge=9;
+                yield return null;yield return null;ScreenCapture.CaptureScreenshot(Path.Combine(folder,"result-native-limit-"+i+".png"));yield return new WaitForSecondsRealtime(.08f);
+            }
+            // Compare an actual red/green pixel before and after dimming using the production shader.
+            var probe=new Texture2D(2,1);probe.SetPixels(new[]{new Color(.9f,.15f,.08f),new Color(.1f,.8f,.16f)});probe.Apply();
+            var back=new Texture2D(1,1);back.SetPixel(0,0,Color.clear);back.Apply();
+            var material=new Material(Shader.Find("YunJian/OriginalHand"));material.SetTexture("_MainTex",probe);material.SetTexture("_BackTex",back);
+            var rt=RenderTexture.GetTemporary(2,1,0,RenderTextureFormat.ARGB32,RenderTextureReadWrite.Linear);var dimPixels=new Texture2D(2,1,TextureFormat.RGBA32,false,true);
+            var prior=RenderTexture.active;material.SetFloat("_Dim",1);Graphics.Blit(probe,rt,material);RenderTexture.active=rt;dimPixels.ReadPixels(new Rect(0,0,2,1),0,0);dimPixels.Apply();RenderTexture.active=prior;
+            Color red=dimPixels.GetPixel(0,0),green=dimPixels.GetPixel(1,0);Require(red.r>red.g*2 && green.g>green.r*2,"Dimming desaturates red/green glyphs");Require(red.r<.75f && green.g<.75f,"Dimming does not reduce brightness");
+            RenderTexture.ReleaseTemporary(rt);Destroy(probe);Destroy(back);Destroy(material);Destroy(dimPixels);
+            Debug.Log("RIICHI RESULT VIDEO PASS: four sizes, yaku and winning hand presentation, two stages, point endpoints, ranks, polling stability, both ron winners and chromatic brightness dimming.");
+            Debug.Log("RIICHI WIN EFFECT PASS: ron/tsumo in all three/four-seat directions and rotated viewers; original cut-ins, Zimo mesh pixels, exact landing, eight source fire layers, visible flame spiral and rubble and visible pixels; delayed result, polling/reconnect cleanup, double ron and robbed tile targets.");
         }
 
         IEnumerator ValidateNorthEffects(RiichiClient client)

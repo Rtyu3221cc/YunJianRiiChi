@@ -84,3 +84,11 @@ Unity 0.5.2 补充原 APK 的 chang、ju、word_left、number_left、number_scor
 - 默认 `effect_hupai_default.lh` 七层配置及加色材质来自雀魂官方公共资源；`yuanqiu2`、`shanguang`、`bao`、`kuosan` 贴图直接从用户 APK 导出，`Light2`、`thunder`、`lizi` 缺失原文件由官方 CDN 补齐。容器、pathID、URL、哈希见 `Actions/win-source.json`，导入脚本 `scripts/import-reference-win.py`。
 - `WinTileEffect.cs` 与 `WinParticle.shader` 使用原七层的寿命、颜色、发射量、透明度、尺寸曲线和图集，在 Unity 原生粒子中适配坐标、平面朝向及尺度；每次胡牌保证发射源配置的最大 burst 数。自摸动作完整曲线保留，较大手臂摆幅适配到本牌桌单位；落牌目标、播放队列、轮询去重和延后结算由本工程 C# 实现。未将雀魂客户端整套运行脚本复制进工程。
 - 所有运行资源已本地打包，离线牌桌无需访问 CDN。素材权利仍归原权利人。
+
+## Unity 0.5.10 录像中的火焰与两阶段结算
+
+- `Results/` 的 52 张结算原图从用户提供 APK 的 `atlas_mj_main_common_*.png` / `atlas_mj_main_chs_0.png` / `atlas_common_yiman_*.png` 精确导出，包括蓝色樱花斜板、役种笔刷、番符圆盘、宝牌标题、点数卡和转移箭头，以及 `h_0..9` 金色番数、`ww_0..9` 白色符数/点数、“番/符/点/役满”字图和满贯系列独立笔刷字图。保持原尺寸比例和原图颜色，无系统字体重绘；bundle、pathID、输出哈希见 `Results/source.json`。
+- `Actions/fire-*.png` 使用原火焰、圆形冲击与火星贴图，优先从 APK 同名文件导出，缺失的原纹理由官方公共 CDN 补齐。八层发射、寿命、色彩及透明度/尺寸曲线读取原 `effect_hupai_fire.lh`。可重复导入脚本为 `scripts/import-video-resources.py`。
+- 录像所用皮肤未作为独立特效预制体打包在这份 APK 中。`FlameSpiral.cs` 使用原火焰图集制作上升旋涡与环绕碎石，时序按用户视频适配；这是 Unity 中对该皮肤表现的还原，不是该皮肤完整脚本的直接复制。原旧火焰的竖直光层收短以避免穿到牌面下方。自摸保留原 0.9 秒手部曲线，接 0.87–1.14 秒背面翻正面，再于 1.24 秒触发特效。
+- `ResultPresentation.cs` 按录像拆成和牌展示和点数转移两阶段。一姬沿用原导入全身图，不跟随录像皮肤切换。公开结果新增的手牌、已公开副露、里宝牌及役种是房主在和牌后发布的计分数据；不会向对手提前泄露手牌或里宝牌。
+- 立直不可出牌使用原彩色图集，仅乘以亮度系数 0.5；不再转为灰度。

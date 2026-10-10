@@ -81,3 +81,18 @@ test('robbed kakan event targets added tile rather than previous discard or whol
 test('ordinary ron publishes exact tile and source without exposing private wall',()=>{
  const r=fixture();r.s.players[1].hand='m123p123s123z3334';r.s.players[1].river=[];r.react(0,'z4');action(r,1,'ron');resolvePass(r);const e=r.view(0).audioEvents.find(e=>e.kind==='ron');assert.deepEqual([e.tile,e.from,e.winSource],['z4',0,'discard']);assert(!('wall' in r.view(0)));assert.equal(r.s.result.details[0].from,0);
 });
+
+test('settlement publishes winning tiles, melds and typed yaku only after a win',()=>{
+ for(const ron of [false,true]){const r=fixture(3);r.s.turn=1;r.s.players[1].hand=ron?'p123456s123z1112':'p123456s123z1112z2';r.s.players[1].nuki=2;r.s.players[1].riichi=1;
+ assert.equal(r.view(0).result,null);r.win([1],ron?0:null,ron?'z2':null);const d=r.view(0).result.details[0];
+ assert.equal(d.tiles.length,13);assert.equal(d.tile,'z2');assert.deepEqual(d.melds,[]);assert.equal(d.nuki,2);assert.equal(d.ura.length,1);
+ assert(d.yaku.every(y=>typeof y.han==='number'&&typeof y.yakuman==='number'));assert(d.yaku.some(y=>y.name==='拔北宝牌'));assert.deepEqual(r.view(2).result.details[0],d);
+ }
+});
+test('yakuman yaku stars become an integer multiplier for native settlement',()=>{
+ const r=fixture();r.s.turn=1;r.s.players[1].hand='m119p19s19z1234567';r.win([1]);const d=r.view(0).result.details[0];assert(d.score.damanguan>0);assert(d.yaku.some(y=>y.yakuman>0&&y.han===0));assert(d.limit.includes('役满'));
+});
+test('double ron settlement retains independent public winning hands and scores',()=>{
+ const r=fixture();for(const i of [1,2]){r.s.players[i].hand='m123p123s123z3334';r.s.players[i].river=[];}r.win([1,2],0,'z4');
+ for(const d of r.s.result.details){assert.equal(d.tiles.length,13);assert.equal(d.tile,'z4');assert(d.yaku.length>0);assert(d.score.defen>0);}assert.equal(r.s.result.details.length,2);
+});

@@ -24,6 +24,10 @@ namespace YunJian.Riichi
         TableRenderer table;
         RoleVoice voice;
         TableEffects effects;
+        readonly ResultPresentation resultDisplay=new ResultPresentation();
+#if UNITY_EDITOR
+        public ResultPresentation ValidationResult => resultDisplay;
+#endif
         string choosingKind;
         GUIStyle label, title, button, field, small;
         GUIStyle caption, centered, tableButton;
@@ -55,7 +59,7 @@ namespace YunJian.Riichi
             StopAllCoroutines(); Busy = false; State = fixture; active = true; page = "home";
             nextPoll = float.PositiveInfinity; SelectedIndex = -1; SelectedAction = null;
             table.Render(fixture);
-            effects.Reset();choosingKind=null;
+            effects.Reset();resultDisplay.Reset();choosingKind=null;
         }
 #endif
 
@@ -184,7 +188,7 @@ namespace YunJian.Riichi
         void EnterHome()
         {
             generation++; active = false; State = null; SelectedAction = null; SelectedIndex = -1; RiichiMode = false;
-            page = "home"; table.Clear(); voice.Reset();effects.Reset();choosingKind=null;
+            page = "home"; table.Clear(); voice.Reset();effects.Reset();resultDisplay.Reset();choosingKind=null;
         }
         void StartRoom(bool practice)
         {
@@ -275,6 +279,7 @@ namespace YunJian.Riichi
         void OnGUI()
         {
             Styles(); uiButtons.Clear(); var previous = GUI.matrix;
+            if(State?.phase!="result")resultDisplay.Reset();
             bool playing = active && State != null && (State.phase == "play" || State.phase == "reaction" || (State.phase == "result" && effects.ShowWinPresentation));
             viewport = TableViewport.Fit(Screen.width, Screen.height, Screen.safeArea, playing);
             GUI.matrix = viewport.Matrix;
@@ -448,22 +453,11 @@ namespace YunJian.Riichi
         }
         void DrawResult()
         {
-            Panel(new Rect(190, 80, 900, 550)); var result = State.result;
-            GUI.Label(new Rect(225, 110, 820, 50), result?.title ?? "本局结束", title);
-            int y = 185;
-            if (result?.details != null) foreach (var d in result.details)
-            {
-                GUI.Label(new Rect(225, y, 800, 32), d.name + "  " + (d.score.damanguan > 0 ? d.score.damanguan + "倍役满" : d.score.fanshu + "番 " + d.score.fu + "符") + "  " + d.score.defen + "点", label); y += 34;
-                GUI.Label(new Rect(225, y, 800, 30), d.hand, small); y += 40;
-            }
-            for (int i = 0; i < State.players.Length; i++)
-            {
-                int delta = result?.delta != null && i < result.delta.Length ? result.delta[i] : 0;
-                GUI.Label(new Rect(225, y, 800, 32), State.players[i].name + "   " + (delta >= 0 ? "+" : "") + delta + " → " + State.players[i].score, label); y += 35;
-            }
-            if (!State.players[State.you].ready && Button(new Rect(225, 545, 240, 55), "确认结算")) StartCoroutine(Send(new RequestBody { op = "ready" }));
-            if (State.host && State.players.All(x => x.ready) && Button(new Rect(485, 545, 240, 55), result != null && result.matchOver ? "再来一场" : "下一局")) StartCoroutine(Send(new RequestBody { op = "next" }));
-            if (Button(new Rect(805, 545, 240, 55), "返回大厅")) EnterHome();
+            var resultMatrix=GUI.matrix;var resultColor=GUI.color;GUI.matrix=Matrix4x4.identity;GUI.color=new Color(0,0,0,.68f);GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=resultColor;GUI.matrix=resultMatrix;
+            var action=resultDisplay.Draw(State,table,effects,font,Button);
+            if(action==ResultPresentation.Action.Ready)StartCoroutine(Send(new RequestBody{op="ready"}));
+            else if(action==ResultPresentation.Action.Next)StartCoroutine(Send(new RequestBody{op="next"}));
+            else if(action==ResultPresentation.Action.Home)EnterHome();
         }
         void DrawRoom()
         {

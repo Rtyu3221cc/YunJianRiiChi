@@ -23,8 +23,7 @@ Shader "YunJian/OriginalHand"
                 fixed4 c=fixed4(lerp(face.rgb,back.rgb,back.a),max(face.a,back.a));
                 // A tile that keeps the hand tenpai stays bright; the rest are dimmed
                 // while the riichi declaration is being chosen.
-                fixed grey=dot(c.rgb,fixed3(.299,.587,.114));
-                c.rgb=lerp(c.rgb,grey*.5,_Dim);
+                c.rgb *= lerp(1,.5,_Dim);
                 return c;
             }
             ENDCG

@@ -135,7 +135,11 @@ class Room{
   for(let k=0;k<winners.length;k++){
    const i=winners[k],r=this.score(i,from,tile,kind,k===0?s.sticks:0);check(r,'和牌条件已变化');
    const winTile=from===null?this.h(i)._zimo:tile,winFrom=from===null?i:from,winSource=from===null?'tsumo':kind;
-   this.sound(from===null?'tsumo':'ron',i,winTile,false,0,{from:winFrom,kind:winSource});r.delta.forEach((v,j)=>delta[j]+=v);details.push({seat:i,from:winFrom,winSource,name:s.players[i].name,hand:s.players[i].hand,tile:from===null?this.h(i)._zimo:tile,ron:from!==null,score:r,nuki:s.players[i].nuki,ura:s.players[i].riichi?s.ura.slice(0,1+this.totalKans()):[]});
+   const handTiles=tiles(this.h(i));if(from===null){const at=handTiles.lastIndexOf(winTile);if(at>=0)handTiles.splice(at,1);}
+    const yakuNames={'門前清自摸和':'门前清自摸和','ドラ':'宝牌','裏ドラ':'里宝牌','赤ドラ':'赤宝牌','七対子':'七对子','槍槓':'抢杠','海底摸月':'海底摸月','河底撈魚':'河底捞鱼','嶺上開花':'岭上开花'};
+    const yaku=r.hupai.map(y=>({name:yakuNames[y.name]||y.name,han:typeof y.fanshu==='number'?y.fanshu:0,yakuman:typeof y.fanshu==='string'?(y.fanshu.match(/\*/g)||[]).length:0}));
+    const limit=r.damanguan?(r.damanguan===1?'役满':r.damanguan+'倍役满'):r.fanshu>=13?'累计役满':r.fanshu>=11?'三倍满':r.fanshu>=8?'倍满':r.fanshu>=6?'跳满':r.fanshu>=5||(r.fanshu===4&&r.fu>=40)||(r.fanshu===3&&r.fu>=70)?'满贯':'';
+    this.sound(from===null?'tsumo':'ron',i,winTile,false,0,{from:winFrom,kind:winSource});r.delta.forEach((v,j)=>delta[j]+=v);details.push({seat:i,from:winFrom,winSource,tiles:handTiles,melds:this.h(i)._fulou.slice(),yaku,limit,name:s.players[i].name,hand:s.players[i].hand,tile:from===null?this.h(i)._zimo:tile,ron:from!==null,score:r,nuki:s.players[i].nuki,ura:s.players[i].riichi?s.ura.slice(0,1+this.totalKans()):[]});
   }
   s.sticks=0;this.finish({title:from===null?'自摸':winners.length===2?'双响 · 荣和':'荣和',delta,details,repeat:winners.includes(s.dealer),draw:false});
  }

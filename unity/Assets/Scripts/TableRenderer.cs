@@ -281,7 +281,13 @@ namespace YunJian.Riichi
                     stickAnchors[i] = stick;
                 }
                 DrawMelds(seat, p);
-                if (i == state.you) DrawHand();
+                var shown=state.phase=="result"?state.result?.details?.FirstOrDefault(d=>d.seat==i && d.tiles!=null):null;
+                if(shown!=null){
+                    var revealed=new GameObject("Revealed winning hand").transform;revealed.SetParent(seat,false);
+                    float pitch=.31f;float edge=Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f?4.0f:2.95f;
+                    for(int j=0;j<shown.tiles.Length;j++)Tile(revealed,shown.tiles[j],new Vector3(-2.2f+j*pitch,.02f,-edge),.29f);
+                }
+                else if (i == state.you) DrawHand();
                 else for (int j = 0; j < p.count - (SelfDrawWinner(i) != null ? 1 : 0); j++)
                 {
                     float edge = Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f ? 4.34f : 3.35f;

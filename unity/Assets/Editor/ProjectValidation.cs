@@ -28,10 +28,14 @@ namespace YunJian.Riichi.Editor
             foreach (var name in new[] { "YunJian/OriginalHand", "YunJian/OriginalTileBody", "YunJian/OriginalTileOutline", "YunJian/ResponseGlow", "YunJian/TurnLight", "YunJian/NorthPetal", "YunJian/WinParticle", "YunJian/TableCloth", "Unlit/Transparent" })
                 Require(Shader.Find(name) != null && (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null || Shader.Find(name).isSupported), "Missing/unsupported skin shader " + name);
             Require(Resources.Load<Texture2D>("Majsoul/Table/score-hub") != null, "Missing score hub");
-            foreach (var name in new[] { "show_rong","show_zimo","win-yuanqiu2","win-shanguang","win-bao","win-Light2","win-thunder","win-lizi","win-kuosan","op_chi","op_peng","op_gang","op_hu","op_zimo","op_lizhi","op_babei","op_liuju","op_x","shout_horizontal","shout_vertical","shout_peng","shout_chi","shout_gang","shout_babei","north-petals","yiji-full","response-arrow","response-glow","hand-skin","hand-nails" })
+            foreach (var name in new[] { "show_rong","show_zimo","fire-fire_bai_add","fire-fire_bai_alpha","fire-yuanqiu2","win-yuanqiu2","win-shanguang","win-bao","win-Light2","win-thunder","win-lizi","win-kuosan","op_chi","op_peng","op_gang","op_hu","op_zimo","op_lizhi","op_babei","op_liuju","op_x","shout_horizontal","shout_vertical","shout_peng","shout_chi","shout_gang","shout_babei","north-petals","yiji-full","response-arrow","response-glow","hand-skin","hand-nails" })
                 Require(Resources.Load<Texture2D>("Majsoul/Actions/"+name)!=null,"Missing action art "+name);
             Require(Resources.Load<TextAsset>("Majsoul/Actions/discard-hand")!=null && Resources.Load<TextAsset>("Majsoul/Actions/discard-hand-frames")!=null,"Missing original discard animation");
-            Require(Resources.Load<TextAsset>("Majsoul/Actions/tsumo-hand-frames")!=null && Resources.Load<TextAsset>("Majsoul/Actions/win-effect")!=null,"Missing original win animation/effect");
+            Require(Resources.Load<TextAsset>("Majsoul/Actions/tsumo-hand-frames")!=null && Resources.Load<TextAsset>("Majsoul/Actions/fire-effect")!=null,"Missing original win animation/effect");
+            for(int digit=0;digit<10;digit++)foreach(var prefix in new[]{"h_","ww_"})Require(Resources.Load<Texture2D>("Majsoul/Results/"+prefix+digit)!=null,"Missing native result digit "+prefix+digit);
+            foreach(var name in new[]{"bg_jiesuan","bg_fan","bg_center_fan","bg_point","scorechange_bg","scorechangearrow_0","word_fan","word_fu","word_point","word_yiman","word_man","word_guan","word_tiao","word_bei","word_yi","word_san","word_si","word_wu","word_liu","word_liang","word_lei","word_ji"})Require(Resources.Load<Texture2D>("Majsoul/Results/"+name)!=null,"Missing settlement art "+name);
+            var resultDigit=Resources.Load<Texture2D>("Majsoul/Results/ww_0");
+            Require(resultDigit.width==69 && resultDigit.height==108,"Native point digit aspect was altered by import");
             Require(Resources.Load<Font>("Majsoul/Font/game") != null, "Missing Chinese font");
             var manifest = JsonUtility.FromJson<VoiceManifest>(Resources.Load<TextAsset>("Majsoul/voice-manifest").text);
             Require(manifest.provider == "yiji", "Active pack must be the one-role Ichihime pack");

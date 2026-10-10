@@ -3,6 +3,7 @@ Shader "YunJian/WinParticle"
     Properties
     {
         _MainTex ("Original winning tile particle", 2D) = "white" {}
+        _DstBlend ("Destination blend", Float) = 1
         _TintColor ("Original tint", Color) = (.5,.5,.5,.913)
     }
     SubShader
@@ -10,7 +11,7 @@ Shader "YunJian/WinParticle"
         Tags { "Queue"="Transparent" "RenderType"="Transparent" }
         Pass
         {
-            Blend SrcAlpha One
+            Blend SrcAlpha [_DstBlend]
             ZWrite Off
             Cull Off
             CGPROGRAM

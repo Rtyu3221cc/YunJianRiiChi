@@ -51,9 +51,11 @@ namespace YunJian.Riichi
         // A discard keeps the source keyframes but is retimed to 0.62 s; the declaration,
         // the stick placement and the meld motion play at their own baked length.
         bool PlainDiscard => current != null && current.kind == "discard" && !current.riichi;
-        float PlayLength => (PlainDiscard || clip == null || clip.data.duration <= 0) ? .62f : clip.data.duration;
+        float ClipLength => (PlainDiscard || clip == null || clip.data.duration <= 0) ? .62f : clip.data.duration;
         // The carried object stops moving when the real river tile / stick / meld takes over.
-        float Handoff => (PlainDiscard || clip == null || clip.data.landTime <= 0) ? .40f : clip.data.landTime;
+        float SourceHandoff => (PlainDiscard || clip == null || clip.data.landTime <= 0) ? .40f : clip.data.landTime;
+        float PlayLength => current?.kind=="tsumo"?1.16f:ClipLength;
+        float Handoff => current?.kind=="tsumo"?1.14f:SourceHandoff;
         static string ClipFor(PublicSound item)
         {
             if (item.kind == "discard") return item.riichi ? RiichiClip : NormalClip;
@@ -143,7 +145,7 @@ namespace YunJian.Riichi
             motion.localScale=Vector3.one*(.33f/.02947767f*(item.kind=="tsumo"?.36f:.9f));
             // Fulu's node_tile is offset from its root; align its settle keyframe
             // with the event's North tile, including the inward-facing glyph.
-            if (item.kind=="nuki" || item.kind=="tsumo") motion.position -= motion.TransformVector(TilePoint(Handoff));
+            if (item.kind=="nuki" || item.kind=="tsumo") motion.position -= motion.TransformVector(TilePoint(SourceHandoff));
             var hand=new GameObject("Source hand mesh");hand.layer=14;hand.transform.SetParent(motion,false);
             hand.AddComponent<MeshFilter>().sharedMesh=mesh;
             var renderer=hand.AddComponent<MeshRenderer>();renderer.sharedMaterials=new[]{body,nails};renderer.shadowCastingMode=ShadowCastingMode.Off;
@@ -184,7 +186,7 @@ namespace YunJian.Riichi
         }
         Vector3 TilePoint(float elapsed)
         {
-            float frame=Mathf.Clamp01(elapsed/PlayLength)*(clip.data.frames-1);
+            float frame=Mathf.Clamp01(elapsed/ClipLength)*(clip.data.frames-1);
             int a=(int)frame,b=Mathf.Min(a+1,clip.data.frames-1); float t=frame-a;
             return Vector3.Lerp(new Vector3(clip.data.tilePoints[a*3],clip.data.tilePoints[a*3+1],clip.data.tilePoints[a*3+2]),new Vector3(clip.data.tilePoints[b*3],clip.data.tilePoints[b*3+1],clip.data.tilePoints[b*3+2]),t);
         }
@@ -213,7 +215,7 @@ namespace YunJian.Riichi
             string key=item.from+":"+item.winSource+":"+item.tile;
             if(!winningBursts.Add(key))return;
             var effect=new GameObject("Original winning tile effect "+key).AddComponent<WinTileEffect>();effect.transform.SetParent(transform,false);
-            effect.Initialize(table.WinningPoint(item),table.SeatAngle(item.kind=="ron"?item.from:item.seat),now,(uint)(item.id+1));
+            effect.Initialize(table.WinningPoint(item),table.SeatAngle(item.kind=="ron"?item.from:item.seat),now+.10f,(uint)(item.id+1));
             winEffects.Add(effect);SpawnedWinEffects++;
         }
         void EndWinEffects(){foreach(var e in winEffects)if(e!=null){e.gameObject.SetActive(false);Destroy(e.gameObject);}winEffects.Clear();}
@@ -266,7 +268,7 @@ namespace YunJian.Riichi
                 impactRenderer.sharedMaterial.SetColor("_Tint", new Color(fade, fade * .95f, fade * .82f, 1f));
             impact.rotation = Quaternion.LookRotation(impact.position - table.Camera.transform.position, Vector3.up);
         }
-        void BeginCall(PublicSound item) { call=item; callStarted=Time.unscaledTime; if(item.kind=="ron")SpawnWin(item,ValidationFreeze?0:callStarted); }
+        void BeginCall(PublicSound item) { call=item; callStarted=Time.unscaledTime; if(item.kind=="ron")SpawnWin(item,(ValidationFreeze?0:callStarted)+.18f); }
         void FinishCall() { call=null; }
         void ConfigureOverlay()
         {
@@ -287,18 +289,20 @@ namespace YunJian.Riichi
             if (call!=null && (ValidationFreeze?ValidationTime:Time.unscaledTime-callStarted) >= 1.05f) FinishCall();
             if (current==null || motion==null || clip==null) return;
             elapsed=ValidationFreeze?ValidationTime:Time.unscaledTime-started;
-            float frame=Mathf.Clamp01(elapsed/PlayLength)*(clip.data.frames-1);int a=(int)frame,b=Mathf.Min(a+1,clip.data.frames-1);float t=frame-a;
+            float frame=Mathf.Clamp01(elapsed/ClipLength)*(clip.data.frames-1);int a=(int)frame,b=Mathf.Min(a+1,clip.data.frames-1);float t=frame-a;
             for(int i=0;i<clip.data.vertices;i++) {clip.frameVertices[i]=Vector3.Lerp(clip.vertices[a][i],clip.vertices[b][i],t);clip.frameNormals[i]=Vector3.Lerp(clip.normals[a][i],clip.normals[b][i],t);}
             mesh.vertices=clip.frameVertices;mesh.normals=clip.frameNormals;mesh.RecalculateBounds();
             if(animatedTile!=null)
             {
-                Vector3 p=TilePoint(elapsed);
+                Vector3 p=TilePoint(current.kind=="tsumo"?Mathf.Min(elapsed,SourceHandoff):elapsed);
+                if(current.kind=="tsumo"){motion.GetComponentInChildren<MeshRenderer>().enabled=elapsed<clip.data.duration;}
                 animatedTile.position=motion.TransformPoint(p)-Vector3.up*.12f;
                 // A declared riichi tile lies sideways in the river, matching CreateTable.
                 bool stick=current.kind=="riichi-stick";
                 animatedTile.rotation=current.kind=="nuki" && table.NorthTarget(current.seat,current.nuki)!=null
                     ? table.NorthTarget(current.seat,current.nuki).rotation
                     : Quaternion.Euler(0,table.SeatAngle(current.seat)+(!stick&&current.riichi?90f:0f),0);
+                if(current.kind=="tsumo")animatedTile.rotation*=Quaternion.Euler(0,0,Mathf.Lerp(180,0,Mathf.SmoothStep(0,1,(elapsed-.87f)/.27f)));
             }
             if (elapsed>=Handoff) CompleteHandoff();
         }

@@ -1,5 +1,17 @@
 # 云间日麻 Unity 三维客户端
 
+## Unity 0.5.10 录像对照优化
+
+最新安卓包：[下载 Unity 0.5.10 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.10/yunjian-riichi-unity-0.5.10.apk)，versionCode 11，同包名同签名，可覆盖更新。
+
+- 按用户《荣牌特效.mp4》调整橙黄色火焰旋涡、环绕碎石与火星；自摸先落背面牌，再翻到正面并播放特效。各方赢家摊开公开手牌，一姬立绘沿用原角色。
+- 原结算背景、役种笔刷、番符圆盘与点数箭头从用户 APK 导入；番数、符数、得点和满贯系列标题直接调用原金色/白色数字与笔刷字图。先展示完整和牌、宝牌/里宝牌、逐项役种、番符与得点，再播放各座位点数转移、名次变化。双响依次结算两名赢家；确认、下一局、终局重开沿用房间流程。
+- 立直不可出的牌仅降低 RGB 亮度，保留红色、绿色和原有透明度。
+- 65/65 规则和协议测试通过；Unity 实际 Play 覆盖三/四麻各方向、翻面交接、轮询/重连、双响、四分辨率结算和保色 shader；双架构 APK 检查通过。安卓真机触控和热点联机待实测。
+
+预览：[火焰胡牌特效](../dist/previews/unity-0.5.10-win-3-tsumo-effect-0.png)、[手牌和役种结算](../dist/previews/unity-0.5.10-result-hand-1688.png)、[点数和排名结算](../dist/previews/unity-0.5.10-result-scores-1688.png)。来源与适配范围见 [ARTWORK.md](../ARTWORK.md)，详见 [验证记录](../dist/验证记录-unity-0.5.10.txt)。
+
+
 ## Unity 0.5.9 荣和、自摸与胡牌特效
 
 最新安卓包：[下载 Unity 0.5.9 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.9/yunjian-riichi-unity-0.5.9.apk)，versionCode 10，与此前 Unity 包同签名，可覆盖更新。
@@ -22,7 +34,7 @@
 
 预览：[拔北提示](../dist/previews/unity-0.5.8-north-call-0.png)、[手部动作](../dist/previews/unity-0.5.8-north-hand-0.png)、[落牌花瓣](../dist/previews/unity-0.5.8-north-petals-0.png)。检查范围见 [0.5.8 验证记录](../dist/验证记录-unity-0.5.8.txt)，素材来源见 [ARTWORK.md](../ARTWORK.md)。安卓真机效果待实测。
 
-构建脚本当前输出 `Builds/yunjian-riichi-unity-0.5.9.apk`。
+构建脚本当前输出 `Builds/yunjian-riichi-unity-0.5.10.apk`。
 
 ## 0.5.7 计分盘出牌指示灯
 
