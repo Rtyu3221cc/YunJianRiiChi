@@ -1,5 +1,17 @@
 # 云间日麻 Unity 三维客户端
 
+## Unity 0.5.12 吃牌、听牌、振听与荒牌流局
+
+安卓包：[下载 Unity 0.5.12 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.12/yunjian-riichi-unity-0.5.12.apk)，versionCode 13，同包名同签名覆盖更新。
+
+- 吃牌响应时直接显示各个小麻将组合，点击组合完成吃牌。小麻将复用对局的牌面、赤牌颜色、玫瑰红牌框和原花饰框。
+- 手牌上方增加听牌提示；选中弃牌后预览该牌打出后的待牌。显示原版橙色“无役”，区分有役荣和与门清自摸/立直增加的役；支持十三面待牌及提示开关。
+- 振听时在手牌左侧显示原版竖排红底白字标识，接入舍牌振听、同巡振听和立直后永久振听。待牌信息只来自自己的手牌与公开牌局。
+- 荒牌流局保留牌桌与头像，先翻倒各家的手牌，公开听牌家的牌面，未听牌家继续盖牌。原版“荒牌流局”“听牌／未听牌”和待牌展示，确认后进入点数转移与排名，最后确认准备下一局。
+- 对照用户四张截图及《荒牌流局.mp4》，继续沿用当前牌面/牌背和一姬相关动作素材。72 项规则/协议测试、三/四麻每种听牌人数、四分辨率界面与完整 Unity 回归、Android 双架构打包/v2 签名/16KB 对齐通过。安卓真机触控及热点联机未执行。
+
+预览：[吃牌组合](../dist/previews/unity-0.5.12-indicator-chi-1688.png)、[听牌与无役](../dist/previews/unity-0.5.12-indicator-open-1688.png)、[振听标识](../dist/previews/unity-0.5.12-indicator-furiten-844.png)、[荒牌流局](../dist/previews/unity-0.5.12-draw-4-reveal-1688.png)。详见 [验证记录](../dist/验证记录-unity-0.5.12.txt) 与 [ARTWORK.md](../ARTWORK.md)。
+
 ## Unity 0.5.11 结算麻将牌修正
 
 安卓包：[下载 Unity 0.5.11 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.11/yunjian-riichi-unity-0.5.11.apk)，versionCode 12，同包名同签名覆盖更新。
@@ -45,7 +57,7 @@
 
 预览：[拔北提示](../dist/previews/unity-0.5.8-north-call-0.png)、[手部动作](../dist/previews/unity-0.5.8-north-hand-0.png)、[落牌花瓣](../dist/previews/unity-0.5.8-north-petals-0.png)。检查范围见 [0.5.8 验证记录](../dist/验证记录-unity-0.5.8.txt)，素材来源见 [ARTWORK.md](../ARTWORK.md)。安卓真机效果待实测。
 
-构建脚本当前输出 `Builds/yunjian-riichi-unity-0.5.11.apk`。
+构建脚本当前输出 `Builds/yunjian-riichi-unity-0.5.12.apk`。
 
 ## 0.5.7 计分盘出牌指示灯
 

@@ -96,3 +96,42 @@ test('double ron settlement retains independent public winning hands and scores'
  const r=fixture();for(const i of [1,2]){r.s.players[i].hand='m123p123s123z3334';r.s.players[i].river=[];}r.win([1,2],0,'z4');
  for(const d of r.s.result.details){assert.equal(d.tiles.length,13);assert.equal(d.tile,'z4');assert(d.yaku.length>0);assert(d.score.defen>0);}assert.equal(r.s.result.details.length,2);
 });
+
+test('discard wait hints retain colored tile identities and distinguish open no-yaku waits',()=>{
+ const r=fixture();r.s.players[0].hand='p23467s789z22p9,m111-';r.s.players[0].river=[];
+ const before=JSON.stringify(r.s),v=r.view(0),hint=v.discardHints.find(x=>v.options.find(a=>a.id===x.id)?.tile==='p9');
+ assert(hint);assert.deepEqual(hint.waits.map(w=>w.tile),['p5','p8']);assert(hint.waits.every(w=>!w.ron&&!w.tsumo));assert(!hint.furiten);assert.equal(JSON.stringify(r.s),before);
+});
+test('closed no-yaku ron waits allow self draw, and riichi discard hints add the yaku',()=>{
+ const r=fixture();r.s.players[0].hand='m111p23467s789z22p9';r.s.players[0].river=[];
+ const v=r.view(0),regular=v.discardHints.find(h=>h.id.startsWith('discard:p9')),declared=v.discardHints.find(h=>h.id.startsWith('riichi:p9'));
+ assert(regular&&declared);assert(regular.waits.every(w=>!w.ron&&w.tsumo));assert(declared.waits.every(w=>w.ron&&w.tsumo));
+});
+test('furiten badge survives a draw and previews a discard into any wait',()=>{
+ const r=fixture();r.s.players[0].hand='m111p23467s789z22p9';r.s.players[0].river=[{tile:'p5'}];
+ assert(r.view(0).furiten);const v=r.view(0),hint=v.discardHints.find(h=>h.id.startsWith('discard:p9'));assert(hint.furiten);
+ r.s.players[0].river=[];r.s.players[0].permanent=true;assert(r.view(0).furiten);
+ r.s.players[0].permanent=false;r.s.players[0].hand='m111p23467s789z22p5';const next=r.view(0).discardHints.find(h=>h.id.startsWith('discard:p5'));assert(next.furiten);
+});
+test('temporary furiten clears on the next draw, while riichi permanent furiten remains',()=>{
+ const r=fixture();r.s.players[0].hand='p123456s123z1112';r.s.players[0].temp=true;r.s.wall=['p9'];assert(r.view(0).furiten);
+ r.draw(0);assert(!r.view(0).furiten);r.s.players[0].permanent=true;assert(r.view(0).furiten);
+});
+test('wait metadata exposes only the requesting hand and never depends on opponents concealed tiles',()=>{
+ const r=fixture();r.s.players[0].hand='m111p23467s789z22p9';const pick=v=>({waitDetails:v.waitDetails,discardHints:v.discardHints,furiten:v.furiten});
+ const a=pick(r.view(0));r.s.players[1].hand='m123456789p111z2';assert.deepEqual(pick(r.view(0)),a);
+ assert(!JSON.stringify(a).includes(r.s.players[1].hand));assert(!r.view(1).discardHints.length);
+});
+test('exhaustive draw reveals waits/tiles only for tenpai seats and transfers the existing noten pool',()=>{
+ for(const n of [3,4])for(let k=0;k<=n;k++){
+  const r=fixture(n);r.s.wall=[];r.s.players.forEach((p,i)=>{p.hand=i<k?'p123456s123z1112':'m19p147s258z12345';p.river=[{tile:'p2'}];});r.exhaust();
+  const result=r.view(0).result;assert.equal(result.title,'荒牌流局');assert.equal(result.drawDetails.length,n);assert.equal(result.delta.reduce((a,b)=>a+b,0),0);
+  result.drawDetails.forEach((d,i)=>{assert.equal(d.seat,i);assert.equal(d.tenpai,i<k);assert.equal(d.tiles.length,i<k?13:0);assert.equal(d.waits.length,i<k?1:0);if(i<k)assert.deepEqual(d.waits,['z2']);else assert.equal(result.revealed[i],null);});
+  if(k&&k<n){const pool=n===3?2000:3000;result.delta.forEach((d,i)=>assert.equal(d,i<k?pool/k:-pool/(n-k)));}
+  else assert(result.delta.every(d=>d===0));
+ }
+});
+test('sanma waits include all thirteen kokushi sides and exclude removed manzu ranks',()=>{
+ const r=fixture(3);r.s.players[0].hand='m19p19s19z1234567';r.s.players[0].river=[];
+ const v=r.view(0);assert.equal(v.waitDetails.length,13);assert(v.waitDetails.every(w=>w.ron&&w.tsumo));assert(!v.waitDetails.some(w=>/^m[2-8]$/.test(w.tile)));
+});

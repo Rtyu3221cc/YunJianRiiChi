@@ -29,6 +29,29 @@ class Room{
  totalKans(){return this.s.players.reduce((a,p)=>a+p.kans,0)}
  waits(h){if(h._zimo||M.Util.xiangting(h)!==0)return [];return M.Util.tingpai(h).filter(p=>!(this.s.n===3&&p[0]==='m'&&p!=='m1'&&p!=='m9'))}
  furiten(i){const p=this.s.players[i],w=this.waits(this.h(i));return p.temp||p.permanent||p.river.some(r=>w.includes(norm(r.tile)))}
+ waitInfo(i,h,discard=null,riichi=false){
+  const s=this.s,p=s.players[i],waits=this.waits(h);
+  const furiten=!!(p.temp||p.permanent||p.river.some(r=>waits.includes(norm(r.tile)))||(discard&&waits.includes(norm(discard))));
+  const param=M.Util.hule_param({rule:RULE,menfeng:this.wind(i),zhuangfeng:Math.floor(s.round/s.n),lizhi:p.riichi||(riichi?1:0),haidi:this.remain()===0?2:0});
+  const details=waits.map(tile=>{
+   const ron=M.Util.hule(h,tile+this.dir(i,(i+1)%s.n),param);
+   const tsumoParam={...param,hupai:{...param.hupai,haidi:this.remain()===0?1:0}};
+   const tsumo=M.Util.hule(h.clone().zimo(tile),null,tsumoParam);
+   return {tile,ron:!!(ron&&ron.hupai),tsumo:!!(tsumo&&tsumo.hupai)};
+  });
+  return {furiten,waits:details};
+ }
+ hints(i,h,options){
+  if(!h)return {waitDetails:[],discardHints:[],furiten:false};
+  const base=h._zimo&&h._zimo.length===2?h.clone().dapai(h._zimo+'_'):h;
+  const info=this.waitInfo(i,base),discardHints=[];
+  if(!this.s.players[i].bot)for(const a of options.filter(a=>a.kind==='discard'||a.kind==='riichi')){
+   const after=h.clone().dapai(a.id.slice(a.id.indexOf(':')+1));
+   const candidate=this.waitInfo(i,after,a.tile,a.kind==='riichi');
+   if(candidate.waits.length)discardHints.push({id:a.id,...candidate});
+  }
+  return {waitDetails:info.waits,discardHints,furiten:info.furiten};
+ }
  score(i,from=null,tile=null,kind='discard',sticks=0){
   const s=this.s,p=s.players[i],h=this.h(i),ron=from!==null;
   if(ron&&this.furiten(i))return null;
@@ -150,7 +173,8 @@ class Room{
   const delta=s.players.map(()=>0);let title='荒牌流局';
   if(nagashi.length){title='流局满贯';for(const i of nagashi)for(let j=0;j<s.n;j++)if(i!==j){const amt=(i===s.dealer||j===s.dealer?4000:2000);delta[i]+=amt;delta[j]-=amt;}}
   else{const n=tenpai.filter(Boolean).length,pool=s.n===3?2000:3000;if(n&&n<s.n)tenpai.forEach((yes,i)=>delta[i]=yes?pool/n:-pool/(s.n-n));}
-  this.finish({title,delta,details:[],tenpai,revealed:s.players.map((p,i)=>tenpai[i]?p.hand:null),nagashi,repeat:tenpai[s.dealer],draw:true});
+  const drawDetails=s.players.map((p,i)=>({seat:i,tenpai:tenpai[i],tiles:tenpai[i]?tiles(this.h(i)):[],waits:tenpai[i]?this.waits(this.h(i)):[]}));
+  this.finish({title,delta,details:[],drawDetails,tenpai,revealed:s.players.map((p,i)=>tenpai[i]?p.hand:null),nagashi,repeat:tenpai[s.dealer],draw:true});
  }
  finish(result){
   const s=this.s;result.delta.forEach((v,i)=>s.players[i].score+=v);s.phase='result';s.result=result;s.pending=null;s.players.forEach(p=>p.ready=!!p.bot);this.log(result.title);
@@ -180,11 +204,12 @@ class Room{
  view(i){
   const s=this.s;if(!s)return {phase:'empty'};
   if(i<0)return {phase:'join',n:s.n,count:s.players.length,started:s.phase!=='lobby'};
-  const h=s.players[i].hand?this.h(i):null;
+  const h=s.players[i].hand?this.h(i):null,options=this.options(i);
+  const hints=['play','reaction'].includes(s.phase)?this.hints(i,h,options):{waitDetails:[],discardHints:[],furiten:false};
   return {phase:s.phase,version:s.version,you:i,host:i===0,n:s.n,pin:s.pin,round:s.round,rounds:s.rounds,dealer:s.dealer,honba:s.honba,sticks:s.sticks,turn:s.turn,
    audioRoom:s.audioRoom||s.pin,audioSeq:s.audioSeq||0,audioEvents:s.audioEvents||[],remaining:s.wall?s.wall.length:0,indicators:s.indicators?s.indicators.slice(0,1+this.totalKans()):[],last:s.last,
    players:s.players.map((p,j)=>({name:p.name,avatar:p.avatar||"",bot:!!p.bot,score:p.score,wind:this.wind(j),riichi:p.riichi,nuki:p.nuki,river:p.river,melds:p.hand?this.h(j)._fulou:[],count:p.hand?tiles(this.h(j)).length:0,ready:p.ready,online:p.bot||Date.now()-(this.seen[p.token]||0)<12000})),
-   hand:h?tiles(h):[],drawn:h&&h._zimo&&h._zimo.length===2?h._zimo:null,options:this.options(i),furiten:h&&!h._zimo?this.furiten(i):false,waits:h?this.waits(h):[],
+   hand:h?tiles(h):[],drawn:h&&h._zimo&&h._zimo.length===2?h._zimo:null,options,furiten:hints.furiten,waits:h?this.waits(h):[],waitDetails:hints.waitDetails,discardHints:hints.discardHints,
    recovery:s.players[i].recovery,log:s.log||[],result:s.result,pending:s.pending?{from:s.pending.from,tile:s.pending.tile,kind:s.pending.kind,riichi:!!s.pending.riichi,waiting:Object.keys(s.pending.options).filter(k=>!s.pending.replies[k]).map(Number)}:null};
  }
  dispatch(req){

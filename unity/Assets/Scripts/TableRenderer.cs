@@ -26,6 +26,28 @@ namespace YunJian.Riichi
         Font font;
         Transform cameraHand;
         Transform responseTarget;
+        string drawKey;float drawBegan;
+        readonly List<Tuple<Transform,Vector3>> drawTiles=new List<Tuple<Transform,Vector3>>();
+        public Rect HandScreenBounds()
+        {
+            if(handTiles.Count==0)return new Rect();
+            Vector2 min=new Vector2(float.MaxValue,float.MaxValue),max=new Vector2(float.MinValue,float.MinValue);
+            foreach(var hand in handTiles){var b=hand.GetComponent<Renderer>().bounds;
+                foreach(int x in new[]{-1,1})foreach(int y in new[]{-1,1}){
+                    var p=HandCamera.WorldToScreenPoint(b.center+Vector3.Scale(b.extents,new Vector3(x,y,0)));
+                    min=Vector2.Min(min,p);max=Vector2.Max(max,p);
+                }
+            }
+            return Rect.MinMaxRect(min.x,min.y,max.x,max.y);
+        }
+        void UpdateDrawReveal()
+        {
+            float t=Mathf.SmoothStep(0,1,(Time.unscaledTime-drawBegan)/.55f);
+            foreach(var tile in drawTiles){
+                tile.Item1.localRotation=Quaternion.Euler(-90*(1-t),0,0);
+                tile.Item1.localPosition=tile.Item2+Vector3.up*original.TableLength*.29f*.5f*(1-t);
+            }
+        }
         Transform selfMelds;
         readonly Dictionary<int, List<Transform>> riverTiles = new Dictionary<int, List<Transform>>();
         readonly Dictionary<int, Transform> stickAnchors = new Dictionary<int, Transform>();
@@ -106,7 +128,7 @@ namespace YunJian.Riichi
         public void Clear()
         {
             foreach (Transform t in content) { t.gameObject.SetActive(false); Destroy(t.gameObject); }
-            handTiles.Clear(); handBase.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); northTiles.Clear(); winningTiles.Clear(); responseTarget = null; selfMelds = null; cameraHand = null; state = null;
+            handTiles.Clear(); handBase.Clear(); drawTiles.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); northTiles.Clear(); winningTiles.Clear(); responseTarget = null; selfMelds = null; cameraHand = null; state = null;
         }
         public int RelativeSeat(int i) => (i - state.you + state.n) % state.n;
         float Angle(int i)
@@ -206,7 +228,7 @@ namespace YunJian.Riichi
             var local = i == state.you ? new Vector3(-3.8f, .15f, -2.8f) : new Vector3(-2.9f, .15f, -3.7f);
             return Quaternion.Euler(0, angle, 0) * local;
         }
-        void LateUpdate() { FitCamera(Screen.width / (float)Screen.height); }
+        void LateUpdate() { UpdateDrawReveal();FitCamera(Screen.width / (float)Screen.height); }
         public void FitCamera(float aspect)
         {
             // Preserve vertical composition on phones; fit the side hands on 16:9.
@@ -262,6 +284,10 @@ namespace YunJian.Riichi
         public void Render(RoomView view)
         {
             Clear(); state = view;
+            bool exhausted=state.phase=="result" && state.result!=null && state.result.draw && !state.result.abort && (state.result.drawDetails?.Length??0)>0;
+            if(exhausted){string next=state.audioRoom+":"+state.round+":"+state.honba+":"+state.result.title;
+                if(next!=drawKey){drawKey=next;drawBegan=Time.unscaledTime;}
+            }else drawKey=null;
             if (state.phase != "play" && state.phase != "reaction" && state.phase != "result") return;
             var hub = scoreHub.Create(content, state);
             for (int i = 0; i < state.players.Length; i++)
@@ -283,7 +309,17 @@ namespace YunJian.Riichi
                 }
                 DrawMelds(seat, p);
                 var shown=state.phase=="result"?state.result?.details?.FirstOrDefault(d=>d.seat==i && d.tiles!=null):null;
-                if(shown!=null){
+                if(exhausted){
+                    var d=state.result.drawDetails.FirstOrDefault(x=>x.seat==i);
+                    var hand=new GameObject("Draw hand seat "+i).transform;hand.SetParent(seat,false);
+                    int count=d!=null && d.tenpai?d.tiles.Length:p.count;float pitch=.31f;
+                    float edge=i==state.you?3.08f:Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f?4f:3.35f;
+                    for(int j=0;j<count;j++){
+                        var tile=Tile(hand,d!=null&&d.tenpai?d.tiles[j]:"z5",new Vector3((j-(count-1)*.5f)*pitch,.02f,-edge),.29f,.42f,d==null||!d.tenpai);
+                        drawTiles.Add(Tuple.Create(tile,tile.localPosition));
+                    }
+                }
+                else if(shown!=null){
                     var revealed=new GameObject("Revealed winning hand").transform;revealed.SetParent(seat,false);
                     float pitch=.31f;float edge=Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f?4.0f:2.95f;
                     for(int j=0;j<shown.tiles.Length;j++)Tile(revealed,shown.tiles[j],new Vector3(-2.2f+j*pitch,.02f,-edge),.29f);

@@ -100,3 +100,11 @@ Unity 0.5.2 补充原 APK 的 chang、ju、word_left、number_left、number_scor
 宝牌和里宝牌直接使用对局 HUD 已有的 `DoraTexture` 及同一套原三维网格、桌面牌面/玫瑰红背面贴图，包括未翻开的指示牌。视频中的猫图案来自其皮肤；本项目结算继续采用本项目对局已选的默认牌面/玫瑰红背面，不混用录像皮肤。
 
 用户 APK `assets/Android/$0qqs86vvx-2$d224jmac_a_pwwtzzeeg@_e4c587454fdfaad84e4a.majset` 中的 `UI_Win` 控件树提供 80×120 手牌槽、6°倾角、手牌容器 0.96 与宝牌容器 0.7 缩放；Unity 对应使用 40×60 和 29×43.5 牌槽并保持纹理原比例。逐像素验证结算纹理与实际 `CreateHand` 网格摄像机渲染一致。原资源路径仍见 `OriginalTile/provenance.json`。
+
+## Unity 0.5.12 对局提示与荒牌流局
+
+用户《荒牌流局.mp4》和四张截图提供显示顺序与布局参考。导入脚本 scripts/import-indicator-resources.py 从用户本地 Majsoul_4.0.16_MC.apk 提取原简体中文主界面及通用主界面 Sprite。Resources/Majsoul/Indicators/source.json 保存十张图的原包、bundle、pathID、Sprite border 和 SHA-256；版本库仅包含实际用到的 PNG、元数据和导入脚本，不包含原 APK 或录屏。
+
+原图片包括 pic_zhengting（竖排振听字图）、nofan（无役）、show_tingpai（听牌）、noting（未听牌）、huangpailiuju（荒牌流局）和 bg_chipengchoose 等花饰/辅助底图。导入保留 NPOT 原尺寸，防止书法和框线比例被修改。UI_ChiPengHu 和 UI_TingPai 的原牌槽为 80×120，吃牌组合、听牌待牌共用当前对局 OriginalTiles.HandTexture，保持 0.62 比例和彩色花色。花饰框支持多列、多行待牌；十三面待牌不会丢失。
+
+荒牌流局使用当前对局三维牌模型摊开手牌，未听牌手牌仅用公开牌数生成背面，不向客户端发送私牌；本项目牌面/玫瑰红背面保留。中央流局、听牌和未听牌字图直接使用 APK Sprite；点数沿用原 scorechange_bg、scorechangearrow_0 与 ww_ 数字图。规则和界面状态衔接在本项目实现，不引用皮肤中的猫牌或录像人物立绘。

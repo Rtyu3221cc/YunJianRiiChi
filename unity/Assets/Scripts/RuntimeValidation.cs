@@ -134,6 +134,7 @@ namespace YunJian.Riichi
                     Require(File.Exists(fullFile), "Full game-view capture failed at " + suffix);
                 }
             }
+            var indicatorProbe=ValidateIndicators(client);while(indicatorProbe.MoveNext())yield return indicatorProbe.Current;
             var winProbe = ValidateWins(client);
             while(winProbe.MoveNext())yield return winProbe.Current;
             var northProbe = ValidateNorthEffects(client);
@@ -389,6 +390,70 @@ namespace YunJian.Riichi
                     Require(Mathf.Abs(tile.localPosition.x-(seat==view.you?-3.35f:2.0f))<.001f,"North tiles do not stack along the seat edge");
                 }
             }
+        }
+        IEnumerator ValidateIndicators(RiichiClient client)
+        {
+            var table=GetComponent<TableRenderer>();client.ValidationToggleRiichi(false);
+            foreach(string name in new[]{"pic_zhengting","nofan","huangpailiuju","show_tingpai","noting","bg_chipengchoose"})
+                Require(TableIndicators.Art(name)!=null,"Native indicator missing: "+name);
+            foreach(Vector2 size in new[]{new Vector2(1280,720),new Vector2(1688,780),new Vector2(2760,1256),new Vector2(844,390)}){
+                SetGameResolution((int)size.x,(int)size.y);
+                var hint=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"hint-open.json")));
+                client.ShowValidationFixture(hint);yield return null;
+                var tile=FindObjectsByType<TileTarget>().First(t=>t.Action.StartsWith("discard:p9"));client.SelectTile(tile.Index,tile.Action);yield return null;yield return null;
+                Require(client.CurrentWaitDetails.Length==2 && client.CurrentWaitDetails.All(w=>!w.ron&&!w.tsumo),"Open no-yaku waits not connected to selected tile");
+                Require(client.CurrentWaitPanel.width>100 && client.CurrentWaitPanel.y>=0 && client.CurrentWaitPanel.xMax<=1280,"Wait panel clips at display size");
+                ScreenCapture.CaptureScreenshot(Path.Combine(folder,"indicator-open-"+(int)size.x+".png"));yield return new WaitForSecondsRealtime(.08f);
+                hint=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"hint-furiten.json")));client.ShowValidationFixture(hint);yield return null;yield return null;
+                Require(client.CurrentFuriten,"Furiten state missing after draw");
+                var badge=client.CurrentFuritenPanel;var nativeBadge=TableIndicators.Art("pic_zhengting");
+                Require(badge.height>=55 && Mathf.Abs(badge.width/badge.height-(float)nativeBadge.width/nativeBadge.height)<.01f,"Furiten brush glyph is shrunk or distorted");
+                ScreenCapture.CaptureScreenshot(Path.Combine(folder,"indicator-furiten-"+(int)size.x+".png"));yield return new WaitForSecondsRealtime(.08f);
+            }
+            foreach(Vector2 size in new[]{new Vector2(1688,780),new Vector2(844,390)}){
+                SetGameResolution((int)size.x,(int)size.y);
+                var view=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"hint-thirteen.json")));client.ShowValidationFixture(view);yield return null;yield return null;
+                Require(client.CurrentWaitDetails.Length==13 && client.CurrentWaitPanel.height>250,"Thirteen waits clipped or dropped");
+                ScreenCapture.CaptureScreenshot(Path.Combine(folder,"indicator-thirteen-"+(int)size.x+".png"));yield return new WaitForSecondsRealtime(.08f);
+                view=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"effects.json")));client.ShowValidationFixture(view);yield return null;yield return null;
+                Require(client.ValidationChoosingKind==null && view.options.Count(o=>o.kind=="chi")==2,"Chi preview requires an extra selection");
+                ScreenCapture.CaptureScreenshot(Path.Combine(folder,"indicator-chi-"+(int)size.x+".png"));yield return new WaitForSecondsRealtime(.08f);
+            }
+            SetGameResolution(1688,780);
+            var closed=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"hint-closed.json")));client.ShowValidationFixture(closed);client.ValidationToggleRiichi(true);yield return null;
+            var riichiTile=FindObjectsByType<TileTarget>().First(t=>t.Action.StartsWith("riichi:p9"));client.SelectTile(riichiTile.Index,riichiTile.Action);yield return null;yield return null;
+            Require(client.CurrentWaitDetails.Length==2 && client.CurrentWaitDetails.All(w=>w.ron),"Riichi waits incorrectly show no-yaku");
+            ScreenCapture.CaptureScreenshot(Path.Combine(folder,"indicator-riichi-1688.png"));yield return new WaitForSecondsRealtime(.08f);client.ValidationToggleRiichi(false);
+            foreach(int n in new[]{3,4})for(int k=0;k<=n;k++){
+                var view=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"draw-"+n+"-"+k+".json")));
+                client.ShowValidationFixture(view);var display=client.ValidationResult;display.Observe(view);display.Freeze=true;display.FrozenAge=.2f;
+                yield return new WaitForSecondsRealtime(.15f);
+                if(n==4 && k==2){
+                    var first=GameObject.Find("Draw hand seat 0").transform.GetChild(0);
+                    Require(Quaternion.Angle(first.localRotation,Quaternion.identity)>10,"Draw hand never flips down");
+                    ScreenCapture.CaptureScreenshot(Path.Combine(folder,"draw-flip.png"));yield return new WaitForSecondsRealtime(.08f);
+                }
+                yield return new WaitForSecondsRealtime(.55f);display.FrozenAge=2;yield return null;yield return null;
+                Require(display.ShowingDraw&&!display.ShowingScores,"Exhaustive draw skips tenpai reveal");
+                for(int seat=0;seat<n;seat++){
+                    var row=GameObject.Find("Draw hand seat "+seat).transform;var d=view.result.drawDetails[seat];
+                    Require(row.childCount==13 && row.GetChild(0).name== (d.tenpai?d.tiles[0]:"Concealed"),"Draw reveals noten/private hand or loses tiles");
+                }
+                table.Render(view);yield return null;Require(Quaternion.Angle(GameObject.Find("Draw hand seat 0").transform.GetChild(0).localRotation,Quaternion.identity)<.1f,"Polling restarts draw flip");
+                display.Observe(view);Require(display.ShowingDraw,"Polling skipped draw reveal");
+                ScreenCapture.CaptureScreenshot(Path.Combine(folder,"draw-reveal-"+n+"-"+k+".png"));yield return new WaitForSecondsRealtime(.08f);
+                display.Advance(view);Require(display.ShowingScores&&!display.ShowingDraw,"Draw confirmation does not advance to noten points");
+                display.FrozenAge=3.5f;for(int seat=0;seat<n;seat++)Require(display.DisplayScore(view,seat)==view.players[seat].score,"Noten points settle to wrong total");
+            }
+            foreach(Vector2 size in new[]{new Vector2(1280,720),new Vector2(1688,780),new Vector2(2760,1256),new Vector2(844,390)})foreach(int n in new[]{3,4}){
+                SetGameResolution((int)size.x,(int)size.y);int k=n==3?1:3;
+                var view=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"draw-"+n+"-"+k+".json")));client.ShowValidationFixture(view);
+                var display=client.ValidationResult;display.Observe(view);display.Freeze=true;display.FrozenAge=2;yield return new WaitForSecondsRealtime(.6f);
+                ScreenCapture.CaptureScreenshot(Path.Combine(folder,"draw-"+n+"-reveal-"+(int)size.x+".png"));yield return new WaitForSecondsRealtime(.08f);
+                display.Advance(view);display.FrozenAge=1.5f;yield return null;yield return null;
+                ScreenCapture.CaptureScreenshot(Path.Combine(folder,"draw-"+n+"-scores-"+(int)size.x+".png"));yield return new WaitForSecondsRealtime(.08f);
+            }
+            Debug.Log("RIICHI INDICATORS PASS: automatic chi mini tiles; selected discard/no-yaku/riichi waits, 13-sided waits and furiten; 3/4-seat exhaustive draw with every tenpai count, private backs, reveal flip/polling, both settlement stages and four display sizes.");
         }
         IEnumerator ValidateWins(RiichiClient client)
         {

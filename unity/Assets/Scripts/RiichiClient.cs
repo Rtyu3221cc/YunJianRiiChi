@@ -33,7 +33,12 @@ namespace YunJian.Riichi
         GUIStyle caption, centered, tableButton;
         TableViewport viewport;
         readonly Dictionary<string, Texture2D> skin = new Dictionary<string, Texture2D>();
-        bool showHints;
+        bool showHints, showWaits=true;
+        DiscardHint ActiveWaitHint => State?.discardHints?.FirstOrDefault(h=>h.id==SelectedAction);
+        public WaitDetail[] CurrentWaitDetails => SelectedAction!=null ? ActiveWaitHint?.waits??new WaitDetail[0] : State?.waitDetails??new WaitDetail[0];
+        public bool CurrentFuriten => ActiveWaitHint?.furiten??(State?.furiten??false);
+        public Rect CurrentWaitPanel { get; private set; }
+        public Rect CurrentFuritenPanel { get; private set; }
         readonly List<Rect> uiButtons = new List<Rect>();
         Font font;
         AndroidJavaClass bridge;
@@ -348,7 +353,7 @@ namespace YunJian.Riichi
             if (Button(new Rect(205, 480, 180, 60), "房间信息")) showRoom = true;
             if (Button(new Rect(410, 480, 180, 60), "返回大厅")) EnterHome();
         }
-        void DrawTableUI()
+        void DrawTableUI(bool passive=false)
         {
             float w = viewport.Width, h = viewport.Height;
             if (SkinButton(new Rect(w - 175, 20, 40, 40), "replay_collect", "房间信息")) showRoom = true;
@@ -375,12 +380,28 @@ namespace YunJian.Riichi
                 ShadowLabel(new Rect(anchor.x - 35, anchor.y + 64, 132, 19), p.v.name, centered, Color.white);
                 ShadowLabel(new Rect(anchor.x - 35, anchor.y + 82, 132, 19), "东南西北"[p.v.wind] + "家 · " + p.v.score, centered, new Color(.69f, .77f, .94f));
             }
+            if(passive)return;
             string status = State.phase == "result" ? State.result.title : State.phase == "reaction" ? (State.options.Length > 0 ? "请选择操作" : "等待其他玩家响应") : State.turn == State.you ? "轮到你出牌" : State.players[State.turn].name + " 的回合";
             if (showHints || State.phase == "reaction") ShadowLabel(new Rect(w * .5f - 210, h - 128, 420, 26), status, centered, Color.white);
             if (SkinButton(new Rect(24, h - 66, 36, 36), showHints ? "ob_ting_on_btn" : "ob_ting_off_btn", "切换出牌提示")) showHints = !showHints;
             ShadowLabel(new Rect(4, h - 31, 76, 18), "出牌提示", centered, new Color(.66f, .75f, .92f));
             if (RiichiMode) GUI.Label(new Rect(w * .5f - 210, h - 105, 420, 22), "选牌后再点一次 · 立直打出", centered);
-            if (State.furiten) GUI.Label(new Rect(22, h - 58, 175, 28), "振听 · 暂不可荣和", caption);
+            var bounds=table.HandScreenBounds();
+            var top=viewport.FromScreen(new Vector2(bounds.xMin,bounds.yMax),Screen.height);
+            var bottom=viewport.FromScreen(new Vector2(bounds.xMax,bounds.yMin),Screen.height);
+            CurrentFuritenPanel=new Rect();
+            if(CurrentFuriten && bounds.width>0){
+                var badge=TableIndicators.Art("pic_zhengting");float bh=Mathf.Clamp(bottom.y-top.y,55,76),bw=bh*badge.width/badge.height;
+                CurrentFuritenPanel=new Rect(top.x-bw-4,(top.y+bottom.y-bh)/2,bw,bh);
+                TableIndicators.Image("pic_zhengting",CurrentFuritenPanel);
+            }
+            if(SkinButton(new Rect(w-64,h-91,36,36),showWaits?"ob_ting_on_btn":"ob_ting_off_btn","切换听牌提示"))showWaits=!showWaits;
+            ShadowLabel(new Rect(w-88,h-54,84,18),"听牌提示",centered,new Color(.66f,.75f,.92f));
+            CurrentWaitPanel=new Rect();
+            if(showWaits && CurrentWaitDetails.Length>0 && bounds.width>0){
+                CurrentWaitPanel=TableIndicators.WaitRect(CurrentWaitDetails.Length,new Vector2((top.x+bottom.x)/2,0),top.y-10,w*.70f);
+                TableIndicators.Waits(table,CurrentWaitDetails,CurrentWaitPanel);
+            }
             DrawResponseMarker();
             DrawActionButtons(w,h);
             effects.DrawCall(w,h,State.n);
@@ -426,16 +447,18 @@ namespace YunJian.Riichi
                     ChooseActionKind(group.Key);
                 }
             }
-            if(choosingKind==null)return;
-            var choices=State.options.Where(x=>x.kind==choosingKind).ToArray();float choiceWidth=126;float total=Mathf.Min(width*.82f,choices.Length*choiceWidth);
+            string previewKind=choosingKind??(State.options.Any(o=>o.kind=="chi")?"chi":null);
+            if(previewKind==null)return;
+            var choices=State.options.Where(x=>x.kind==previewKind).ToArray();if(choices.Length==0)return;
+            float choiceWidth=134;float total=Mathf.Min(width*.82f,choices.Length*choiceWidth);
             float x=width-100-total,y=height-258;
-            var bg=effects.Art("bg_chipengchoose");if(bg!=null)GUI.DrawTexture(new Rect(x-8,y-8,total+16,84),bg,ScaleMode.StretchToFill);
+            TableIndicators.Panel(new Rect(x-12,y-12,total+24,90));
             for(int i=0;i<choices.Length;i++)
             {
                 Rect r=new Rect(x+i*total/choices.Length,y,total/choices.Length-4,66);
                 var a=GUI.matrix.MultiplyPoint3x4(new Vector3(r.x,r.y,0));var b=GUI.matrix.MultiplyPoint3x4(new Vector3(r.xMax,r.yMax,0));uiButtons.Add(Rect.MinMaxRect(a.x,a.y,b.x,b.y));
                 var meld=choices[i].meld;var digits=meld.Skip(1).Where(char.IsDigit).ToArray();float tw=Mathf.Min(38,(r.width-8)/Mathf.Max(1,digits.Length));
-                for(int j=0;j<digits.Length;j++)GUI.DrawTexture(new Rect(r.center.x-digits.Length*tw/2+j*tw,r.y+4,tw-1,53),table.TileTexture(meld[0].ToString()+digits[j]),ScaleMode.ScaleToFit);
+                for(int j=0;j<digits.Length;j++)GUI.DrawTexture(new Rect(r.center.x-digits.Length*tw/2+j*tw,r.y+3,tw-1,tw*1.5f),table.HandTexture(meld[0].ToString()+digits[j]),ScaleMode.ScaleToFit);
                 bool old=GUI.enabled;GUI.enabled&=!Busy;if(GUI.Button(r,"",GUIStyle.none))Act(choices[i].id);GUI.enabled=old;
             }
         }
@@ -453,7 +476,13 @@ namespace YunJian.Riichi
         }
         void DrawResult()
         {
-            var resultMatrix=GUI.matrix;var resultColor=GUI.color;GUI.matrix=Matrix4x4.identity;GUI.color=new Color(0,0,0,.68f);GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=resultColor;GUI.matrix=resultMatrix;
+            var resultMatrix=GUI.matrix;var resultColor=GUI.color;
+            if(State.result.draw){
+                viewport=TableViewport.Fit(Screen.width,Screen.height,Screen.safeArea,true);GUI.matrix=viewport.Matrix;
+                bool enabled=GUI.enabled;GUI.enabled=false;DrawTableUI(true);GUI.enabled=enabled;
+                viewport=TableViewport.Fit(Screen.width,Screen.height,Screen.safeArea,false);GUI.matrix=resultMatrix;
+            }
+            GUI.matrix=Matrix4x4.identity;GUI.color=new Color(0,0,0,State.result.draw ? .38f : .68f);GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=resultColor;GUI.matrix=resultMatrix;
             var action=resultDisplay.Draw(State,table,effects,font,Button);
             if(action==ResultPresentation.Action.Ready)StartCoroutine(Send(new RequestBody{op="ready"}));
             else if(action==ResultPresentation.Action.Next)StartCoroutine(Send(new RequestBody{op="next"}));

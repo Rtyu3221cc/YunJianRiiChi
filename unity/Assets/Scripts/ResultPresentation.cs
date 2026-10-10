@@ -11,23 +11,26 @@ namespace YunJian.Riichi
     {
         public enum Action { None, Ready, Next, Home }
         readonly Dictionary<string,Texture2D> art=new Dictionary<string,Texture2D>();
-        string key; int winner; bool scores; float started, skipped;
+        string key; int winner; bool scores,drawStage; float started, skipped;
         GUIStyle text, number; Font font;
         static readonly Color gold=new Color(1,.76f,.3f), white=new Color(.93f,.94f,.96f);
         public bool ShowingScores => scores;
+        public bool ShowingDraw => drawStage;
         public int WinnerIndex => winner;
         public bool Freeze; public float FrozenAge;
         float Age => Freeze?FrozenAge:Time.unscaledTime-started+skipped;
-        public void Reset(){key=null;winner=0;scores=false;skipped=0;Freeze=false;}
+        public void Reset(){key=null;winner=0;scores=false;drawStage=false;skipped=0;Freeze=false;}
         public void Observe(RoomView v)
         {
             string next=v.audioRoom+":"+v.round+":"+v.honba+":"+v.result?.title+":"+string.Join(",",v.result?.delta??new int[0]);
             if(next==key)return;
-            key=next;winner=0;scores=v.result?.details==null || v.result.details.Length==0;started=Time.unscaledTime;skipped=0;
+            key=next;winner=0;drawStage=v.result!=null && v.result.draw && !v.result.abort && (v.result.drawDetails?.Length??0)>0;
+            scores=!drawStage && (v.result?.details==null || v.result.details.Length==0);started=Time.unscaledTime;skipped=0;
         }
         float RevealEnd(WinDetail d) => .8f+(d.yaku?.Length??0)*.32f+1.1f;
         public void Advance(RoomView v)
         {
+            if(drawStage){drawStage=false;scores=true;started=Time.unscaledTime;skipped=0;FrozenAge=0;return;}
             if(scores){skipped=3.5f;return;}
             var d=v.result.details[winner];
             if(Age<RevealEnd(d)){skipped=RevealEnd(d);return;}
@@ -137,6 +140,24 @@ namespace YunJian.Riichi
             GUI.matrix=matrix;
             if(v.result.details.Length>1)Label(new Rect(835,656,180,32),"和牌 "+(winner+1)+" / "+v.result.details.Length,17,white);
         }
+        void DrawRound(RoomView v,TableRenderer table)
+        {
+            float age=Age;var old=GUI.color;GUI.color=new Color(1,1,1,Mathf.Clamp01(age/.5f));
+            if(v.result.title=="荒牌流局")TableIndicators.Image("huangpailiuju",new Rect(435,268,410,110));
+            else Label(new Rect(435,268,410,110),v.result.title,42,gold);
+            GUI.color=old;
+            if(age<.7f)return;
+            foreach(var d in v.result.drawDetails){
+                int relative=(d.seat-v.you+v.n)%v.n;
+                Vector2 c=relative==0?new Vector2(640,458):relative==v.n-1?new Vector2(318,358):relative==1&&v.n==4?new Vector2(997,358):new Vector2(640,184);
+                if(!d.tenpai){TableIndicators.Image("noting",new Rect(c.x-93,c.y-22,186,44));continue;}
+                var waits=(d.waits??new string[0]).Select(t=>new WaitDetail{tile=t,ron=true}).ToArray();
+                if(waits.Length==0){TableIndicators.Image("show_tingpai",new Rect(c.x-88,c.y-22,176,44));continue;}
+                var r=TableIndicators.WaitRect(waits.Length,c,c.y+34,380,52,false);
+                TableIndicators.Image("show_tingpai",new Rect(c.x-96,r.y-40,192,42));
+                TableIndicators.Waits(table,waits,r,52,false,false);
+            }
+        }
         public static int Before(RoomView v,int seat) => v.players[seat].score-(v.result?.delta!=null&&seat<v.result.delta.Length?v.result.delta[seat]:0);
         public static int Rank(RoomView v,int seat,bool before) => 1+Enumerable.Range(0,v.n).Count(i=>{
             int a=before?Before(v,i):v.players[i].score,b=before?Before(v,seat):v.players[seat].score;
@@ -147,24 +168,37 @@ namespace YunJian.Riichi
         void Arrow(Vector2 a,Vector2 b,float alpha)
         {
             var matrix=GUI.matrix;var old=GUI.color;GUI.color=new Color(1,1,1,alpha);
-            Vector2 delta=b-a;GUIUtility.RotateAroundPivot(Mathf.Atan2(delta.y,delta.x)*Mathf.Rad2Deg+90,a);
-            Image("scorechangearrow_0",new Rect(a.x-13,a.y-delta.magnitude,26,delta.magnitude));GUI.matrix=matrix;GUI.color=old;
+            Vector2 delta=b-a;
+            // Compose in canvas coordinates; RotateAroundPivot transforms scaled
+            // pivots again and moves the arrow away from its score cards.
+            GUI.matrix=matrix*Matrix4x4.TRS(new Vector3(a.x,a.y,0),Quaternion.Euler(0,0,Mathf.Atan2(delta.y,delta.x)*Mathf.Rad2Deg+90),Vector3.one);
+            Image("scorechangearrow_0",new Rect(-13,-delta.magnitude,26,delta.magnitude));GUI.matrix=matrix;GUI.color=old;
+        }
+        public static Vector2[] TransferEnds(Vector2 a,Vector2 b)
+        {
+            Vector2 dir=(b-a).normalized;
+            float margin=Mathf.Min(160/Mathf.Max(.001f,Mathf.Abs(dir.x)),69/Mathf.Max(.001f,Mathf.Abs(dir.y)))+10;
+            return new[]{a+dir*margin,b-dir*margin};
         }
         void Scores(RoomView v,TableRenderer table)
         {
             Label(new Rect(415,25,450,42),v.result.matchOver?"终局 · 点数结算":v.result.title+" · 点数结算",27,gold);
             if(Age>.3f && Age<2.7f){
+                if(v.result.draw)foreach(int from in Enumerable.Range(0,v.n).Where(i=>v.result.delta[i]<0))foreach(int to in Enumerable.Range(0,v.n).Where(i=>v.result.delta[i]>0)){
+                    Vector2 a=Center((from-v.you+v.n)%v.n,v.n),b=Center((to-v.you+v.n)%v.n,v.n);var ends=TransferEnds(a,b);
+                    Arrow(ends[0],ends[1],Mathf.Clamp01((Age-.3f)/.3f)*Mathf.Clamp01((2.7f-Age)/.4f));
+                }
                 var details=v.result.details??new WinDetail[0];
                 foreach(var d in details)foreach(int seat in Enumerable.Range(0,v.n).Where(i=>v.result.delta[i]<0)){
-                    Vector2 a=Center((seat-v.you+v.n)%v.n,v.n),b=Center((d.seat-v.you+v.n)%v.n,v.n);Vector2 dir=(b-a).normalized;
-                    Arrow(a+dir*118,b-dir*118,Mathf.Clamp01((Age-.3f)/.3f)*Mathf.Clamp01((2.7f-Age)/.4f));
+                    Vector2 a=Center((seat-v.you+v.n)%v.n,v.n),b=Center((d.seat-v.you+v.n)%v.n,v.n);var ends=TransferEnds(a,b);
+                    Arrow(ends[0],ends[1],Mathf.Clamp01((Age-.3f)/.3f)*Mathf.Clamp01((2.7f-Age)/.4f));
                 }
             }
             for(int seat=0;seat<v.n;seat++){
                 int relative=(seat-v.you+v.n)%v.n;Vector2 c=Center(relative,v.n);Rect r=new Rect(c.x-160,c.y-69,320,138);
                 Image("scorechange_bg",r);var portrait=table.Portrait(v.players[seat]);if(portrait!=null)GUI.DrawTexture(new Rect(r.x+7,r.y+11,89,99),portrait,ScaleMode.ScaleToFit);
                 Label(new Rect(r.x+107,r.y+3,198,30),v.players[seat].name,20,white,TextAnchor.MiddleLeft);
-                Label(new Rect(r.x+109,r.y+32,189,40),DisplayScore(v,seat).ToString(),31,gold,TextAnchor.MiddleRight);
+                Glyphs(new Rect(r.x+109,r.y+32,189,40),Digits(DisplayScore(v,seat),"ww_"),36,TextAnchor.MiddleRight);
                 int delta=v.result.delta!=null&&seat<v.result.delta.Length?v.result.delta[seat]:0;
                 Label(new Rect(r.x+100,r.y+79,105,31),(delta>=0?"+":"")+delta,24,delta>=0?new Color(.64f,.85f,1):new Color(1,.42f,.34f));
                 int prior=Rank(v,seat,true),rank=Rank(v,seat,false);
@@ -176,7 +210,8 @@ namespace YunJian.Riichi
         public Action Draw(RoomView v,TableRenderer table,TableEffects effects,Font gameFont,Func<Rect,string,bool> button)
         {
             Observe(v);if(text==null){font=gameFont;text=new GUIStyle(GUI.skin.label){font=font,wordWrap=false,clipping=TextClipping.Clip};number=new GUIStyle(text);}
-            if(!scores){Details(v,table,effects);if(button(new Rect(1050,650,180,46),Age<RevealEnd(v.result.details[winner])?"跳过":"确认"))Advance(v);}
+            if(drawStage){DrawRound(v,table);if(button(new Rect(1050,650,180,46),Age<.7f?"跳过":"确认"))Advance(v);}
+            else if(!scores){Details(v,table,effects);if(button(new Rect(1050,650,180,46),Age<RevealEnd(v.result.details[winner])?"跳过":"确认"))Advance(v);}
             else {
                 Scores(v,table);
                 if(!v.players[v.you].ready && button(new Rect(1050,650,180,46),"确认结算")){Advance(v);return Action.Ready;}

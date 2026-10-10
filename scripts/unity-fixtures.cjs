@@ -68,3 +68,17 @@ const doubled=winRoom(4);for(const i of [1,2]){doubled.s.players[i].hand='p12345
 doubled.s.players[0].river.push({tile:'z2',called:false});doubled.s.last={from:0,tile:'z2'};
 const seq=doubled.s.audioSeq;doubled.win([1,2],0,'z2');const doubledView=doubled.view(0);doubledView.audioEvents=doubledView.audioEvents.filter(e=>e.id>seq);
 fs.writeFileSync('build/unity-smoke/win-double-ron.json',JSON.stringify(doubledView));
+
+// Authoritative waits/no-yaku/furiten and draw DTO scenes, not game replays.
+for(const open of [false,true]){
+ const r=winRoom(4);r.s.phase='play';r.s.turn=0;r.s.players[0].hand=open?'p23467s789z22p9,m111-':'m111p23467s789z22p9';r.s.players[0].river=[];
+ r.s.players[0].bot=false;const v=r.view(0);v.audioRoom='hint-'+open;fs.writeFileSync('build/unity-smoke/hint-'+(open?'open':'closed')+'.json',JSON.stringify(v));
+ r.s.players[0].river=[{tile:'p5'}];fs.writeFileSync('build/unity-smoke/hint-furiten.json',JSON.stringify(r.view(0)));
+}
+for(const n of [3,4])for(let k=0;k<=n;k++){
+ const r=winRoom(n);r.s.audioRoom='draw-'+n+'-'+k;r.s.wall=[];
+ r.s.players.forEach((p,i)=>{p.hand=i<k?(i===1?'m123456p123s78z22':'p123456s123z1112'):'m19p147s258z12345';p.river=[{tile:'p2'}];});r.exhaust();
+ fs.writeFileSync('build/unity-smoke/draw-'+n+'-'+k+'.json',JSON.stringify(r.view(0)));
+}
+const thirteen=winRoom(3);thirteen.s.phase='play';thirteen.s.turn=1;thirteen.s.players[0].hand='m19p19s19z1234567';thirteen.s.players[0].river=[];
+fs.writeFileSync('build/unity-smoke/hint-thirteen.json',JSON.stringify(thirteen.view(0)));
