@@ -2,6 +2,18 @@ param([string]$EditorPath, [ValidateSet('Validate','Play','Android')][string]$Mo
 $ErrorActionPreference = 'Stop'
 $projectTask = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../unity'))
 $originalProjectTask = $projectTask
+if ($Mode -eq 'Android') {
+ # Sync the maintained offline engine before copying/staging or invoking Unity.
+ # This prevents a successful native build from silently packaging stale room rules.
+ $hostSourceTask = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../app/src/main/assets'))
+ $hostTargetTask = Join-Path $projectTask 'Assets/Plugins/Android/riichi-host.androidlib/assets'
+ foreach ($hostFileTask in (Get-ChildItem -LiteralPath $hostSourceTask -File -Recurse)) {
+  $hostRelativeTask = [IO.Path]::GetRelativePath($hostSourceTask,$hostFileTask.FullName)
+  $hostDestinationTask = Join-Path $hostTargetTask $hostRelativeTask
+  New-Item -ItemType Directory -Force (Split-Path $hostDestinationTask -Parent) | Out-Null
+  Copy-Item -LiteralPath $hostFileTask.FullName -Destination $hostDestinationTask -Force
+ }
+}
 if (!$EditorPath) {
  $candidateTask = Get-ChildItem -LiteralPath 'C:/Program Files/Unity/Hub/Editor' -Filter 'Unity.exe' -Recurse -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1
  if ($candidateTask) { $EditorPath = $candidateTask.FullName }
@@ -39,9 +51,9 @@ if ($unityTask.ExitCode -ne 0) { throw "Unity validation failed (exit $($unityTa
 if ($Mode -ne 'Android') {
  $markerTask = if ($Mode -eq 'Play') { 'RIICHI UNITY PLAY PASS' } else { 'RIICHI UNITY VALIDATION PASS' }
  if (!(Select-String -LiteralPath $logTask -SimpleMatch $markerTask -Quiet)) { throw 'Unity exited without the validation success marker.' }
-} elseif (!(Test-Path -LiteralPath (Join-Path $projectTask 'Builds/yunjian-riichi-unity-0.5.13.apk'))) { throw 'Unity did not produce the Android APK.' }
+} elseif (!(Test-Path -LiteralPath (Join-Path $projectTask 'Builds/yunjian-riichi-unity-0.5.14.apk'))) { throw 'Unity did not produce the Android APK.' }
 if ($Mode -eq 'Android' -and $projectTask -ne $originalProjectTask) {
  New-Item -ItemType Directory -Force (Join-Path $originalProjectTask 'Builds') | Out-Null
- Copy-Item -LiteralPath (Join-Path $projectTask 'Builds/yunjian-riichi-unity-0.5.13.apk') -Destination (Join-Path $originalProjectTask 'Builds/yunjian-riichi-unity-0.5.13.apk') -Force
+ Copy-Item -LiteralPath (Join-Path $projectTask 'Builds/yunjian-riichi-unity-0.5.14.apk') -Destination (Join-Path $originalProjectTask 'Builds/yunjian-riichi-unity-0.5.14.apk') -Force
 }
 Get-Content -LiteralPath $logTask -Tail 20

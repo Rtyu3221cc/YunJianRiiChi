@@ -24,7 +24,7 @@ namespace YunJian.Riichi
         {
             string next=v.audioRoom+":"+v.round+":"+v.honba+":"+v.result?.title+":"+string.Join(",",v.result?.delta??new int[0]);
             if(next==key)return;
-            key=next;winner=0;drawStage=v.result!=null && v.result.draw && !v.result.abort && (v.result.drawDetails?.Length??0)>0;
+            key=next;winner=0;drawStage=v.result!=null && v.result.draw && ((!v.result.abort && (v.result.drawDetails?.Length??0)>0) || v.result.title=="九种九牌");
             scores=!drawStage && (v.result?.details==null || v.result.details.Length==0);started=Time.unscaledTime;skipped=0;
         }
         float RevealEnd(WinDetail d) => .8f+(d.yaku?.Length??0)*.32f+1.1f;
@@ -104,7 +104,7 @@ namespace YunJian.Riichi
         void Details(RoomView v,TableRenderer table,TableEffects effects)
         {
             var d=v.result.details[winner];float age=Age;float entrance=Mathf.SmoothStep(0,1,age/.45f);
-            var matrix=GUI.matrix;GUI.matrix*=Matrix4x4.Translate(new Vector3((1-entrance)*1280,0,0));
+            var matrix=GUI.matrix;GUI.matrix*=Matrix4x4.Translate(new Vector3((1-entrance)*1280,28,0));
             Image("bg_jiesuan",new Rect(0,5,1280,705));
             var portrait=effects.Art("yiji-full");if(portrait!=null)GUI.DrawTexture(new Rect(20,48,475,805),portrait,ScaleMode.ScaleToFit);
             WinningHand(d,table);
@@ -143,10 +143,11 @@ namespace YunJian.Riichi
         void DrawRound(RoomView v,TableRenderer table)
         {
             float age=Age;var old=GUI.color;GUI.color=new Color(1,1,1,Mathf.Clamp01(age/.5f));
-            if(v.result.title=="荒牌流局")TableIndicators.Image("huangpailiuju",new Rect(435,268,410,110));
+            if(v.result.title=="九种九牌")TableIndicators.Image("jiuzhongjiupai",new Rect(486,264,308,97));
+            else if(v.result.title=="荒牌流局")TableIndicators.Image("huangpailiuju",new Rect(435,268,410,110));
             else Label(new Rect(435,268,410,110),v.result.title,42,gold);
             GUI.color=old;
-            if(age<.7f)return;
+            if(age<.7f || v.result.abort)return;
             foreach(var d in v.result.drawDetails){
                 int relative=(d.seat-v.you+v.n)%v.n;
                 Vector2 c=relative==0?new Vector2(640,458):relative==v.n-1?new Vector2(318,358):relative==1&&v.n==4?new Vector2(997,358):new Vector2(640,184);

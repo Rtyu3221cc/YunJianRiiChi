@@ -114,3 +114,9 @@ Unity 0.5.2 补充原 APK 的 chang、ju、word_left、number_left、number_scor
 scripts/import-settlement-resources.py 从用户提供的 Majsoul_4.0.16_MC.apk 提取 UI_Win 的 pg_he/pg_zimo、UI_ScoreChange 的 s_1–s_4 与对应“位”、rank_down_arrow / upgrade_arrow、scorechangearrow_1、Btn_common、bg_head1。Resources/Majsoul/Settlement/source.json 记录原 bundle、pathID 和 SHA-256；PNG 保留原尺寸，NPOT 不缩放。点数增减原 CText 引用的 haolong_0 数字字体及局标题 fengyucumaokai 的简体中文对应字体直接从 APK 的 Font.m_FontData 导出。确认与返回大厅都按原 CText 控件用相同书法字体/金色，不使用带另一圈边框的 confirm 字图。按钮命中仍由本项目同步 Busy 与权威房间操作。
 
 《荣牌特效.mp4》呈现亮黄实心、橙色旋转带、上宽下窄的高火焰柱及基部碎石；0.5.12 的细螺旋纹理没有达到该样式。0.5.13 保留八层原火焰粒子，并使用原 fx_fire_003 火焰细节贴图搭建六个宽火焰面及交叉填充核心，依据录像调整高度、横向比例、色彩、上升/衰减和碎石轨迹。该安装包目录索引没有找到此录像皮肤的独立命名预制体，柱体几何和控制逻辑在 Unity 实现；不宣称完整皮肤代码逐字复制。四时间点及三/四麻每个座位实际相机截图用于核对，不只是验证有粒子生成。美术纹理没有使用生成图片。
+
+## Unity 0.5.14 九种九牌与明牌指示
+
+九种九牌字图由 scripts/import-indicator-resources.py 从 Majsoul_4.0.16_MC.apk 的简体中文主牌桌图集直接提取，Indicators/source.json 记录 bundle、pathID、border、SHA-256。对照用户九种九牌.mp4，中央原字图淡入，声明者手牌移到桌沿、按原牌面/牌背模型平放展开；录像中的回放控制条属于录像回放功能，未加入实时对局。只公布依法声明的那一手牌，其他私牌不读取、不展示。
+
+同类牌提示复用原 maque_outline 轮廓与 response-glow 纹理，手牌 shader 以轻微暖色保持牌面颜色；所有可见性由当前公共 DTO 与本人的手牌决定。新公开事件的 riverIndex 只标识已打出的牌在牌河中的位置，不携带对手手牌。出牌隐藏/排队/落牌交接和自摸正面朝向为本项目客户端适配逻辑。Android 构建前自动同步维护中的离线引擎与资源到手机房主插件，APK 校验逐文件比对，避免原生编译成功却装入旧规则。

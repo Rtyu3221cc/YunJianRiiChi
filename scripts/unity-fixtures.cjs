@@ -82,3 +82,9 @@ for(const n of [3,4])for(let k=0;k<=n;k++){
 }
 const thirteen=winRoom(3);thirteen.s.phase='play';thirteen.s.turn=1;thirteen.s.players[0].hand='m19p19s19z1234567';thirteen.s.players[0].river=[];
 fs.writeFileSync('build/unity-smoke/hint-thirteen.json',JSON.stringify(thirteen.view(0)));
+
+// Abort declaration publishes only the declaring player's hand.
+for(const n of [3,4])for(let seat=0;seat<n;seat++){
+ const r=winRoom(n);r.s.turn=seat;r.s.interrupted=false;r.s.players[seat].river=[];r.s.players[seat].hand='m19p19s19z1234567z1';
+ r.act(seat,'abort9');fs.writeFileSync('build/unity-smoke/nine-'+n+'-'+seat+'.json',JSON.stringify(r.view(0)));
+}

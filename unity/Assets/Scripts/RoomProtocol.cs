@@ -35,8 +35,8 @@ namespace YunJian.Riichi
     [Serializable] public class DrawDetail { public int seat; public bool tenpai; public string[] tiles = new string[0], waits = new string[0]; }
     [Serializable] public class Choice { public string id, kind, tile, meld; }
     // 'riichi' marks the declaration discard so the client plays the sideways clip.
-    [Serializable] public class PublicSound { public int id, seat, nuki, from; public string kind, tile, winSource; public bool riichi; }
-    [Serializable] public class ResultView { public string title; public int[] delta; public bool matchOver, repeat; public WinDetail[] details; public bool draw, abort; public DrawDetail[] drawDetails = new DrawDetail[0]; }
+    [Serializable] public class PublicSound { public int id, seat, nuki, from, riverIndex; public string kind, tile, winSource; public bool riichi; }
+    [Serializable] public class ResultView { public string title; public int[] delta; public bool matchOver, repeat; public WinDetail[] details; public bool draw, abort; public DrawDetail abortHand; public DrawDetail[] drawDetails = new DrawDetail[0]; }
     [Serializable] public class WinDetail { public int seat, from; public string name, hand, tile, winSource; public bool ron; public ScoreDetail score; public int nuki; public string limit; public string[] tiles, melds, ura; public YakuDetail[] yaku; }
     [Serializable] public class YakuDetail { public string name; public int han, yakuman; }
     // Normalized presentation yaku never contain mixed numeric/string fields.

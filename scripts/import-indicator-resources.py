@@ -5,7 +5,7 @@ ROOT=Path(__file__).resolve().parent.parent
 OUT=ROOT/'unity/Assets/Resources/Majsoul/Indicators';OUT.mkdir(parents=True,exist_ok=True)
 sys.path.insert(0,str(ROOT/'tools/asset-inspector'));import UnityPy
 UnityPy.config.FALLBACK_UNITY_VERSION='2022.3.62f2c1';warnings.filterwarnings('ignore')
-names={'pic_zhengting','show_tingpai','noting','huangpailiuju','nofan','bg_chipengchoose','bg_chipengchoose2','bg_chipengchoose_title','bg_3','bg_4'};records=[]
+names={'pic_zhengting','show_tingpai','noting','huangpailiuju','jiuzhongjiupai','nofan','bg_chipengchoose','bg_chipengchoose2','bg_chipengchoose_title','bg_3','bg_4'};records=[]
 rows=[json.loads(s)for s in (ROOT/'build/reference/fast-catalog.jsonl').read_text(encoding='utf8').splitlines()]
 with zipfile.ZipFile(ROOT/'dist/Majsoul_4.0.16_MC.apk') as z:
  for row in rows:

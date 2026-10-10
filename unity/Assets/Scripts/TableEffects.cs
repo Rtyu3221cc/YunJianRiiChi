@@ -72,7 +72,7 @@ namespace YunJian.Riichi
         }
         public void Reset()
         {
-            Finish(); FinishCall(); EndImpact(); EndNorthEffects(); EndWinEffects(); winningBursts.Clear(); handEvents.Clear(); callEvents.Clear(); room = null; cursor = 0; last = Time.unscaledTime;
+            Finish(); FinishCall(); EndImpact(); EndNorthEffects(); EndWinEffects(); winningBursts.Clear(); ClearQueuedHands(); callEvents.Clear(); room = null; cursor = 0; last = Time.unscaledTime;
         }
         public void Accept(RoomView view)
         {
@@ -81,9 +81,9 @@ namespace YunJian.Riichi
             bool stale = Time.unscaledTime-last >= 8; last = Time.unscaledTime;
             var fresh = (view.audioEvents ?? new PublicSound[0]).Where(e => e.id > cursor).OrderBy(e => e.id).ToArray();
             cursor = Math.Max(cursor, view.audioSeq);
-            if (stale) { Finish(); FinishCall(); EndNorthEffects(); EndWinEffects(); handEvents.Clear(); callEvents.Clear(); return; }
+            if (stale) { Finish(); FinishCall(); EndNorthEffects(); EndWinEffects(); ClearQueuedHands(); callEvents.Clear(); return; }
             if(view.phase!="result" && !ShowWinPresentation)winningBursts.Clear();
-            if(fresh.Any(IsWin) && !ShowWinPresentation) {Finish();FinishCall();EndImpact();EndNorthEffects();handEvents.Clear();callEvents.Clear();}
+            if(fresh.Any(IsWin) && !ShowWinPresentation) {Finish();FinishCall();EndImpact();EndNorthEffects();ClearQueuedHands();callEvents.Clear();}
             foreach (var item in fresh)
             {
                 if (item.seat < 0 || item.seat >= view.n) continue;
@@ -92,14 +92,27 @@ namespace YunJian.Riichi
                     var detail=view.result?.details?.FirstOrDefault(d=>d.seat==item.seat);
                     if(detail!=null){item.tile=detail.tile;item.from=detail.ron?(view.last?.from??detail.from):item.seat;item.winSource=detail.winSource;}
                 }
-                if (ClipFor(item) != null) handEvents.Enqueue(item);
+                if (ClipFor(item) != null && (item.kind!="discard" || table.FindDiscard(item.seat,item.tile,item.riverIndex)!=null)) handEvents.Enqueue(item);
                 if (CallArt(item.kind) != null) callEvents.Enqueue(item);
             }
             while (handEvents.Count > 8) handEvents.Dequeue();
             while (callEvents.Count > 4) callEvents.Dequeue();
             // Re-rendering a state does not restart the event currently playing, but it
             // does rebuild the table, so the replaced object has to be hidden again.
+            // Start and hide before rendering this accepted state, rather than waiting
+            // for Update next frame. Queued discards stay hidden until their hand-off.
+            if(current==null && handEvents.Count>0)Begin(handEvents.Dequeue());
             if (current != null) HideTarget();
+            foreach(var pending in handEvents)if(pending.kind=="discard"){
+                var tile=table.FindDiscard(pending.seat,pending.tile,pending.riverIndex);if(tile!=null)tile.gameObject.SetActive(false);
+            }
+        }
+        void ClearQueuedHands()
+        {
+            foreach(var e in handEvents)if(e.kind=="discard"){
+                var target=table.FindDiscard(e.seat,e.tile,e.riverIndex);if(target!=null)target.gameObject.SetActive(true);
+            }
+            handEvents.Clear();
         }
         void LoadClip(string stem)
         {
@@ -131,6 +144,7 @@ namespace YunJian.Riichi
         }
         void Begin(PublicSound item)
         {
+            if(item.kind=="discard" && item.riverIndex>0 && table.FindDiscard(item.seat,item.tile,item.riverIndex)==null)return;
             current=item; started=Time.unscaledTime; handedOff=false; PlayedEvents++;
             string stem=ClipFor(item); if (stem==null) return;
             LoadClip(stem);
@@ -138,7 +152,7 @@ namespace YunJian.Riichi
             motion = new GameObject("Original hand seat "+item.seat).transform;
             if(overlay==null) {overlay=new GameObject("Discard hand overlay camera").AddComponent<Camera>();overlay.transform.SetParent(table.Camera.transform,false);}
             ConfigureOverlay();overlay.enabled=true;
-            Vector3 anchor=item.kind=="tsumo" ? table.WinningPoint(item) : stick ? table.StickPoint(item.seat) : item.kind=="nuki" ? table.NorthPoint(item.seat,item.nuki) : MeldKinds.Contains(item.kind) ? table.MeldPoint(item.seat) : table.DiscardPoint(item.seat,item.tile);
+            Vector3 anchor=item.kind=="tsumo" ? table.WinningPoint(item) : stick ? table.StickPoint(item.seat) : item.kind=="nuki" ? table.NorthPoint(item.seat,item.nuki) : MeldKinds.Contains(item.kind) ? table.MeldPoint(item.seat) : table.DiscardPoint(item.seat,item.tile,item.riverIndex);
             motion.position=anchor+Vector3.up*.12f;
             motion.rotation=Quaternion.Euler(0,table.SeatAngle(item.seat)+180,0);
             // Zimo lifts the whole original arm; fit its larger sweep to this table.
@@ -157,17 +171,22 @@ namespace YunJian.Riichi
                 foreach(var child in animatedTile.GetComponentsInChildren<Transform>())child.gameObject.layer=14;
                 foreach(var collider in animatedTile.GetComponentsInChildren<Collider>())collider.enabled=false;
             }
+            mesh.vertices=clip.vertices[0];mesh.normals=clip.normals[0];mesh.RecalculateBounds();
+            if(animatedTile!=null){
+                animatedTile.position=motion.TransformPoint(TilePoint(0))-Vector3.up*.12f;
+                animatedTile.rotation=Quaternion.Euler(0,table.SeatAngle(item.seat)+(!stick&&item.riichi?90:0),0);
+            }
             HideTarget();
         }
         void HideTarget()
         {
             float elapsed=ValidationFreeze?ValidationTime:Time.unscaledTime-started;
-            if(elapsed>=Handoff) return;
             if (current.kind=="riichi-stick") targetStick=table.StickTarget(current.seat);
             else if (current.kind=="tsumo") targetTile=table.WinningTarget(current);
             else if (current.kind=="nuki") northTarget=table.NorthTarget(current.seat,current.nuki);
             else if (MeldKinds.Contains(current.kind)) meldTarget=table.MeldTarget(current.seat);
-            else targetTile=table.FindDiscard(current.seat,current.tile);
+            else targetTile=table.FindDiscard(current.seat,current.tile,current.riverIndex);
+            if(elapsed>=Handoff) return;
             if (targetTile!=null) targetTile.gameObject.SetActive(false);
             if (targetStick!=null) targetStick.gameObject.SetActive(false);
             if (meldTarget!=null) meldTarget.gameObject.SetActive(false);
@@ -302,7 +321,7 @@ namespace YunJian.Riichi
                 animatedTile.rotation=current.kind=="nuki" && table.NorthTarget(current.seat,current.nuki)!=null
                     ? table.NorthTarget(current.seat,current.nuki).rotation
                     : Quaternion.Euler(0,table.SeatAngle(current.seat)+(!stick&&current.riichi?90f:0f),0);
-                if(current.kind=="tsumo")animatedTile.rotation*=Quaternion.Euler(0,0,Mathf.Lerp(180,0,Mathf.SmoothStep(0,1,(elapsed-.87f)/.27f)));
+                // Tsumo carries and slaps the tile face up for the entire motion.
             }
             if (elapsed>=Handoff) CompleteHandoff();
         }
@@ -328,7 +347,7 @@ namespace YunJian.Riichi
 #if UNITY_EDITOR
         public void ValidationPlay(int seat,string kind,string tile=null,bool riichi=false)
         {
-            Finish();FinishCall();EndNorthEffects();EndWinEffects();winningBursts.Clear();handEvents.Clear();callEvents.Clear();ValidationFreeze=true;ValidationTime=.28f;
+            Finish();FinishCall();EndNorthEffects();EndWinEffects();winningBursts.Clear();ClearQueuedHands();callEvents.Clear();ValidationFreeze=true;ValidationTime=.28f;
             Begin(new PublicSound {seat=seat,kind=kind,tile=tile,riichi=riichi});
             if (CallArt(kind)!=null) BeginCall(new PublicSound {seat=seat,kind=kind,tile=tile,riichi=riichi});
         }

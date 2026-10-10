@@ -26,6 +26,11 @@ namespace YunJian.Riichi
         Font font;
         Transform cameraHand;
         Transform responseTarget;
+        readonly List<Tuple<Transform,string>> exposedTiles=new List<Tuple<Transform,string>>();
+        readonly Dictionary<Transform,Transform> matchingGlows=new Dictionary<Transform,Transform>();
+        string selectedTile;
+        public bool IsMatchingTile(string tile) => selectedTile!=null && TileKind(tile)==selectedTile;
+        static string TileKind(string tile) => string.IsNullOrEmpty(tile)?null:tile.Replace("0","5");
         string drawKey;float drawBegan;
         readonly List<Tuple<Transform,Vector3>> drawTiles=new List<Tuple<Transform,Vector3>>();
         public Rect HandScreenBounds()
@@ -128,7 +133,7 @@ namespace YunJian.Riichi
         public void Clear()
         {
             foreach (Transform t in content) { t.gameObject.SetActive(false); Destroy(t.gameObject); }
-            handTiles.Clear(); handBase.Clear(); drawTiles.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); northTiles.Clear(); winningTiles.Clear(); responseTarget = null; selfMelds = null; cameraHand = null; state = null;
+            exposedTiles.Clear();matchingGlows.Clear();selectedTile=null;handTiles.Clear(); handBase.Clear(); drawTiles.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); northTiles.Clear(); winningTiles.Clear(); responseTarget = null; selfMelds = null; cameraHand = null; state = null;
         }
         public int RelativeSeat(int i) => (i - state.you + state.n) % state.n;
         float Angle(int i)
@@ -167,19 +172,28 @@ namespace YunJian.Riichi
             Cube("Red dot", root, new Vector3(0, .024f, 0), new Vector3(.045f, .004f, .045f), red);
             return root;
         }
-        public Transform FindDiscard(int seat, string tile)
+        public Transform FindDiscard(int seat, string tile, int riverIndex=0)
         {
-            // A delayed event must never hide an older identical discard after a call.
+            // New hosts identify the exact committed river slot (one-based), including
+            // multiple discards queued between two polls. Called tiles never qualify.
+            if(state==null || seat<0 || seat>=state.players.Length)return null;
+            if(riverIndex>0){
+                var history=state.players[seat].river;int raw=riverIndex-1;
+                if(raw>=history.Length || history[raw].called || history[raw].tile!=tile)return null;
+                int visible=history.Take(raw).Count(t=>!t.called);
+                return riverTiles.TryGetValue(seat,out var rendered) && visible<rendered.Count?rendered[visible]:null;
+            }
+            // Legacy hosts can only identify the current last discard.
             if(state.last==null || state.last.from!=seat || state.last.tile!=tile) return null;
             var river=state.players[seat].river;
             if(river.Length==0 || river[river.Length-1].called || river[river.Length-1].tile!=tile) return null;
             if (!riverTiles.TryGetValue(seat,out var tiles)) return null;
             return tiles.LastOrDefault(t=>t!=null && t.name.EndsWith(" "+tile,StringComparison.Ordinal));
         }
-        public Vector3 DiscardPoint(int seat,string tile)
+        public Vector3 DiscardPoint(int seat,string tile,int riverIndex=0)
         {
-            Transform target=null;
-            if(riverTiles.TryGetValue(seat,out var tiles))target=tiles.LastOrDefault(t=>t!=null && t.name.EndsWith(" "+tile,StringComparison.Ordinal));
+            Transform target=riverIndex>0?FindDiscard(seat,tile,riverIndex):null;
+            if(riverIndex==0 && riverTiles.TryGetValue(seat,out var tiles))target=tiles.LastOrDefault(t=>t!=null && t.name.EndsWith(" "+tile,StringComparison.Ordinal));
             return target!=null?target.position:Quaternion.Euler(0,Angle(seat),0)*new Vector3(-.895f,0,-1.48f);
         }
         public Transform ResponseTarget => responseTarget;
@@ -194,6 +208,8 @@ namespace YunJian.Riichi
             return block.GetFloat("_Dim");
         }
         public int ValidationHandCount => handTiles.Count;
+        public int ValidationMatchCount => matchingGlows.Count(x=>x.Value.gameObject.activeSelf);
+        public bool ValidationMatchesOnlyFaces => matchingGlows.All(x=>x.Key.Find("Original tile").localRotation==Quaternion.identity);
 #endif
         // Room.view() returns options for this client alone, and the engine creates
         // them only when a call is legal; a lone 'pass' is not a call.
@@ -267,6 +283,7 @@ namespace YunJian.Riichi
         Transform Tile(Transform parent, string tile, Vector3 position, float w = .28f, float h = .42f, bool hidden = false, bool sideways = false, float opacity = 1)
         {
             var root = original.CreateTable(parent, tile, position, w, hidden, sideways, opacity);
+            if(!hidden)exposedTiles.Add(Tuple.Create(root,tile));
             var shadow = new GameObject("Contact shadow"); shadow.transform.SetParent(root, false);
             shadow.transform.localPosition = new Vector3(.018f, .002f - position.y, -.022f);
             shadow.AddComponent<MeshFilter>().sharedMesh = geometry.Get(w + .02f, w * original.TableLength + .02f, true);
@@ -285,7 +302,7 @@ namespace YunJian.Riichi
         {
             Clear(); state = view;
             bool exhausted=state.phase=="result" && state.result!=null && state.result.draw && !state.result.abort && (state.result.drawDetails?.Length??0)>0;
-            if(exhausted){string next=state.audioRoom+":"+state.round+":"+state.honba+":"+state.result.title;
+            if(exhausted || state.result?.abortHand!=null){string next=state.audioRoom+":"+state.round+":"+state.honba+":"+state.result.title;
                 if(next!=drawKey){drawKey=next;drawBegan=Time.unscaledTime;}
             }else drawKey=null;
             if (state.phase != "play" && state.phase != "reaction" && state.phase != "result") return;
@@ -319,6 +336,15 @@ namespace YunJian.Riichi
                         drawTiles.Add(Tuple.Create(tile,tile.localPosition));
                     }
                 }
+                else if(state.phase=="result" && state.result?.abortHand?.seat==i){
+                    var reveal=new GameObject("Nine terminals hand seat "+i).transform;reveal.SetParent(seat,false);
+                    var tiles=state.result.abortHand.tiles;bool self=i==state.you;float pitch=self?.37f:.31f,width=self?.35f:.29f;
+                    float edge=self?4.10f:Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f?4f:3.35f;
+                    for(int j=0;j<tiles.Length;j++){
+                        var tile=Tile(reveal,tiles[j],new Vector3((j-(tiles.Length-1)*.5f)*pitch,.02f,-edge),width);
+                        drawTiles.Add(Tuple.Create(tile,tile.localPosition));
+                    }
+                }
                 else if(shown!=null){
                     var revealed=new GameObject("Revealed winning hand").transform;revealed.SetParent(seat,false);
                     float pitch=.31f;float edge=Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f?4.0f:2.95f;
@@ -336,6 +362,7 @@ namespace YunJian.Riichi
                 }
             }
             DrawWinningTiles();
+            SelectHand(Client.SelectedIndex);
         }
         WinDetail SelfDrawWinner(int seat) => state.phase=="result" ? state.result?.details?.FirstOrDefault(d=>d.seat==seat && !d.ron) : null;
         public Transform WinningTarget(PublicSound item)
@@ -428,8 +455,19 @@ namespace YunJian.Riichi
         }
         public void SelectHand(int index)
         {
-            for (int i = 0; i < handTiles.Count; i++)
+            selectedTile=index>=0 && index<handTiles.Count?TileKind(handTiles[index].name.Substring(5)):null;
+            for (int i = 0; i < handTiles.Count; i++){
                 handTiles[i].localPosition = handBase[i] + (i == index ? new Vector3(0, .30f, 0) : Vector3.zero);
+                var renderer=handTiles[i].GetComponent<MeshRenderer>();var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block);
+                block.SetFloat("_Match",IsMatchingTile(handTiles[i].name.Substring(5))?1:0);renderer.SetPropertyBlock(block);
+            }
+            foreach(var entry in exposedTiles){
+                var tile=entry.Item1;bool match=IsMatchingTile(entry.Item2);
+                var edge=tile.Find("Original tile/Original tile outline").GetComponent<MeshRenderer>();
+                var block=new MaterialPropertyBlock();if(match)block.SetColor("_Color",new Color(1,.72f,.12f,1));edge.SetPropertyBlock(block);
+                if(match && !matchingGlows.ContainsKey(tile))matchingGlows[tile]=original.CreateResponseGlow(tile,.33f,"Same tile ground glow");
+                if(matchingGlows.TryGetValue(tile,out var light))light.gameObject.SetActive(match);
+            }
         }
         void DrawMelds(Transform parent, PlayerView p)
         {

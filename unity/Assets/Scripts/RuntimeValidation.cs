@@ -141,6 +141,7 @@ namespace YunJian.Riichi
                     Require(File.Exists(fullFile), "Full game-view capture failed at " + suffix);
                 }
             }
+            var latestProbe=ValidateLatestFixes(client);while(latestProbe.MoveNext())yield return latestProbe.Current;
             var indicatorProbe=ValidateIndicators(client);while(indicatorProbe.MoveNext())yield return indicatorProbe.Current;
             var winProbe = ValidateWins(client);
             while(winProbe.MoveNext())yield return winProbe.Current;
@@ -398,6 +399,41 @@ namespace YunJian.Riichi
                 }
             }
         }
+        IEnumerator ValidateLatestFixes(RiichiClient client)
+        {
+            var table=GetComponent<TableRenderer>();var fx=GetComponent<TableEffects>();SetGameResolution(1688,780);
+            var view=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"effects.json")));
+            view.phase="play";view.pending=null;view.last=null;view.hand=new[]{"p0","p5","z4"};view.drawn=null;
+            view.players[0].melds=new[]{"p5555","p555+"};view.players[0].nuki=1;
+            view.players[1].river=new[]{new RiverTile{tile="p5"},new RiverTile{tile="p0",called=true},new RiverTile{tile="z4"}};
+            view.options=view.hand.Select(t=>new Choice{id="discard:"+t,kind="discard",tile=t}).ToArray();
+            client.ShowValidationFixture(view);yield return null;client.SelectTile(0,"discard:p0");
+            Require(table.IsMatchingTile("p5") && table.IsMatchingTile("p0") && !table.IsMatchingTile("s5"),"Red/normal five matching differs");
+            Require(table.ValidationMatchCount>=6 && table.ValidationMatchesOnlyFaces,"Same-tile highlight missing or includes a concealed kan back");
+            ScreenCapture.CaptureScreenshot(Path.Combine(folder,"matching-tiles-1688.png"));yield return new WaitForSecondsRealtime(.1f);
+            table.Render(view);Require(table.IsMatchingTile("p5"),"Polling lost selected match highlight");
+            table.SelectHand(-1);Require(table.ValidationMatchCount==0,"Clearing selection leaves highlights behind");
+            client.ShowValidationFixture(view);fx.ValidationFreeze=true;fx.ValidationTime=.1f;view.audioRoom="discard-synchronous";view.audioSeq=10;view.audioEvents=new PublicSound[0];fx.Accept(view);
+            view.players[1].river=new[]{new RiverTile{tile="p5"},new RiverTile{tile="p5"}};table.Render(view);
+            view.audioSeq=12;view.audioEvents=new[]{new PublicSound{id=11,seat=1,kind="discard",tile="p5",riverIndex=1},new PublicSound{id=12,seat=1,kind="discard",tile="p5",riverIndex=2}};fx.Accept(view);
+            Require(!table.FindDiscard(1,"p5",1).gameObject.activeSelf && !table.FindDiscard(1,"p5",2).gameObject.activeSelf,"Committed discard flashes before Update/queued hand");
+            yield return null;table.Render(view);fx.Accept(view);
+            Require(!table.FindDiscard(1,"p5",1).gameObject.activeSelf && !table.FindDiscard(1,"p5",2).gameObject.activeSelf,"Polling reveals queued discard");
+            fx.ValidationTime=.41f;yield return null;Require(table.FindDiscard(1,"p5",1).gameObject.activeSelf && !table.FindDiscard(1,"p5",2).gameObject.activeSelf,"River hand-off uses the wrong identical tile");
+            fx.ValidationTime=.63f;yield return null;fx.ValidationTime=.1f;yield return null;yield return null;
+            fx.ValidationTime=.41f;yield return null;Require(table.FindDiscard(1,"p5",2).gameObject.activeSelf,"Queued discard never lands");fx.Reset();
+            foreach(int n in new[]{3,4})for(int seat=0;seat<n;seat++){
+                view=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"nine-"+n+"-"+seat+".json")));client.ShowValidationFixture(view);
+                var display=client.ValidationResult;display.Observe(view);display.Freeze=true;display.FrozenAge=2;yield return new WaitForSecondsRealtime(.6f);yield return null;
+                Require(display.ShowingDraw && TableIndicators.Art("jiuzhongjiupai")!=null,"Nine terminals skips native declaration page");
+                var hand=GameObject.Find("Nine terminals hand seat "+seat).transform;
+                Require(hand.childCount==14 && hand.GetChild(0).Find("Original tile").localRotation==Quaternion.identity,"Abort declaring hand is hidden or inverted");
+                Require(FindObjectsByType<Transform>(FindObjectsSortMode.None).Count(t=>t.name.StartsWith("Nine terminals hand seat"))==1,"Abort reveals another player's hand");
+                if(seat==0){ScreenCapture.CaptureScreenshot(Path.Combine(folder,"nine-"+n+"-1688.png"));yield return new WaitForSecondsRealtime(.1f);}
+                table.Render(view);display.Observe(view);Require(display.ShowingDraw,"Polling skips nine terminals page");display.Advance(view);Require(display.ShowingScores,"Nine terminals confirmation cannot advance");
+            }
+            Debug.Log("RIICHI LATEST FIXES PASS: visible-only red-five matching; synchronous and queued river hiding with exact public slots; original nine-terminals declaration and public declaring hand.");
+        }
         IEnumerator ValidateIndicators(RiichiClient client)
         {
             var table=GetComponent<TableRenderer>();client.ValidationToggleRiichi(false);
@@ -485,6 +521,10 @@ namespace YunJian.Riichi
                 {
                     Require(fx.ValidationKind==kind && fx.ValidationAnimatedTile.name==e.tile && !target.gameObject.activeSelf,"Self draw hand did not carry the exact winning tile");
                     Require(fx.ValidationWin==null,"Self draw effect starts before tile landing");
+                    foreach(float time in new[]{0f,.25f,.6f,.9f,1.13f}){
+                        fx.ValidationTime=time;yield return null;
+                        Require(Vector3.Dot(fx.ValidationAnimatedTile.up,Vector3.up)>.99f,"Self-draw carried tile flips face down during slap");
+                    }
                     fx.ValidationTime=.6f;yield return null;yield return null;
                     var hand=GameObject.Find("Original hand seat "+winner).GetComponentInChildren<MeshRenderer>();
                     Capture(table,Path.Combine(folder,"win-hand-probe-"+n+"-"+you+"-"+relative+".png"),1688,780);

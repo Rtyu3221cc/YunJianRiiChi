@@ -135,3 +135,16 @@ test('sanma waits include all thirteen kokushi sides and exclude removed manzu r
  const r=fixture(3);r.s.players[0].hand='m19p19s19z1234567';r.s.players[0].river=[];
  const v=r.view(0);assert.equal(v.waitDetails.length,13);assert(v.waitDetails.every(w=>w.ron&&w.tsumo));assert(!v.waitDetails.some(w=>/^m[2-8]$/.test(w.tile)));
 });
+
+test('nine terminals reveals only the declaring hand in all public views',()=>{
+ for(const n of [3,4])for(let seat=0;seat<n;seat++){
+  const r=fixture(n);r.s.turn=seat;r.s.interrupted=false;r.s.players[seat].river=[];r.s.players[seat].hand='m19p19s19z1234567z1';
+  const expected=tiles(r.h(seat));action(r,seat,'abort9');
+  for(let viewer=0;viewer<n;viewer++){const v=r.view(viewer);assert.deepEqual(v.result.abortHand,{seat,tiles:expected});assert.equal(v.result.delta.reduce((a,b)=>a+b),0);assert(v.players.every(p=>!('hand'in p)));assert.equal(v.result.drawDetails,undefined);}
+ }
+ const r=fixture();r.abort('四风连打');assert.equal(r.view(0).result.abortHand,undefined);
+});
+test('discard events identify the committed river slot without private hand data',()=>{
+ const r=fixture();r.s.players[0].hand='p123456s123z1112p9';const prior=r.s.players[0].river.length;
+ action(r,0,'discard:p9_');const e=r.view(1).audioEvents.findLast(e=>e.kind==='discard');assert.equal(e.riverIndex,prior+1);assert.equal(e.tile,'p9');assert(!('hand'in e));
+});

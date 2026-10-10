@@ -11,7 +11,7 @@ function avatar(value){check(typeof value==='string'&&value.length<=12288&&(valu
 function player(name,token){return {name,avatar:"",token:token||randomHex(18),recovery:randomHex(6),score:0,hand:'',river:[],riichi:0,ippatsu:false,nuki:0,temp:false,permanent:false,kans:0,ready:false,requests:[]}}
 class Room{
  constructor(host,save,snapshot){this.host=host;this.save=save||(()=>{});this.s=snapshot?JSON.parse(snapshot):null;this.seen={};}
- sound(kind,seat,tile,riichi,nuki,win){const s=this.s;s.audioSeq=(s.audioSeq||0)+1;s.audioEvents=(s.audioEvents||[]).concat({id:s.audioSeq,kind,seat,tile:tile||null,riichi:!!riichi,...(nuki?{nuki}:{}),...(win?{from:win.from,winSource:win.kind}:{}),at:Date.now()}).slice(-24);}
+ sound(kind,seat,tile,riichi,nuki,win){const s=this.s;s.audioSeq=(s.audioSeq||0)+1;s.audioEvents=(s.audioEvents||[]).concat({id:s.audioSeq,kind,seat,tile:tile||null,riichi:!!riichi,...(kind==='discard'?{riverIndex:s.players[seat].river.length}:{}),...(nuki?{nuki}:{}),...(win?{from:win.from,winSource:win.kind}:{}),at:Date.now()}).slice(-24);}
  addBot(){const s=this.s;check(s.players.length<s.n,'座位已满');let n=1;while(s.players.some(p=>p.name==='AI · '+n))n++;const p=player('AI · '+n);p.bot=true;s.players.push(p);}
  tick(){
   const s=this.s;if(!s||!g.RiichiAI||!['play','reaction'].includes(s.phase))return {ok:true,idle:true};
@@ -166,7 +166,7 @@ class Room{
   }
   s.sticks=0;this.finish({title:from===null?'自摸':winners.length===2?'双响 · 荣和':'荣和',delta,details,repeat:winners.includes(s.dealer),draw:false});
  }
- abort(title){this.finish({title,delta:this.s.players.map(()=>0),details:[],repeat:true,draw:true,abort:true})}
+ abort(title,seat=null){this.finish({title,delta:this.s.players.map(()=>0),details:[],repeat:true,draw:true,abort:true,...(seat===null?{}:{abortHand:{seat,tiles:tiles(this.h(seat))}})})}
  exhaust(){
   const s=this.s,tenpai=s.players.map((_,i)=>this.waits(this.h(i)).length>0),nagashi=[];
   for(let i=0;i<s.n;i++)if(s.players[i].river.length&&s.players[i].river.every(r=>!r.called&&(r.tile[0]==='z'||/[19]/.test(r.tile[1]))))nagashi.push(i);
@@ -192,7 +192,7 @@ class Room{
   }
   const h=this.h(i),p=s.players[i];
   if(id==='tsumo')return this.win([i]);
-  if(id==='abort9')return this.abort('九种九牌');
+  if(id==='abort9')return this.abort('九种九牌',i);
   if(id==='nuki')return this.react(i,'z4','nuki');
   if(id.startsWith('kan:')){const m=id.slice(4),kind=/[+=-]/.test(m)?'kakan':'ankan';return this.react(i,m[0]+m.slice(-1),kind,m);}
   const riichi=id.startsWith('riichi:'),t=id.slice(id.indexOf(':')+1),tile=t.slice(0,2);

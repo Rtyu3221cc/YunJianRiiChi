@@ -117,7 +117,7 @@ namespace YunJian.Riichi
         public void SelectTile(int index, string action)
         {
             if (Busy || State == null || !State.options.Any(x => x.id == action)) return;
-            if (SelectedIndex == index && SelectedAction == action) { SelectedAction = null; SelectedIndex = -1; Act(action); }
+            if (SelectedIndex == index && SelectedAction == action) { SelectedAction = null; SelectedIndex = -1; table.SelectHand(-1); Act(action); }
             else { SelectedIndex = index; SelectedAction = action; table.SelectHand(index); }
         }
         public void Act(string id) { choosingKind=null;StartCoroutine(Send(new RequestBody { op = "action", action = id })); }
@@ -373,6 +373,11 @@ namespace YunJian.Riichi
             {
                 Rect tile = new Rect(ox + (28+i*56)*k, oy + 44*k, 54*k, 81*k);
                 GUI.DrawTexture(tile, table.DoraTexture(i < State.indicators.Length ? State.indicators[i] : null), ScaleMode.ScaleToFit);
+                if(i<State.indicators.Length && table.IsMatchingTile(State.indicators[i])){
+                    var color=GUI.color;GUI.color=new Color(1,.74f,.15f,.85f);
+                    GUI.DrawTexture(new Rect(tile.x,tile.y,tile.width,2),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(tile.x,tile.yMax-2,tile.width,2),Texture2D.whiteTexture);
+                    GUI.DrawTexture(new Rect(tile.x,tile.y,2,tile.height),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(tile.xMax-2,tile.y,2,tile.height),Texture2D.whiteTexture);GUI.color=color;
+                }
             }
             HudNumber(State.sticks, ox + 117*k, oy + 139*k, k);
             HudNumber(State.honba, ox + 256*k, oy + 139*k, k);

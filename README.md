@@ -1,5 +1,18 @@
 # 云间日麻
 
+## Unity 0.5.14 明牌高亮、出牌时序与九种九牌
+
+安卓包：[下载 Unity 0.5.14 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.14/yunjian-riichi-unity-0.5.14.apk)，versionCode 15，同包名同签名覆盖更新。
+
+- 点选待出的手牌后，标出当前可见的同类牌，赤五与普通五一起匹配；覆盖自己的明牌、牌河、副露、拔北和已翻开的宝牌，排除对手暗牌、被吃碰走的舍牌与暗杠牌背。
+- 收到出牌状态时立即隐藏尚未落下的新牌，再由手部动画交接到牌河，修复先出现、消失、又出现的问题。公开事件携带一基河牌序号，连续/同种出牌各自排队，轮询不会提前亮出等待落牌的对象。
+- 和牌详情整页下移 28 个基准像素，牌、立绘、宝牌、役种和点数一起移动；确认按钮仍可操作。
+- 自摸手部动画的牌从抬手到拍下全程正面朝上，取消牌背到正面的翻转。
+- 九种九牌先显示安装包原字图，再展开声明者的公开手牌，保留其他玩家的牌背；确认后进入点数页，连庄和确认流程继续由房主决定。
+- 74 项规则、AI、公共协议测试通过。完整 Unity Play 回归、公开牌隐私/同帧出牌队列/各座位自摸朝向、原资源 APK 检查通过。安卓真机触控与热点联机未执行。
+
+预览：[同类明牌](dist/previews/unity-0.5.14-matching-tiles-1688.png)、[九种九牌](dist/previews/unity-0.5.14-nine-3-1688.png)、[和牌结算下移](dist/previews/unity-0.5.14-result-hand-1688.png)。详见 [验证记录](dist/验证记录-unity-0.5.14.txt)。
+
 ## Unity 0.5.13 结算原素材、吃牌框与胡牌火焰
 
 安卓包：[下载 Unity 0.5.13 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.13/yunjian-riichi-unity-0.5.13.apk)，versionCode 14，同包名同签名覆盖更新。

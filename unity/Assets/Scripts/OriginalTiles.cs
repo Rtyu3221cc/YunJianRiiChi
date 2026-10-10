@@ -96,14 +96,15 @@ namespace YunJian.Riichi
             if (opacity < 1) { root.localScale = Vector3.one * .8f; root.localPosition -= Vector3.up * .04f; }
             return root;
         }
-        public void CreateResponseGlow(Transform tile,float width)
+        public Transform CreateResponseGlow(Transform tile,float width,string name="Original response ground glow")
         {
-            var light=new GameObject("Original response ground glow").transform;light.SetParent(tile,false);
+            var light=new GameObject(name).transform;light.SetParent(tile,false);
             light.localPosition=Vector3.up*.006f;
             // The source image includes its bloom margins; align its inner ring to the foot.
             light.localScale=new Vector3(width*2.67f,1,width*TableLength*1.80f);
             light.gameObject.AddComponent<MeshFilter>().sharedMesh=glowMesh;
             var renderer=light.gameObject.AddComponent<MeshRenderer>();renderer.sharedMaterial=glow;renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;
+            return light;
         }
         public Transform CreateStandingBack(Transform parent, Vector3 position, float width)
         {
