@@ -108,3 +108,9 @@ Unity 0.5.2 补充原 APK 的 chang、ju、word_left、number_left、number_scor
 原图片包括 pic_zhengting（竖排振听字图）、nofan（无役）、show_tingpai（听牌）、noting（未听牌）、huangpailiuju（荒牌流局）和 bg_chipengchoose 等花饰/辅助底图。导入保留 NPOT 原尺寸，防止书法和框线比例被修改。UI_ChiPengHu 和 UI_TingPai 的原牌槽为 80×120，吃牌组合、听牌待牌共用当前对局 OriginalTiles.HandTexture，保持 0.62 比例和彩色花色。花饰框支持多列、多行待牌；十三面待牌不会丢失。
 
 荒牌流局使用当前对局三维牌模型摊开手牌，未听牌手牌仅用公开牌数生成背面，不向客户端发送私牌；本项目牌面/玫瑰红背面保留。中央流局、听牌和未听牌字图直接使用 APK Sprite；点数沿用原 scorechange_bg、scorechangearrow_0 与 ww_ 数字图。规则和界面状态衔接在本项目实现，不引用皮肤中的猫牌或录像人物立绘。
+
+## Unity 0.5.13 原结算控件与录像火焰适配
+
+scripts/import-settlement-resources.py 从用户提供的 Majsoul_4.0.16_MC.apk 提取 UI_Win 的 pg_he/pg_zimo、UI_ScoreChange 的 s_1–s_4 与对应“位”、rank_down_arrow / upgrade_arrow、scorechangearrow_1、Btn_common、bg_head1。Resources/Majsoul/Settlement/source.json 记录原 bundle、pathID 和 SHA-256；PNG 保留原尺寸，NPOT 不缩放。点数增减原 CText 引用的 haolong_0 数字字体及局标题 fengyucumaokai 的简体中文对应字体直接从 APK 的 Font.m_FontData 导出。确认与返回大厅都按原 CText 控件用相同书法字体/金色，不使用带另一圈边框的 confirm 字图。按钮命中仍由本项目同步 Busy 与权威房间操作。
+
+《荣牌特效.mp4》呈现亮黄实心、橙色旋转带、上宽下窄的高火焰柱及基部碎石；0.5.12 的细螺旋纹理没有达到该样式。0.5.13 保留八层原火焰粒子，并使用原 fx_fire_003 火焰细节贴图搭建六个宽火焰面及交叉填充核心，依据录像调整高度、横向比例、色彩、上升/衰减和碎石轨迹。该安装包目录索引没有找到此录像皮肤的独立命名预制体，柱体几何和控制逻辑在 Unity 实现；不宣称完整皮肤代码逐字复制。四时间点及三/四麻每个座位实际相机截图用于核对，不只是验证有粒子生成。美术纹理没有使用生成图片。

@@ -245,6 +245,13 @@ namespace YunJian.Riichi
             Fill(new Rect(r.x + 1, r.y + 1, r.width - 2, r.height - 2), new Color(.065f, .105f, .17f, .96f));
             bool pressed = GUI.Button(r, text, tableButton); GUI.enabled = old; return pressed;
         }
+        bool ResultButton(Rect r,string value)
+        {
+            var a=GUI.matrix.MultiplyPoint3x4(new Vector3(r.x,r.y,0));var b=GUI.matrix.MultiplyPoint3x4(new Vector3(r.xMax,r.yMax,0));
+            uiButtons.Add(Rect.MinMaxRect(a.x,a.y,b.x,b.y));
+            bool enabled=GUI.enabled;GUI.enabled&=!Busy;
+            bool pressed=GUI.Button(r,"",GUIStyle.none);GUI.enabled=enabled;return pressed;
+        }
         void Panel(Rect r)
         {
             Fill(r, new Color(.48f, .4f, .27f, .95f));
@@ -452,13 +459,13 @@ namespace YunJian.Riichi
             var choices=State.options.Where(x=>x.kind==previewKind).ToArray();if(choices.Length==0)return;
             float choiceWidth=134;float total=Mathf.Min(width*.82f,choices.Length*choiceWidth);
             float x=width-100-total,y=height-258;
-            TableIndicators.Panel(new Rect(x-12,y-12,total+24,90));
+            TableIndicators.Panel(new Rect(x-36,y-29,total+72,132),containTiles:true);
             for(int i=0;i<choices.Length;i++)
             {
                 Rect r=new Rect(x+i*total/choices.Length,y,total/choices.Length-4,66);
                 var a=GUI.matrix.MultiplyPoint3x4(new Vector3(r.x,r.y,0));var b=GUI.matrix.MultiplyPoint3x4(new Vector3(r.xMax,r.yMax,0));uiButtons.Add(Rect.MinMaxRect(a.x,a.y,b.x,b.y));
                 var meld=choices[i].meld;var digits=meld.Skip(1).Where(char.IsDigit).ToArray();float tw=Mathf.Min(38,(r.width-8)/Mathf.Max(1,digits.Length));
-                for(int j=0;j<digits.Length;j++)GUI.DrawTexture(new Rect(r.center.x-digits.Length*tw/2+j*tw,r.y+3,tw-1,tw*1.5f),table.HandTexture(meld[0].ToString()+digits[j]),ScaleMode.ScaleToFit);
+                for(int j=0;j<digits.Length;j++)GUI.DrawTexture(new Rect(r.center.x-digits.Length*tw/2+j*tw,r.y+9,tw-1,tw*1.5f),table.HandTexture(meld[0].ToString()+digits[j]),ScaleMode.ScaleToFit);
                 bool old=GUI.enabled;GUI.enabled&=!Busy;if(GUI.Button(r,"",GUIStyle.none))Act(choices[i].id);GUI.enabled=old;
             }
         }
@@ -477,13 +484,13 @@ namespace YunJian.Riichi
         void DrawResult()
         {
             var resultMatrix=GUI.matrix;var resultColor=GUI.color;
-            if(State.result.draw){
+            {
                 viewport=TableViewport.Fit(Screen.width,Screen.height,Screen.safeArea,true);GUI.matrix=viewport.Matrix;
                 bool enabled=GUI.enabled;GUI.enabled=false;DrawTableUI(true);GUI.enabled=enabled;
                 viewport=TableViewport.Fit(Screen.width,Screen.height,Screen.safeArea,false);GUI.matrix=resultMatrix;
             }
             GUI.matrix=Matrix4x4.identity;GUI.color=new Color(0,0,0,State.result.draw ? .38f : .68f);GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=resultColor;GUI.matrix=resultMatrix;
-            var action=resultDisplay.Draw(State,table,effects,font,Button);
+            var action=resultDisplay.Draw(State,table,effects,font,ResultButton);
             if(action==ResultPresentation.Action.Ready)StartCoroutine(Send(new RequestBody{op="ready"}));
             else if(action==ResultPresentation.Action.Next)StartCoroutine(Send(new RequestBody{op="next"}));
             else if(action==ResultPresentation.Action.Home)EnterHome();

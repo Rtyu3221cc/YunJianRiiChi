@@ -43,7 +43,7 @@ namespace YunJian.Riichi
         public void Initialize(Vector3 point,float angle,float now,uint seed)
         {
             StartedAt=now; transform.position=point+Vector3.up*.045f;
-            transform.rotation=Quaternion.Euler(0,angle,0); transform.localScale=Vector3.one*2;
+            transform.rotation=Quaternion.Euler(0,angle,0); transform.localScale=new Vector3(1.35f,2,1.35f);
             plane=new Mesh {name="Original win ground particle",vertices=new[]{new Vector3(-.5f,0,-.5f),new Vector3(-.5f,0,.5f),new Vector3(.5f,0,.5f),new Vector3(.5f,0,-.5f)},uv=new[]{Vector2.zero,Vector2.up,Vector2.one,Vector2.right},triangles=new[]{0,1,2,0,2,3}};
             plane.RecalculateBounds();
             var config=JsonUtility.FromJson<Config>(Resources.Load<TextAsset>("Majsoul/Actions/fire-effect").text);

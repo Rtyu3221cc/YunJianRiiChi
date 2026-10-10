@@ -41,10 +41,17 @@ namespace YunJian.Riichi
                 Require(Vector2.Distance(roundtrip, point) < .001f, "Safe-area pointer mapping differs from drawing");
                 Require(Mathf.Abs(layout.Matrix.m00 - layout.Matrix.m11) < .00001f, "Nonuniform UI scale");
             }
+            Require(Resources.Load<Font>("Majsoul/Settlement/score-font")!=null && Resources.Load<Font>("Majsoul/Settlement/round-font-chs")!=null,"Native settlement fonts missing");
+            foreach(var sprite in new[]{"pg_he","pg_zimo","s_1","s_2","s_3","s_4","s_1_1","s_2_2","s_3_3","s_4_4","Btn_common","bg_head1","flame-detail"})Require(Resources.Load<Texture2D>("Majsoul/Settlement/"+sprite)!=null,"Native settlement art missing: "+sprite);
             var client = GetComponent<RiichiClient>(); var table = GetComponent<TableRenderer>();
             client.BeginValidationPractice(File.ReadAllText(Path.Combine(folder, "host.txt")).Trim());
             float deadline = Time.realtimeSinceStartup + 35;
-            while ((client.State == null || client.State.phase != "play" || client.Busy || !client.State.options.Any(x => x.kind == "discard")) && Time.realtimeSinceStartup < deadline) yield return null;
+            while ((client.State == null || client.State.phase != "play" || client.Busy || !client.State.options.Any(x => x.kind == "discard")) && Time.realtimeSinceStartup < deadline){
+                // Random opening draws can offer a legal pon/ron before our first
+                // discard. Resolve that test-player response rather than timing out.
+                if(!client.Busy && client.State?.phase=="reaction" && client.State.options.Any(x=>x.kind=="pass"))client.Act("pass");
+                yield return null;
+            }
             Require(client.State != null && client.State.phase == "play" && !client.Busy && client.State.options.Any(x => x.kind == "discard"), "Live practice failed to reach the human discard turn");
             var state = client.State; int before = state.players[state.you].river.Length;
             yield return null; Physics.SyncTransforms();
@@ -497,7 +504,16 @@ namespace YunJian.Riichi
                 Require(Vector3.Distance(effect.transform.position,table.WinningPoint(e)+Vector3.up*.045f)<.001f,"Win effect detached from winning tile");
                 int pixels=effect.GetComponentsInChildren<ParticleSystemRenderer>().Max(renderer=>VisibleEffectPixels(table,renderer));
                 Require(pixels>20,"Fire win particles invisible on the actual camera");
-                if(you==0)Capture(table,Path.Combine(folder,"win-"+n+"-"+kind+"-effect-"+relative+".png"),1688,780);
+                effect.Sample(.55f); // Measure the peak independently of the call/hand lead-in.
+                var column=effect.GetComponentsInChildren<MeshRenderer>().First(x=>x.name=="Filled flame core 4");
+                Require(column.bounds.size.y>6 && column.GetComponent<MeshFilter>().sharedMesh.bounds.size.x>.45f,"Reference flame column too short or narrow");
+                Require(effect.GetComponentsInChildren<MeshRenderer>().Where(x=>x.name.StartsWith("Filled flame core")).Max(x=>VisibleEffectPixels(table,x))>150,"Filled flame core not visible to the actual camera");
+                if(you==0){
+                    Capture(table,Path.Combine(folder,"win-"+n+"-"+kind+"-effect-"+relative+".png"),1688,780);
+                    if(relative==0)foreach(float sample in new[]{.12f,.45f,.9f,1.5f}){
+                        effect.Sample(sample);Capture(table,Path.Combine(folder,"win-"+n+"-"+kind+"-flame-"+sample.ToString("F2",System.Globalization.CultureInfo.InvariantCulture)+".png"),1688,780);
+                    }
+                }
                 table.Render(view);fx.Accept(view);yield return null;yield return null;
                 Require(fx.ValidationWin==effect && fx.SpawnedWinEffects==before+1 && fx.ShowWinPresentation,"Polling restarted win effect or exposed result too early");
                 fx.ValidationTime=3.1f;yield return null;yield return null;
@@ -533,6 +549,8 @@ namespace YunJian.Riichi
                 if(multi.result.details.Length>1){Require(display.WinnerIndex==1 && !display.ShowingScores,"Double ron second settlement missing");display.Advance(multi);}
                 Require(display.ShowingScores,"Settlement does not advance to score transfer");
                 display.FrozenAge=0;for(int i=0;i<multi.n;i++)Require(display.DisplayScore(multi,i)==ResultPresentation.Before(multi,i),"Score transfer starts at wrong total");
+                display.FrozenAge=1.5f;yield return null;yield return null;
+                ScreenCapture.CaptureScreenshot(Path.Combine(folder,"result-transfer-"+(int)size.x+".png"));yield return new WaitForSecondsRealtime(.08f);
                 display.FrozenAge=3.5f;for(int i=0;i<multi.n;i++)Require(display.DisplayScore(multi,i)==multi.players[i].score,"Score transfer ends at wrong total");
                 yield return null;yield return null;ScreenCapture.CaptureScreenshot(Path.Combine(folder,"result-scores-"+(int)size.x+".png"));yield return new WaitForSecondsRealtime(.08f);
                 display.Observe(multi);Require(display.ShowingScores,"Polling restarted result presentation");
@@ -590,6 +608,7 @@ namespace YunJian.Riichi
             var prior=RenderTexture.active;material.SetFloat("_Dim",1);Graphics.Blit(probe,rt,material);RenderTexture.active=rt;dimPixels.ReadPixels(new Rect(0,0,2,1),0,0);dimPixels.Apply();RenderTexture.active=prior;
             Color red=dimPixels.GetPixel(0,0),green=dimPixels.GetPixel(1,0);Require(red.r>red.g*2 && green.g>green.r*2,"Dimming desaturates red/green glyphs");Require(red.r<.75f && green.g<.75f,"Dimming does not reduce brightness");
             RenderTexture.ReleaseTemporary(rt);Destroy(probe);Destroy(back);Destroy(material);Destroy(dimPixels);
+            Debug.Log("RIICHI FIDELITY PASS: framed chi tiles, original win/score/rank/button sprites and fonts, broad filled flame core at four ages and every seat.");
             Debug.Log("RIICHI RESULT VIDEO PASS: four sizes, yaku and winning hand presentation, two stages, point endpoints, ranks, polling stability, both ron winners and chromatic brightness dimming.");
             Debug.Log("RIICHI WIN EFFECT PASS: ron/tsumo in all three/four-seat directions and rotated viewers; original cut-ins, Zimo mesh pixels, exact landing, eight source fire layers, visible flame spiral and rubble and visible pixels; delayed result, polling/reconnect cleanup, double ron and robbed tile targets.");
         }

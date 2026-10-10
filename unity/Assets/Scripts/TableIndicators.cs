@@ -19,7 +19,7 @@ namespace YunJian.Riichi
         {var t=Art(name);if(t!=null)GUI.DrawTexture(r,t,ScaleMode.ScaleToFit);}
         // Native CImage uses sprite borders. Keep the flowers and frame intact as
         // the panel grows for several chi combinations or thirteen-sided waits.
-        public static void Panel(Rect r,string name="bg_chipengchoose")
+        public static void Panel(Rect r,string name="bg_chipengchoose",bool containTiles=false)
         {
             var t=Art(name);if(t==null)return;
             if(source==null)source=JsonUtility.FromJson<Source>(Resources.Load<TextAsset>("Majsoul/Indicators/source").text);
@@ -27,7 +27,7 @@ namespace YunJian.Riichi
             foreach(var sprite in source.sprites)if(sprite.name==name && sprite.border.sqrMagnitude>0){b=sprite.border;break;}
             // The native frame only slices horizontally. Preserve its transparent
             // flower margins vertically and keep the inner fill within the frame.
-            if(b.y==0 && b.w==0){b.y=35;b.w=35;}
+            if(b.y==0 && b.w==0){b.y=containTiles?60:35;b.w=containTiles?60:35;}
             float s=Mathf.Min(.6f,Mathf.Min(r.width/(b.x+b.z+1),r.height/(b.y+b.w+1)));
             float[] dx={r.x,r.x+b.x*s,r.xMax-b.z*s,r.xMax},dy={r.y,r.y+b.w*s,r.yMax-b.y*s,r.yMax};
             float[] sx={0,b.x,t.width-b.z,t.width},sy={0,b.w,t.height-b.y,t.height};

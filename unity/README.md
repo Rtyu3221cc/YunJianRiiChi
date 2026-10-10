@@ -1,5 +1,17 @@
 # 云间日麻 Unity 三维客户端
 
+## Unity 0.5.13 结算原素材、吃牌框与胡牌火焰
+
+安卓包：[下载 Unity 0.5.13 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.13/yunjian-riichi-unity-0.5.13.apk)，versionCode 14，同包名同签名覆盖更新。
+
+- 吃牌组合的小麻将放进花饰框内，保留框线、完整花饰和上下留白。
+- 和牌结算使用原 UI_Win 的 pg_he / pg_zimo 字图，修正宝牌行位置和“满贯”等档位文字大小；麻将继续复用当前对局的真实牌面和牌背。
+- 点数结算使用 APK 原局标题书法字体、增减分数字字体、1–4 位字图、升降箭头、转分弯箭头和蓝色确认按钮。头像移到右上方，排名位于左下方、分数位于右下方，保留暗下去的牌桌 HUD。
+- 对照《荣牌特效.mp4》，把细光带改成更高、更宽且有填充的火焰柱，调整旋转火焰带、亮黄核心和碎石。火焰细节贴图来自 APK；旋转柱几何及时间动画在 Unity 中按录像重新适配，并非该皮肤完整特效预制体的逐字移植。
+- 四分辨率完整 Unity 回归、三/四麻各座位的荣和/自摸、四个火焰时间点、原牌面像素一致性、APK 双架构/v2 签名/16KB 对齐通过。安卓真机触控及热点联机未执行。
+
+预览：[吃牌](../dist/previews/unity-0.5.13-indicator-chi-1688.png)、[和牌结算](../dist/previews/unity-0.5.13-result-hand-1688.png)、[点数结算](../dist/previews/unity-0.5.13-result-scores-1688.png)、[转分过程](../dist/previews/unity-0.5.13-result-transfer-1688.png)、[胡牌火焰](../dist/previews/unity-0.5.13-win-4-tsumo-flame-0.45.png)。详见 [验证记录](../dist/验证记录-unity-0.5.13.txt)。
+
 ## Unity 0.5.12 吃牌、听牌、振听与荒牌流局
 
 安卓包：[下载 Unity 0.5.12 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.12/yunjian-riichi-unity-0.5.12.apk)，versionCode 13，同包名同签名覆盖更新。
@@ -57,7 +69,7 @@
 
 预览：[拔北提示](../dist/previews/unity-0.5.8-north-call-0.png)、[手部动作](../dist/previews/unity-0.5.8-north-hand-0.png)、[落牌花瓣](../dist/previews/unity-0.5.8-north-petals-0.png)。检查范围见 [0.5.8 验证记录](../dist/验证记录-unity-0.5.8.txt)，素材来源见 [ARTWORK.md](../ARTWORK.md)。安卓真机效果待实测。
 
-构建脚本当前输出 `Builds/yunjian-riichi-unity-0.5.12.apk`。
+构建脚本当前输出 `Builds/yunjian-riichi-unity-0.5.13.apk`。
 
 ## 0.5.7 计分盘出牌指示灯
 
