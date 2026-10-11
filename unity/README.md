@@ -1,5 +1,14 @@
 # 云间日麻 Unity 三维客户端
 
+## Unity 0.5.19 结算名称居中修正
+
+安卓包：[下载 Unity 0.5.19 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.19/yunjian-riichi-unity-0.5.19.apk)，versionCode 20，同签名覆盖更新。
+
+- 结算玩家名称上移 12.5 个基准画布单位，居中于斜名牌的可见框内，修正文字贴近下边框的问题。旋转中心随文字框同步移动，保持原版约 4.748 度倾角。
+- 实际 Unity 774×438、934×430 两种参考比例核对名称上下留白，完整 Play 回归、APK 双架构/v2 原签名/16KB 对齐/离线资源校验通过。安卓真机未执行。
+
+实际预览：[774×438 结算](../dist/previews/unity-0.5.19-result-reference-774.png)、[934×430 结算](../dist/previews/unity-0.5.19-result-reference-934.png)。[验证记录](../dist/验证记录-unity-0.5.19.txt)。
+
 ## Unity 0.5.18 结算名称倾角与牌列分组
 
 安卓包：[下载 Unity 0.5.18 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.18/yunjian-riichi-unity-0.5.18.apk)，versionCode 19，同签名覆盖更新。
@@ -126,7 +135,7 @@
 
 预览：[拔北提示](../dist/previews/unity-0.5.8-north-call-0.png)、[手部动作](../dist/previews/unity-0.5.8-north-hand-0.png)、[落牌花瓣](../dist/previews/unity-0.5.8-north-petals-0.png)。检查范围见 [0.5.8 验证记录](../dist/验证记录-unity-0.5.8.txt)，素材来源见 [ARTWORK.md](../ARTWORK.md)。安卓真机效果待实测。
 
-构建脚本当前输出 `Builds/yunjian-riichi-unity-0.5.18.apk`。
+构建脚本当前输出 `Builds/yunjian-riichi-unity-0.5.19.apk`。
 
 ## 0.5.7 计分盘出牌指示灯
 

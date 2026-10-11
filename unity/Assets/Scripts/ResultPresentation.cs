@@ -137,9 +137,11 @@ namespace YunJian.Riichi
             Image("bg_nickname",NativeRect(-965,-370.9f,396,83,.5f,.5f,1.947f));
             // UI_Win container_name/container_name has a 4.748-degree rotation.
             // Compose locally so scaled canvases retain the same nameplate slope.
-            var nameMatrix=GUI.matrix;var namePivot=new Vector3(142,601.5f,0);
+            // Center the text in the visible slanted strip, not the sprite's bounds.
+            var nameRect=new Rect(32,572.5f,220,33);
+            var nameMatrix=GUI.matrix;var namePivot=new Vector3(nameRect.center.x,nameRect.center.y,0);
             GUI.matrix*=Matrix4x4.TRS(namePivot,Quaternion.Euler(0,0,-4.748f),Vector3.one)*Matrix4x4.Translate(-namePivot);
-            Label(new Rect(32,585,220,33),d.name,22,white);GUI.matrix=nameMatrix;
+            Label(nameRect,d.name,22,white);GUI.matrix=nameMatrix;
             Image(d.ron?"pg_he":"pg_zimo",NativeRect(834.3f,419.6f,104,108),ScaleMode.ScaleToFit);
             NativeDora(v,table,v.indicators,27.5f,250,"bg_dora");
             NativeDora(v,table,d.ura,536.5f,303,"bg_lidora");
