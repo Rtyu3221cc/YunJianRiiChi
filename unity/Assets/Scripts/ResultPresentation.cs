@@ -65,7 +65,7 @@ namespace YunJian.Riichi
             var names=new List<string>();
             foreach(char c in value??""){
                 string glyph=c=='满'?"man":c=='贯'?"guan":c=='跳'?"tiao":c=='倍'?"bei":c=='役'?"yi":c=='三'?"san":c=='累'?"lei":c=='计'?"ji":
-                    c=='2'?"liang":c=='3'?"san":c=='4'?"si":c=='5'?"wu":c=='6'?"liu":null;
+                    c=='两'||c=='2'?"liang":c=='3'?"san":c=='4'?"si":c=='5'?"wu":c=='6'?"liu":null;
                 if(glyph!=null)names.Add("word_"+glyph);else if(char.IsDigit(c))names.Add("h_"+c);
             }
             return names.ToArray();
@@ -85,56 +85,85 @@ namespace YunJian.Riichi
                 GUI.DrawTexture(new Rect(x+i*29,y,28,43.5f),table.DoraTexture(i<tiles.Length?tiles[i]:null),ScaleMode.ScaleToFit);
             }
         }
+        // UI_Win prefab coordinates are 1920 x 1080, center anchored.
+        // Content fits the reference canvas; the background extends to the safe edges.
+        static Vector2 NativePoint(float x,float y) => new Vector2(640+x*2/3,360-y*2/3);
+        static Rect NativeRect(float x,float y,float w,float h,float px=0,float py=1,float scale=1)
+        {
+            var p=NativePoint(x,y);w*=scale*2/3;h*=scale*2/3;
+            return new Rect(p.x-w*px,p.y-h*(1-py),w,h);
+        }
         void WinningHand(WinDetail d,TableRenderer table)
         {
-            var tiles=(d.tiles??new string[0]).ToList();
-            var melds=d.melds??new string[0];int count=tiles.Count+melds.Sum(m=>m.Skip(1).Count(char.IsDigit));
-            float pitch=Mathf.Min(40,625f/Mathf.Max(14,count+2)),x=494;
-            var matrix=GUI.matrix;GUIUtility.RotateAroundPivot(-6,new Vector2(850,118));
-            foreach(var tile in tiles){Tile(table,tile,new Rect(x,85,pitch-1,pitch*1.5f));x+=pitch;}
-            foreach(var meld in melds){x+=8;int n=0;var digits=meld.Skip(1).Where(char.IsDigit).ToArray();foreach(char c in digits){
-                // Concealed kans retain their face-down ends in the scoring hand.
-                if(digits.Length==4 && !meld.Any(ch=>ch=='+'||ch=='-'||ch=='=' ) && (n==0||n==3)){
-                    Tile(table,null,new Rect(x,85,pitch-1,pitch*1.5f));
-                }else Tile(table,meld[0].ToString()+c,new Rect(x,85,pitch-1,pitch*1.5f));
-                x+=pitch;n++;
+            var tiles=(d.tiles??new string[0]).ToList();var melds=d.melds??new string[0];
+            int count=tiles.Count+melds.Sum(m=>m.Skip(1).Count(char.IsDigit))+1;
+            float pitch=Mathf.Min(51.2f,720f/(count+.5f)),x=0,y=-133*.96f*2/3;
+            var matrix=GUI.matrix;var anchor=NativePoint(-251.6f,275.9f);
+            GUI.matrix*=Matrix4x4.TRS(new Vector3(anchor.x,anchor.y,0),Quaternion.Euler(0,0,-6),Vector3.one);
+            foreach(var tile in tiles){Tile(table,tile,new Rect(x,y,pitch-1,pitch*1.5f));x+=pitch;}
+            foreach(var meld in melds){int n=0;var digits=meld.Skip(1).Where(char.IsDigit).ToArray();foreach(char c in digits){
+                bool back=digits.Length==4 && !meld.Any(ch=>ch=='+'||ch=='-'||ch=='=') && (n==0||n==3);
+                Tile(table,back?null:meld[0].ToString()+c,new Rect(x,y,pitch-1,pitch*1.5f));x+=pitch;n++;
             }}
-            Tile(table,d.tile,new Rect(x+22,85,pitch-1,pitch*1.5f));GUI.matrix=matrix;
+            Tile(table,d.tile,new Rect(x+pitch*.5f,y,pitch-1,pitch*1.5f));GUI.matrix=matrix;
         }
+        void NativeDora(RoomView v,TableRenderer table,string[] tiles,float x,float y,string title)
+        {
+            if(tiles==null || tiles.Length==0)return;
+            var matrix=GUI.matrix;var anchor=NativePoint(x,y);
+            GUI.matrix*=Matrix4x4.TRS(new Vector3(anchor.x,anchor.y,0),Quaternion.Euler(0,0,-6),Vector3.one);
+            Image(title,new Rect(-80.27f,5.13f,100.33f,53.67f),ScaleMode.ScaleToFit);
+            for(int i=0;i<5;i++)GUI.DrawTexture(new Rect(i*37.33f,0,37.33f,56),table.DoraTexture(i<tiles.Length?tiles[i]:null),ScaleMode.ScaleToFit);
+            GUI.matrix=matrix;
+        }
+        static readonly Vector2[] NativeYakuOffsets={new Vector2(119.72f,12.6f),new Vector2(70.72f,-81.4f),new Vector2(103.72f,-170.4f),new Vector2(214.72f,-243.4f),new Vector2(655.72f,82.6f),new Vector2(744.72f,10.6f),new Vector2(772.72f,-78.4f),new Vector2(665.72f,-184.4f)};
         void Details(RoomView v,TableRenderer table,TableEffects effects)
         {
-            var d=v.result.details[winner];float age=Age;float entrance=Mathf.SmoothStep(0,1,age/.45f);
-            var matrix=GUI.matrix;GUI.matrix*=Matrix4x4.Translate(new Vector3((1-entrance)*1280,28,0));
-            Image("bg_jiesuan",new Rect(0,5,1280,705));
-            var portrait=effects.Art("yiji-full");if(portrait!=null)GUI.DrawTexture(new Rect(20,48,475,805),portrait,ScaleMode.ScaleToFit);
+            var d=v.result.details[winner];float age=Age,entrance=Mathf.SmoothStep(0,1,age/.45f);
+            var matrix=GUI.matrix;GUI.matrix*=Matrix4x4.Translate(new Vector3((1-entrance)*1280,0,0));
+            var viewport=TableViewport.Fit(Screen.width,Screen.height,Screen.safeArea,false);
+            float extra=(Screen.safeArea.width/viewport.Scale-1280)/2;
+            Image("bg_jiesuan",new Rect(-extra-1.67f,-2.67f,1280+2*extra,720));
+            var portrait=effects.Art("yiji-full");
+            if(portrait!=null)GUI.DrawTexture(NativeRect(-947,424,924.567f,1392.131f),portrait,ScaleMode.ScaleToFit);
             WinningHand(d,table);
-            Image("bg_nickname",new Rect(0,571,375,57));Label(new Rect(24,580,305,40),d.name,23,white);
-            Image(d.ron?"pg_he":"pg_zimo",new Rect(1168,102,73,75),ScaleMode.ScaleToFit);
-            GUIUtility.RotateAroundPivot(-6,new Vector2(870,380));
-            Dora(v,table,v.indicators,643,184,"bg_dora");Dora(v,table,d.ura,972,184,"bg_lidora");
-            if(d.nuki>0)Label(new Rect(545,247,210,29),"拔北 × "+d.nuki,19,gold,TextAnchor.MiddleLeft);
+            Image("bg_nickname",NativeRect(-965,-370.9f,396,83,.5f,.5f,1.947f));
+            Label(new Rect(32,585,220,33),d.name,22,white);
+            Image(d.ron?"pg_he":"pg_zimo",NativeRect(834.3f,419.6f,104,108),ScaleMode.ScaleToFit);
+            NativeDora(v,table,v.indicators,27.5f,250,"bg_dora");
+            NativeDora(v,table,d.ura,536.5f,303,"bg_lidora");
             var yaku=d.yaku??new YakuDetail[0];int visible=Mathf.Clamp(Mathf.FloorToInt((age-.65f)/.32f),0,yaku.Length);
-            int rows=Math.Max(1,(yaku.Length+1)/2);float step=Mathf.Min(43,252f/rows);
             for(int i=0;i<visible;i++){
-                int col=i/rows,row=i%rows;float x=537+col*425,y=285+row*step;
-                Image("bg_fan",new Rect(x,y,259,step));Label(new Rect(x+10,y,189,step),yaku[i].name,rows>7?18:22,white);
-                var fanGlyphs=yaku[i].yakuman>0?(yaku[i].yakuman==1?new[]{"word_yiman"}:Digits(yaku[i].yakuman,"h_").Concat(new[]{"word_yiman"}).ToArray()):Digits(yaku[i].han,"h_").Concat(new[]{"word_fan"}).ToArray();
-                Glyphs(new Rect(x+202,y,55,step),fanGlyphs,Mathf.Min(27,step-3));
+                float x,y,h=35.2f;
+                if(yaku.Length<=8){var offset=NativeYakuOffsets[i]-NativeYakuOffsets[0];x=611+offset.x*2/3;y=303.7f-offset.y*2/3;}
+                else {int rows=(yaku.Length+1)/2;x=583+i/rows*357;y=276+i%rows*Mathf.Min(35,238f/rows);h=Mathf.Min(35,238f/rows);}
+                bool yakuman=yaku[i].yakuman>0;
+                Image(yakuman?"bg_yakuman":"bg_fan",yakuman?new Rect(x-32.4f,y-35.3f,278.4f,h+60):new Rect(x+2,y-38.5f,220,h+37.6f));
+                if(yakuman){x-=33;y+=4.4f;}
+                var rowMatrix=GUI.matrix;
+                GUI.matrix*=Matrix4x4.TRS(new Vector3(x,y,0),Quaternion.Euler(0,0,-6),Vector3.one);
+                Label(new Rect(0,0,yakuman?243.2f:176,h),yaku[i].name,h<30?18:23,white);
+                GUI.matrix=rowMatrix;
+                if(yaku[i].yakuman==0)Glyphs(new Rect(x+179,y-28,42,h+5),Digits(yaku[i].han,"h_").Concat(new[]{"word_fan"}).ToArray(),26);
             }
             if(age>=.8f+yaku.Length*.32f){
-                Image("bg_center_fan",new Rect(824,375,101,101));
-                var score=d.score??new ScoreDetail();
-                if(score.damanguan>0)Glyphs(new Rect(833,387,83,78),new[]{"word_yiman"},49);
+                var circle=NativeRect(365.5f,-48,185,179,.12972973f,.16759777f);
+                Image("bg_center_fan",circle);var score=d.score??new ScoreDetail();
+                if(score.damanguan>0)Glyphs(new Rect(circle.x+12,circle.y+16,circle.width-24,circle.height-32),new[]{"word_yiman"},60);
                 else {
-                    Glyphs(new Rect(837,380,65,49),Digits(score.fanshu,"h_"),44);
-                    Image("word_fan",new Rect(880,419,31,37),ScaleMode.ScaleToFit);
-                    Glyphs(new Rect(832,438,50,23),Digits(score.fu,"ww_").Concat(new[]{"word_fu"}).ToArray(),20);
+                    Glyphs(new Rect(circle.x+15,circle.y+5,65,61),Digits(score.fanshu,"h_"),55);
+                    Image("word_fan",new Rect(circle.x+64,circle.y+52,38,45),ScaleMode.ScaleToFit);
+                    Glyphs(new Rect(circle.x+12,circle.y+80,68,26),Digits(score.fu,"ww_").Concat(new[]{"word_fu"}).ToArray(),24);
                 }
-                Image("bg_point",new Rect(861,557,337,76));
-                Glyphs(new Rect(856,533,346,88),Digits(score.defen,"ww_").Concat(new[]{"word_point"}).ToArray(),72,TextAnchor.MiddleRight);
+                var scoreRect=NativeRect(555,-315,589,110,.49235994f,.5f,1.2f);
+                var scoreMatrix=GUI.matrix;var scoreAnchor=NativePoint(555,-315);
+                GUI.matrix*=Matrix4x4.TRS(new Vector3(scoreAnchor.x,scoreAnchor.y,0),Quaternion.Euler(0,0,-6),Vector3.one)*Matrix4x4.Translate(new Vector3(-scoreAnchor.x,-scoreAnchor.y,0));
+                Image("bg_point",new Rect(scoreRect.x+40,scoreRect.y+60,scoreRect.width-40,60));
+                Glyphs(scoreRect,Digits(score.defen,"ww_").Concat(new[]{"word_point"}).ToArray(),88,TextAnchor.MiddleRight);
+                GUI.matrix=scoreMatrix;
                 if(!string.IsNullOrEmpty(d.limit)){
-                    Image("bg_yakuman",new Rect(605,554,226,63));
-                    Glyphs(new Rect(610,545,216,76),LimitGlyphs(d.limit),64);
+                    var limit=NativeRect(-62,-412,650,155,.66153848f,.4333333f,1.2f);
+                    Glyphs(limit,LimitGlyphs(d.limit),124,TextAnchor.MiddleLeft);
                 }
             }
             GUI.matrix=matrix;

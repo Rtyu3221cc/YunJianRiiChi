@@ -1,5 +1,16 @@
 # 云间日麻 Unity 三维客户端
 
+## Unity 0.5.17 手牌大小与结算布局修正
+
+安卓包：[下载 Unity 0.5.17 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.17/yunjian-riichi-unity-0.5.17.apk)，versionCode 18，同签名覆盖更新。
+
+- 恢复原版手牌相机/牌模型的固定高度，约占画面高度 14.1%；不再为副露同时缩小整排手牌。先保留左右空间，空间不足时在桌面上移开会遮挡的副露，保持其模型大小和朝向。
+- 按雀魂 APK 的 UI_Win 预制体坐标重排结算牌列、宝牌/里宝牌、役种、番符和点数；一姬立绘保持。少量役种按原版先纵向排列，多役种采用两列。
+- 宽屏结算背景铺满，内容继续按中心锚点等比缩放；放大满贯/跳满/多倍役满标题，修正牌列过于靠右、番符和点数过低及宽屏两侧留空。
+- 完整 Unity Play 回归通过，精确 934×430 和 774×438 参考比例及原有四种分辨率截图核对；APK 双架构、v2 原签名、16KB 对齐及离线素材一致性通过。安卓真机触控/热点联机未执行。
+
+实际 Unity 合成场景预览：[手牌与副露](../dist/previews/unity-0.5.17-matching-tiles-1688.png)、[宽屏结算](../dist/previews/unity-0.5.17-result-reference-934.png)、[普通比例役满结算](../dist/previews/unity-0.5.17-result-reference-774.png)。[对照说明](../docs/手牌与结算布局对照.md)，[验证记录](../dist/验证记录-unity-0.5.17.txt)。
+
 ## Unity 0.5.16 同类牌全模型蓝色与副露避让
 
 安卓包：[下载 Unity 0.5.16 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.16/yunjian-riichi-unity-0.5.16.apk)，versionCode 17，同签名覆盖更新。
@@ -104,7 +115,7 @@
 
 预览：[拔北提示](../dist/previews/unity-0.5.8-north-call-0.png)、[手部动作](../dist/previews/unity-0.5.8-north-hand-0.png)、[落牌花瓣](../dist/previews/unity-0.5.8-north-petals-0.png)。检查范围见 [0.5.8 验证记录](../dist/验证记录-unity-0.5.8.txt)，素材来源见 [ARTWORK.md](../ARTWORK.md)。安卓真机效果待实测。
 
-构建脚本当前输出 `Builds/yunjian-riichi-unity-0.5.16.apk`。
+构建脚本当前输出 `Builds/yunjian-riichi-unity-0.5.17.apk`。
 
 ## 0.5.7 计分盘出牌指示灯
 

@@ -379,6 +379,8 @@ namespace YunJian.Riichi
                 min=Vector2.Min(min,screen);max=Vector2.Max(max,screen);
             }
             var handBounds=Rect.MinMaxRect(min.x,min.y,max.x,max.y);
+            // Layout must preserve readability, including when several edge melds exist.
+            Require(handBounds.height>=Screen.safeArea.height*OriginalTiles.HandHeight/18*.98f,"Meld avoidance shrank the foreground hand");
             foreach(Transform seat in root)foreach(Transform group in seat){
                 if(group.name!="Exposed melds" && group.name!="Extracted North")continue;
                 foreach(var box in group.GetComponentsInChildren<BoxCollider>()){
@@ -416,6 +418,11 @@ namespace YunJian.Riichi
             client.ShowValidationFixture(view);yield return null;client.SelectTile(2,"discard:p0");
             for(int frame=0;frame<8;frame++)yield return null;
             ValidateHandMeldGap(table,view);
+            // An animation hides its static target; layout must retain the landing slot.
+            var movingMeld=table.MeldTarget(view.you);var landing=movingMeld.position;
+            movingMeld.gameObject.SetActive(false);table.FitCamera(Screen.width/(float)Screen.height);
+            Require(Vector3.Distance(movingMeld.position,landing)<.001f,"Hiding an animated meld moved its landing slot");
+            movingMeld.gameObject.SetActive(true);table.FitCamera(Screen.width/(float)Screen.height);
             foreach(var tile in GameObject.Find("PublicTableState").GetComponentsInChildren<MeshRenderer>()){
                 if(tile.name!="Original tile" || !OriginalTiles.IsMatchedModel(tile.transform.parent))continue;
                 Require(tile.sharedMaterials.All(m=>m.HasProperty("_Match")),"Blue tint is missing a tile model material");
@@ -609,6 +616,22 @@ namespace YunJian.Riichi
                 yield return null;yield return null;ScreenCapture.CaptureScreenshot(Path.Combine(folder,"result-scores-"+(int)size.x+".png"));yield return new WaitForSecondsRealtime(.08f);
                 display.Observe(multi);Require(display.ShowingScores,"Polling restarted result presentation");
             }
+            // Exact reference aspect ratios: ordinary and yakuman presentation with Ichihime.
+            var reference=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"win-double-ron.json")));
+            reference.result.details=new[]{reference.result.details[0]};
+            var referenceDetail=reference.result.details[0];referenceDetail.tiles=new[]{"p3","p3","p5","p5","p5","p5","p8","p8","p8","p4","p4","p4","p4"};
+            referenceDetail.tile="p4";referenceDetail.melds=new string[0];referenceDetail.ura=new[]{"p3"};
+            referenceDetail.yaku=new[]{new YakuDetail{name="清一色",han=5},new YakuDetail{name="拔北宝牌",han=1}};
+            referenceDetail.limit="跳满";referenceDetail.score=new ScoreDetail{fanshu=6,fu=40,defen=12000};reference.indicators=new[]{"z5","s1"};
+            SetGameResolution(934,430);client.ShowValidationFixture(reference);
+            var referenceDisplay=client.ValidationResult;referenceDisplay.Observe(reference);referenceDisplay.Freeze=true;referenceDisplay.FrozenAge=9;
+            yield return null;yield return null;ScreenCapture.CaptureScreenshot(Path.Combine(folder,"result-reference-934.png"));yield return new WaitForSecondsRealtime(.08f);
+            reference.audioRoom="result-reference-yakuman";referenceDetail.tiles=new[]{"z2","z2","z3","z3","z3","z4","z4","z1","z1","z1","z7","z7","z7"};referenceDetail.tile="z4";
+            referenceDetail.yaku=new[]{new YakuDetail{name="字一色",yakuman=1},new YakuDetail{name="小四喜",yakuman=1}};
+            referenceDetail.limit="2倍役满";referenceDetail.score=new ScoreDetail{damanguan=2,defen=96000};reference.indicators=new[]{"s1"};
+            SetGameResolution(774,438);client.ShowValidationFixture(reference);referenceDisplay.Observe(reference);referenceDisplay.Freeze=true;referenceDisplay.FrozenAge=9;
+            yield return null;yield return null;ScreenCapture.CaptureScreenshot(Path.Combine(folder,"result-reference-774.png"));yield return new WaitForSecondsRealtime(.08f);
+            Debug.Log("RIICHI HAND RESULT LAYOUT PASS: native hand height without meld shrinkage, safe public melds, APK win anchors and exact 934x430 / 774x438 reference aspects.");
             // Compare the result texture to an actual gameplay hand mesh render.
             var original=new OriginalTiles();var parityHand=original.CreateHand(null,"m9",new Vector3(50,50,50));
             var handProbe=new GameObject("Settlement gameplay parity camera").AddComponent<Camera>();

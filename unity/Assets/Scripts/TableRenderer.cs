@@ -257,31 +257,53 @@ namespace YunJian.Riichi
             HandCamera.orthographicSize = 9;
             float scale = Mathf.Min(safeHeight, 18 * aspect * safeWidth * .9f / handSpan);
             float centerX = safe.center.x;
-            // Both table-edge melds can lie behind the overlay hand camera.
-            // Reserve their projected silhouettes, including the lifted selection.
+            // Keep the native quad height. Public edge groups yield space when
+            // their silhouettes would otherwise force the foreground hand to shrink.
+            foreach(var group in exposedGroups)group.localPosition=Vector3.zero;
             float left=safe.xMin+safe.width*.05f,right=safe.xMax-safe.width*.05f;
             float handTop=safe.yMin+(OriginalTiles.HandHeight+.42f)*scale/18*Screen.height;
-            float margin=18*Screen.height/780f;
+            float margin=10*Screen.height/780f;
+            float half=handSpan*scale/(18*aspect)*Screen.width*.5f;
             foreach(var group in exposedGroups)
             {
                 if(!ProjectedBounds(group,out var bounds) || bounds.yMin>handTop || bounds.yMax<safe.yMin)continue;
                 if(group==selfMelds || bounds.center.x>=safe.center.x)right=Mathf.Min(right,bounds.xMin-margin);
                 else left=Mathf.Max(left,bounds.xMax+margin);
             }
-            float available=Mathf.Max(1,right-left);
-            scale=Mathf.Min(scale,available*18*aspect/Screen.width/handSpan);
-            float half=handSpan*scale/(18*aspect)*Screen.width*.5f;
-            centerX=Mathf.Clamp(safe.center.x,left+half,right-half);
+            if(right-left>=half*2)centerX=Mathf.Clamp(centerX,left+half,right-half);
+            else centerX=Mathf.Clamp(centerX,safe.xMin+safe.width*.05f+half,safe.xMax-safe.width*.05f-half);
+            var handBand=Rect.MinMaxRect(centerX-half,safe.yMin,centerX+half,handTop);
+            foreach(var group in exposedGroups)
+                if(ProjectedBounds(group,out var bounds) && handBand.Overlaps(bounds))MoveAboveHand(group,handTop+margin);
             float x = ((centerX / Screen.width) - .5f) * 18 * aspect;
             float bottom = -9 + safe.y / Screen.height * 18;
             cameraHand.position = new Vector3(x, bottom + (OriginalTiles.HandHeight / 2 + .12f) * scale, 0);
             cameraHand.rotation = Quaternion.identity;
             cameraHand.localScale = Vector3.one * scale;
         }
+        void MoveAboveHand(Transform group,float bottom)
+        {
+            // Translate only along the cloth plane; no rescaling or orientation change.
+            // The lowest projected corner gives an exact ray/plane target at each size.
+            for(int pass=0;pass<4;pass++)
+            {
+                float lowest=float.MaxValue;Vector3 point=Vector3.zero,screen=Vector3.zero;
+                foreach(var box in group.GetComponentsInChildren<BoxCollider>(true))for(int corner=0;corner<8;corner++)
+                {
+                    var offset=Vector3.Scale(box.size*.5f,new Vector3((corner&1)==0?-1:1,(corner&2)==0?-1:1,(corner&4)==0?-1:1));
+                    var world=box.transform.TransformPoint(box.center+offset);var p=Camera.WorldToScreenPoint(world);
+                    if(p.z>0 && p.y<lowest){lowest=p.y;point=world;screen=p;}
+                }
+                if(lowest>=bottom || lowest==float.MaxValue)return;
+                var ray=Camera.ScreenPointToRay(new Vector3(screen.x,bottom,0));
+                if(!new Plane(Vector3.up,point).Raycast(ray,out float distance))return;
+                var delta=ray.GetPoint(distance)-point;delta.y=0;group.position+=delta;
+            }
+        }
         bool ProjectedBounds(Transform group,out Rect bounds)
         {
             Vector2 min=new Vector2(float.MaxValue,float.MaxValue),max=new Vector2(float.MinValue,float.MinValue);bool any=false;
-            foreach(var box in group.GetComponentsInChildren<BoxCollider>())
+            foreach(var box in group.GetComponentsInChildren<BoxCollider>(true))
             for(int corner=0;corner<8;corner++)
             {
                 var offset=Vector3.Scale(box.size*.5f,new Vector3((corner&1)==0?-1:1,(corner&2)==0?-1:1,(corner&4)==0?-1:1));
