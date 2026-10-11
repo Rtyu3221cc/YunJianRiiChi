@@ -13,7 +13,7 @@ namespace YunJian.Riichi
         public Camera HandCamera { get; private set; }
         OriginalTiles original;
         readonly ReferenceScoreHub scoreHub = new ReferenceScoreHub();
-        public Texture DoraTexture(string tile) => original.DoraTexture(tile);
+        public Texture DoraTexture(string tile,bool match=false) => original.DoraTexture(tile,match);
         public Texture HandTexture(string tile) => original.HandTexture(tile);
         Transform content;
         RoomView state;
@@ -27,7 +27,6 @@ namespace YunJian.Riichi
         Transform cameraHand;
         Transform responseTarget;
         readonly List<Tuple<Transform,string>> exposedTiles=new List<Tuple<Transform,string>>();
-        readonly Dictionary<Transform,Transform> matchingGlows=new Dictionary<Transform,Transform>();
         string selectedTile;
         public bool IsMatchingTile(string tile) => selectedTile!=null && TileKind(tile)==selectedTile;
         static string TileKind(string tile) => string.IsNullOrEmpty(tile)?null:tile.Replace("0","5");
@@ -133,7 +132,7 @@ namespace YunJian.Riichi
         public void Clear()
         {
             foreach (Transform t in content) { t.gameObject.SetActive(false); Destroy(t.gameObject); }
-            exposedTiles.Clear();matchingGlows.Clear();selectedTile=null;handTiles.Clear(); handBase.Clear(); drawTiles.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); northTiles.Clear(); winningTiles.Clear(); responseTarget = null; selfMelds = null; cameraHand = null; state = null;
+            exposedTiles.Clear();selectedTile=null;handTiles.Clear(); handBase.Clear(); drawTiles.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); northTiles.Clear(); winningTiles.Clear(); responseTarget = null; selfMelds = null; cameraHand = null; state = null;
         }
         public int RelativeSeat(int i) => (i - state.you + state.n) % state.n;
         float Angle(int i)
@@ -208,8 +207,8 @@ namespace YunJian.Riichi
             return block.GetFloat("_Dim");
         }
         public int ValidationHandCount => handTiles.Count;
-        public int ValidationMatchCount => matchingGlows.Count(x=>x.Value.gameObject.activeSelf);
-        public bool ValidationMatchesOnlyFaces => matchingGlows.All(x=>x.Key.Find("Original tile").localRotation==Quaternion.identity);
+        public int ValidationMatchCount => exposedTiles.Count(x=>OriginalTiles.IsMatchedFace(x.Item1));
+        public bool ValidationMatchesOnlyFaces => exposedTiles.Where(x=>OriginalTiles.IsMatchedFace(x.Item1)).All(x=>x.Item1.Find("Original tile").localRotation==Quaternion.identity);
 #endif
         // Room.view() returns options for this client alone, and the engine creates
         // them only when a call is legal; a lone 'pass' is not a call.
@@ -458,15 +457,9 @@ namespace YunJian.Riichi
             selectedTile=index>=0 && index<handTiles.Count?TileKind(handTiles[index].name.Substring(5)):null;
             for (int i = 0; i < handTiles.Count; i++){
                 handTiles[i].localPosition = handBase[i] + (i == index ? new Vector3(0, .30f, 0) : Vector3.zero);
-                var renderer=handTiles[i].GetComponent<MeshRenderer>();var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block);
-                block.SetFloat("_Match",IsMatchingTile(handTiles[i].name.Substring(5))?1:0);renderer.SetPropertyBlock(block);
             }
             foreach(var entry in exposedTiles){
-                var tile=entry.Item1;bool match=IsMatchingTile(entry.Item2);
-                var edge=tile.Find("Original tile/Original tile outline").GetComponent<MeshRenderer>();
-                var block=new MaterialPropertyBlock();if(match)block.SetColor("_Color",new Color(1,.72f,.12f,1));edge.SetPropertyBlock(block);
-                if(match && !matchingGlows.ContainsKey(tile))matchingGlows[tile]=original.CreateResponseGlow(tile,.33f,"Same tile ground glow");
-                if(matchingGlows.TryGetValue(tile,out var light))light.gameObject.SetActive(match);
+                OriginalTiles.MatchFace(entry.Item1,IsMatchingTile(entry.Item2));
             }
         }
         void DrawMelds(Transform parent, PlayerView p)

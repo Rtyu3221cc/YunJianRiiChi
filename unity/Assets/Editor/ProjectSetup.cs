@@ -29,8 +29,8 @@ namespace YunJian.Riichi.Editor
             PlayerSettings.companyName = "YunJian";
             PlayerSettings.productName = "云间日麻 3D";
             PlayerSettings.SetApplicationIdentifier(UnityEditor.Build.NamedBuildTarget.Android, "com.yunjian.riichi.unity");
-            PlayerSettings.bundleVersion = "0.5.14";
-            PlayerSettings.Android.bundleVersionCode = 15;
+            PlayerSettings.bundleVersion = "0.5.15";
+            PlayerSettings.Android.bundleVersionCode = 16;
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel26;
             // Local, offline distribution: matches the existing phone-hosted service.
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel32;
@@ -47,7 +47,7 @@ namespace YunJian.Riichi.Editor
             var graphics = new SerializedObject(graphicsAssets[0]);
             var shaders = graphics.FindProperty("m_AlwaysIncludedShaders");
             if (shaders == null) throw new System.Exception("无法读取 Always Included Shaders，请检查编辑器版本。");
-            foreach (var name in new[] { "Standard", "Unlit/Texture", "Unlit/Transparent", "Unlit/Color", "YunJian/OriginalHand", "YunJian/OriginalTileBody", "YunJian/OriginalTileOutline", "YunJian/ResponseGlow", "YunJian/TurnLight", "YunJian/NorthPetal", "YunJian/WinParticle", "YunJian/TableCloth" })
+            foreach (var name in new[] { "Standard", "Unlit/Texture", "Unlit/Transparent", "Unlit/Color", "YunJian/OriginalHand", "YunJian/OriginalTileFace", "YunJian/OriginalTileBody", "YunJian/OriginalTileOutline", "YunJian/ResponseGlow", "YunJian/TurnLight", "YunJian/NorthPetal", "YunJian/WinParticle", "YunJian/TableCloth" })
             {
                 var shader = Shader.Find(name); if (shader == null) continue;
                 bool found = false; for (int i = 0; i < shaders.arraySize; i++) if (shaders.GetArrayElementAtIndex(i).objectReferenceValue == shader) found = true;
@@ -62,7 +62,7 @@ namespace YunJian.Riichi.Editor
             if (!File.Exists("Assets/Scenes/Table.unity")) CreateScene();
             Configure();
             Directory.CreateDirectory("Builds");
-            var report = BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, "Builds/yunjian-riichi-unity-0.5.14.apk", BuildTarget.Android, BuildOptions.None);
+            var report = BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, "Builds/yunjian-riichi-unity-0.5.15.apk", BuildTarget.Android, BuildOptions.None);
             if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded) throw new System.Exception("Android build failed");
         }
     }

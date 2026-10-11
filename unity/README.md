@@ -1,5 +1,16 @@
 # 云间日麻 Unity 三维客户端
 
+## Unity 0.5.15 同类明牌蓝色覆盖
+
+安卓包：[下载 Unity 0.5.15 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.15/yunjian-riichi-unity-0.5.15.apk)，versionCode 16，同签名覆盖更新。
+
+- 按参考图将同类明牌改为淡蓝色牌面覆盖，取消黄色边框和地面光圈，牌壳、红色牌背和牌面图案保持原素材。
+- 自己手牌中的相同牌保持原色，选中牌只按既有操作抬起，不附加同类特效。
+- 只匹配当前公开的牌面，包括牌河、副露、拔北和已翻开的宝牌；对手暗牌、暗杠牌背不参与，赤五与普通五仍一起匹配。
+- 完整 Unity Play 回归、原牌面比例/像素一致性、状态刷新和出牌交接检查通过。安卓双架构、v2 同签名、16KB 对齐通过，真机触控/热点联机未执行。
+
+预览：[蓝色同类明牌与原色手牌](../dist/previews/unity-0.5.15-matching-tiles-1688.png)。详见 [验证记录](../dist/验证记录-unity-0.5.15.txt)。
+
 ## Unity 0.5.14 明牌高亮、出牌时序与九种九牌
 
 安卓包：[下载 Unity 0.5.14 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.14/yunjian-riichi-unity-0.5.14.apk)，versionCode 15，同包名同签名覆盖更新。
@@ -82,7 +93,7 @@
 
 预览：[拔北提示](../dist/previews/unity-0.5.8-north-call-0.png)、[手部动作](../dist/previews/unity-0.5.8-north-hand-0.png)、[落牌花瓣](../dist/previews/unity-0.5.8-north-petals-0.png)。检查范围见 [0.5.8 验证记录](../dist/验证记录-unity-0.5.8.txt)，素材来源见 [ARTWORK.md](../ARTWORK.md)。安卓真机效果待实测。
 
-构建脚本当前输出 `Builds/yunjian-riichi-unity-0.5.14.apk`。
+构建脚本当前输出 `Builds/yunjian-riichi-unity-0.5.15.apk`。
 
 ## 0.5.7 计分盘出牌指示灯
 

@@ -372,12 +372,8 @@ namespace YunJian.Riichi
             for (int i = 0; i < 5; i++)
             {
                 Rect tile = new Rect(ox + (28+i*56)*k, oy + 44*k, 54*k, 81*k);
-                GUI.DrawTexture(tile, table.DoraTexture(i < State.indicators.Length ? State.indicators[i] : null), ScaleMode.ScaleToFit);
-                if(i<State.indicators.Length && table.IsMatchingTile(State.indicators[i])){
-                    var color=GUI.color;GUI.color=new Color(1,.74f,.15f,.85f);
-                    GUI.DrawTexture(new Rect(tile.x,tile.y,tile.width,2),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(tile.x,tile.yMax-2,tile.width,2),Texture2D.whiteTexture);
-                    GUI.DrawTexture(new Rect(tile.x,tile.y,2,tile.height),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(tile.xMax-2,tile.y,2,tile.height),Texture2D.whiteTexture);GUI.color=color;
-                }
+                string indicator=i<State.indicators.Length?State.indicators[i]:null;
+                GUI.DrawTexture(tile,table.DoraTexture(indicator,table.IsMatchingTile(indicator)),ScaleMode.ScaleToFit);
             }
             HudNumber(State.sticks, ox + 117*k, oy + 139*k, k);
             HudNumber(State.honba, ox + 256*k, oy + 139*k, k);

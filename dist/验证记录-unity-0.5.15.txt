@@ -1,0 +1,16 @@
+云间日麻 Unity 0.5.15 验证记录（2026-10-11）
+
+包名 com.yunjian.riichi.unity；versionName 0.5.15；versionCode 16；ARM64 + ARMv7；min API 26，target 32，compile 36，同证书覆盖更新。
+APK yunjian-riichi-unity-0.5.15.apk；51,122,322 字节；SHA-256 4AF57D100752C61BE3FA0E3BC68E88ACBE756A418856C7B86F9A137BB7BC6BAC。
+
+修正：同类明牌使用淡蓝色牌面，取消黄色光圈/轮廓，普通手牌同类染色移除；手牌选择抬起和立直保色变暗保持。
+
+- 规则、AI、公共协议测试：独立发布检出 74/74 通过。
+- 完整 Unity Play 通过，RIICHI BLUE MATCH PASS、LATEST FIXES、RESULT TILE 等完整标记通过。实际相机截图核对蓝色公开牌面、原红牌背和原色手牌。
+- 赤五/普通五匹配、暗杠牌背排除、无同类黄色光圈、选择清除/重绘稳定通过。
+- 新牌面 shader APK 内编译与 inclusion 校验通过。未匹配牌面、手牌、结算预览共用素材的尺寸/颜色/逐像素一致性检查通过。
+- 既有四分辨率 UI、公开河牌序号、同帧隐藏/队列落牌、自摸正面朝上、九种九牌声明、荒牌流局、听牌/振听、拔北花瓣、火焰和回合灯回归通过。
+- APK ZIP 和当前离线 JS 逐文件一致、JNI、双架构、原图集/字体/动画/新 shader 通过；v2 原签名与 16KB 对齐通过。
+
+预览为实际 Unity 客户端合成场景。安卓真机安装、触控与热点联机未执行。
+Unity 编辑器已知 SearchDatabase 启动索引异常不影响回归，应用无业务异常。

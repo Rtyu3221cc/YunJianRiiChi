@@ -403,15 +403,17 @@ namespace YunJian.Riichi
         {
             var table=GetComponent<TableRenderer>();var fx=GetComponent<TableEffects>();SetGameResolution(1688,780);
             var view=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"effects.json")));
-            view.phase="play";view.pending=null;view.last=null;view.hand=new[]{"p0","p5","z4"};view.drawn=null;
+            view.phase="play";view.pending=null;view.last=null;view.hand=new[]{"m1","m3","p0","p5","p5","p6","p7","p8","s1","s2","s3","z4","z4"};view.indicators=new[]{"p5","z4"};view.drawn=null;
             view.players[0].melds=new[]{"p5555","p555+"};view.players[0].nuki=1;
             view.players[1].river=new[]{new RiverTile{tile="p5"},new RiverTile{tile="p0",called=true},new RiverTile{tile="z4"}};
             view.options=view.hand.Select(t=>new Choice{id="discard:"+t,kind="discard",tile=t}).ToArray();
-            client.ShowValidationFixture(view);yield return null;client.SelectTile(0,"discard:p0");
+            client.ShowValidationFixture(view);yield return null;client.SelectTile(2,"discard:p0");
             Require(table.IsMatchingTile("p5") && table.IsMatchingTile("p0") && !table.IsMatchingTile("s5"),"Red/normal five matching differs");
             Require(table.ValidationMatchCount>=6 && table.ValidationMatchesOnlyFaces,"Same-tile highlight missing or includes a concealed kan back");
+            Require(GameObject.Find("Same tile ground glow")==null,"Matching tiles still use a yellow ground glow");
             ScreenCapture.CaptureScreenshot(Path.Combine(folder,"matching-tiles-1688.png"));yield return new WaitForSecondsRealtime(.1f);
             table.Render(view);Require(table.IsMatchingTile("p5"),"Polling lost selected match highlight");
+            Debug.Log("RIICHI BLUE MATCH PASS: visible face-only blue tint, original rim/back, no matching glow or hand tint, red-five equivalence and polling selection retained.");
             table.SelectHand(-1);Require(table.ValidationMatchCount==0,"Clearing selection leaves highlights behind");
             client.ShowValidationFixture(view);fx.ValidationFreeze=true;fx.ValidationTime=.1f;view.audioRoom="discard-synchronous";view.audioSeq=10;view.audioEvents=new PublicSound[0];fx.Accept(view);
             view.players[1].river=new[]{new RiverTile{tile="p5"},new RiverTile{tile="p5"}};table.Render(view);

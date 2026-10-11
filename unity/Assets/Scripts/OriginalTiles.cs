@@ -68,7 +68,7 @@ namespace YunJian.Riichi
             {
                 // Table face is the 50 x 70 interior of the existing 52 x 72 crop.
                 // The original mesh's face submesh supplies the UV mapping.
-                m = new Material(Shader.Find("Unlit/Texture")) { mainTexture = Resources.Load<Texture2D>("Majsoul/TableTiles/" + tile) };
+                m = new Material(Shader.Find("YunJian/OriginalTileFace")) { mainTexture = Resources.Load<Texture2D>("Majsoul/TableTiles/" + tile) };
                 m.mainTextureScale = new Vector2(50f / 52, 70f / 72); m.mainTextureOffset = new Vector2(1f / 52, 1f / 72);
             }
             materials[key] = m; return m;
@@ -95,6 +95,17 @@ namespace YunJian.Riichi
             var box = root.gameObject.AddComponent<BoxCollider>(); box.center = Vector3.up * TableDepth * width / 2; box.size = new Vector3(width, TableDepth * width, TableLength * width);
             if (opacity < 1) { root.localScale = Vector3.one * .8f; root.localPosition -= Vector3.up * .04f; }
             return root;
+        }
+        public static void MatchFace(Transform tile,bool match)
+        {
+            var renderer=tile.Find("Original tile").GetComponent<MeshRenderer>();
+            var block=new MaterialPropertyBlock();block.SetFloat("_Match",match?1:0);
+            renderer.SetPropertyBlock(block,1);
+        }
+        public static bool IsMatchedFace(Transform tile)
+        {
+            var block=new MaterialPropertyBlock();tile.Find("Original tile").GetComponent<MeshRenderer>().GetPropertyBlock(block,1);
+            return block.GetFloat("_Match")>.5f;
         }
         public Transform CreateResponseGlow(Transform tile,float width,string name="Original response ground glow")
         {
@@ -146,9 +157,10 @@ namespace YunJian.Riichi
             root.gameObject.SetActive(false); UnityEngine.Object.Destroy(root.gameObject);
             handTextures[key] = target; return target;
         }
-        public Texture DoraTexture(string tile)
+        public Texture DoraTexture(string tile,bool match=false)
         {
-            string key = string.IsNullOrEmpty(tile) ? "back" : tile;
+            bool hidden=string.IsNullOrEmpty(tile);match&=!hidden;
+            string key = (hidden ? "back" : tile)+(match?"/blue":"");
             if (doraTextures.TryGetValue(key, out var cached)) return cached;
             if (doraCamera == null)
             {
@@ -158,7 +170,8 @@ namespace YunJian.Riichi
                 doraCamera.cullingMask = 1 << 13; doraCamera.nearClipPlane = .1f; doraCamera.farClipPlane = 10;
             }
             Vector3 origin = new Vector3(50,50,50);
-            var root = CreateTable(null, tile, origin, 1, key == "back", false, 1);
+            var root = CreateTable(null, tile, origin, 1, hidden, false, 1);
+            MatchFace(root,match);
             foreach (var t in root.GetComponentsInChildren<Transform>()) t.gameObject.layer = 13;
             doraCamera.transform.position = origin + new Vector3(0,4,-.65f);
             doraCamera.transform.LookAt(origin + Vector3.up * TableDepth / 2, Vector3.forward);
