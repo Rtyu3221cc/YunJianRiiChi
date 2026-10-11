@@ -148,3 +148,20 @@ test('discard events identify the committed river slot without private hand data
  const r=fixture();r.s.players[0].hand='p123456s123z1112p9';const prior=r.s.players[0].river.length;
  action(r,0,'discard:p9_');const e=r.view(1).audioEvents.findLast(e=>e.kind==='discard');assert.equal(e.riverIndex,prior+1);assert.equal(e.tile,'p9');assert(!('hand'in e));
 });
+
+test('opening order is viewer-private and preserves actual deal including dealer draw',()=>{
+ for(const n of [3,4]){const r=make(n);for(let i=0;i<n;i++){
+  const v=r.view(i);assert.equal(v.handSeq,1);assert(v.dealtAt>0);
+  assert.deepEqual(v.openingHand.slice().sort(),v.hand.slice().sort());
+  assert.equal(v.openingHand.length,i===r.s.dealer?14:13);
+  if(i===r.s.dealer)assert.equal(v.openingHand.at(-1),v.drawn);
+  for(const p of v.players)assert(!('dealt' in p)&&!('openingHand' in p));
+  const saved=v.openingHand.slice();v.openingHand.length=0;assert.deepEqual(r.view(i).openingHand,saved);
+ }}
+});
+test('opening sequence changes on new hands and survives host snapshot restore',()=>{
+ const r=make(3),seq=r.view(0).handSeq,at=r.view(0).dealtAt;r.newHand();
+ assert.equal(r.view(0).handSeq,seq+1);assert(r.view(0).dealtAt>=at);
+ const restored=new Room('host',null,JSON.stringify(r.s));assert.deepEqual(restored.view(1).openingHand,r.view(1).openingHand);
+ assert.equal(restored.view(1).handSeq,seq+1);conservation(r);
+});

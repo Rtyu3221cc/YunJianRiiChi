@@ -1,0 +1,14 @@
+云间日麻 Unity 0.5.21 验证记录（2026-10-11）
+
+包名 com.yunjian.riichi.unity；versionName 0.5.21；versionCode 22；ARM64 + ARMv7；同证书覆盖更新。
+APK yunjian-riichi-unity-0.5.21.apk；52,196,090 字节；SHA-256 9BCEF0D68505279F76B91305305D52CE49E300CB8A4781FB9466CDCAD8AAF0E4。
+
+- 规则、AI、公共协议：源码及独立发布检出均 76/76 通过。
+- 完整 Unity Play 通过，OPENING AUDIO、WAIT INPUT、HAND RESULT LAYOUT、BLUE MATCH、RESULT TILE 等标记通过。
+- 实际发牌顺序分组淡入、排序滑动、最终牌位、输入锁定、四次发牌音效、重复轮询、晚到重连及取消恢复通过；非庄家首次摸牌保留整理进度并最终显示摸牌通过。
+- 原始音频离线加载、BGM 循环且轮询保留播放位置、独立音乐/音效静音、落牌时刻播放一次、后台暂停/恢复及离开停止通过。
+- BGM 与用户录像音轨相关度 0.96244；五项桌面音效直接从用户 APK 导出，来源与 SHA-256 已记录。
+- 既有手牌大小、副露避让、蓝色同类指示、听牌长按、拔北/胡牌、九种九牌、流局、振听及结算布局回归通过。
+- APK ZIP、离线 JS 逐文件一致、JNI、双架构、原始资源和编译 shader、v2 原签名及 16KB 对齐通过。
+
+预览来自实际 Unity 客户端合成公开状态。安卓真机安装、听感、触摸和热点联机未执行。

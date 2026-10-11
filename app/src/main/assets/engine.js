@@ -95,9 +95,10 @@ class Room{
    for(let k=0;k<4;k++)wall.push(suit+(s.red&&suit!=='z'&&n===5&&k===0?0:n));
   }
   shuffle(wall);s.rinshan=wall.splice(0,4);s.indicators=wall.splice(0,5);s.ura=wall.splice(0,5);s.deadFill=[];s.wall=wall;
+  s.handSeq=(s.handSeq||0)+1;s.dealtAt=Date.now();
   s.interrupted=false;s.phase='play';s.pending=null;s.result=null;s.log=[];s.last=null;s.turn=s.dealer;s.drawKind='normal';
-  for(let i=0;i<s.n;i++){let p=s.players[i];Object.assign(p,{hand:new M.Shoupai(wall.splice(0,13)).toString(),river:[],riichi:0,ippatsu:false,nuki:0,temp:false,permanent:false,kans:0,ready:false});}
-  this.draw(s.dealer);this.log('开局');
+  for(let i=0;i<s.n;i++){let p=s.players[i],dealt=wall.splice(0,13);Object.assign(p,{dealt,hand:new M.Shoupai(dealt).toString(),river:[],riichi:0,ippatsu:false,nuki:0,temp:false,permanent:false,kans:0,ready:false});}
+  this.draw(s.dealer);s.players[s.dealer].dealt.push(this.h(s.dealer)._zimo);this.log('开局');
  }
  log(text){this.s.log.push(text);if(this.s.log.length>12)this.s.log.shift()}
  interrupt(){this.s.interrupted=true;this.s.players.forEach(p=>p.ippatsu=false)}
@@ -209,6 +210,7 @@ class Room{
   return {phase:s.phase,version:s.version,you:i,host:i===0,n:s.n,pin:s.pin,round:s.round,rounds:s.rounds,dealer:s.dealer,honba:s.honba,sticks:s.sticks,turn:s.turn,
    audioRoom:s.audioRoom||s.pin,audioSeq:s.audioSeq||0,audioEvents:s.audioEvents||[],remaining:s.wall?s.wall.length:0,indicators:s.indicators?s.indicators.slice(0,1+this.totalKans()):[],last:s.last,
    players:s.players.map((p,j)=>({name:p.name,avatar:p.avatar||"",bot:!!p.bot,score:p.score,wind:this.wind(j),riichi:p.riichi,nuki:p.nuki,river:p.river,melds:p.hand?this.h(j)._fulou:[],count:p.hand?tiles(this.h(j)).length:0,ready:p.ready,online:p.bot||Date.now()-(this.seen[p.token]||0)<12000})),
+   handSeq:s.handSeq||0,dealtAt:s.dealtAt||0,openingHand:(s.players[i].dealt||[]).slice(),
    hand:h?tiles(h):[],drawn:h&&h._zimo&&h._zimo.length===2?h._zimo:null,options,furiten:hints.furiten,waits:h?this.waits(h):[],waitDetails:hints.waitDetails,discardHints:hints.discardHints,
    recovery:s.players[i].recovery,log:s.log||[],result:s.result,pending:s.pending?{from:s.pending.from,tile:s.pending.tile,kind:s.pending.kind,riichi:!!s.pending.riichi,waiting:Object.keys(s.pending.options).filter(k=>!s.pending.replies[k]).map(Number)}:null};
  }

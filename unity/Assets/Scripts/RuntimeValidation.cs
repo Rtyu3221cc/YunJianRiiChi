@@ -53,6 +53,7 @@ namespace YunJian.Riichi
                 yield return null;
             }
             Require(client.State != null && client.State.phase == "play" && !client.Busy && client.State.options.Any(x => x.kind == "discard"), "Live practice failed to reach the human discard turn");
+            while(table.ArrangingHand)yield return null;
             var state = client.State; int before = state.players[state.you].river.Length;
             yield return null; Physics.SyncTransforms();
             var tile = FindObjectsByType<TileTarget>(FindObjectsSortMode.None).OrderBy(t => t.Index).First();
@@ -141,6 +142,7 @@ namespace YunJian.Riichi
                     Require(File.Exists(fullFile), "Full game-view capture failed at " + suffix);
                 }
             }
+            var openingProbe=ValidateOpeningAudio(client);while(openingProbe.MoveNext())yield return openingProbe.Current;
             var latestProbe=ValidateLatestFixes(client);while(latestProbe.MoveNext())yield return latestProbe.Current;
             var indicatorProbe=ValidateIndicators(client);while(indicatorProbe.MoveNext())yield return indicatorProbe.Current;
             var winProbe = ValidateWins(client);
@@ -712,6 +714,68 @@ namespace YunJian.Riichi
             Debug.Log("RIICHI FIDELITY PASS: framed chi tiles, original win/score/rank/button sprites and fonts, broad filled flame core at four ages and every seat.");
             Debug.Log("RIICHI RESULT VIDEO PASS: four sizes, yaku and winning hand presentation, two stages, point endpoints, ranks, polling stability, both ron winners and chromatic brightness dimming.");
             Debug.Log("RIICHI WIN EFFECT PASS: ron/tsumo in all three/four-seat directions and rotated viewers; original cut-ins, Zimo mesh pixels, exact landing, eight source fire layers, visible flame spiral and rubble and visible pixels; delayed result, polling/reconnect cleanup, double ron and robbed tile targets.");
+        }
+
+        IEnumerator ValidateOpeningAudio(RiichiClient client)
+        {
+            var table=GetComponent<TableRenderer>();var audio=GetComponent<GameAudio>();var fx=GetComponent<TableEffects>();
+            Require(audio.HasResources && audio.MusicLoops,"Original table audio resources/loop missing");
+            audio.Configure(true,.35f,true,.8f);audio.Suspend(false);
+            var view=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"preview-4.json")));
+            view.phase="play";view.you=0;view.dealer=0;view.turn=0;view.audioRoom="opening-audio";view.handSeq=1;
+            view.dealtAt=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();view.pending=null;
+            view.openingHand=new[]{"s3","p8","m6","z1","m2","p1","s5","m8","p4","z1","s1","m2","p7","z3"};
+            view.hand=view.openingHand.OrderBy(x=>"mpsz".IndexOf(x[0])).ThenBy(x=>x[1]).ToArray();view.drawn="z3";
+            view.options=view.hand.Distinct().Select(t=>new Choice{id="discard:"+t+(t==view.drawn?"_":""),kind="discard",tile=t}).ToArray();
+            foreach(var p in view.players){p.river=new RiverTile[0];p.melds=new string[0];p.nuki=0;p.count=13;}
+            table.Opening.Freeze=true;table.Opening.FrozenAge=0;
+            int sounds=audio.DealSounds,starts=table.Opening.Started;
+            client.ShowValidationFixture(view);SetGameResolution(1688,780);yield return null;
+            Require(table.ArrangingHand && table.Opening.Started==starts+1,"Fresh deal did not animate");
+            client.SelectTile(0,"discard:m2");Require(client.SelectedIndex==-1,"Opening accepted discard while tiles move");
+            float previousX=0;
+            foreach(float age in new[]{.21f,.51f,.81f,1.11f,1.40f,1.80f}){
+                table.Opening.FrozenAge=age;yield return null;yield return null;
+                int visible=Enumerable.Range(0,14).Count(i=>table.ValidationHandOpacity(i)>.95f);
+                if(age<1.2f)Require(visible==Mathf.Min(14,((int)(age/.3f)+1)*4),"Opening batches/fade differ from native deal");
+                if(age<1.2f)Require(Mathf.Abs(table.ValidationHandPosition(0).x-table.ValidationHandBase(0).x)>1,"Initial hand was already sorted");
+                if(age==1.11f)previousX=table.ValidationHandPosition(0).x;
+                if(age==1.40f)Require(table.ValidationHandPosition(0).x<previousX && table.ValidationHandPosition(0).x>=table.ValidationHandBase(0).x,"Sort does not slide left toward final position");
+                if(age>=1.76f)for(int i=0;i<14;i++)Require(Vector3.Distance(table.ValidationHandPosition(i),table.ValidationHandBase(i))<.001f,"Opening final position differs from normal hand");
+                Capture(table,Path.Combine(folder,"opening-"+age.ToString("F2",System.Globalization.CultureInfo.InvariantCulture)+".png"),1688,780);
+            }
+            Require(audio.DealSounds==sounds+4 && !table.ArrangingHand,"Deal sound groups repeat or animation never completes");
+            table.Render(view);yield return null;Require(table.Opening.Started==starts+1 && audio.DealSounds==sounds+4,"Polling restarts deal");
+            table.Opening.Freeze=false;
+            float musicAt=audio.MusicTime;for(int i=0;i<10;i++)audio.SetScene(view);
+            yield return new WaitForSecondsRealtime(.25f);Require(audio.MusicPlaying && audio.MusicTime>musicAt+.1f,"Polling restarts/stops BGM");
+            audio.Configure(false,.35f,true,.8f);yield return null;Require(!audio.MusicPlaying,"BGM mute failed");
+            float pausedAt=audio.MusicTime;audio.Configure(true,.35f,false,.8f);yield return new WaitForSecondsRealtime(.1f);
+            Require(audio.MusicPlaying && audio.MusicTime>=pausedAt,"BGM resume restarts track");audio.PreviewDiscard();yield return null;Require(!audio.EffectsPlaying,"SFX mute failed");
+            audio.Configure(true,.35f,true,.8f);
+            view.players[1].river=new[]{new RiverTile{tile="p3"}};client.ShowValidationFixture(view);yield return null;
+            int landings=audio.LandingSounds;fx.ValidationPlay(1,"discard","p3",false);fx.ValidationTime=.39f;yield return null;
+            Require(audio.LandingSounds==landings,"Discard sound fired before landing");
+            fx.ValidationTime=.41f;yield return null;Require(audio.LandingSounds==landings+1 && audio.EffectsPlaying,"Discard landing is silent");
+            yield return null;table.Render(view);fx.Accept(view);yield return null;Require(audio.LandingSounds==landings+1,"Discard sound duplicated by sampling/polling");
+            fx.Reset();fx.ValidationFreeze=false;
+            audio.Suspend(true);yield return null;Require(!audio.MusicPlaying && !audio.EffectsPlaying,"Background suspension leaves audio running");
+            audio.Suspend(false);yield return null;Require(audio.MusicPlaying,"BGM does not resume after background");
+            view.handSeq=2;view.dealtAt=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()-30000;view.players[1].river=new RiverTile[0];
+            client.ShowValidationFixture(view);yield return null;Require(!table.ArrangingHand && table.Opening.Started==starts+1,"Late reconnect replays opening");
+            view.handSeq=3;view.dealtAt=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();table.Opening.Freeze=true;table.Opening.FrozenAge=.1f;
+            client.ShowValidationFixture(view);yield return null;table.Opening.Cancel();yield return null;
+            Require(!table.ArrangingHand && Enumerable.Range(0,14).All(i=>table.ValidationHandOpacity(i)>.99f),"Cancelling opening leaves hidden tiles");
+            table.Opening.Freeze=true;table.Opening.FrozenAge=.4f;view.handSeq=4;view.dealtAt=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            view.drawn=null;view.hand=view.hand.Take(13).ToArray();view.openingHand=view.openingHand.Take(13).ToArray();view.options=new Choice[0];
+            client.ShowValidationFixture(view);yield return null;int nondealerStarts=table.Opening.Started;
+            view.hand=view.hand.Concat(new[]{"p9"}).ToArray();view.drawn="p9";table.Render(view);yield return null;
+            Require(table.ArrangingHand && table.Opening.Started==nondealerStarts,"First nondealer draw cancelled/restarted opening");
+            Require(table.ValidationHandOpacity(13)==0,"First draw appeared inside the initial deal");
+            table.Opening.FrozenAge=1.8f;yield return null;yield return null;
+            Require(!table.ArrangingHand && Enumerable.Range(0,14).All(i=>table.ValidationHandOpacity(i)>.99f),"First nondealer draw stayed hidden after sorting");
+            table.Opening.Freeze=false;audio.Reset();Require(!audio.MusicPlaying && !audio.EffectsPlaying,"Leaving table does not stop audio");
+            Debug.Log("RIICHI OPENING AUDIO PASS: native four-tile/fade/sort timings, four deal sounds, exact final hand positions, polling and reconnect, landing-only sound, separate mute/volume, BGM loop/pause/resume and cleanup.");
         }
 
         IEnumerator ValidateNorthEffects(RiichiClient client)

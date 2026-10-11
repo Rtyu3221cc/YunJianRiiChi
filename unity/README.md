@@ -1,5 +1,17 @@
 # 云间日麻 Unity 三维客户端
 
+## Unity 0.5.21 开局理牌与对局音频
+
+安卓包：[下载 Unity 0.5.21 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.21/yunjian-riichi-unity-0.5.21.apk)，versionCode 22，同签名覆盖更新。
+
+- 开局按照实际发牌顺序，每 0.3 秒展示一组四张牌，200ms 淡入下落；1.2 秒后横向滑动整理，最后保留庄家摸牌间隔。动画期间不接受手牌出牌，非庄家的首次摸牌也不会打断整理。
+- 加入录像同款雀魂对局 BGM，与角色语音独立循环播放；正常状态轮询保持播放位置。返回大厅停止，切后台暂停、回前台续播。
+- 发牌、出牌、副露、立直棒和自摸落牌使用雀魂原始桌面音效；落牌声音与手部动画交接时刻同步，每次动作只播放一次。
+- 声音设置分别控制角色语音、BGM、桌面音效的开关和音量，并可试听荣和与落牌。音乐采用流式加载；全部音频随 APK 离线打包。
+- 实际 Unity 的理牌节拍、淡入、最终牌位、轮询不重播、延迟重连、落牌声音时机、独立静音以及后台暂停/续播验证通过；规则和公共协议 76/76 通过。安卓真机未执行。
+
+[动画与音频说明](../docs/开局动画与对局音频.md)、[理牌逐帧预览](../dist/previews/unity-0.5.21-opening.png)、[验证记录](../dist/验证记录-unity-0.5.21.txt)。
+
 ## Unity 0.5.20 听牌预览与长按查看
 
 安卓包：[下载 Unity 0.5.20 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.20/yunjian-riichi-unity-0.5.20.apk)，versionCode 21，同签名覆盖更新。
@@ -146,7 +158,7 @@
 
 预览：[拔北提示](../dist/previews/unity-0.5.8-north-call-0.png)、[手部动作](../dist/previews/unity-0.5.8-north-hand-0.png)、[落牌花瓣](../dist/previews/unity-0.5.8-north-petals-0.png)。检查范围见 [0.5.8 验证记录](../dist/验证记录-unity-0.5.8.txt)，素材来源见 [ARTWORK.md](../ARTWORK.md)。安卓真机效果待实测。
 
-构建脚本当前输出 `Builds/yunjian-riichi-unity-0.5.20.apk`。
+构建脚本当前输出 `Builds/yunjian-riichi-unity-0.5.21.apk`。
 
 ## 0.5.7 计分盘出牌指示灯
 

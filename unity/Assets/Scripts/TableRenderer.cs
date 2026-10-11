@@ -21,6 +21,9 @@ namespace YunJian.Riichi
         readonly Dictionary<string, Texture2D> portraits = new Dictionary<string, Texture2D>();
         readonly List<Transform> handTiles = new List<Transform>();
         readonly List<Vector3> handBase = new List<Vector3>();
+        readonly HandOpening opening = new HandOpening();
+        public bool ArrangingHand => opening.Active;
+        public HandOpening Opening => opening;
         Material ivory, frame, felt, red, gold, contactShadow;
         Texture2D shadowTexture;
         Font font;
@@ -130,8 +133,9 @@ namespace YunJian.Riichi
             }
             return Resources.Load<Texture2D>("Majsoul/Portraits/" + (p.bot ? "yiji" : "erjietang"));
         }
-        public void Clear()
+        public void Clear(bool resetOpening=true)
         {
+            if(resetOpening)opening.Reset();
             foreach (Transform t in content) { t.gameObject.SetActive(false); Destroy(t.gameObject); }
             exposedTiles.Clear();exposedGroups.Clear();selectedTile=null;handTiles.Clear(); handBase.Clear(); drawTiles.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); northTiles.Clear(); winningTiles.Clear(); responseTarget = null; selfMelds = null; cameraHand = null; state = null;
         }
@@ -207,6 +211,9 @@ namespace YunJian.Riichi
             var block = new MaterialPropertyBlock(); renderer.GetPropertyBlock(block);
             return block.GetFloat("_Dim");
         }
+        public Vector3 ValidationHandPosition(int index)=>handTiles[index].localPosition;
+        public Vector3 ValidationHandBase(int index)=>handBase[index];
+        public float ValidationHandOpacity(int index){var b=new MaterialPropertyBlock();handTiles[index].GetComponent<MeshRenderer>().GetPropertyBlock(b);return b.GetFloat("_Opacity");}
         public int ValidationHandCount => handTiles.Count;
         public int ValidationMatchCount => exposedTiles.Count(x=>OriginalTiles.IsMatchedModel(x.Item1));
         public bool ValidationMatchesOnlyFaces => exposedTiles.Where(x=>OriginalTiles.IsMatchedModel(x.Item1)).All(x=>x.Item1.Find("Original tile").localRotation==Quaternion.identity);
@@ -244,7 +251,7 @@ namespace YunJian.Riichi
             var local = i == state.you ? new Vector3(-3.8f, .15f, -2.8f) : new Vector3(-2.9f, .15f, -3.7f);
             return Quaternion.Euler(0, angle, 0) * local;
         }
-        void LateUpdate() { UpdateDrawReveal();FitCamera(Screen.width / (float)Screen.height); }
+        void LateUpdate() { opening.Apply(handTiles,handBase,GetComponent<GameAudio>());UpdateDrawReveal();FitCamera(Screen.width / (float)Screen.height); }
         public void FitCamera(float aspect)
         {
             // Preserve vertical composition on phones; fit the side hands on 16:9.
@@ -332,7 +339,7 @@ namespace YunJian.Riichi
         }
         public void Render(RoomView view)
         {
-            Clear(); state = view;
+            Clear(false); state = view; opening.Observe(view);
             bool exhausted=state.phase=="result" && state.result!=null && state.result.draw && !state.result.abort && (state.result.drawDetails?.Length??0)>0;
             if(exhausted || state.result?.abortHand!=null){string next=state.audioRoom+":"+state.round+":"+state.honba+":"+state.result.title;
                 if(next!=drawKey){drawKey=next;drawBegan=Time.unscaledTime;}
@@ -487,6 +494,7 @@ namespace YunJian.Riichi
         }
         public void SelectHand(int index)
         {
+            if(opening.Active){opening.Apply(handTiles,handBase,GetComponent<GameAudio>());return;}
             selectedTile=index>=0 && index<handTiles.Count?TileKind(handTiles[index].name.Substring(5)):null;
             for (int i = 0; i < handTiles.Count; i++){
                 handTiles[i].localPosition = handBase[i] + (i == index ? new Vector3(0, .30f, 0) : Vector3.zero);

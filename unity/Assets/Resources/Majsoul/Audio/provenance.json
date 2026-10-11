@@ -1,0 +1,53 @@
+{
+  "clips": [
+    {
+      "resource": "Majsoul/Audio/zimo",
+      "source": "myassets/ui/mj/main/audio/zimo.mp3",
+      "apkBundle": "assets/Android/$0qqs86vvx-2$d2248p-fm@@_2_43833da14d3d8e4f51c2.majset",
+      "sha256": "e16d4a1cd0c82bca78ebaf67b69b9f4d62f71fa81bb0fd58a3b062458c21e301"
+    },
+    {
+      "resource": "Majsoul/Audio/discard_tile",
+      "source": "myassets/ui/mj/main/audio/discard_tile.mp3",
+      "apkBundle": "assets/Android/$0qqs86vvx-2$d2248p-fm@@_2_43833da14d3d8e4f51c2.majset",
+      "sha256": "c8ecad36d7e765415d3fa8153ab12219275f1aeb47fee447806a9f1a51cb283a"
+    },
+    {
+      "resource": "Majsoul/Audio/newround_pais",
+      "source": "myassets/ui/mj/main/audio/newround_pais.mp3",
+      "apkBundle": "assets/Android/$0qqs86vvx-2$d2248p-fm@@_2_43833da14d3d8e4f51c2.majset",
+      "sha256": "edc3cc63f55adae1d50a23d5bfa080911beab5ecf539df8e3bd5faa073847662"
+    },
+    {
+      "resource": "Majsoul/Audio/fulu",
+      "source": "myassets/ui/mj/main/audio/fulu.mp3",
+      "apkBundle": "assets/Android/$0qqs86vvx-2$d2248p-fm@@_2_43833da14d3d8e4f51c2.majset",
+      "sha256": "8f22bab9309bef0773c7f94981a414111d2b9997d9ed5d34c2362ea8beac1364"
+    },
+    {
+      "resource": "Majsoul/Audio/put_liqi",
+      "source": "myassets/ui/mj/main/audio/put_liqi.mp3",
+      "apkBundle": "assets/Android/$0qqs86vvx-2$d2248p-fm@@_2_43833da14d3d8e4f51c2.majset",
+      "sha256": "c78d160f90550935fd1183dcbd5d8422c27fe4e742a60cc5d16adca7bdf4fda7"
+    },
+    {
+      "resource": "Majsoul/Audio/game",
+      "source": "https://game.maj-soul.com/1/v0.10.275.w/audio/music/game.mp3",
+      "sha256": "05fb461e3625c7436116964708cd19f9ad2508bbf775fe18a4bfe5273e8c42a5",
+      "referenceCorrelation": 0.96244,
+      "referenceOffsetSeconds": 9.345
+    }
+  ],
+  "referenceVideos": [
+    "开局整理手牌.mp4",
+    "打牌时的背景音乐以及出牌音效.mp4"
+  ],
+  "openingTiming": {
+    "batchSeconds": 0.3,
+    "fadeSeconds": 0.2,
+    "sortAtSeconds": 1.2,
+    "sortTilesPerSecond": 25
+  },
+  "nativeCode": "ViewPlayer_Me.NewGame / HandPaiPlane.AnimNewTile / SetIndex / Update; PlayAudio(216) newround_pais and PlayAudio(207) discard_tile",
+  "bgmNote": "Default game.mp3 is supplied from official versioned resources; the local APK catalog has no default game BGM clip. Video audio waveform confirms this track."
+}

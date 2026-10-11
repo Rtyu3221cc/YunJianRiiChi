@@ -212,6 +212,7 @@ namespace YunJian.Riichi
         void CompleteHandoff()
         {
             if (handedOff) return; handedOff=true;
+            GetComponent<GameAudio>()?.Landing(current.kind);
             if (animatedTile!=null) animatedTile.gameObject.SetActive(false);
             if (targetTile!=null) targetTile.gameObject.SetActive(true);
             if (targetStick!=null) targetStick.gameObject.SetActive(true);

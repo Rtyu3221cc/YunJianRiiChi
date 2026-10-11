@@ -23,6 +23,9 @@ namespace YunJian.Riichi
         float nextPoll, volume = .8f;
         TableRenderer table;
         RoleVoice voice;
+        GameAudio gameAudio;
+        bool musicMuted, effectsMuted;
+        float musicVolume=.35f, effectsVolume=.8f;
         TableEffects effects;
         readonly ResultPresentation resultDisplay=new ResultPresentation();
 #if UNITY_EDITOR
@@ -77,7 +80,7 @@ namespace YunJian.Riichi
             StopAllCoroutines(); Busy = false; State = fixture; active = true; page = "home";
             ResetWaitPress();validationWaitInput=false;
             nextPoll = float.PositiveInfinity; SelectedIndex = -1; SelectedAction = null;
-            table.Render(fixture);
+            table.Render(fixture);gameAudio.SetScene(fixture);
             effects.Reset();resultDisplay.Reset();choosingKind=null;
         }
 #endif
@@ -90,6 +93,10 @@ namespace YunJian.Riichi
             table = gameObject.AddComponent<TableRenderer>(); table.Client = this;
             effects = gameObject.AddComponent<TableEffects>();
             voice = gameObject.AddComponent<RoleVoice>();
+            gameAudio = gameObject.AddComponent<GameAudio>();
+            musicMuted=PlayerPrefs.GetInt("riichi.musicMuted",0)!=0;effectsMuted=PlayerPrefs.GetInt("riichi.effectsMuted",0)!=0;
+            musicVolume=PlayerPrefs.GetFloat("riichi.musicVolume",.35f);effectsVolume=PlayerPrefs.GetFloat("riichi.effectsVolume",.8f);
+            gameAudio.Configure(!musicMuted,musicVolume,!effectsMuted,effectsVolume);
             nickname = PlayerPrefs.GetString("riichi.name", "旅人");
             endpoint = PlayerPrefs.GetString("riichi.server", endpoint);
             secret = PlayerPrefs.GetString("riichi.editorHost", "");
@@ -130,11 +137,11 @@ namespace YunJian.Riichi
         }
         public void SelectTile(int index, string action)
         {
-            if (Busy || State == null || !State.options.Any(x => x.id == action)) return;
+            if (table.ArrangingHand || Busy || State == null || !State.options.Any(x => x.id == action)) return;
             if (SelectedIndex == index && SelectedAction == action) { SelectedAction = null; SelectedIndex = -1; table.SelectHand(-1); Act(action); }
             else { SelectedIndex = index; SelectedAction = action; table.SelectHand(index); }
         }
-        public void Act(string id) { choosingKind=null;StartCoroutine(Send(new RequestBody { op = "action", action = id })); }
+        public void Act(string id) { if(table.ArrangingHand)return;choosingKind=null;StartCoroutine(Send(new RequestBody { op = "action", action = id })); }
         IEnumerator Send(RequestBody req, Action success = null, bool poll = false)
         {
             if (Busy) yield break;
@@ -172,7 +179,7 @@ namespace YunJian.Riichi
                     bool changed = State == null || State.version != reply.state.version || State.phase != reply.state.phase;
                     State = reply.state;
                     if(State.phase!="play" && State.phase!="reaction")ResetWaitPress();
-                    voice.Accept(State);
+                    voice.Accept(State);gameAudio.SetScene(State);
                     if (State.phase == "empty" || State.phase == "join") { active = false; page = "home"; table.Clear(); }
                     else
                     {
@@ -232,7 +239,7 @@ namespace YunJian.Riichi
         void EnterHome()
         {
             generation++; active = false; State = null; SelectedAction = null; SelectedIndex = -1; RiichiMode = false;
-            page = "home";ResetWaitPress();table.Clear(); voice.Reset();effects.Reset();resultDisplay.Reset();choosingKind=null;
+            page = "home";ResetWaitPress();table.Clear(); voice.Reset();gameAudio.Reset();effects.Reset();resultDisplay.Reset();choosingKind=null;
         }
         void StartRoom(bool practice)
         {
@@ -561,13 +568,19 @@ namespace YunJian.Riichi
         }
         void DrawSettings()
         {
-            Panel(new Rect(350, 160, 580, 350)); GUI.Label(new Rect(385, 190, 490, 50), voice.HasYiji ? "一姬角色语音" : "离线中文语音", title);
-            if (Button(new Rect(385, 255, 490, 48), muted ? "语音：关闭" : "语音：开启")) { muted = !muted; SaveSound(); }
-            volume = GUI.HorizontalSlider(new Rect(385, 330, 490, 25), volume, 0, 1); voice.Configure(!muted, volume);
-            if (Button(new Rect(385, 395, 230, 55), "试听荣和")) voice.Preview();
-            if (Button(new Rect(645, 395, 230, 55), "保存并关闭")) { SaveSound(); page = "home"; }
+            Panel(new Rect(350,100,580,510));GUI.Label(new Rect(385,120,490,48),"声音设置",title);
+            if(Button(new Rect(385,185,200,44),muted?"角色语音：关闭":"角色语音：开启")){muted=!muted;SaveSound();}
+            volume=GUI.HorizontalSlider(new Rect(615,201,260,25),volume,0,1);
+            if(Button(new Rect(385,260,200,44),musicMuted?"背景音乐：关闭":"背景音乐：开启")){musicMuted=!musicMuted;SaveSound();}
+            musicVolume=GUI.HorizontalSlider(new Rect(615,276,260,25),musicVolume,0,1);
+            if(Button(new Rect(385,335,200,44),effectsMuted?"桌面音效：关闭":"桌面音效：开启")){effectsMuted=!effectsMuted;SaveSound();}
+            effectsVolume=GUI.HorizontalSlider(new Rect(615,351,260,25),effectsVolume,0,1);
+            voice.Configure(!muted,volume);gameAudio.Configure(!musicMuted,musicVolume,!effectsMuted,effectsVolume);
+            if(Button(new Rect(385,420,230,48),"试听荣和"))voice.Preview();
+            if(Button(new Rect(645,420,230,48),"试听落牌"))gameAudio.PreviewDiscard();
+            if(Button(new Rect(385,510,490,55),"保存并关闭")){SaveSound();page="home";}
         }
-        void SaveSound() { PlayerPrefs.SetInt("riichi.muted", muted ? 1 : 0); PlayerPrefs.SetFloat("riichi.volume", volume); PlayerPrefs.Save(); voice.Configure(!muted, volume); }
+        void SaveSound() { PlayerPrefs.SetInt("riichi.muted", muted ? 1 : 0); PlayerPrefs.SetFloat("riichi.volume", volume); PlayerPrefs.SetInt("riichi.musicMuted",musicMuted?1:0);PlayerPrefs.SetInt("riichi.effectsMuted",effectsMuted?1:0);PlayerPrefs.SetFloat("riichi.musicVolume",musicVolume);PlayerPrefs.SetFloat("riichi.effectsVolume",effectsVolume);PlayerPrefs.Save(); voice.Configure(!muted, volume);gameAudio.Configure(!musicMuted,musicVolume,!effectsMuted,effectsVolume); }
         public static string TileName(string p)
         {
             if (string.IsNullOrEmpty(p) || p.Length < 2) return "";
@@ -579,7 +592,7 @@ namespace YunJian.Riichi
         {
             switch (kind) { case "ron": return "荣和"; case "tsumo": return "自摸"; case "pon": return "碰"; case "chi": return "吃"; case "kan": case "minkan": return "杠"; case "nuki": return "拔北"; case "abort9": return "九种九牌"; case "pass": return "过"; default: return kind; }
         }
-        void OnApplicationPause(bool pause) { if(pause)ResetWaitPress();voice.Suspend(pause);effects.Reset(); }
+        void OnApplicationPause(bool pause) { if(pause)ResetWaitPress();voice.Suspend(pause);gameAudio.Suspend(pause);if(pause)table.Opening.Cancel();effects.Reset(); }
         void OnDestroy() { bridge?.Dispose(); }
     }
 }
