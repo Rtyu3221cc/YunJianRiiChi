@@ -371,18 +371,23 @@ namespace YunJian.Riichi
         {
             var root=GameObject.Find("PublicTableState").transform;
             var hand=root.Find("Camera-facing hand").GetComponentsInChildren<BoxCollider>();
-            float right=float.MinValue;
+            Vector2 min=new Vector2(float.MaxValue,float.MaxValue),max=new Vector2(float.MinValue,float.MinValue);
             foreach(var box in hand)foreach(var corner in Corners(box))
             {
-                var screen=table.HandCamera.WorldToViewportPoint(corner);
-                Require(screen.x>0 && screen.x<1 && screen.y>0 && screen.y<1,"Adaptive hand is clipped");
-                right=Mathf.Max(right,screen.x);
+                var screen=table.HandCamera.WorldToScreenPoint(corner);
+                Require(screen.x>0 && screen.x<Screen.width && screen.y>0 && screen.y<Screen.height,"Adaptive hand is clipped");
+                min=Vector2.Min(min,screen);max=Vector2.Max(max,screen);
             }
-            var melds=root.Find("Seat "+view.you+"/Exposed melds").GetComponentsInChildren<BoxCollider>();
-            if(melds.Length==0)return;
-            float left=float.MaxValue;
-            foreach(var box in melds)foreach(var corner in Corners(box))left=Mathf.Min(left,table.Camera.WorldToViewportPoint(corner).x);
-            Require(right+8f/Screen.width<left,"Concealed hand covers an exposed meld: "+view.players[view.you].melds.Length);
+            var handBounds=Rect.MinMaxRect(min.x,min.y,max.x,max.y);
+            foreach(Transform seat in root)foreach(Transform group in seat){
+                if(group.name!="Exposed melds" && group.name!="Extracted North")continue;
+                foreach(var box in group.GetComponentsInChildren<BoxCollider>()){
+                    min=new Vector2(float.MaxValue,float.MaxValue);max=new Vector2(float.MinValue,float.MinValue);
+                    foreach(var corner in Corners(box)){var p=table.Camera.WorldToScreenPoint(corner);min=Vector2.Min(min,p);max=Vector2.Max(max,p);}
+                    var bounds=Rect.MinMaxRect(min.x-4,min.y-4,max.x+4,max.y+4);
+                    Require(!handBounds.Overlaps(bounds),"Hand covers visible "+seat.name+"/"+group.name);
+                }
+            }
         }
         static void ValidateNorth(TableRenderer table,RoomView view)
         {
@@ -407,13 +412,20 @@ namespace YunJian.Riichi
             view.players[0].melds=new[]{"p5555","p555+"};view.players[0].nuki=1;
             view.players[1].river=new[]{new RiverTile{tile="p5"},new RiverTile{tile="p0",called=true},new RiverTile{tile="z4"}};
             view.options=view.hand.Select(t=>new Choice{id="discard:"+t,kind="discard",tile=t}).ToArray();
+            view.players[3].melds=new[]{"s123-","z4444"};
             client.ShowValidationFixture(view);yield return null;client.SelectTile(2,"discard:p0");
+            for(int frame=0;frame<8;frame++)yield return null;
+            ValidateHandMeldGap(table,view);
+            foreach(var tile in GameObject.Find("PublicTableState").GetComponentsInChildren<MeshRenderer>()){
+                if(tile.name!="Original tile" || !OriginalTiles.IsMatchedModel(tile.transform.parent))continue;
+                Require(tile.sharedMaterials.All(m=>m.HasProperty("_Match")),"Blue tint is missing a tile model material");
+            }
             Require(table.IsMatchingTile("p5") && table.IsMatchingTile("p0") && !table.IsMatchingTile("s5"),"Red/normal five matching differs");
             Require(table.ValidationMatchCount>=6 && table.ValidationMatchesOnlyFaces,"Same-tile highlight missing or includes a concealed kan back");
             Require(GameObject.Find("Same tile ground glow")==null,"Matching tiles still use a yellow ground glow");
             ScreenCapture.CaptureScreenshot(Path.Combine(folder,"matching-tiles-1688.png"));yield return new WaitForSecondsRealtime(.1f);
             table.Render(view);Require(table.IsMatchingTile("p5"),"Polling lost selected match highlight");
-            Debug.Log("RIICHI BLUE MATCH PASS: visible face-only blue tint, original rim/back, no matching glow or hand tint, red-five equivalence and polling selection retained.");
+            Debug.Log("RIICHI BLUE MATCH PASS: whole-model original blue tint, no matching glow or hand tint, red-five equivalence and polling selection retained.");
             table.SelectHand(-1);Require(table.ValidationMatchCount==0,"Clearing selection leaves highlights behind");
             client.ShowValidationFixture(view);fx.ValidationFreeze=true;fx.ValidationTime=.1f;view.audioRoom="discard-synchronous";view.audioSeq=10;view.audioEvents=new PublicSound[0];fx.Accept(view);
             view.players[1].river=new[]{new RiverTile{tile="p5"},new RiverTile{tile="p5"}};table.Render(view);

@@ -17,9 +17,8 @@ Shader "YunJian/OriginalTileFace"
             fixed4 frag(v2f i):SV_Target
             {
                 fixed4 c=tex2D(_MainTex,i.uv);
-                // Reference white face (223,224,222) -> blue face (137,186,215).
-                // Applied only to the face submesh, leaving the rim/back untouched.
-                c.rgb*=lerp(fixed3(1,1,1),fixed3(.614,.830,.968),_Match);
+                // ViewPai.OnChoosedPai / setMeshColor uses this tint on every material.
+                c.rgb*=lerp(fixed3(1,1,1),fixed3(.615,.827,.976),_Match);
                 return c;
             }
             ENDCG

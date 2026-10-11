@@ -53,6 +53,7 @@ namespace YunJian.Riichi
             }
         }
         Transform selfMelds;
+        readonly List<Transform> exposedGroups=new List<Transform>();
         readonly Dictionary<int, List<Transform>> riverTiles = new Dictionary<int, List<Transform>>();
         readonly Dictionary<int, Transform> stickAnchors = new Dictionary<int, Transform>();
         readonly Dictionary<int, Transform> meldAnchors = new Dictionary<int, Transform>();
@@ -132,7 +133,7 @@ namespace YunJian.Riichi
         public void Clear()
         {
             foreach (Transform t in content) { t.gameObject.SetActive(false); Destroy(t.gameObject); }
-            exposedTiles.Clear();selectedTile=null;handTiles.Clear(); handBase.Clear(); drawTiles.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); northTiles.Clear(); winningTiles.Clear(); responseTarget = null; selfMelds = null; cameraHand = null; state = null;
+            exposedTiles.Clear();exposedGroups.Clear();selectedTile=null;handTiles.Clear(); handBase.Clear(); drawTiles.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); northTiles.Clear(); winningTiles.Clear(); responseTarget = null; selfMelds = null; cameraHand = null; state = null;
         }
         public int RelativeSeat(int i) => (i - state.you + state.n) % state.n;
         float Angle(int i)
@@ -207,8 +208,8 @@ namespace YunJian.Riichi
             return block.GetFloat("_Dim");
         }
         public int ValidationHandCount => handTiles.Count;
-        public int ValidationMatchCount => exposedTiles.Count(x=>OriginalTiles.IsMatchedFace(x.Item1));
-        public bool ValidationMatchesOnlyFaces => exposedTiles.Where(x=>OriginalTiles.IsMatchedFace(x.Item1)).All(x=>x.Item1.Find("Original tile").localRotation==Quaternion.identity);
+        public int ValidationMatchCount => exposedTiles.Count(x=>OriginalTiles.IsMatchedModel(x.Item1));
+        public bool ValidationMatchesOnlyFaces => exposedTiles.Where(x=>OriginalTiles.IsMatchedModel(x.Item1)).All(x=>x.Item1.Find("Original tile").localRotation==Quaternion.identity);
 #endif
         // Room.view() returns options for this client alone, and the engine creates
         // them only when a call is legal; a lone 'pass' is not a call.
@@ -256,28 +257,38 @@ namespace YunJian.Riichi
             HandCamera.orthographicSize = 9;
             float scale = Mathf.Min(safeHeight, 18 * aspect * safeWidth * .9f / handSpan);
             float centerX = safe.center.x;
-            if (selfMelds != null && selfMelds.childCount > 0)
+            // Both table-edge melds can lie behind the overlay hand camera.
+            // Reserve their projected silhouettes, including the lifted selection.
+            float left=safe.xMin+safe.width*.05f,right=safe.xMax-safe.width*.05f;
+            float handTop=safe.yMin+(OriginalTiles.HandHeight+.42f)*scale/18*Screen.height;
+            float margin=18*Screen.height/780f;
+            foreach(var group in exposedGroups)
             {
-                // The concealed hand uses an overlay camera. Reserve the actual
-                // projected meld footprint so it cannot cover exposed tiles.
-                float right = safe.xMax;
-                foreach (var box in selfMelds.GetComponentsInChildren<BoxCollider>())
-                for (int corner = 0; corner < 8; corner++)
-                {
-                    var offset = Vector3.Scale(box.size * .5f, new Vector3((corner & 1) == 0 ? -1 : 1, (corner & 2) == 0 ? -1 : 1, (corner & 4) == 0 ? -1 : 1));
-                    float px = Camera.WorldToScreenPoint(box.transform.TransformPoint(box.center + offset)).x;
-                    right = Mathf.Min(right, px - 18 * Screen.height / 780f);
-                }
-                float left = safe.xMin + safe.width * .08f;
-                scale = Mathf.Min(scale, Mathf.Max(1, right - left) * 18 * aspect / Screen.width / handSpan);
-                float half = handSpan * scale / (18 * aspect) * Screen.width * .5f;
-                centerX = Mathf.Clamp(safe.center.x - safe.width * .025f * Mathf.Min(2, state.players[state.you].melds.Length), left + half, right - half);
+                if(!ProjectedBounds(group,out var bounds) || bounds.yMin>handTop || bounds.yMax<safe.yMin)continue;
+                if(group==selfMelds || bounds.center.x>=safe.center.x)right=Mathf.Min(right,bounds.xMin-margin);
+                else left=Mathf.Max(left,bounds.xMax+margin);
             }
+            float available=Mathf.Max(1,right-left);
+            scale=Mathf.Min(scale,available*18*aspect/Screen.width/handSpan);
+            float half=handSpan*scale/(18*aspect)*Screen.width*.5f;
+            centerX=Mathf.Clamp(safe.center.x,left+half,right-half);
             float x = ((centerX / Screen.width) - .5f) * 18 * aspect;
             float bottom = -9 + safe.y / Screen.height * 18;
             cameraHand.position = new Vector3(x, bottom + (OriginalTiles.HandHeight / 2 + .12f) * scale, 0);
             cameraHand.rotation = Quaternion.identity;
             cameraHand.localScale = Vector3.one * scale;
+        }
+        bool ProjectedBounds(Transform group,out Rect bounds)
+        {
+            Vector2 min=new Vector2(float.MaxValue,float.MaxValue),max=new Vector2(float.MinValue,float.MinValue);bool any=false;
+            foreach(var box in group.GetComponentsInChildren<BoxCollider>())
+            for(int corner=0;corner<8;corner++)
+            {
+                var offset=Vector3.Scale(box.size*.5f,new Vector3((corner&1)==0?-1:1,(corner&2)==0?-1:1,(corner&4)==0?-1:1));
+                var p=Camera.WorldToScreenPoint(box.transform.TransformPoint(box.center+offset));
+                if(p.z<=0)continue;any=true;min=Vector2.Min(min,p);max=Vector2.Max(max,p);
+            }
+            bounds=any?Rect.MinMaxRect(min.x,min.y,max.x,max.y):new Rect();return any;
         }
         Transform Tile(Transform parent, string tile, Vector3 position, float w = .28f, float h = .42f, bool hidden = false, bool sideways = false, float opacity = 1)
         {
@@ -459,7 +470,7 @@ namespace YunJian.Riichi
                 handTiles[i].localPosition = handBase[i] + (i == index ? new Vector3(0, .30f, 0) : Vector3.zero);
             }
             foreach(var entry in exposedTiles){
-                OriginalTiles.MatchFace(entry.Item1,IsMatchingTile(entry.Item2));
+                OriginalTiles.MatchModel(entry.Item1,IsMatchingTile(entry.Item2));
             }
         }
         void DrawMelds(Transform parent, PlayerView p)
@@ -471,6 +482,7 @@ namespace YunJian.Riichi
             Transform anchor=null;
             var root=new GameObject("Exposed melds").transform;root.SetParent(parent,false);parent=root;
             if (index == state.you) selfMelds = root;
+            exposedGroups.Add(root);
             // Read backwards so the first meld remains nearest the player's right edge.
             foreach (string meld in p.melds)
             {
@@ -512,6 +524,7 @@ namespace YunJian.Riichi
             if (anchor != null) meldAnchors[index] = anchor;
             // Source babei anchor lies inward of, and separate from, the meld corner.
             var north=new GameObject("Extracted North").transform;north.SetParent(parent.parent,false);
+            exposedGroups.Add(north);
             bool self=index==state.you;
             var extracted = new List<Transform>(); northTiles[index] = extracted;
             for (int i = 0; i < p.nuki; i++)

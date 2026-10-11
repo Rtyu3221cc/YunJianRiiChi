@@ -96,15 +96,17 @@ namespace YunJian.Riichi
             if (opacity < 1) { root.localScale = Vector3.one * .8f; root.localPosition -= Vector3.up * .04f; }
             return root;
         }
-        public static void MatchFace(Transform tile,bool match)
+        public static void MatchModel(Transform tile,bool match)
         {
             var renderer=tile.Find("Original tile").GetComponent<MeshRenderer>();
             var block=new MaterialPropertyBlock();block.SetFloat("_Match",match?1:0);
-            renderer.SetPropertyBlock(block,1);
+            // One block on the renderer applies the source tint to face and shell.
+            renderer.SetPropertyBlock(block);
+            tile.Find("Original tile/Original tile outline").GetComponent<MeshRenderer>().SetPropertyBlock(block);
         }
-        public static bool IsMatchedFace(Transform tile)
+        public static bool IsMatchedModel(Transform tile)
         {
-            var block=new MaterialPropertyBlock();tile.Find("Original tile").GetComponent<MeshRenderer>().GetPropertyBlock(block,1);
+            var block=new MaterialPropertyBlock();tile.Find("Original tile").GetComponent<MeshRenderer>().GetPropertyBlock(block);
             return block.GetFloat("_Match")>.5f;
         }
         public Transform CreateResponseGlow(Transform tile,float width,string name="Original response ground glow")
@@ -171,7 +173,7 @@ namespace YunJian.Riichi
             }
             Vector3 origin = new Vector3(50,50,50);
             var root = CreateTable(null, tile, origin, 1, hidden, false, 1);
-            MatchFace(root,match);
+            MatchModel(root,match);
             foreach (var t in root.GetComponentsInChildren<Transform>()) t.gameObject.layer = 13;
             doraCamera.transform.position = origin + new Vector3(0,4,-.65f);
             doraCamera.transform.LookAt(origin + Vector3.up * TableDepth / 2, Vector3.forward);
