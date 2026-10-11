@@ -1,5 +1,16 @@
 # 云间日麻
 
+## Unity 0.5.20 听牌预览与长按查看
+
+安卓包：[下载 Unity 0.5.20 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.20/yunjian-riichi-unity-0.5.20.apk)，versionCode 21，同签名覆盖更新。
+
+- 选中准备打出的牌，只有打出这张牌后可以听牌才自动显示对应待牌；换选不能听牌的牌时收起。
+- 右侧「听牌提示」改为长按查看当前待牌，松开或移出按钮后收起。短按不会切换常驻开关；已听牌且未选牌时也不再常驻显示。
+- 长按期间允许只读查看，不受正常状态轮询的忙碌标志影响；拖出按钮后在手牌上松开会消耗该手势，避免误出牌。切换后台或进入结算会清理长按状态。
+- 实际 Unity 自动预览、短按、长按、松开、拖出和失去焦点验证通过，完整 Play 与 APK 双架构/v2 原签名/16KB 对齐/离线资源校验通过。安卓真机未执行。
+
+实际预览：[选牌听牌预览](dist/previews/unity-0.5.20-indicator-open-1688.png)、[平时收起](dist/previews/unity-0.5.20-indicator-wait-idle-844.png)、[长按查看](dist/previews/unity-0.5.20-indicator-thirteen-844.png)。[验证记录](dist/验证记录-unity-0.5.20.txt)。
+
 ## Unity 0.5.19 结算名称居中修正
 
 安卓包：[下载 Unity 0.5.19 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.19/yunjian-riichi-unity-0.5.19.apk)，versionCode 20，同签名覆盖更新。

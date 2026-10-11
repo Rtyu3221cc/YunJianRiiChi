@@ -463,11 +463,14 @@ namespace YunJian.Riichi
             foreach(Vector2 size in new[]{new Vector2(1280,720),new Vector2(1688,780),new Vector2(2760,1256),new Vector2(844,390)}){
                 SetGameResolution((int)size.x,(int)size.y);
                 var hint=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"hint-open.json")));
-                client.ShowValidationFixture(hint);yield return null;
+                client.ShowValidationFixture(hint);yield return null;yield return null;
+                Require(client.CurrentWaitDetails.Length==0 && client.CurrentWaitPanel.width==0,"Unselected hand shows persistent waits");
                 var tile=FindObjectsByType<TileTarget>().First(t=>t.Action.StartsWith("discard:p9"));client.SelectTile(tile.Index,tile.Action);yield return null;yield return null;
                 Require(client.CurrentWaitDetails.Length==2 && client.CurrentWaitDetails.All(w=>!w.ron&&!w.tsumo),"Open no-yaku waits not connected to selected tile");
                 Require(client.CurrentWaitPanel.width>100 && client.CurrentWaitPanel.y>=0 && client.CurrentWaitPanel.xMax<=1280,"Wait panel clips at display size");
                 ScreenCapture.CaptureScreenshot(Path.Combine(folder,"indicator-open-"+(int)size.x+".png"));yield return new WaitForSecondsRealtime(.08f);
+                var other=FindObjectsByType<TileTarget>().First(t=>t.Action=="discard:p2");client.SelectTile(other.Index,other.Action);yield return null;yield return null;
+                Require(client.CurrentWaitDetails.Length==0 && client.CurrentWaitPanel.width==0,"Non-tenpai discard shows the original hand's waits");
                 hint=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"hint-furiten.json")));client.ShowValidationFixture(hint);yield return null;yield return null;
                 Require(client.CurrentFuriten,"Furiten state missing after draw");
                 var badge=client.CurrentFuritenPanel;var nativeBadge=TableIndicators.Art("pic_zhengting");
@@ -477,12 +480,33 @@ namespace YunJian.Riichi
             foreach(Vector2 size in new[]{new Vector2(1688,780),new Vector2(844,390)}){
                 SetGameResolution((int)size.x,(int)size.y);
                 var view=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"hint-thirteen.json")));client.ShowValidationFixture(view);yield return null;yield return null;
-                Require(client.CurrentWaitDetails.Length==13 && client.CurrentWaitPanel.height>250,"Thirteen waits clipped or dropped");
+                Require(client.CurrentWaitDetails.Length==0 && client.CurrentWaitPanel.width==0,"Already tenpai waits should require holding the button");
+                ScreenCapture.CaptureScreenshot(Path.Combine(folder,"indicator-wait-idle-"+(int)size.x+".png"));yield return new WaitForSecondsRealtime(.08f);
+                Vector2 press=client.CurrentWaitButton.center,off=press+new Vector2(-220,-90);
+                client.ValidationWaitPointer(press,true,true,false,100);client.ValidationWaitPointer(press,false,true,false,100.2f);yield return null;yield return null;
+                Require(client.CurrentWaitPanel.width==0,"Short press displays waits before the hold threshold");
+                client.ValidationWaitPointer(press,false,false,true,100.21f);yield return null;yield return null;
+                Require(client.CurrentWaitDetails.Length==0 && client.CurrentWaitPanel.width==0,"Short tap latched the wait panel on");
+                client.ValidationWaitPointer(press,true,true,false,101);client.ValidationWaitPointer(press,false,true,false,101.4f);yield return null;yield return null;
+                Require(client.CurrentWaitDetails.Length==13 && client.CurrentWaitPanel.height>250,"Held thirteen waits clipped or dropped");
                 ScreenCapture.CaptureScreenshot(Path.Combine(folder,"indicator-thirteen-"+(int)size.x+".png"));yield return new WaitForSecondsRealtime(.08f);
+                Require(client.ValidationWaitPointer(off,false,false,true,101.5f),"Release outside the inspection button was not consumed");yield return null;yield return null;
+                Require(client.CurrentWaitDetails.Length==0 && client.CurrentWaitPanel.width==0,"Released hold kept waits visible");
+                client.ValidationWaitPointer(press,true,true,false,102);client.ValidationWaitPointer(press,false,true,false,102.4f);yield return null;yield return null;
+                Require(client.CurrentWaitDetails.Length==13,"Fresh hold does not show waits");
+                client.ValidationWaitPointer(off,false,true,false,102.5f);yield return null;yield return null;
+                Require(client.CurrentWaitPanel.width==0,"Dragging off the button kept waits visible");
+                client.ValidationWaitPointer(press,false,true,false,102.6f);yield return null;yield return null;
+                Require(client.CurrentWaitPanel.width==0,"Cancelled press resumed on re-entering the button");
+                client.ValidationWaitPointer(press,false,false,true,102.7f);
+                client.ValidationWaitPointer(press,true,true,false,103);client.ValidationWaitPointer(press,false,true,false,103.4f);yield return null;yield return null;
+                client.SendMessage("OnApplicationFocus",false);yield return null;yield return null;
+                Require(client.CurrentWaitPanel.width==0,"Lost focus kept held waits visible");client.ValidationEndWaitPointer();
                 view=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"effects.json")));client.ShowValidationFixture(view);yield return null;yield return null;
                 Require(client.ValidationChoosingKind==null && view.options.Count(o=>o.kind=="chi")==2,"Chi preview requires an extra selection");
                 ScreenCapture.CaptureScreenshot(Path.Combine(folder,"indicator-chi-"+(int)size.x+".png"));yield return new WaitForSecondsRealtime(.08f);
             }
+            Debug.Log("RIICHI WAIT INPUT PASS: selected legal tenpai discard preview; idle/non-tenpai hidden; short tap ignored; held current waits; release/drag-off/focus cancel; captured release and scaled button hit tests.");
             SetGameResolution(1688,780);
             var closed=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"hint-closed.json")));client.ShowValidationFixture(closed);client.ValidationToggleRiichi(true);yield return null;
             var riichiTile=FindObjectsByType<TileTarget>().First(t=>t.Action.StartsWith("riichi:p9"));client.SelectTile(riichiTile.Index,riichiTile.Action);yield return null;yield return null;

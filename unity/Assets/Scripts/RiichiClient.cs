@@ -33,9 +33,22 @@ namespace YunJian.Riichi
         GUIStyle caption, centered, tableButton;
         TableViewport viewport;
         readonly Dictionary<string, Texture2D> skin = new Dictionary<string, Texture2D>();
-        bool showHints, showWaits=true;
+        bool showHints;
+        const float WaitHoldDelay=.35f;
+        static readonly WaitDetail[] NoWaits=new WaitDetail[0];
+        bool waitPressCaptured,waitPressCancelled,waitHoldVisible;
+        float waitPressStarted;
+        Rect waitButtonScreenRect;
+#if UNITY_EDITOR
+        bool validationWaitInput;
+#endif
+        bool CanInspectWaits => active && State!=null && (State.phase=="play" || State.phase=="reaction") && !showRoom && page!="settings" && page!="confirm-close";
         DiscardHint ActiveWaitHint => State?.discardHints?.FirstOrDefault(h=>h.id==SelectedAction);
-        public WaitDetail[] CurrentWaitDetails => SelectedAction!=null ? ActiveWaitHint?.waits??new WaitDetail[0] : State?.waitDetails??new WaitDetail[0];
+        bool PreviewingDiscard => CanInspectWaits && State.phase=="play" && State.turn==State.you && SelectedAction!=null && State.options.Any(o=>o.id==SelectedAction && (o.kind=="discard" || o.kind=="riichi"));
+        // A selected legal discard previews its resulting hand. Otherwise the
+        // current waits are only shown while the inspection button is held.
+        public WaitDetail[] CurrentWaitDetails => !CanInspectWaits ? NoWaits : PreviewingDiscard ? ActiveWaitHint?.waits??NoWaits : waitHoldVisible ? State.waitDetails??NoWaits : NoWaits;
+        public Rect CurrentWaitButton { get; private set; }
         public bool CurrentFuriten => ActiveWaitHint?.furiten??(State?.furiten??false);
         public Rect CurrentWaitPanel { get; private set; }
         public Rect CurrentFuritenPanel { get; private set; }
@@ -62,6 +75,7 @@ namespace YunJian.Riichi
         public void ShowValidationFixture(RoomView fixture)
         {
             StopAllCoroutines(); Busy = false; State = fixture; active = true; page = "home";
+            ResetWaitPress();validationWaitInput=false;
             nextPoll = float.PositiveInfinity; SelectedIndex = -1; SelectedAction = null;
             table.Render(fixture);
             effects.Reset();resultDisplay.Reset();choosingKind=null;
@@ -157,6 +171,7 @@ namespace YunJian.Riichi
                 {
                     bool changed = State == null || State.version != reply.state.version || State.phase != reply.state.phase;
                     State = reply.state;
+                    if(State.phase!="play" && State.phase!="reaction")ResetWaitPress();
                     voice.Accept(State);
                     if (State.phase == "empty" || State.phase == "join") { active = false; page = "home"; table.Clear(); }
                     else
@@ -172,10 +187,34 @@ namespace YunJian.Riichi
                 success?.Invoke();
             }
         }
+        void ResetWaitPress()
+        {waitPressCaptured=false;waitPressCancelled=false;waitHoldVisible=false;}
+        // Capture the whole gesture, including release outside the button, so
+        // dragging off this read-only control cannot accidentally discard a tile.
+        bool UpdateWaitPointer(Vector2 point,bool down,bool held,bool up,float now)
+        {
+            bool consumed=waitPressCaptured;
+            if(!CanInspectWaits){ResetWaitPress();return consumed;}
+            if(down && waitButtonScreenRect.Contains(point)){
+                waitPressCaptured=true;waitPressCancelled=false;waitPressStarted=now;consumed=true;
+            }
+            if(!waitPressCaptured)return consumed;
+            if(up || !held){ResetWaitPress();return true;}
+            if(!waitButtonScreenRect.Contains(point))waitPressCancelled=true;
+            waitHoldVisible=!waitPressCancelled && now-waitPressStarted>=WaitHoldDelay;
+            return true;
+        }
+        void OnApplicationFocus(bool focused){if(!focused)ResetWaitPress();}
+        void OnDisable(){ResetWaitPress();}
         void Update()
         {
+            bool waitInputConsumed=waitPressCaptured;
+#if UNITY_EDITOR
+            if(!validationWaitInput)
+#endif
+            waitInputConsumed=UpdateWaitPointer(new Vector2(Input.mousePosition.x,Screen.height-Input.mousePosition.y),Input.GetMouseButtonDown(0),Input.GetMouseButton(0),Input.GetMouseButtonUp(0),Time.unscaledTime);
             if (active && !Busy && Time.unscaledTime >= nextPoll) { nextPoll = Time.unscaledTime + .65f; StartCoroutine(Send(new RequestBody { op = "state" }, null, true)); }
-            if (active && !Busy && Input.GetMouseButtonUp(0) && !InUI(Input.mousePosition))
+            if (active && !Busy && Input.GetMouseButtonUp(0) && !waitInputConsumed && !InUI(Input.mousePosition))
             {
                 Ray ray = table.HandCamera.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(ray, out var hit, 100f))
@@ -193,7 +232,7 @@ namespace YunJian.Riichi
         void EnterHome()
         {
             generation++; active = false; State = null; SelectedAction = null; SelectedIndex = -1; RiichiMode = false;
-            page = "home"; table.Clear(); voice.Reset();effects.Reset();resultDisplay.Reset();choosingKind=null;
+            page = "home";ResetWaitPress();table.Clear(); voice.Reset();effects.Reset();resultDisplay.Reset();choosingKind=null;
         }
         void StartRoom(bool practice)
         {
@@ -291,6 +330,7 @@ namespace YunJian.Riichi
         void OnGUI()
         {
             Styles(); uiButtons.Clear(); var previous = GUI.matrix;
+            CurrentWaitPanel=new Rect();CurrentWaitButton=new Rect();waitButtonScreenRect=new Rect();
             if(State?.phase!="result")resultDisplay.Reset();
             bool playing = active && State != null && (State.phase == "play" || State.phase == "reaction" || (State.phase == "result" && effects.ShowWinPresentation));
             viewport = TableViewport.Fit(Screen.width, Screen.height, Screen.safeArea, playing);
@@ -403,16 +443,25 @@ namespace YunJian.Riichi
                 CurrentFuritenPanel=new Rect(top.x-bw-4,(top.y+bottom.y-bh)/2,bw,bh);
                 TableIndicators.Image("pic_zhengting",CurrentFuritenPanel);
             }
-            if(SkinButton(new Rect(w-64,h-91,36,36),showWaits?"ob_ting_on_btn":"ob_ting_off_btn","切换听牌提示"))showWaits=!showWaits;
+            DrawWaitButton(new Rect(w-64,h-91,36,36));
             ShadowLabel(new Rect(w-88,h-54,84,18),"听牌提示",centered,new Color(.66f,.75f,.92f));
             CurrentWaitPanel=new Rect();
-            if(showWaits && CurrentWaitDetails.Length>0 && bounds.width>0){
+            if(CurrentWaitDetails.Length>0 && bounds.width>0){
                 CurrentWaitPanel=TableIndicators.WaitRect(CurrentWaitDetails.Length,new Vector2((top.x+bottom.x)/2,0),top.y-10,w*.70f);
                 TableIndicators.Waits(table,CurrentWaitDetails,CurrentWaitPanel);
             }
             DrawResponseMarker();
             DrawActionButtons(w,h);
             effects.DrawCall(w,h,State.n);
+        }
+        void DrawWaitButton(Rect r)
+        {
+            CurrentWaitButton=r;
+            var a=GUI.matrix.MultiplyPoint3x4(new Vector3(r.x,r.y,0));var b=GUI.matrix.MultiplyPoint3x4(new Vector3(r.xMax,r.yMax,0));
+            waitButtonScreenRect=Rect.MinMaxRect(a.x,a.y,b.x,b.y);uiButtons.Add(waitButtonScreenRect);
+            var texture=Skin(waitHoldVisible?"ob_ting_on_btn":"ob_ting_off_btn");
+            if(texture!=null)GUI.DrawTexture(r,texture,ScaleMode.ScaleToFit);
+            GUI.Label(r,new GUIContent("","长按查看听牌"),GUIStyle.none);
         }
         bool ActionButton(Rect r,string sprite,string tooltip)
         {
@@ -435,6 +484,12 @@ namespace YunJian.Riichi
             else if(choices.Length>1)choosingKind=choosingKind==kind?null:kind;
         }
 #if UNITY_EDITOR
+        public bool ValidationWaitPointer(Vector2 canvasPoint,bool down,bool held,bool up,float now)
+        {
+            validationWaitInput=true;var point=viewport.Matrix.MultiplyPoint3x4(canvasPoint);
+            return UpdateWaitPointer(new Vector2(point.x,point.y),down,held,up,now);
+        }
+        public void ValidationEndWaitPointer(){validationWaitInput=false;ResetWaitPress();}
         public string ValidationChoosingKind => choosingKind;
         public void ValidationChooseActionKind(string kind) => ChooseActionKind(kind);
         public void ValidationToggleRiichi(bool on) { RiichiMode = on; SelectedIndex = -1; SelectedAction = null; table.Render(State); }
@@ -524,7 +579,7 @@ namespace YunJian.Riichi
         {
             switch (kind) { case "ron": return "荣和"; case "tsumo": return "自摸"; case "pon": return "碰"; case "chi": return "吃"; case "kan": case "minkan": return "杠"; case "nuki": return "拔北"; case "abort9": return "九种九牌"; case "pass": return "过"; default: return kind; }
         }
-        void OnApplicationPause(bool pause) { voice.Suspend(pause);effects.Reset(); }
+        void OnApplicationPause(bool pause) { if(pause)ResetWaitPress();voice.Suspend(pause);effects.Reset(); }
         void OnDestroy() { bridge?.Dispose(); }
     }
 }
