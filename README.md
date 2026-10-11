@@ -1,5 +1,16 @@
 # 云间日麻
 
+## Unity 0.5.18 结算名称倾角与牌列分组
+
+安卓包：[下载 Unity 0.5.18 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.18/yunjian-riichi-unity-0.5.18.apk)，versionCode 19，同签名覆盖更新。
+
+- 玩家名称采用 APK UI_Win 原版约 4.748 度倾角，与名牌背景同向；使用局部矩阵保留各宽高比下的倾角和位置。
+- 结算牌列严格按「手牌 → 大间隔 → 全部副露 → 大间隔 → 和牌」。多组副露连续排列，不在每组副露或每张牌之间添加间隔；无副露时只保留和牌前的间隔。
+- 单牌显示框直接填满各牌位，保持实战麻将纹理/牌背的 0.62 比例，消除旧版缩窄框和留白导致的组内细缝；完整牌列统一适配屏幕。
+- 实际 Unity 结算截图覆盖无副露、两组副露、暗杠及两种参考比例；完整 Unity Play 回归、APK 双架构/v2 原签名/16KB 对齐/离线资源校验通过。安卓真机未执行。
+
+实际预览：[两组副露结算](dist/previews/unity-0.5.18-result-reference-774.png)、[宽屏结算](dist/previews/unity-0.5.18-result-reference-934.png)、[暗杠结算](dist/previews/unity-0.5.18-result-kan-1688.png)。[验证记录](dist/验证记录-unity-0.5.18.txt)。
+
 ## Unity 0.5.17 手牌大小与结算布局修正
 
 安卓包：[下载 Unity 0.5.17 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.17/yunjian-riichi-unity-0.5.17.apk)，versionCode 18，同签名覆盖更新。

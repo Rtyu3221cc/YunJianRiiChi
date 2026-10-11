@@ -626,12 +626,12 @@ namespace YunJian.Riichi
             SetGameResolution(934,430);client.ShowValidationFixture(reference);
             var referenceDisplay=client.ValidationResult;referenceDisplay.Observe(reference);referenceDisplay.Freeze=true;referenceDisplay.FrozenAge=9;
             yield return null;yield return null;ScreenCapture.CaptureScreenshot(Path.Combine(folder,"result-reference-934.png"));yield return new WaitForSecondsRealtime(.08f);
-            reference.audioRoom="result-reference-yakuman";referenceDetail.tiles=new[]{"z2","z2","z3","z3","z3","z4","z4","z1","z1","z1","z7","z7","z7"};referenceDetail.tile="z4";
+            reference.audioRoom="result-reference-yakuman";referenceDetail.tiles=new[]{"z2","z2","z3","z3","z3","z4","z4"};referenceDetail.melds=new[]{"z111+","z777-"};referenceDetail.tile="z4";
             referenceDetail.yaku=new[]{new YakuDetail{name="字一色",yakuman=1},new YakuDetail{name="小四喜",yakuman=1}};
             referenceDetail.limit="2倍役满";referenceDetail.score=new ScoreDetail{damanguan=2,defen=96000};reference.indicators=new[]{"s1"};
             SetGameResolution(774,438);client.ShowValidationFixture(reference);referenceDisplay.Observe(reference);referenceDisplay.Freeze=true;referenceDisplay.FrozenAge=9;
             yield return null;yield return null;ScreenCapture.CaptureScreenshot(Path.Combine(folder,"result-reference-774.png"));yield return new WaitForSecondsRealtime(.08f);
-            Debug.Log("RIICHI HAND RESULT LAYOUT PASS: native hand height without meld shrinkage, safe public melds, APK win anchors and exact 934x430 / 774x438 reference aspects.");
+            Debug.Log("RIICHI HAND RESULT LAYOUT PASS: native hand height, safe public melds, APK win anchors and name slope, consecutive two-meld section with only two breaks, exact 934x430 / 774x438 reference aspects.");
             // Compare the result texture to an actual gameplay hand mesh render.
             var original=new OriginalTiles();var parityHand=original.CreateHand(null,"m9",new Vector3(50,50,50));
             var handProbe=new GameObject("Settlement gameplay parity camera").AddComponent<Camera>();

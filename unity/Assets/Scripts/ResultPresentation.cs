@@ -97,15 +97,22 @@ namespace YunJian.Riichi
         {
             var tiles=(d.tiles??new string[0]).ToList();var melds=d.melds??new string[0];
             int count=tiles.Count+melds.Sum(m=>m.Skip(1).Count(char.IsDigit))+1;
-            float pitch=Mathf.Min(51.2f,720f/(count+.5f)),x=0,y=-133*.96f*2/3;
+            // Only two section breaks: concealed hand | all melds | winning tile.
+            bool hasMelds=melds.Any(m=>m.Skip(1).Any(char.IsDigit));
+            float gaps=.5f+(hasMelds && tiles.Count>0?.5f:0);
+            float pitch=Mathf.Min(51.2f,760f/(count+gaps)),x=0,y=-133*.96f*2/3;
+            // Fill each pitch with the shared 0.62-aspect gameplay texture, without
+            // a narrower drawing box or per-tile padding that creates visible seams.
+            float height=pitch*OriginalTiles.HandHeight/OriginalTiles.HandWidth;
             var matrix=GUI.matrix;var anchor=NativePoint(-251.6f,275.9f);
             GUI.matrix*=Matrix4x4.TRS(new Vector3(anchor.x,anchor.y,0),Quaternion.Euler(0,0,-6),Vector3.one);
-            foreach(var tile in tiles){Tile(table,tile,new Rect(x,y,pitch-1,pitch*1.5f));x+=pitch;}
+            foreach(var tile in tiles){Tile(table,tile,new Rect(x,y,pitch,height));x+=pitch;}
+            if(hasMelds && tiles.Count>0)x+=pitch*.5f;
             foreach(var meld in melds){int n=0;var digits=meld.Skip(1).Where(char.IsDigit).ToArray();foreach(char c in digits){
                 bool back=digits.Length==4 && !meld.Any(ch=>ch=='+'||ch=='-'||ch=='=') && (n==0||n==3);
-                Tile(table,back?null:meld[0].ToString()+c,new Rect(x,y,pitch-1,pitch*1.5f));x+=pitch;n++;
+                Tile(table,back?null:meld[0].ToString()+c,new Rect(x,y,pitch,height));x+=pitch;n++;
             }}
-            Tile(table,d.tile,new Rect(x+pitch*.5f,y,pitch-1,pitch*1.5f));GUI.matrix=matrix;
+            Tile(table,d.tile,new Rect(x+pitch*.5f,y,pitch,height));GUI.matrix=matrix;
         }
         void NativeDora(RoomView v,TableRenderer table,string[] tiles,float x,float y,string title)
         {
@@ -128,7 +135,11 @@ namespace YunJian.Riichi
             if(portrait!=null)GUI.DrawTexture(NativeRect(-947,424,924.567f,1392.131f),portrait,ScaleMode.ScaleToFit);
             WinningHand(d,table);
             Image("bg_nickname",NativeRect(-965,-370.9f,396,83,.5f,.5f,1.947f));
-            Label(new Rect(32,585,220,33),d.name,22,white);
+            // UI_Win container_name/container_name has a 4.748-degree rotation.
+            // Compose locally so scaled canvases retain the same nameplate slope.
+            var nameMatrix=GUI.matrix;var namePivot=new Vector3(142,601.5f,0);
+            GUI.matrix*=Matrix4x4.TRS(namePivot,Quaternion.Euler(0,0,-4.748f),Vector3.one)*Matrix4x4.Translate(-namePivot);
+            Label(new Rect(32,585,220,33),d.name,22,white);GUI.matrix=nameMatrix;
             Image(d.ron?"pg_he":"pg_zimo",NativeRect(834.3f,419.6f,104,108),ScaleMode.ScaleToFit);
             NativeDora(v,table,v.indicators,27.5f,250,"bg_dora");
             NativeDora(v,table,d.ura,536.5f,303,"bg_lidora");
