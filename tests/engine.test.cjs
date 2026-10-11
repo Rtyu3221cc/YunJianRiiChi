@@ -165,3 +165,24 @@ test('opening sequence changes on new hands and survives host snapshot restore',
  const restored=new Room('host',null,JSON.stringify(r.s));assert.deepEqual(restored.view(1).openingHand,r.view(1).openingHand);
  assert.equal(restored.view(1).handSeq,seq+1);conservation(r);
 });
+
+test('wait remaining counts own hand and public faces without hidden information',()=>{
+ const r=fixture();r.s.players.forEach(p=>{p.river=[];p.nuki=0});r.s.indicators=['z7','z6','m1','m9','p9'];
+ r.s.players[0].hand='m123p123s123z1122m5';r.s.players[0].river=[{tile:'z1'}];r.s.players[1].river=[{tile:'z1'}];
+ const hint=r.view(0).discardHints.find(h=>h.id==='discard:m5_');assert(hint);assert.equal(hint.waits.find(w=>w.tile==='z1').remaining,0);assert.equal(hint.waits.find(w=>w.tile==='z2').remaining,2);
+ const before=hint.waits;r.s.wall=Array(30).fill('z2');r.s.players[1].hand='z1111222233334';r.s.players[2].hand='z1111222233334';
+ assert.deepEqual(r.view(0).discardHints.find(h=>h.id==='discard:m5_').waits,before);
+});
+test('unseen counts normalize red fives and do not double count called discards',()=>{
+ const r=fixture();r.s.players.forEach(p=>{p.river=[];p.nuki=0});r.s.indicators=['z7','z6','m1','m9','p9'];
+ r.s.players[0].hand='m123p123s123z1122';r.s.players[1].hand='m19p147s258z12345,p055+';
+ r.s.players[1].river=[{tile:'p0',called:true}];assert.equal(r.unseen(0,'p5'),1);assert.equal(r.unseen(0,'p0'),1);
+ r.s.players[2].river=[{tile:'p5'}];assert.equal(r.unseen(0,'p5'),0);
+ r.s.players[1].hand='m19p147s258z12345,p5555';assert.equal(r.unseen(0,'p5'),0);
+ r.s.players[1].nuki=3;assert.equal(r.unseen(0,'z4'),1);r.s.indicators[0]='z4';assert.equal(r.unseen(0,'z4'),0);
+ const q=fixture();q.s.indicators=['z7','z6','m1','m9','p9'];q.s.players[1].hand='m19p147s258z12345,p555+';
+ assert.equal(q.unseen(0,'p5'),1);q.s.pending={from:1,tile:'p0',kind:'kakan'};assert.equal(q.unseen(0,'p5'),0);
+ q.s.players[1].hand='m19p147s258z12345';q.s.pending={from:1,tile:'p5',kind:'ankan'};assert.equal(q.unseen(0,'p5'),0);
+ q.s.players[1].nuki=1;q.s.pending={from:1,tile:'z4',kind:'nuki'};assert.equal(q.unseen(0,'z4'),1);
+ const s=fixture(3);assert.equal(s.unseen(0,'m2'),0);
+});

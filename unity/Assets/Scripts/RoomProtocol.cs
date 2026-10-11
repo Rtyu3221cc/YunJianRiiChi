@@ -33,7 +33,7 @@ namespace YunJian.Riichi
     [Serializable] public class RiverTile { public string tile; public bool riichi, called, tsumogiri; }
     [Serializable] public class LastDiscard { public int from; public string tile; }
     [Serializable] public class PendingView { public int from; public string tile, kind; public bool riichi; public int[] waiting; }
-    [Serializable] public class WaitDetail { public string tile; public bool ron, tsumo; }
+    [Serializable] public class WaitDetail { public string tile; public bool ron, tsumo; public int remaining; }
     [Serializable] public class DiscardHint { public string id; public bool furiten; public WaitDetail[] waits = new WaitDetail[0]; }
     [Serializable] public class DrawDetail { public int seat; public bool tenpai; public string[] tiles = new string[0], waits = new string[0]; }
     [Serializable] public class Choice { public string id, kind, tile, meld; }

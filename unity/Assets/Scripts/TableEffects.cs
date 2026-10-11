@@ -242,7 +242,7 @@ namespace YunJian.Riichi
         void UpdateWinEffects()
         {
             float now=ValidationFreeze?ValidationTime:Time.unscaledTime;
-            for(int i=winEffects.Count-1;i>=0;i--){var e=winEffects[i];float age=e==null?WinTileEffect.Lifetime:now-e.StartedAt;if(age>=WinTileEffect.Lifetime){if(e!=null){e.gameObject.SetActive(false);Destroy(e.gameObject);}winEffects.RemoveAt(i);}else e.Sample(age);}
+            for(int i=winEffects.Count-1;i>=0;i--){var e=winEffects[i];float age=e==null?WinTileEffect.Lifetime:now-e.StartedAt;if(age>=0 && e!=null && !e.SoundTriggered){e.SoundTriggered=true;GetComponent<GameAudio>()?.Cue("ron_huolongjuan");}if(age>=WinTileEffect.Lifetime){if(e!=null){e.gameObject.SetActive(false);Destroy(e.gameObject);}winEffects.RemoveAt(i);}else e.Sample(age);}
         }
         void EndNorthEffects()
         {

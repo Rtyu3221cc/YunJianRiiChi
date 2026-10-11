@@ -8,7 +8,9 @@ namespace YunJian.Riichi
         AudioClip deal, discard, meld, stick, tsumo;
         bool inTable, suspended, musicEnabled=true, effectsEnabled=true;
         float musicVolume=.35f;
-        string room;
+        string room,drawKey;
+        readonly System.Collections.Generic.Dictionary<string,AudioClip> cues=new System.Collections.Generic.Dictionary<string,AudioClip>();
+        public readonly System.Collections.Generic.List<string> PlayedCues=new System.Collections.Generic.List<string>();
         public int DealSounds { get; private set; }
         public int LandingSounds { get; private set; }
         public bool HasResources => music.clip!=null && deal!=null && discard!=null && meld!=null && stick!=null && tsumo!=null;
@@ -45,7 +47,7 @@ namespace YunJian.Riichi
         }
         void Update(){music.volume=Mathf.MoveTowards(music.volume,musicVolume,Time.unscaledDeltaTime*1.5f);}
         public void Suspend(bool pause){suspended=pause;if(pause)effects.Stop();RefreshMusic();}
-        public void Reset(){inTable=false;room=null;music.Stop();effects.Stop();music.volume=0;}
+        public void Reset(){inTable=false;room=null;drawKey=null;music.Stop();effects.Stop();music.volume=0;}
         void Play(AudioClip clip){if(clip!=null && effectsEnabled && !suspended)effects.PlayOneShot(clip);}
         public void Deal(){if(!inTable || suspended)return;DealSounds++;Play(deal);}
         public void Landing(string kind)
@@ -54,6 +56,12 @@ namespace YunJian.Riichi
             AudioClip clip=kind=="discard" || kind=="nuki"?discard:kind=="riichi-stick"?stick:kind=="tsumo"?tsumo:kind=="chi" || kind=="pon" || kind=="kan"?meld:null;
             if(clip==null)return;LandingSounds++;Play(clip);
         }
+        public void Cue(string name,float gain=1){
+            if(!inTable || suspended || string.IsNullOrEmpty(name))return;
+            if(!cues.TryGetValue(name,out var clip))cues[name]=clip=Load(name);
+            if(clip==null)return;PlayedCues.Add(name);if(effectsEnabled)effects.PlayOneShot(clip,gain);
+        }
+        public void DrawReveal(string next){if(next==drawKey)return;drawKey=next;Cue("showtile");}
         public void PreviewDiscard(){Play(discard);}
     }
 }

@@ -24,6 +24,7 @@ namespace YunJian.Riichi
         TableRenderer table;
         RoleVoice voice;
         GameAudio gameAudio;
+        SettlementAudio settlementAudio;
         bool musicMuted, effectsMuted;
         float musicVolume=.35f, effectsVolume=.8f;
         TableEffects effects;
@@ -79,10 +80,11 @@ namespace YunJian.Riichi
         {
             StopAllCoroutines(); Busy = false; State = fixture; active = true; page = "home";
             ResetWaitPress();validationWaitInput=false;
-            nextPoll = float.PositiveInfinity; SelectedIndex = -1; SelectedAction = null;
+            nextPoll = float.PositiveInfinity; ClearSelection();
             table.Render(fixture);gameAudio.SetScene(fixture);
             effects.Reset();resultDisplay.Reset();choosingKind=null;
         }
+        public void ValidationApplyState(RoomView fixture){State=fixture;RebindSelection();table.Render(fixture);gameAudio.SetScene(fixture);}
 #endif
 
         void Awake()
@@ -93,7 +95,7 @@ namespace YunJian.Riichi
             table = gameObject.AddComponent<TableRenderer>(); table.Client = this;
             effects = gameObject.AddComponent<TableEffects>();
             voice = gameObject.AddComponent<RoleVoice>();
-            gameAudio = gameObject.AddComponent<GameAudio>();
+            gameAudio = gameObject.AddComponent<GameAudio>();settlementAudio=gameObject.AddComponent<SettlementAudio>();
             musicMuted=PlayerPrefs.GetInt("riichi.musicMuted",0)!=0;effectsMuted=PlayerPrefs.GetInt("riichi.effectsMuted",0)!=0;
             musicVolume=PlayerPrefs.GetFloat("riichi.musicVolume",.35f);effectsVolume=PlayerPrefs.GetFloat("riichi.effectsVolume",.8f);
             gameAudio.Configure(!musicMuted,musicVolume,!effectsMuted,effectsVolume);
@@ -103,7 +105,7 @@ namespace YunJian.Riichi
             volume = PlayerPrefs.GetFloat("riichi.volume", .8f);
             muted = PlayerPrefs.GetInt("riichi.muted", 0) != 0;
             token = PlayerPrefs.GetString("riichi.token:" + endpoint, "");
-            voice.Configure(!muted, volume);
+            voice.Configure(!muted, volume);settlementAudio.Configure(!muted,volume);
             font = Resources.Load<Font>("Majsoul/Font/game") ?? Font.CreateDynamicFontFromOSFont(new[] { "Microsoft YaHei", "Noto Sans CJK SC", "sans-serif" }, 24);
 #if UNITY_ANDROID && !UNITY_EDITOR
             try
@@ -135,11 +137,28 @@ namespace YunJian.Riichi
             var a = ip.GetAddressBytes();
             return a[0] == 127 || a[0] == 10 || (a[0] == 192 && a[1] == 168) || (a[0] == 172 && a[1] >= 16 && a[1] <= 31);
         }
+        string selectedFace;int selectedCopy;
+        void ClearSelection(){SelectedAction=null;SelectedIndex=-1;selectedFace=null;selectedCopy=0;}
+        void RebindSelection()
+        {
+            if(selectedFace==null || State==null || (State.phase!="play" && State.phase!="reaction")){ClearSelection();return;}
+            var hand=TableRenderer.DisplayHand(State);int copy=0,index=-1;
+            for(int i=0;i<hand.Count;i++)if(hand[i]==selectedFace && copy++==selectedCopy){index=i;break;}
+            if(index<0){ClearSelection();return;}
+            SelectedIndex=index;bool drawn=!string.IsNullOrEmpty(State.drawn) && index==hand.Count-1;
+            var choices=State.options.Where(o=>o.kind==(RiichiMode?"riichi":"discard")).ToArray();
+            SelectedAction=choices.FirstOrDefault(o=>o.tile==selectedFace && o.id.EndsWith("_",StringComparison.Ordinal)==drawn)?.id;
+            if(choices.Length>0 && SelectedAction==null)ClearSelection();
+        }
         public void SelectTile(int index, string action)
         {
-            if (table.ArrangingHand || Busy || State == null || !State.options.Any(x => x.id == action)) return;
-            if (SelectedIndex == index && SelectedAction == action) { SelectedAction = null; SelectedIndex = -1; table.SelectHand(-1); Act(action); }
-            else { SelectedIndex = index; SelectedAction = action; table.SelectHand(index); }
+            if(table.ArrangingHand || State==null || (State.phase!="play" && State.phase!="reaction"))return;
+            var hand=TableRenderer.DisplayHand(State);if(index<0 || index>=hand.Count)return;
+            bool legal=action!=null && State.options.Any(o=>o.id==action && (o.kind=="discard" || o.kind=="riichi"));
+            bool choosing=State.options.Any(o=>o.kind==(RiichiMode?"riichi":"discard"));
+            if(choosing && !legal)return;
+            if(legal && !Busy && SelectedIndex==index && SelectedAction==action){ClearSelection();table.SelectHand(-1);Act(action);return;}
+            SelectedIndex=index;SelectedAction=legal?action:null;selectedFace=hand[index];selectedCopy=hand.Take(index).Count(t=>t==selectedFace);table.SelectHand(index);
         }
         public void Act(string id) { if(table.ArrangingHand)return;choosingKind=null;StartCoroutine(Send(new RequestBody { op = "action", action = id })); }
         IEnumerator Send(RequestBody req, Action success = null, bool poll = false)
@@ -184,8 +203,8 @@ namespace YunJian.Riichi
                     else
                     {
                         active = true;
-                        if (SelectedAction != null && !State.options.Any(x => x.id == SelectedAction)) { SelectedAction = null; SelectedIndex = -1; }
                         if (!State.options.Any(x => x.kind == "riichi")) RiichiMode = false;
+                        RebindSelection();
                         if (changed) table.Render(State);
                         effects.Accept(State);
                         if(choosingKind!=null && !State.options.Any(x=>x.kind==choosingKind)) choosingKind=null;
@@ -215,13 +234,15 @@ namespace YunJian.Riichi
         void OnDisable(){ResetWaitPress();}
         void Update()
         {
+            if(State?.phase=="result" && (State.result.draw || !effects.ShowWinPresentation)){resultDisplay.Observe(State);settlementAudio.Tick(State,resultDisplay,true,gameAudio);}
+            else if(State?.phase!="result")settlementAudio.Reset();
             bool waitInputConsumed=waitPressCaptured;
 #if UNITY_EDITOR
             if(!validationWaitInput)
 #endif
             waitInputConsumed=UpdateWaitPointer(new Vector2(Input.mousePosition.x,Screen.height-Input.mousePosition.y),Input.GetMouseButtonDown(0),Input.GetMouseButton(0),Input.GetMouseButtonUp(0),Time.unscaledTime);
             if (active && !Busy && Time.unscaledTime >= nextPoll) { nextPoll = Time.unscaledTime + .65f; StartCoroutine(Send(new RequestBody { op = "state" }, null, true)); }
-            if (active && !Busy && Input.GetMouseButtonUp(0) && !waitInputConsumed && !InUI(Input.mousePosition))
+            if (active && Input.GetMouseButtonUp(0) && !waitInputConsumed && !InUI(Input.mousePosition))
             {
                 Ray ray = table.HandCamera.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(ray, out var hit, 100f))
@@ -238,8 +259,8 @@ namespace YunJian.Riichi
         }
         void EnterHome()
         {
-            generation++; active = false; State = null; SelectedAction = null; SelectedIndex = -1; RiichiMode = false;
-            page = "home";ResetWaitPress();table.Clear(); voice.Reset();gameAudio.Reset();effects.Reset();resultDisplay.Reset();choosingKind=null;
+            generation++; active = false; State = null; ClearSelection(); RiichiMode = false;
+            page = "home";ResetWaitPress();table.Clear(); voice.Reset();gameAudio.Reset();settlementAudio.Reset();effects.Reset();resultDisplay.Reset();choosingKind=null;
         }
         void StartRoom(bool practice)
         {
@@ -522,7 +543,7 @@ namespace YunJian.Riichi
             var choices=State.options.Where(x=>x.kind==previewKind).ToArray();if(choices.Length==0)return;
             float choiceWidth=134;float total=Mathf.Min(width*.82f,choices.Length*choiceWidth);
             float x=width-100-total,y=height-258;
-            TableIndicators.Panel(new Rect(x-36,y-29,total+72,132),containTiles:true);
+            TableIndicators.Panel(new Rect(x-28,y-24,total+56,112),containTiles:true);
             for(int i=0;i<choices.Length;i++)
             {
                 Rect r=new Rect(x+i*total/choices.Length,y,total/choices.Length-4,66);
@@ -575,12 +596,12 @@ namespace YunJian.Riichi
             musicVolume=GUI.HorizontalSlider(new Rect(615,276,260,25),musicVolume,0,1);
             if(Button(new Rect(385,335,200,44),effectsMuted?"桌面音效：关闭":"桌面音效：开启")){effectsMuted=!effectsMuted;SaveSound();}
             effectsVolume=GUI.HorizontalSlider(new Rect(615,351,260,25),effectsVolume,0,1);
-            voice.Configure(!muted,volume);gameAudio.Configure(!musicMuted,musicVolume,!effectsMuted,effectsVolume);
+            voice.Configure(!muted,volume);settlementAudio.Configure(!muted,volume);gameAudio.Configure(!musicMuted,musicVolume,!effectsMuted,effectsVolume);
             if(Button(new Rect(385,420,230,48),"试听荣和"))voice.Preview();
             if(Button(new Rect(645,420,230,48),"试听落牌"))gameAudio.PreviewDiscard();
             if(Button(new Rect(385,510,490,55),"保存并关闭")){SaveSound();page="home";}
         }
-        void SaveSound() { PlayerPrefs.SetInt("riichi.muted", muted ? 1 : 0); PlayerPrefs.SetFloat("riichi.volume", volume); PlayerPrefs.SetInt("riichi.musicMuted",musicMuted?1:0);PlayerPrefs.SetInt("riichi.effectsMuted",effectsMuted?1:0);PlayerPrefs.SetFloat("riichi.musicVolume",musicVolume);PlayerPrefs.SetFloat("riichi.effectsVolume",effectsVolume);PlayerPrefs.Save(); voice.Configure(!muted, volume);gameAudio.Configure(!musicMuted,musicVolume,!effectsMuted,effectsVolume); }
+        void SaveSound() { PlayerPrefs.SetInt("riichi.muted", muted ? 1 : 0); PlayerPrefs.SetFloat("riichi.volume", volume); PlayerPrefs.SetInt("riichi.musicMuted",musicMuted?1:0);PlayerPrefs.SetInt("riichi.effectsMuted",effectsMuted?1:0);PlayerPrefs.SetFloat("riichi.musicVolume",musicVolume);PlayerPrefs.SetFloat("riichi.effectsVolume",effectsVolume);PlayerPrefs.Save(); voice.Configure(!muted, volume);settlementAudio.Configure(!muted,volume);gameAudio.Configure(!musicMuted,musicVolume,!effectsMuted,effectsVolume); }
         public static string TileName(string p)
         {
             if (string.IsNullOrEmpty(p) || p.Length < 2) return "";
@@ -592,7 +613,7 @@ namespace YunJian.Riichi
         {
             switch (kind) { case "ron": return "荣和"; case "tsumo": return "自摸"; case "pon": return "碰"; case "chi": return "吃"; case "kan": case "minkan": return "杠"; case "nuki": return "拔北"; case "abort9": return "九种九牌"; case "pass": return "过"; default: return kind; }
         }
-        void OnApplicationPause(bool pause) { if(pause)ResetWaitPress();voice.Suspend(pause);gameAudio.Suspend(pause);if(pause)table.Opening.Cancel();effects.Reset(); }
+        void OnApplicationPause(bool pause) { if(pause)ResetWaitPress();voice.Suspend(pause);settlementAudio.Suspend(pause);gameAudio.Suspend(pause);if(pause)table.Opening.Cancel();effects.Reset(); }
         void OnDestroy() { bridge?.Dispose(); }
     }
 }

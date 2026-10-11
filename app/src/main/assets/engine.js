@@ -29,6 +29,23 @@ class Room{
  totalKans(){return this.s.players.reduce((a,p)=>a+p.kans,0)}
  waits(h){if(h._zimo||M.Util.xiangting(h)!==0)return [];return M.Util.tingpai(h).filter(p=>!(this.s.n===3&&p[0]==='m'&&p!=='m1'&&p!=='m9'))}
  furiten(i){const p=this.s.players[i],w=this.waits(this.h(i));return p.temp||p.permanent||p.river.some(r=>w.includes(norm(r.tile)))}
+ // Four copies minus this viewer's hand and public faces. Never inspect other hands or the wall.
+ unseen(i,tile){
+  const s=this.s,kind=norm(tile);if(s.n===3&&kind[0]==='m'&&!['m1','m9'].includes(kind))return 0;
+  let seen=tiles(this.h(i)).filter(t=>norm(t)===kind).length;
+  for(const p of s.players){
+   seen+=p.river.filter(t=>!t.called&&norm(t.tile)===kind).length;
+   if(kind==='z4')seen+=p.nuki;
+  }
+  // _fulou is public, including the declared identity of a concealed kan.
+  for(let seat=0;seat<s.n;seat++)for(const meld of this.h(seat)._fulou)
+   seen+=Array.from(meld.slice(1)).filter(d=>/[0-9]/.test(d)&&norm(meld[0]+d)===kind).length;
+  // Robbing-kong/North reactions publicly declare faces before committing the meld.
+  const pending=s.pending;if(pending&&pending.from!==i&&norm(pending.tile)===kind)
+   seen+=pending.kind==='ankan'?4:['kakan','nuki'].includes(pending.kind)?1:0;
+  seen+=s.indicators.slice(0,1+this.totalKans()).filter(t=>norm(t)===kind).length;
+  return Math.max(0,4-seen);
+ }
  waitInfo(i,h,discard=null,riichi=false){
   const s=this.s,p=s.players[i],waits=this.waits(h);
   const furiten=!!(p.temp||p.permanent||p.river.some(r=>waits.includes(norm(r.tile)))||(discard&&waits.includes(norm(discard))));
@@ -37,7 +54,7 @@ class Room{
    const ron=M.Util.hule(h,tile+this.dir(i,(i+1)%s.n),param);
    const tsumoParam={...param,hupai:{...param.hupai,haidi:this.remain()===0?1:0}};
    const tsumo=M.Util.hule(h.clone().zimo(tile),null,tsumoParam);
-   return {tile,ron:!!(ron&&ron.hupai),tsumo:!!(tsumo&&tsumo.hupai)};
+   return {tile,ron:!!(ron&&ron.hupai),tsumo:!!(tsumo&&tsumo.hupai),remaining:this.unseen(i,tile)};
   });
   return {furiten,waits:details};
  }

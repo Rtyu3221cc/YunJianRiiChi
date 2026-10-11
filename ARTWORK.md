@@ -152,3 +152,7 @@ scripts/import-settlement-resources.py 从用户提供的 Majsoul_4.0.16_MC.apk 
 bg_nickname 的斜边和透明区域使完整图片矩形的中心不等于玩家名称所在位置的可见框中心。名称框由基准画布 (32,585,220,33) 上移至 (32,572.5,220,33)，以文字框中心作为局部旋转中心，保留 -4.748 度倾角。姓名、背景和其他结算元素仍统一适配屏幕比例。
 
 实际 Unity 774×438、934×430 参考画面核对名称在框内的上下留白。沿用 0.5.18 的手牌/全部副露/和牌两处间隔及连续牌面布局。
+
+## Unity 0.5.22 提示框、报役和火龙卷
+
+原始 `pop_bound`/`bg_3` 以及 `showtile`、`hule_fan_out`、`fu_appear`、`score_appear`、`mangan`、`beiman`、`yakuman` 等声音从用户 APK 导出。缺失的深蓝 `pop_bg`、一姬 82 条役种/结果语音和火龙卷 305034 场景/音效使用雀魂官方固定版本资源；所有资源离线打包，来源和 SHA-256 见 `SettlementVoice/provenance.json`、`SettlementVoice/manifest.json`、`Audio/provenance.json`、`Indicators/source.json`。真实网格和原版粒子数据取代旧的程序旋风。[详细说明](docs/原版提示与结算音效.md)。

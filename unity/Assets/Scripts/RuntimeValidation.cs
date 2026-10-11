@@ -17,7 +17,7 @@ namespace YunJian.Riichi
             folder = Path.GetFullPath("../build/unity-smoke"); Directory.CreateDirectory(folder);
             foreach (var name in new[] { "passed.txt", "failed.txt" })
                 if (File.Exists(Path.Combine(folder, name))) File.Delete(Path.Combine(folder, name));
-            var run = Run();
+            var run = Environment.GetEnvironmentVariable("RIICHI_NATIVE_PREVIEW")=="1"?NativeFirePreview.Run(GetComponent<RiichiClient>(),folder):Run();
             while (true)
             {
                 bool next;
@@ -26,7 +26,7 @@ namespace YunJian.Riichi
                 if (!next) break;
                 yield return run.Current;
             }
-            File.WriteAllText(Path.Combine(folder, "passed.txt"), "Actual Unity Play mode: live AI room, delayed second-click discard, raycast, 3/4-seat rendering, safe-area pointer roundtrips, 4 resolutions, 8 role clips, called-river removal, grouped chi choices, all 4 discard hand directions at 15 time samples with opaque materials, call cut-ins, event dedup/reconnect; original 224-vertex outlines, model-foot response glow in 4 directions, 0-4 own melds without hand overlap at 4 resolutions, and 4 inward-facing North tiles per seat. Original turn-light particles: four directions, rendered fade/peak/fade, one-second looping and stable phase across polling. North extraction: all three viewer seats/directions, original cut-in, carried tile/landing match, independent previous North and meld visibility, nine visible flutter petals, survival across polling/hand completion, cleanup and event dedup/reconnect. Win effects: original ron/tsumo cut-ins, Zimo hand and exact tile landing in all 3/4 directions and rotated viewers; eight-layer fire particles, video flame spiral and rubble with visible camera pixels, delayed settlement, double ron, robbed tile targets and polling/reconnect cleanup. Fixture screenshots are synthetic layout scenes, not replays.");
+            File.WriteAllText(Path.Combine(folder, "passed.txt"), "Actual Unity Play mode: live AI room, delayed second-click discard, raycast, 3/4-seat rendering, safe-area pointer roundtrips, 4 resolutions, 8 role clips, called-river removal, grouped chi choices, all 4 discard hand directions at 15 time samples with opaque materials, call cut-ins, event dedup/reconnect; original 224-vertex outlines, model-foot response glow in 4 directions, 0-4 own melds without hand overlap at 4 resolutions, and 4 inward-facing North tiles per seat. Original turn-light particles: four directions, rendered fade/peak/fade, one-second looping and stable phase across polling. North extraction: all three viewer seats/directions, original cut-in, carried tile/landing match, independent previous North and meld visibility, nine visible flutter petals, survival across polling/hand completion, cleanup and event dedup/reconnect. Win effects: original ron/tsumo cut-ins, Zimo hand and exact tile landing in all 3/4 directions and rotated viewers; nine-layer fire tornado particles, video flame spiral and rubble with visible camera pixels, delayed settlement, double ron, robbed tile targets and polling/reconnect cleanup. Fixture screenshots are synthetic layout scenes, not replays.");
             Debug.Log("RIICHI UNITY PLAY PASS"); EditorApplication.Exit(0);
         }
         IEnumerator Run()
@@ -142,6 +142,7 @@ namespace YunJian.Riichi
                     Require(File.Exists(fullFile), "Full game-view capture failed at " + suffix);
                 }
             }
+            var nativeProbe=NativePresentationValidation.Run(client,folder);while(nativeProbe.MoveNext())yield return nativeProbe.Current;
             var openingProbe=ValidateOpeningAudio(client);while(openingProbe.MoveNext())yield return openingProbe.Current;
             var latestProbe=ValidateLatestFixes(client);while(latestProbe.MoveNext())yield return latestProbe.Current;
             var indicatorProbe=ValidateIndicators(client);while(indicatorProbe.MoveNext())yield return indicatorProbe.Current;
@@ -587,14 +588,14 @@ namespace YunJian.Riichi
                 }
                 else {Require(fx.ValidationKind==null,"Ron incorrectly moved the winner's hand");fx.ValidationTime=.55f;yield return null;yield return null;}
                 var effect=fx.ValidationWin;
-                Require(effect!=null && effect.LayerCount==8 && effect.ParticleCount>0 && fx.SpawnedWinEffects==before+1,"Original eight-layer fire burst missing/duplicated");
+                Require(effect!=null && effect.LayerCount==WinTileEffect.SourceLayerCount && effect.ParticleCount>0 && fx.SpawnedWinEffects==before+1,"Original nine-layer fire tornado burst missing/duplicated");
                 Require(Vector3.Distance(effect.transform.position,table.WinningPoint(e)+Vector3.up*.045f)<.001f,"Win effect detached from winning tile");
                 int pixels=effect.GetComponentsInChildren<ParticleSystemRenderer>().Max(renderer=>VisibleEffectPixels(table,renderer));
                 Require(pixels>20,"Fire win particles invisible on the actual camera");
                 effect.Sample(.55f); // Measure the peak independently of the call/hand lead-in.
-                var column=effect.GetComponentsInChildren<MeshRenderer>().First(x=>x.name=="Filled flame core 4");
-                Require(column.bounds.size.y>6 && column.GetComponent<MeshFilter>().sharedMesh.bounds.size.x>.45f,"Reference flame column too short or narrow");
-                Require(effect.GetComponentsInChildren<MeshRenderer>().Where(x=>x.name.StartsWith("Filled flame core")).Max(x=>VisibleEffectPixels(table,x))>150,"Filled flame core not visible to the actual camera");
+                Require(effect.MeshLayerCount==2 && effect.GetComponent<FlameSpiral>()==null,"Native spiral meshes replaced by synthetic ribbons");
+                var column=effect.GetComponentsInChildren<ParticleSystemRenderer>().Where(x=>x.renderMode==ParticleSystemRenderMode.Mesh).ToArray();
+                Require(column.Length>=2 && column.Max(x=>VisibleEffectPixels(table,x))>150,"Native flame mesh/ground flash invisible to the actual camera");
                 if(you==0){
                     Capture(table,Path.Combine(folder,"win-"+n+"-"+kind+"-effect-"+relative+".png"),1688,780);
                     if(relative==0)foreach(float sample in new[]{.12f,.45f,.9f,1.5f}){
@@ -711,9 +712,9 @@ namespace YunJian.Riichi
             var prior=RenderTexture.active;material.SetFloat("_Dim",1);Graphics.Blit(probe,rt,material);RenderTexture.active=rt;dimPixels.ReadPixels(new Rect(0,0,2,1),0,0);dimPixels.Apply();RenderTexture.active=prior;
             Color red=dimPixels.GetPixel(0,0),green=dimPixels.GetPixel(1,0);Require(red.r>red.g*2 && green.g>green.r*2,"Dimming desaturates red/green glyphs");Require(red.r<.75f && green.g<.75f,"Dimming does not reduce brightness");
             RenderTexture.ReleaseTemporary(rt);Destroy(probe);Destroy(back);Destroy(material);Destroy(dimPixels);
-            Debug.Log("RIICHI FIDELITY PASS: framed chi tiles, original win/score/rank/button sprites and fonts, broad filled flame core at four ages and every seat.");
+            Debug.Log("RIICHI FIDELITY PASS: framed chi tiles, original win/score/rank/button sprites and fonts, original fire-tornado meshes at four ages and every seat.");
             Debug.Log("RIICHI RESULT VIDEO PASS: four sizes, yaku and winning hand presentation, two stages, point endpoints, ranks, polling stability, both ron winners and chromatic brightness dimming.");
-            Debug.Log("RIICHI WIN EFFECT PASS: ron/tsumo in all three/four-seat directions and rotated viewers; original cut-ins, Zimo mesh pixels, exact landing, eight source fire layers, visible flame spiral and rubble and visible pixels; delayed result, polling/reconnect cleanup, double ron and robbed tile targets.");
+            Debug.Log("RIICHI WIN EFFECT PASS: ron/tsumo in all three/four-seat directions and rotated viewers; original cut-ins, Zimo mesh pixels, exact landing, nine original fire-tornado layers, original spiral and rubble sheet and visible pixels; delayed result, polling/reconnect cleanup, double ron and robbed tile targets.");
         }
 
         IEnumerator ValidateOpeningAudio(RiichiClient client)

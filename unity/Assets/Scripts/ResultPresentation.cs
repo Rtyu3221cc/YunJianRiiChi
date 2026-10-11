@@ -19,6 +19,8 @@ namespace YunJian.Riichi
         public int WinnerIndex => winner;
         public bool Freeze; public float FrozenAge;
         float Age => Freeze?FrozenAge:Time.unscaledTime-started+skipped;
+        public float ElapsedAge=>Age;
+        public int SkipSerial {get;private set;}
         public void Reset(){key=null;winner=0;scores=false;drawStage=false;skipped=0;Freeze=false;}
         public void Observe(RoomView v)
         {
@@ -27,13 +29,13 @@ namespace YunJian.Riichi
             key=next;winner=0;drawStage=v.result!=null && v.result.draw && ((!v.result.abort && (v.result.drawDetails?.Length??0)>0) || v.result.title=="九种九牌");
             scores=!drawStage && (v.result?.details==null || v.result.details.Length==0);started=Time.unscaledTime;skipped=0;
         }
-        float RevealEnd(WinDetail d) => .8f+(d.yaku?.Length??0)*.32f+1.1f;
+        float RevealEnd(WinDetail d) => SettlementAudio.Sequence(d).end;
         public void Advance(RoomView v)
         {
             if(drawStage){drawStage=false;scores=true;started=Time.unscaledTime;skipped=0;FrozenAge=0;return;}
             if(scores){skipped=3.5f;return;}
             var d=v.result.details[winner];
-            if(Age<RevealEnd(d)){skipped=RevealEnd(d);return;}
+            if(Age<RevealEnd(d)){skipped=RevealEnd(d);SkipSerial++;return;}
             if(++winner>=v.result.details.Length){scores=true;winner=v.result.details.Length-1;}
             started=Time.unscaledTime;skipped=0;FrozenAge=0;
         }
@@ -145,7 +147,7 @@ namespace YunJian.Riichi
             Image(d.ron?"pg_he":"pg_zimo",NativeRect(834.3f,419.6f,104,108),ScaleMode.ScaleToFit);
             NativeDora(v,table,v.indicators,27.5f,250,"bg_dora");
             NativeDora(v,table,d.ura,536.5f,303,"bg_lidora");
-            var yaku=d.yaku??new YakuDetail[0];int visible=Mathf.Clamp(Mathf.FloorToInt((age-.65f)/.32f),0,yaku.Length);
+            var sequence=SettlementAudio.Sequence(d);var yaku=sequence.rows.Select(row=>row.yaku).ToArray();int visible=sequence.rows.Count(row=>age>=row.at);
             for(int i=0;i<visible;i++){
                 float x,y,h=35.2f;
                 if(yaku.Length<=8){var offset=NativeYakuOffsets[i]-NativeYakuOffsets[0];x=611+offset.x*2/3;y=303.7f-offset.y*2/3;}
@@ -159,7 +161,7 @@ namespace YunJian.Riichi
                 GUI.matrix=rowMatrix;
                 if(yaku[i].yakuman==0)Glyphs(new Rect(x+179,y-28,42,h+5),Digits(yaku[i].han,"h_").Concat(new[]{"word_fan"}).ToArray(),26);
             }
-            if(age>=.8f+yaku.Length*.32f){
+            if(age>=sequence.fuAt){
                 var circle=NativeRect(365.5f,-48,185,179,.12972973f,.16759777f);
                 Image("bg_center_fan",circle);var score=d.score??new ScoreDetail();
                 if(score.damanguan>0)Glyphs(new Rect(circle.x+12,circle.y+16,circle.width-24,circle.height-32),new[]{"word_yiman"},60);
@@ -168,13 +170,15 @@ namespace YunJian.Riichi
                     Image("word_fan",new Rect(circle.x+64,circle.y+52,38,45),ScaleMode.ScaleToFit);
                     Glyphs(new Rect(circle.x+12,circle.y+80,68,26),Digits(score.fu,"ww_").Concat(new[]{"word_fu"}).ToArray(),24);
                 }
+                if(age>=sequence.pointsAt){
                 var scoreRect=NativeRect(555,-315,589,110,.49235994f,.5f,1.2f);
                 var scoreMatrix=GUI.matrix;var scoreAnchor=NativePoint(555,-315);
                 GUI.matrix*=Matrix4x4.TRS(new Vector3(scoreAnchor.x,scoreAnchor.y,0),Quaternion.Euler(0,0,-6),Vector3.one)*Matrix4x4.Translate(new Vector3(-scoreAnchor.x,-scoreAnchor.y,0));
                 Image("bg_point",new Rect(scoreRect.x+40,scoreRect.y+60,scoreRect.width-40,60));
                 Glyphs(scoreRect,Digits(score.defen,"ww_").Concat(new[]{"word_point"}).ToArray(),88,TextAnchor.MiddleRight);
                 GUI.matrix=scoreMatrix;
-                if(!string.IsNullOrEmpty(d.limit)){
+                }
+                if(age>=sequence.titleAt && !string.IsNullOrEmpty(d.limit)){
                     var limit=NativeRect(-62,-412,650,155,.66153848f,.4333333f,1.2f);
                     Glyphs(limit,LimitGlyphs(d.limit),124,TextAnchor.MiddleLeft);
                 }
@@ -182,17 +186,20 @@ namespace YunJian.Riichi
             GUI.matrix=matrix;
             if(v.result.details.Length>1)Label(new Rect(835,656,180,32),"和牌 "+(winner+1)+" / "+v.result.details.Length,17,white);
         }
+        public static Vector2 TableCenter(TableRenderer table)=>TableViewport.Fit(Screen.width,Screen.height,Screen.safeArea,false).FromScreen(table.Camera.WorldToScreenPoint(Vector3.zero),Screen.height);
+        public Rect DrawTitleRect {get;private set;}
         void DrawRound(RoomView v,TableRenderer table)
         {
             float age=Age;var old=GUI.color;GUI.color=new Color(1,1,1,Mathf.Clamp01(age/.5f));
-            if(v.result.title=="九种九牌")TableIndicators.Image("jiuzhongjiupai",new Rect(486,264,308,97));
-            else if(v.result.title=="荒牌流局")TableIndicators.Image("huangpailiuju",new Rect(435,268,410,110));
-            else Label(new Rect(435,268,410,110),v.result.title,42,gold);
+            var center=TableCenter(table);
+            string title=v.result.title=="九种九牌"?"jiuzhongjiupai":v.result.title=="荒牌流局"?"huangpailiuju":null;
+            if(title!=null){DrawTitleRect=TableIndicators.CenteredImageRect(title,center,title=="huangpailiuju"?360:308);TableIndicators.Image(title,DrawTitleRect);}
+            else Label(new Rect(center.x-205,center.y-55,410,110),v.result.title,42,gold);
             GUI.color=old;
             if(age<.7f || v.result.abort)return;
             foreach(var d in v.result.drawDetails){
                 int relative=(d.seat-v.you+v.n)%v.n;
-                Vector2 c=relative==0?new Vector2(640,458):relative==v.n-1?new Vector2(318,358):relative==1&&v.n==4?new Vector2(997,358):new Vector2(640,184);
+                Vector2 c=center+(relative==0?new Vector2(0,160):relative==v.n-1?new Vector2(-322,60):relative==1&&v.n==4?new Vector2(322,60):new Vector2(0,-114));
                 if(!d.tenpai){TableIndicators.Image("noting",new Rect(c.x-93,c.y-22,186,44));continue;}
                 var waits=(d.waits??new string[0]).Select(t=>new WaitDetail{tile=t,ron=true}).ToArray();
                 if(waits.Length==0){TableIndicators.Image("show_tingpai",new Rect(c.x-88,c.y-22,176,44));continue;}

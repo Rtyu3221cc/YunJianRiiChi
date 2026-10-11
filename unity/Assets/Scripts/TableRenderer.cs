@@ -342,7 +342,7 @@ namespace YunJian.Riichi
             Clear(false); state = view; opening.Observe(view);
             bool exhausted=state.phase=="result" && state.result!=null && state.result.draw && !state.result.abort && (state.result.drawDetails?.Length??0)>0;
             if(exhausted || state.result?.abortHand!=null){string next=state.audioRoom+":"+state.round+":"+state.honba+":"+state.result.title;
-                if(next!=drawKey){drawKey=next;drawBegan=Time.unscaledTime;}
+                if(next!=drawKey){drawKey=next;drawBegan=Time.unscaledTime;GetComponent<GameAudio>()?.DrawReveal(next);}
             }else drawKey=null;
             if (state.phase != "play" && state.phase != "reaction" && state.phase != "result") return;
             var hub = scoreHub.Create(content, state);
@@ -455,6 +455,13 @@ namespace YunJian.Riichi
                 }
             }
         }
+        public static System.Collections.Generic.List<string> DisplayHand(RoomView view)
+        {
+            var hand=view.hand.ToList();
+            if(!string.IsNullOrEmpty(view.drawn)){int at=hand.LastIndexOf(view.drawn);if(at>=0){hand.RemoveAt(at);hand.Add(view.drawn);}}
+            return hand;
+        }
+        public string HandFace(int index)=>index>=0 && index<handTiles.Count?handTiles[index].name.Substring(5):null;
         void DrawHand()
         {
             cameraHand = new GameObject("Camera-facing hand").transform; cameraHand.SetParent(content, false);
@@ -476,7 +483,7 @@ namespace YunJian.Riichi
                 // A presentation hand must not cast a giant floating shadow onto the table.
                 foreach (var renderer in tile.GetComponentsInChildren<Renderer>()) { renderer.shadowCastingMode = ShadowCastingMode.Off; renderer.receiveShadows = false; }
                 handTiles.Add(tile); handBase.Add(pos);
-                if (choice != null) { var target = tile.gameObject.AddComponent<TileTarget>(); target.Index = i; target.Action = choice.id; }
+                if (choice != null || !choosing && (state.phase=="play" || state.phase=="reaction")) { var target = tile.gameObject.AddComponent<TileTarget>(); target.Index = i; target.Action = choice?.id; }
                 else
                 {
                     // A tile that cannot be discarded right now is dimmed and unpickable,

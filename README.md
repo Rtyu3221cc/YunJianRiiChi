@@ -1,5 +1,17 @@
 # 云间日麻
 
+## Unity 0.5.22 原版提示、结算报役与火龙卷
+
+安卓包：[下载 Unity 0.5.22 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.22/yunjian-riichi-unity-0.5.22.apk)，versionCode 23，同签名覆盖更新。
+
+- 荒牌流局标题按牌桌投影轴居中，待牌在自己的框内居中；放倒手牌播放原版 `showtile` 音效，轮询不重播。
+- 听牌与吃牌组合采用原版深蓝金边花纹框。听牌逐牌显示未见张数，吃牌组合只显示小麻将；长按查看和出牌前预览沿用现有操作。
+- 结算使用一姬逐条念出役种，按原始顺序和语音时长展示；番符、点数、满贯标题带对应声音，满贯/跳满、倍满/三倍满、役满采用三组原版鼓声。支持一至六倍役满语音。
+- 胡牌特效使用《荣牌特效.mp4》对应的「火龙卷」305034，九层原版粒子、真实旋风/环形网格、帧动画贴图和碎石，配套音轨与录像波形相关度 0.991。移除旧的简化旋风绘制。
+- 非自己回合也可以抬起选牌，并在轮询和新摸牌后保持选中的牌；自己的回合仍通过再次点击提交合法出牌。
+
+[实现与资源出处](docs/原版提示与结算音效.md)、[提示框预览](dist/previews/unity-0.5.22-indicators.png)、[火龙卷逐帧预览](dist/previews/unity-0.5.22-tornado.png)、[验证记录](dist/验证记录-unity-0.5.22.txt)。
+
 ## Unity 0.5.21 开局理牌与对局音频
 
 安卓包：[下载 Unity 0.5.21 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.21/yunjian-riichi-unity-0.5.21.apk)，versionCode 22，同签名覆盖更新。
