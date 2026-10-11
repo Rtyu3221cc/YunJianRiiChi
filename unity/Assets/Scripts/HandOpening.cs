@@ -28,7 +28,7 @@ namespace YunJian.Riichi
         }
         public bool Active=>running && Age<End;
         public int Started { get; private set; }
-        public void Observe(RoomView view)
+        public void Observe(RoomView view,float delay=0)
         {
             if(view.handSeq<=0){running=false;return;}
             string next=view.audioRoom+":"+view.handSeq;
@@ -36,14 +36,15 @@ namespace YunJian.Riichi
             key=next;running=false;
             long age=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()-view.dealtAt;
             var p=view.you>=0 && view.you<view.players.Length?view.players[view.you]:null;
-            if((view.phase!="play" && view.phase!="reaction") || age<0 || age>2500 || p==null || p.river.Length>0 || p.melds.Length>0 || p.nuki>0 || view.openingHand.Length<13 || !(view.openingHand.Length==view.hand.Length || view.openingHand.Length==13 && view.hand.Length==14 && !string.IsNullOrEmpty(view.drawn)))return;
-            deal=(string[])view.openingHand.Clone();began=Time.unscaledTime;played=-1;running=true;Started++;
+            if((view.phase!="play" && view.phase!="reaction") || delay<=0 && (age<0 || age>2500) || p==null || p.river.Length>0 || p.melds.Length>0 || p.nuki>0 || view.openingHand.Length<13 || !(view.openingHand.Length==view.hand.Length || view.openingHand.Length==13 && view.hand.Length==14 && !string.IsNullOrEmpty(view.drawn)))return;
+            deal=(string[])view.openingHand.Clone();began=Time.unscaledTime+delay;played=-1;running=true;Started++;
         }
         public void Apply(List<Transform> tiles,List<Vector3> bases,GameAudio audio)
         {
             if(!running)return;
             lastTiles=tiles;lastBases=bases;
             float age=Age;
+            if(age<0){foreach(var tile in tiles){var rr=tile.GetComponent<MeshRenderer>();var bb=new MaterialPropertyBlock();rr.GetPropertyBlock(bb);bb.SetFloat("_Opacity",0);rr.SetPropertyBlock(bb);}return;}
             bool extraDraw=deal.Length==13 && tiles.Count==14;
             if(tiles.Count!=deal.Length && !extraDraw){Cancel();return;}
             var used=new bool[deal.Length];var slots=new int[tiles.Count];

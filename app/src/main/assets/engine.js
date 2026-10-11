@@ -14,7 +14,7 @@ class Room{
  sound(kind,seat,tile,riichi,nuki,win){const s=this.s;s.audioSeq=(s.audioSeq||0)+1;s.audioEvents=(s.audioEvents||[]).concat({id:s.audioSeq,kind,seat,tile:tile||null,riichi:!!riichi,...(kind==='discard'?{riverIndex:s.players[seat].river.length}:{}),...(nuki?{nuki}:{}),...(win?{from:win.from,winSource:win.kind}:{}),at:Date.now()}).slice(-24);}
  addBot(){const s=this.s;check(s.players.length<s.n,'座位已满');let n=1;while(s.players.some(p=>p.name==='AI · '+n))n++;const p=player('AI · '+n);p.bot=true;s.players.push(p);}
  tick(){
-  const s=this.s;if(!s||!g.RiichiAI||!['play','reaction'].includes(s.phase))return {ok:true,idle:true};
+  const s=this.s;if(!s||!g.RiichiAI||!['play','reaction'].includes(s.phase)||Date.now()<(s.matchOpeningUntil||0))return {ok:true,idle:true};
   const i=s.phase==='play'?s.turn:s.players.findIndex((p,j)=>p.bot&&this.options(j).length);
   if(i<0||!s.players[i].bot)return {ok:true,idle:true};
   const before=JSON.stringify(s);
@@ -227,7 +227,7 @@ class Room{
   return {phase:s.phase,version:s.version,you:i,host:i===0,n:s.n,pin:s.pin,round:s.round,rounds:s.rounds,dealer:s.dealer,honba:s.honba,sticks:s.sticks,turn:s.turn,
    audioRoom:s.audioRoom||s.pin,audioSeq:s.audioSeq||0,audioEvents:s.audioEvents||[],remaining:s.wall?s.wall.length:0,indicators:s.indicators?s.indicators.slice(0,1+this.totalKans()):[],last:s.last,
    players:s.players.map((p,j)=>({name:p.name,avatar:p.avatar||"",bot:!!p.bot,score:p.score,wind:this.wind(j),riichi:p.riichi,nuki:p.nuki,river:p.river,melds:p.hand?this.h(j)._fulou:[],count:p.hand?tiles(this.h(j)).length:0,ready:p.ready,online:p.bot||Date.now()-(this.seen[p.token]||0)<12000})),
-   handSeq:s.handSeq||0,dealtAt:s.dealtAt||0,openingHand:(s.players[i].dealt||[]).slice(),
+   handSeq:s.handSeq||0,dealtAt:s.dealtAt||0,matchSeq:s.matchSeq||0,matchStartedAt:s.matchStartedAt||0,openingHand:(s.players[i].dealt||[]).slice(),
    hand:h?tiles(h):[],drawn:h&&h._zimo&&h._zimo.length===2?h._zimo:null,options,furiten:hints.furiten,waits:h?this.waits(h):[],waitDetails:hints.waitDetails,discardHints:hints.discardHints,
    recovery:s.players[i].recovery,log:s.log||[],result:s.result,pending:s.pending?{from:s.pending.from,tile:s.pending.tile,kind:s.pending.kind,riichi:!!s.pending.riichi,waiting:Object.keys(s.pending.options).filter(k=>!s.pending.replies[k]).map(Number)}:null};
  }
@@ -262,12 +262,13 @@ class Room{
    else if(req.op==='start'){check(i===0&&s.phase==='lobby','仅房主可开局');if(req.fillBots===true)while(s.players.length<s.n)this.addBot();check(s.players.length===s.n,'还有空位，可添加 AI 后开局');s.players=shuffle(s.players); // Keep host identity separate from seat ordering.
     // Host remains player 0; randomize dealer instead, so management rights never move.
     const hostIndex=s.players.findIndex(p=>p.token===req.token);[s.players[0],s.players[hostIndex]]=[s.players[hostIndex],s.players[0]];
+    s.matchSeq=(s.matchSeq||0)+1;s.matchStartedAt=Date.now();s.matchOpeningUntil=s.matchStartedAt+6000;
     s.dealer=parseInt(randomHex(2),16)%s.n;s.initialDealer=s.dealer;s.players.forEach(p=>p.score=s.n===3?35000:25000);this.newHand();
    }else if(req.op==='action')this.act(i,req.action);
    else if(req.op==='ready'){check(s.phase==='result','当前不在结算阶段');s.players[i].ready=true;}
    else if(req.op==='next'){
     check(i===0&&s.phase==='result'&&s.players.every(p=>p.ready),'请等待所有玩家确认结算');
-    if(s.result.matchOver){s.round=0;s.dealer=s.initialDealer;s.honba=0;s.sticks=0;s.players.forEach(p=>p.score=s.n===3?35000:25000);}
+    if(s.result.matchOver){s.matchSeq=(s.matchSeq||0)+1;s.matchStartedAt=Date.now();s.matchOpeningUntil=s.matchStartedAt+6000;s.round=0;s.dealer=s.initialDealer;s.honba=0;s.sticks=0;s.players.forEach(p=>p.score=s.n===3?35000:25000);}
     else {s.honba=s.result.draw||s.result.repeat?s.honba+1:0;if(!s.result.repeat){s.dealer=(s.dealer+1)%s.n;s.round++;}}
     this.newHand();
    }else if(req.op==='close'){check(i===0,'仅房主可结束牌桌');this.s=null;this.save('');return {ok:true,state:{phase:'empty'}};}

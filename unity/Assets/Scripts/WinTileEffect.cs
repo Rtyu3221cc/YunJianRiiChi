@@ -11,10 +11,12 @@ namespace YunJian.Riichi
     public sealed class WinTileEffect : MonoBehaviour
     {
         [Serializable] public class Key { public float time,value; }
+        [Serializable] public class ColorKey { public float time;public float[] color; }
         [Serializable] public class Burst { public float time;public int min,max; }
         [Serializable] public class Node { public string name;public int parent;public float[] position,rotation,scale; }
         [Serializable] public class MeshData { public float[] positions,uv;public int[] indices; }
         [Serializable] public class Layer {
+            public ColorKey[] colors;public float[] box;public bool nativeShape;public float randomDirection;
             public string name,texture;public int node,blendDst,maxParticles,renderMode,shape,cycles;
             public float[] colorMin,colorMax,tint,tiles,size3d,size3dMin,velocityMin,velocityMax;
             public float angularSpeed;public float duration,delay,lifeMin,lifeMax,sizeMin,sizeMax,speedMin,speedMax,rotationMin,rotationMax,gravity,rate,stretch,radius,coneAngle;
@@ -50,9 +52,14 @@ namespace YunJian.Riichi
         public void Initialize(Vector3 point,float angle,float now,uint seed)
         {
             StartedAt=now;transform.position=point+Vector3.up*.045f;var camera=GetComponentInParent<TableRenderer>()?.Camera;float yaw=camera==null?angle:Mathf.Atan2(point.x-camera.transform.position.x,point.z-camera.transform.position.z)*Mathf.Rad2Deg;transform.rotation=Quaternion.Euler(0,yaw,0);transform.localScale=Vector3.one*(.33f/.02947767f);
+            Build("Majsoul/Actions/fire-effect","Majsoul/Actions/",seed);
+        }
+        public void InitializeUi(string path,float scale,float now,uint seed){StartedAt=now;transform.localScale=Vector3.one*scale;Build(path,"Majsoul/UiEffects/",seed);}
+        void Build(string path,string textures,uint seed)
+        {
             var plane=new Mesh{name="Native horizontal billboard",vertices=new[]{new Vector3(-.5f,0,-.5f),new Vector3(-.5f,0,.5f),new Vector3(.5f,0,.5f),new Vector3(.5f,0,-.5f)},uv=new[]{Vector2.zero,Vector2.up,Vector2.one,Vector2.right},triangles=new[]{0,1,2,0,2,3}};
             plane.RecalculateBounds();meshes.Add(plane);
-            var config=JsonUtility.FromJson<Config>(Resources.Load<TextAsset>("Majsoul/Actions/fire-effect").text);var nodes=new Transform[config.nodes.Length];
+            var config=JsonUtility.FromJson<Config>(Resources.Load<TextAsset>(path).text);var nodes=new Transform[config.nodes.Length];
             for(int i=0;i<nodes.Length;i++){
                 var n=config.nodes[i];var go=new GameObject(n.name);nodes[i]=go.transform;nodes[i].SetParent(n.parent<0?transform:nodes[n.parent],false);
                 nodes[i].localPosition=V(n.position);nodes[i].localRotation=new Quaternion(n.rotation[0],n.rotation[1],n.rotation[2],n.rotation[3]);nodes[i].localScale=V(n.scale);
@@ -66,9 +73,10 @@ namespace YunJian.Riichi
                 if(l.size3d.Length==3){m.startSize3D=true;var a=l.size3dMin.Length==3?l.size3dMin:l.size3d;m.startSizeX=new ParticleSystem.MinMaxCurve(Mathf.Min(a[0],l.size3d[0]),Mathf.Max(a[0],l.size3d[0]));m.startSizeY=new ParticleSystem.MinMaxCurve(Mathf.Min(a[1],l.size3d[1]),Mathf.Max(a[1],l.size3d[1]));m.startSizeZ=new ParticleSystem.MinMaxCurve(Mathf.Min(a[2],l.size3d[2]),Mathf.Max(a[2],l.size3d[2]));}
                 m.gravityModifier=l.gravity;m.maxParticles=l.maxParticles;var emission=p.emission;emission.rateOverTime=l.rate;emission.SetBursts(l.bursts.Select(b=>new ParticleSystem.Burst(b.time,(short)b.max)).ToArray());
                 var shape=p.shape;shape.enabled=l.shape>=0;
-                if(shape.enabled){shape.shapeType=l.shape==2?ParticleSystemShapeType.Cone:ParticleSystemShapeType.Hemisphere;shape.radius=l.radius;shape.angle=l.coneAngle;shape.rotation=new Vector3(0,180,0);}
+                if(shape.enabled){shape.shapeType=l.shape==2?ParticleSystemShapeType.Cone:ParticleSystemShapeType.Hemisphere;shape.radius=l.radius;shape.angle=l.coneAngle;shape.rotation=new Vector3(0,180,0);
+                    if(l.nativeShape){shape.shapeType=l.shape==0?ParticleSystemShapeType.Sphere:l.shape==1?ParticleSystemShapeType.Hemisphere:l.shape==2?ParticleSystemShapeType.Cone:l.shape==3?ParticleSystemShapeType.Box:ParticleSystemShapeType.Circle;shape.randomDirectionAmount=l.randomDirection;if(l.box!=null && l.box.Length==3)shape.scale=V(l.box);}}
                 if(l.velocityMin.Length==3){var vel=p.velocityOverLifetime;vel.enabled=true;vel.space=ParticleSystemSimulationSpace.Local;vel.x=new ParticleSystem.MinMaxCurve(l.velocityMin[0],l.velocityMax[0]);vel.y=new ParticleSystem.MinMaxCurve(l.velocityMin[1],l.velocityMax[1]);vel.z=new ParticleSystem.MinMaxCurve(-l.velocityMax[2],-l.velocityMin[2]);}
-                if(l.alpha.Length>0){var col=p.colorOverLifetime;col.enabled=true;var g=new Gradient();g.SetKeys(new[]{new GradientColorKey(Color.white,0),new GradientColorKey(Color.white,1)},l.alpha.Select(k=>new GradientAlphaKey(k.value,k.time)).ToArray());col.color=g;}
+                if(l.alpha.Length>0){var col=p.colorOverLifetime;col.enabled=true;var g=new Gradient();g.SetKeys(l.colors!=null && l.colors.Length>0?l.colors.Select(k=>new GradientColorKey(C(k.color),k.time)).ToArray():new[]{new GradientColorKey(Color.white,0),new GradientColorKey(Color.white,1)},l.alpha.Select(k=>new GradientAlphaKey(k.value,k.time)).ToArray());col.color=g;}
                 if(l.size.Length>0){var size=p.sizeOverLifetime;size.enabled=true;
                     if(l.sizeX.Length>0){size.separateAxes=true;size.x=new ParticleSystem.MinMaxCurve(1,Curve(l.sizeX));size.y=new ParticleSystem.MinMaxCurve(1,Curve(l.sizeY));size.z=new ParticleSystem.MinMaxCurve(1,Curve(l.sizeZ));}
                     else size.size=new ParticleSystem.MinMaxCurve(1,Curve(l.size));}
@@ -80,7 +88,7 @@ namespace YunJian.Riichi
                 else if(l.renderMode==2){renderer.mesh=plane;renderer.alignment=ParticleSystemRenderSpace.World;}
                 else renderer.alignment=ParticleSystemRenderSpace.View;
                 renderer.lengthScale=l.stretch;renderer.velocityScale=0;renderer.cameraVelocityScale=0;renderer.SetActiveVertexStreams(new List<ParticleSystemVertexStream>{ParticleSystemVertexStream.Position,ParticleSystemVertexStream.Color,ParticleSystemVertexStream.UV});
-                var material=new Material(Shader.Find("YunJian/WinParticle")){mainTexture=Resources.Load<Texture2D>("Majsoul/Actions/"+l.texture)};material.SetColor("_TintColor",C(l.tint));material.SetFloat("_DstBlend",l.blendDst==1?1:10);renderer.sharedMaterial=material;materials.Add(material);systems.Add(p);
+                var material=new Material(Shader.Find("YunJian/WinParticle")){mainTexture=Resources.Load<Texture2D>(textures+l.texture)};material.SetColor("_TintColor",C(l.tint));material.SetFloat("_DstBlend",l.blendDst==1?1:10);renderer.sharedMaterial=material;materials.Add(material);systems.Add(p);
             }
             Sample(-1);
         }

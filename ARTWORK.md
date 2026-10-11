@@ -160,3 +160,7 @@ bg_nickname 的斜边和透明区域使完整图片矩形的中心不等于玩�
 ## Unity 0.5.23 提示边框修正
 
 `Indicators/pop_frame.png` 从已有原版 `pop_bound` 派生，保留金色边缘与花纹，去掉半透明深蓝内部像素；原版 `pop_bg` 继续作为底图。出处、转换方式及 SHA-256 记录在 `Indicators/source.json`。其余结算字图、牌面、一姬立绘、音频和火龙卷资源沿用 0.5.22。
+
+## Unity 0.5.24 背景、等级火焰和整局开场
+
+`bg_jiesuan1`、开场四向画框、姓名底纹、自家标签及可匹配贴图从用户APK导出；役满和胜负场景参数/网格以及缺失贴图由雀魂官方固定版本资源补充。开场四张立绘画框由原版画框和已有一姬完整立绘按原节点位置合成。出处与哈希见 Results/source.json、MatchIntro/source.json、UiEffects/source.json。[实现说明](docs/原版背景与整局开场.md)。

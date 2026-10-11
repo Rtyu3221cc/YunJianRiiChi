@@ -29,6 +29,11 @@ namespace YunJian.Riichi
         float musicVolume=.35f, effectsVolume=.8f;
         TableEffects effects;
         readonly ResultPresentation resultDisplay=new ResultPresentation();
+        readonly MatchIntroduction introduction=new MatchIntroduction();
+        public float IntroRemaining=>introduction.Remaining;
+#if UNITY_EDITOR
+        public MatchIntroduction ValidationIntro=>introduction;
+#endif
 #if UNITY_EDITOR
         public ResultPresentation ValidationResult => resultDisplay;
 #endif
@@ -46,7 +51,7 @@ namespace YunJian.Riichi
 #if UNITY_EDITOR
         bool validationWaitInput;
 #endif
-        public bool OptionsReady => State!=null && !table.ArrangingHand && !effects.HasPendingActions;
+        public bool OptionsReady => State!=null && !introduction.Active && !table.ArrangingHand && !effects.HasPendingActions;
         bool CanInspectWaits => active && State!=null && (State.phase=="play" || State.phase=="reaction") && !showRoom && page!="settings" && page!="confirm-close";
         DiscardHint ActiveWaitHint => State?.discardHints?.FirstOrDefault(h=>h.id==SelectedAction);
         bool PreviewingDiscard => CanInspectWaits && State.phase=="play" && State.turn==State.you && SelectedAction!=null && State.options.Any(o=>o.id==SelectedAction && (o.kind=="discard" || o.kind=="riichi"));
@@ -80,12 +85,12 @@ namespace YunJian.Riichi
         public void ShowValidationFixture(RoomView fixture)
         {
             StopAllCoroutines(); Busy = false; State = fixture; active = true; page = "home";
-            ResetWaitPress();validationWaitInput=false;
+            introduction.Reset();ResetWaitPress();validationWaitInput=false;
             nextPoll = float.PositiveInfinity; ClearSelection();
             table.Render(fixture);gameAudio.SetScene(fixture);
             effects.Reset();resultDisplay.Reset();choosingKind=null;
         }
-        public void ValidationApplyState(RoomView fixture){State=fixture;RebindSelection();table.Render(fixture);gameAudio.SetScene(fixture);}
+        public void ValidationApplyState(RoomView fixture){State=fixture;introduction.Observe(fixture,true);RebindSelection();table.Render(fixture);gameAudio.SetScene(fixture);}
 #endif
 
         void Awake()
@@ -199,7 +204,7 @@ namespace YunJian.Riichi
                     bool changed = State == null || State.version != reply.state.version || State.phase != reply.state.phase;
                     State = reply.state;
                     if(State.phase!="play" && State.phase!="reaction")ResetWaitPress();
-                    voice.Observe(State);gameAudio.SetScene(State);
+                    introduction.Observe(State,validationSession);voice.Observe(State);gameAudio.SetScene(State);
                     if (State.phase == "empty" || State.phase == "join") { active = false; page = "home"; table.Clear(); }
                     else
                     {
@@ -235,6 +240,7 @@ namespace YunJian.Riichi
         void OnDisable(){ResetWaitPress();}
         void Update()
         {
+            introduction.Tick(gameAudio);
             if(State?.phase=="result" && (State.result.draw || !effects.ShowWinPresentation)){resultDisplay.Observe(State);settlementAudio.Tick(State,resultDisplay,true,gameAudio);}
             else if(State?.phase!="result")settlementAudio.Reset();
             bool waitInputConsumed=waitPressCaptured;
@@ -243,7 +249,7 @@ namespace YunJian.Riichi
 #endif
             waitInputConsumed=UpdateWaitPointer(new Vector2(Input.mousePosition.x,Screen.height-Input.mousePosition.y),Input.GetMouseButtonDown(0),Input.GetMouseButton(0),Input.GetMouseButtonUp(0),Time.unscaledTime);
             if (active && !Busy && Time.unscaledTime >= nextPoll) { nextPoll = Time.unscaledTime + .65f; StartCoroutine(Send(new RequestBody { op = "state" }, null, true)); }
-            if (active && Input.GetMouseButtonUp(0) && !waitInputConsumed && !InUI(Input.mousePosition))
+            if (active && !introduction.Active && Input.GetMouseButtonUp(0) && !waitInputConsumed && !InUI(Input.mousePosition))
             {
                 Ray ray = table.HandCamera.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(ray, out var hit, 100f))
@@ -261,7 +267,7 @@ namespace YunJian.Riichi
         void EnterHome()
         {
             generation++; active = false; State = null; ClearSelection(); RiichiMode = false;
-            page = "home";ResetWaitPress();table.Clear(); voice.Reset();gameAudio.Reset();settlementAudio.Reset();effects.Reset();resultDisplay.Reset();choosingKind=null;
+            page = "home";introduction.Reset();ResetWaitPress();table.Clear(); voice.Reset();gameAudio.Reset();settlementAudio.Reset();effects.Reset();resultDisplay.Reset();choosingKind=null;
         }
         void StartRoom(bool practice)
         {
@@ -358,6 +364,7 @@ namespace YunJian.Riichi
         }
         void OnGUI()
         {
+            if(introduction.Active){introduction.Draw();return;}
             Styles(); uiButtons.Clear(); var previous = GUI.matrix;
             CurrentWaitPanel=new Rect();CurrentWaitButton=new Rect();waitButtonScreenRect=new Rect();
             if(State?.phase!="result")resultDisplay.Reset();
@@ -551,7 +558,7 @@ namespace YunJian.Riichi
                 Rect r=new Rect(x+i*total/choices.Length,y,total/choices.Length-4,66);
                 var a=GUI.matrix.MultiplyPoint3x4(new Vector3(r.x,r.y,0));var b=GUI.matrix.MultiplyPoint3x4(new Vector3(r.xMax,r.yMax,0));uiButtons.Add(Rect.MinMaxRect(a.x,a.y,b.x,b.y));
                 var meld=choices[i].meld;var digits=meld.Skip(1).Where(char.IsDigit).ToArray();float tw=Mathf.Min(38,(r.width-8)/Mathf.Max(1,digits.Length));
-                for(int j=0;j<digits.Length;j++)GUI.DrawTexture(new Rect(r.center.x-digits.Length*tw/2+j*tw,r.y+1,tw-1,tw*1.5f),table.HandTexture(meld[0].ToString()+digits[j]),ScaleMode.ScaleToFit);
+                for(int j=0;j<digits.Length;j++)GUI.DrawTexture(new Rect(r.center.x-digits.Length*tw/2+j*tw,r.y+5,tw-1,tw*1.5f),table.HandTexture(meld[0].ToString()+digits[j]),ScaleMode.ScaleToFit);
                 bool old=GUI.enabled;GUI.enabled&=!Busy;if(GUI.Button(r,"",GUIStyle.none))Act(choices[i].id);GUI.enabled=old;
             }
         }
@@ -615,7 +622,7 @@ namespace YunJian.Riichi
         {
             switch (kind) { case "ron": return "荣和"; case "tsumo": return "自摸"; case "pon": return "碰"; case "chi": return "吃"; case "kan": case "minkan": return "杠"; case "nuki": return "拔北"; case "abort9": return "九种九牌"; case "pass": return "过"; default: return kind; }
         }
-        void OnApplicationPause(bool pause) { if(pause)ResetWaitPress();voice.Suspend(pause);settlementAudio.Suspend(pause);gameAudio.Suspend(pause);if(pause)table.Opening.Cancel();effects.Reset(); }
-        void OnDestroy() { bridge?.Dispose(); }
+        void OnApplicationPause(bool pause) { if(pause){introduction.Reset();resultDisplay.ClearEffects();ResetWaitPress();}voice.Suspend(pause);settlementAudio.Suspend(pause);gameAudio.Suspend(pause);if(pause)table.Opening.Cancel();effects.Reset(); }
+        void OnDestroy() { introduction.Reset();resultDisplay.Reset();bridge?.Dispose(); }
     }
 }

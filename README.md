@@ -1,5 +1,17 @@
 # 云间日麻
 
+## Unity 0.5.24 原版背景、役满火焰与整局开场
+
+安卓包：[下载 Unity 0.5.24 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.24/yunjian-riichi-unity-0.5.24.apk)，versionCode 25，同签名覆盖更新。
+
+- 吃牌组小幅下移，保留左右间距和牌底到金边的留白；四字结算标题沿用原字号。
+- 累计役满及一至六倍役满加入原版六层火焰/火星，使用原网格、4×4帧图、颜色曲线和横向发射范围，在标题出现300ms后启动。
+- 结算改用原版 `bg_jiesuan` 与1433×781的 `bg_jiesuan1` 分层，按原预制体矩形等比缩放/裁切，保留花纹和斜边比例。
+- 新开一整局播放原版四向画框、一姬立绘、玩家姓名、自家标签、胜负字与花瓣和声音；进出使用400ms的strongIn曲线。之后再发牌、理牌，AI等待开场结束。
+- 开场按整局编号去重。下一小局、轮询和已看过的重连不重播；结束整局后新开下一整局会再播放，支持三人和四人。
+
+[开场预览](dist/previews/unity-0.5.24-intro.png)、[役满火焰预览](dist/previews/unity-0.5.24-fire.png)、[不同屏幕比例](dist/previews/unity-0.5.24-backgrounds.png)、[吃牌框](dist/previews/unity-0.5.24-chi.png)、[实现与素材出处](docs/原版背景与整局开场.md)、[验证记录](dist/验证记录-unity-0.5.24.txt)。
+
 ## Unity 0.5.23 动画顺序与结算布局
 
 安卓包：[下载 Unity 0.5.23 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.23/yunjian-riichi-unity-0.5.23.apk)，versionCode 24，同签名覆盖更新。

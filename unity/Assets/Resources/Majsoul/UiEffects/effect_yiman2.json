@@ -1,0 +1,1032 @@
+{
+  "nodes": [
+    {
+      "name": "effect_yiman2",
+      "parent": -1,
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        -1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "effect_yiman",
+      "parent": 0,
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        -1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "effect_yiman",
+      "parent": 1,
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        -1
+      ],
+      "scale": [
+        0.9464,
+        0.9464531,
+        0.9464531
+      ]
+    },
+    {
+      "name": "lizi",
+      "parent": 2,
+      "position": [
+        0,
+        -0.021,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        -1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "fire up",
+      "parent": 2,
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        -1
+      ],
+      "scale": [
+        1,
+        2,
+        1
+      ]
+    },
+    {
+      "name": "lizi bao",
+      "parent": 2,
+      "position": [
+        0,
+        0.042,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        -1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "fire bao",
+      "parent": 2,
+      "position": [
+        2.580679e-15,
+        0.042,
+        -2.793968e-09
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        -1
+      ],
+      "scale": [
+        0.999997,
+        0.9999967,
+        0.9999967
+      ]
+    },
+    {
+      "name": "bao",
+      "parent": 2,
+      "position": [
+        -0.008,
+        0.0662,
+        -7.450581e-09
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        -1
+      ],
+      "scale": [
+        2.774718,
+        1.395885,
+        0.9999967
+      ]
+    }
+  ],
+  "layers": [
+    {
+      "name": "effect_yiman",
+      "node": 2,
+      "duration": 1,
+      "delay": 0,
+      "gravity": 0,
+      "rate": 150,
+      "maxParticles": 1000,
+      "renderMode": 4,
+      "stretch": 2,
+      "colorMin": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "colorMax": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "size3d": [],
+      "size3dMin": [],
+      "alpha": [
+        {
+          "time": 0,
+          "value": 0
+        },
+        {
+          "time": 0.3617609,
+          "value": 1
+        },
+        {
+          "time": 1,
+          "value": 1
+        }
+      ],
+      "size": [
+        {
+          "time": 0,
+          "value": 0.4941216
+        },
+        {
+          "time": 0.2940251,
+          "value": 1
+        },
+        {
+          "time": 1,
+          "value": 0
+        }
+      ],
+      "sizeX": [],
+      "sizeY": [],
+      "sizeZ": [],
+      "tiles": [
+        4,
+        4
+      ],
+      "frames": [],
+      "cycles": 1,
+      "bursts": [],
+      "texture": "native-ui-fire_bai_add",
+      "tint": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "blendDst": 1,
+      "lifeMin": 0.3,
+      "lifeMax": 0.8,
+      "sizeMin": 0.03,
+      "sizeMax": 0.02,
+      "speedMin": 0,
+      "speedMax": 0,
+      "rotationMin": 360,
+      "rotationMax": 0,
+      "shape": 3,
+      "radius": 1,
+      "coneAngle": 25,
+      "angularSpeed": 0,
+      "velocityMin": [
+        0,
+        0.1,
+        0
+      ],
+      "velocityMax": [
+        0,
+        0.2,
+        0
+      ],
+      "randomFrame": true,
+      "mesh": {
+        "positions": [
+          -1.2699999809265137,
+          1.2699999809265137,
+          -0.0,
+          1.2699999809265137,
+          1.2699999809265137,
+          -0.0,
+          -1.2699999809265137,
+          -1.2699999809265137,
+          -0.0,
+          1.2699999809265137,
+          -1.2699999809265137,
+          -0.0
+        ],
+        "uv": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "indices": [
+          2,
+          1,
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "box": [
+        0.62,
+        0,
+        0
+      ],
+      "nativeShape": true,
+      "randomDirection": 0,
+      "colors": [
+        {
+          "time": 0,
+          "color": [
+            1,
+            0.9960785,
+            0.5254902,
+            1
+          ]
+        },
+        {
+          "time": 0.2441138,
+          "color": [
+            1,
+            0.451754,
+            0.2231834,
+            1
+          ]
+        },
+        {
+          "time": 1,
+          "color": [
+            1,
+            0,
+            0,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "name": "lizi",
+      "node": 3,
+      "duration": 1,
+      "delay": 0,
+      "gravity": 0,
+      "rate": 50,
+      "maxParticles": 1000,
+      "renderMode": 4,
+      "stretch": 2,
+      "colorMin": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "colorMax": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "size3d": [],
+      "size3dMin": [],
+      "alpha": [],
+      "size": [
+        {
+          "time": 0,
+          "value": 0.182354
+        },
+        {
+          "time": 0.2940251,
+          "value": 1
+        },
+        {
+          "time": 1,
+          "value": 0
+        }
+      ],
+      "sizeX": [],
+      "sizeY": [],
+      "sizeZ": [],
+      "tiles": [
+        1,
+        1
+      ],
+      "frames": [],
+      "cycles": 1,
+      "bursts": [],
+      "texture": "native-ui-lizi_00015",
+      "tint": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "blendDst": 1,
+      "lifeMin": 0.4,
+      "lifeMax": 1,
+      "sizeMin": 0.01,
+      "sizeMax": 0.02,
+      "speedMin": 0,
+      "speedMax": 0,
+      "rotationMin": 360,
+      "rotationMax": 0,
+      "shape": 3,
+      "radius": 1,
+      "coneAngle": 25,
+      "angularSpeed": 0,
+      "velocityMin": [
+        0,
+        0.05,
+        0
+      ],
+      "velocityMax": [
+        0,
+        0.2,
+        0
+      ],
+      "mesh": {
+        "positions": [
+          -1.2699999809265137,
+          1.2699999809265137,
+          -0.0,
+          1.2699999809265137,
+          1.2699999809265137,
+          -0.0,
+          -1.2699999809265137,
+          -1.2699999809265137,
+          -0.0,
+          1.2699999809265137,
+          -1.2699999809265137,
+          -0.0
+        ],
+        "uv": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "indices": [
+          2,
+          1,
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "box": [
+        0.62,
+        0,
+        0
+      ],
+      "nativeShape": true,
+      "randomDirection": 0,
+      "colors": []
+    },
+    {
+      "name": "fire up",
+      "node": 4,
+      "duration": 1,
+      "delay": 0,
+      "gravity": 0,
+      "rate": 50,
+      "maxParticles": 1000,
+      "renderMode": 4,
+      "stretch": 2,
+      "colorMin": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "colorMax": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "size3d": [],
+      "size3dMin": [],
+      "alpha": [
+        {
+          "time": 0,
+          "value": 0
+        },
+        {
+          "time": 0.3617609,
+          "value": 1
+        },
+        {
+          "time": 1,
+          "value": 1
+        }
+      ],
+      "size": [
+        {
+          "time": 0,
+          "value": 0.4941216
+        },
+        {
+          "time": 0.2940251,
+          "value": 1
+        },
+        {
+          "time": 1,
+          "value": 0
+        }
+      ],
+      "sizeX": [],
+      "sizeY": [],
+      "sizeZ": [],
+      "tiles": [
+        4,
+        4
+      ],
+      "frames": [],
+      "cycles": 1,
+      "bursts": [],
+      "texture": "native-ui-fire_bai_add",
+      "tint": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "blendDst": 1,
+      "lifeMin": 0.3,
+      "lifeMax": 0.8,
+      "sizeMin": 0.015,
+      "sizeMax": 0.02,
+      "speedMin": 0,
+      "speedMax": 0,
+      "rotationMin": 360,
+      "rotationMax": 0,
+      "shape": 3,
+      "radius": 1,
+      "coneAngle": 25,
+      "angularSpeed": 0,
+      "velocityMin": [
+        0,
+        0.1,
+        0
+      ],
+      "velocityMax": [
+        0,
+        0.2,
+        0
+      ],
+      "randomFrame": true,
+      "mesh": {
+        "positions": [
+          -1.2699999809265137,
+          1.2699999809265137,
+          -0.0,
+          1.2699999809265137,
+          1.2699999809265137,
+          -0.0,
+          -1.2699999809265137,
+          -1.2699999809265137,
+          -0.0,
+          1.2699999809265137,
+          -1.2699999809265137,
+          -0.0
+        ],
+        "uv": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "indices": [
+          2,
+          1,
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "box": [
+        0.6,
+        0,
+        0
+      ],
+      "nativeShape": true,
+      "randomDirection": 0,
+      "colors": [
+        {
+          "time": 0,
+          "color": [
+            1,
+            0.9960785,
+            0.5254902,
+            1
+          ]
+        },
+        {
+          "time": 0.2441138,
+          "color": [
+            1,
+            0.451754,
+            0.2231834,
+            1
+          ]
+        },
+        {
+          "time": 1,
+          "color": [
+            1,
+            0,
+            0,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "name": "lizi bao",
+      "node": 5,
+      "duration": 5,
+      "delay": 0,
+      "gravity": 0,
+      "rate": 0,
+      "maxParticles": 1000,
+      "renderMode": 4,
+      "stretch": 2,
+      "colorMin": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "colorMax": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "size3d": [],
+      "size3dMin": [],
+      "alpha": [],
+      "size": [
+        {
+          "time": 0,
+          "value": 0.182354
+        },
+        {
+          "time": 0.2940251,
+          "value": 1
+        },
+        {
+          "time": 1,
+          "value": 0
+        }
+      ],
+      "sizeX": [],
+      "sizeY": [],
+      "sizeZ": [],
+      "tiles": [
+        1,
+        1
+      ],
+      "frames": [],
+      "cycles": 1,
+      "bursts": [
+        {
+          "time": 0,
+          "min": 50,
+          "max": 50
+        }
+      ],
+      "texture": "native-ui-lizi_00015",
+      "tint": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "blendDst": 1,
+      "lifeMin": 0.4,
+      "lifeMax": 1,
+      "sizeMin": 0.01,
+      "sizeMax": 0.02,
+      "speedMin": 0.5,
+      "speedMax": 1,
+      "rotationMin": 360,
+      "rotationMax": 0,
+      "shape": 0,
+      "radius": 0.04,
+      "coneAngle": 25,
+      "angularSpeed": 0,
+      "velocityMin": [
+        1,
+        0,
+        0
+      ],
+      "velocityMax": [
+        -1,
+        0,
+        0
+      ],
+      "mesh": {
+        "positions": [
+          -1.2699999809265137,
+          1.2699999809265137,
+          -0.0,
+          1.2699999809265137,
+          1.2699999809265137,
+          -0.0,
+          -1.2699999809265137,
+          -1.2699999809265137,
+          -0.0,
+          1.2699999809265137,
+          -1.2699999809265137,
+          -0.0
+        ],
+        "uv": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "indices": [
+          2,
+          1,
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "box": [],
+      "nativeShape": true,
+      "randomDirection": 1,
+      "colors": []
+    },
+    {
+      "name": "fire bao",
+      "node": 6,
+      "duration": 5,
+      "delay": 0,
+      "gravity": 0,
+      "rate": 0,
+      "maxParticles": 1000,
+      "renderMode": 4,
+      "stretch": 2,
+      "colorMin": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "colorMax": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "size3d": [],
+      "size3dMin": [],
+      "alpha": [
+        {
+          "time": 0,
+          "value": 1
+        },
+        {
+          "time": 1,
+          "value": 1
+        }
+      ],
+      "size": [
+        {
+          "time": 0,
+          "value": 0.182354
+        },
+        {
+          "time": 0.2940251,
+          "value": 1
+        },
+        {
+          "time": 1,
+          "value": 0
+        }
+      ],
+      "sizeX": [],
+      "sizeY": [],
+      "sizeZ": [],
+      "tiles": [
+        4,
+        4
+      ],
+      "frames": [],
+      "cycles": 1,
+      "bursts": [
+        {
+          "time": 0,
+          "min": 50,
+          "max": 50
+        }
+      ],
+      "texture": "native-ui-fire_bai_add",
+      "tint": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "blendDst": 1,
+      "lifeMin": 0.4,
+      "lifeMax": 1,
+      "sizeMin": 0.03,
+      "sizeMax": 0.07,
+      "speedMin": 0.1,
+      "speedMax": 0.4,
+      "rotationMin": 360,
+      "rotationMax": 0,
+      "shape": 0,
+      "radius": 0.05,
+      "coneAngle": 25,
+      "angularSpeed": 0,
+      "velocityMin": [
+        1,
+        0,
+        0
+      ],
+      "velocityMax": [
+        -1,
+        0,
+        0
+      ],
+      "randomFrame": true,
+      "mesh": {
+        "positions": [
+          -1.2699999809265137,
+          1.2699999809265137,
+          -0.0,
+          1.2699999809265137,
+          1.2699999809265137,
+          -0.0,
+          -1.2699999809265137,
+          -1.2699999809265137,
+          -0.0,
+          1.2699999809265137,
+          -1.2699999809265137,
+          -0.0
+        ],
+        "uv": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "indices": [
+          2,
+          1,
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "box": [],
+      "nativeShape": true,
+      "randomDirection": 1,
+      "colors": [
+        {
+          "time": 0,
+          "color": [
+            1,
+            0.7144016,
+            0.3529412,
+            1
+          ]
+        },
+        {
+          "time": 1,
+          "color": [
+            1,
+            0,
+            0,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "name": "bao",
+      "node": 7,
+      "duration": 1,
+      "delay": 0,
+      "gravity": 0,
+      "rate": 0,
+      "maxParticles": 1000,
+      "renderMode": 4,
+      "stretch": 2,
+      "colorMin": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "colorMax": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "size3d": [],
+      "size3dMin": [],
+      "alpha": [
+        {
+          "time": 0,
+          "value": 1
+        },
+        {
+          "time": 0.09117266,
+          "value": 1
+        },
+        {
+          "time": 0.1882353,
+          "value": 0.3139145
+        },
+        {
+          "time": 1,
+          "value": 0
+        }
+      ],
+      "size": [],
+      "sizeX": [],
+      "sizeY": [],
+      "sizeZ": [],
+      "tiles": [
+        1,
+        1
+      ],
+      "frames": [],
+      "cycles": 1,
+      "bursts": [
+        {
+          "time": 0,
+          "min": 2,
+          "max": 2
+        }
+      ],
+      "texture": "native-ui-lizi_00032",
+      "tint": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "blendDst": 1,
+      "lifeMin": 0.7,
+      "lifeMax": 0.7,
+      "sizeMin": 0.21,
+      "sizeMax": 0.21,
+      "speedMin": 0,
+      "speedMax": 0,
+      "rotationMin": 0,
+      "rotationMax": 0,
+      "shape": -1,
+      "radius": 0.03,
+      "coneAngle": 0,
+      "angularSpeed": 0,
+      "velocityMin": [],
+      "velocityMax": [],
+      "mesh": {
+        "positions": [
+          -1.2699999809265137,
+          1.2699999809265137,
+          -0.0,
+          1.2699999809265137,
+          1.2699999809265137,
+          -0.0,
+          -1.2699999809265137,
+          -1.2699999809265137,
+          -0.0,
+          1.2699999809265137,
+          -1.2699999809265137,
+          -0.0
+        ],
+        "uv": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "indices": [
+          2,
+          1,
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "box": [],
+      "nativeShape": true,
+      "randomDirection": 0,
+      "colors": [
+        {
+          "time": 0,
+          "color": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "time": 1,
+          "color": [
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    }
+  ]
+}

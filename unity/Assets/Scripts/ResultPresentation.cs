@@ -10,6 +10,9 @@ namespace YunJian.Riichi
     public sealed class ResultPresentation
     {
         public enum Action { None, Ready, Next, Home }
+        readonly NativeUiEffect limitFire=new NativeUiEffect();
+        public int LimitFireLayers=>limitFire.LayerCount;
+        public void ClearEffects()=>limitFire.Dispose();
         readonly Dictionary<string,Texture2D> art=new Dictionary<string,Texture2D>();
         string key; int winner; bool scores,drawStage; float started, skipped;
         GUIStyle text, number, roundText; Font font;
@@ -21,17 +24,18 @@ namespace YunJian.Riichi
         float Age => Freeze?FrozenAge:Time.unscaledTime-started+skipped;
         public float ElapsedAge=>Age;
         public int SkipSerial {get;private set;}
-        public void Reset(){key=null;winner=0;scores=false;drawStage=false;skipped=0;Freeze=false;}
+        public void Reset(){limitFire.Dispose();key=null;winner=0;scores=false;drawStage=false;skipped=0;Freeze=false;}
         public void Observe(RoomView v)
         {
             string next=v.audioRoom+":"+v.round+":"+v.honba+":"+v.result?.title+":"+string.Join(",",v.result?.delta??new int[0]);
             if(next==key)return;
-            key=next;winner=0;drawStage=v.result!=null && v.result.draw && ((!v.result.abort && (v.result.drawDetails?.Length??0)>0) || v.result.title=="九种九牌");
+            limitFire.Dispose();key=next;winner=0;drawStage=v.result!=null && v.result.draw && ((!v.result.abort && (v.result.drawDetails?.Length??0)>0) || v.result.title=="九种九牌");
             scores=!drawStage && (v.result?.details==null || v.result.details.Length==0);started=Time.unscaledTime;skipped=0;
         }
         float RevealEnd(WinDetail d) => SettlementAudio.Sequence(d).end;
         public void Advance(RoomView v)
         {
+            limitFire.Dispose();
             if(drawStage){drawStage=false;scores=true;started=Time.unscaledTime;skipped=0;FrozenAge=0;return;}
             if(scores){skipped=3.5f;return;}
             var d=v.result.details[winner];
@@ -126,13 +130,22 @@ namespace YunJian.Riichi
             GUI.matrix=matrix;
         }
         static readonly Vector2[] NativeYakuOffsets={new Vector2(119.72f,12.6f),new Vector2(70.72f,-81.4f),new Vector2(103.72f,-170.4f),new Vector2(214.72f,-243.4f),new Vector2(655.72f,82.6f),new Vector2(744.72f,10.6f),new Vector2(772.72f,-78.4f),new Vector2(665.72f,-184.4f)};
+        public static Rect NativeBackgroundRect(float virtualWidth,float virtualHeight=720){
+            float scale=Mathf.Max(1,Mathf.Max((virtualWidth+4)/1801f,virtualHeight/720));
+            return new Rect(640-900.5f*scale,360-134.67f*scale-497.685f*scale,1801f*scale,995.37f*scale);
+        }
+        void DrawNativeBackground(TableViewport viewport){
+            float width=Screen.width/viewport.Scale,height=Screen.height/viewport.Scale,scale=Mathf.Max(width/1280,height/720);
+            var color=GUI.color;GUI.color=new Color(color.r,color.g,color.b,color.a*.4f);Image("bg_jiesuan",new Rect(640-640*scale,360-360*scale,1280*scale,720*scale));GUI.color=color;
+            Image("bg_jiesuan1",NativeBackgroundRect(width,height));
+        }
         void Details(RoomView v,TableRenderer table,TableEffects effects)
         {
             var d=v.result.details[winner];float age=Age,entrance=Mathf.SmoothStep(0,1,age/.45f);
             var matrix=GUI.matrix;GUI.matrix*=Matrix4x4.Translate(new Vector3((1-entrance)*1280,0,0));
             var viewport=TableViewport.Fit(Screen.width,Screen.height,Screen.safeArea,false);
             float extra=(Screen.safeArea.width/viewport.Scale-1280)/2;
-            Image("bg_jiesuan",new Rect(-viewport.Origin.x/viewport.Scale-2,-viewport.Origin.y/viewport.Scale-2,Screen.width/viewport.Scale+4,Screen.height/viewport.Scale+4));
+            DrawNativeBackground(viewport);
             var portrait=effects.Art("yiji-full");
             if(portrait!=null)GUI.DrawTexture(NativeRect(-947,424,924.567f,1392.131f),portrait,ScaleMode.ScaleToFit);
             WinningHand(d,table);
@@ -187,6 +200,7 @@ namespace YunJian.Riichi
                     var names=LimitGlyphs(d.limit);var titleTextures=names.Select(Art).Where(t=>t!=null).ToArray();
                     float titleWidth=titleTextures.Sum(t=>124f*t.width/t.height)+Mathf.Max(0,titleTextures.Length-1)*1.5f;
                     var limit=new Rect(right-titleWidth,558,titleWidth+1,135);
+                    if(d.limit.Contains("役满") && age>=sequence.titleAt+.3f)limitFire.Draw(new Rect(limit.center.x-300,limit.center.y-145,600,260),d.limit=="役满"?"Majsoul/UiEffects/effect_yiman":"Majsoul/UiEffects/effect_yiman2",age-sequence.titleAt-.3f,25);
                     Glyphs(limit,names,124,TextAnchor.MiddleRight);
                 }
             }

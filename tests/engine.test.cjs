@@ -186,3 +186,9 @@ test('unseen counts normalize red fives and do not double count called discards'
  q.s.players[1].nuki=1;q.s.pending={from:1,tile:'z4',kind:'nuki'};assert.equal(q.unseen(0,'z4'),1);
  const s=fixture(3);assert.equal(s.unseen(0,'m2'),0);
 });
+
+test('full-match identity differs from hand identity and survives recovery',()=>{
+ const r=make(3),first=r.view(0);assert.equal(first.matchSeq,1);assert(first.matchStartedAt>0);r.newHand();assert.equal(r.view(0).matchSeq,1);assert.equal(r.view(0).matchStartedAt,first.matchStartedAt);
+ r.s.phase='result';r.s.result={matchOver:true};r.s.players.forEach(p=>p.ready=true);const next=r.dispatch({op:'next',token:r.s.players[0].token,version:r.s.version});assert(next.ok,next.error);assert.equal(next.state.matchSeq,2);assert(next.state.matchStartedAt>=first.matchStartedAt);
+ assert.equal(new Room('host',null,JSON.stringify(r.s)).view(1).matchSeq,2);assert(!('matchOpeningUntil'in next.state));assert(next.state.players.every(p=>!('hand'in p)));conservation(r);
+});

@@ -32,4 +32,12 @@ for rec in json.loads((assets/'Indicators/source.json').read_text(encoding='utf8
     file=assets/'Indicators'/(rec['name']+'.png')
     assert file.exists() and hashlib.sha256(file.read_bytes()).hexdigest()==rec['sha256'], 'Popup hash mismatch: '+rec['name']
 
+for folder in ['UiEffects','MatchIntro']:
+    for rec in json.loads((assets/folder/'source.json').read_text(encoding='utf8')):
+        if not rec.get('output'):continue
+        file=(assets/rec['output']).resolve();assert file.is_relative_to(assets.resolve()) and file.exists()
+        assert hashlib.sha256(file.read_bytes()).hexdigest()==rec['sha256'], 'New native resource hash mismatch: '+rec['output']
+for name in ['effect_yiman','effect_yiman2']:
+    ui=json.loads((assets/'UiEffects'/(name+'.json')).read_text(encoding='utf8'))
+    assert len(ui['layers'])==6 and any(l.get('colors')for l in ui['layers']) and any(l.get('box')for l in ui['layers'])
 print('PASS:',checked,'native transformed-asset hashes; 17 original audio hashes; 82 Ichihime clips; exact 305034 fire-tornado data with nine emitters/two meshes.')

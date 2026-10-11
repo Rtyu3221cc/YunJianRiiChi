@@ -11,6 +11,8 @@ for(const n of [3,4]) {
   room.dispatch({op:'create',host:'preview',name:'旅人',n,rounds:1,bots:true});
   const token=room.s.players[0].token;
   room.dispatch({op:'start',token,version:room.s.version});
+  // Synthetic preview generation runs after the presentation interval.
+  room.s.matchOpeningUntil=0;
   for(let step=0;step<600&&room.s.phase!=='result';step++) {
    const view=room.view(0);
    if(view.phase==='play' && view.options.some(a=>a.kind==='discard') && view.players.reduce((total,p)=>total+p.river.length,0)>=n*8) {preview=view;break;}

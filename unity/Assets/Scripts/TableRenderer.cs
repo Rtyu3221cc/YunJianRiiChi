@@ -354,7 +354,7 @@ namespace YunJian.Riichi
         public void Render(RoomView view)
         {
             bool keepHand=view.phase=="result" && view.result!=null && !view.result.draw && cameraHand!=null && handTiles.Count>0;
-            Clear(false,keepHand);state=view;opening.Observe(view);
+            Clear(false,keepHand);state=view;opening.Observe(view,GetComponent<RiichiClient>()?.IntroRemaining??0);
             bool exhausted=state.phase=="result" && state.result!=null && state.result.draw && !state.result.abort && (state.result.drawDetails?.Length??0)>0;
             if(exhausted || state.result?.abortHand!=null || state.phase=="result" && (state.result?.details?.Length??0)>0){string next=state.audioRoom+":"+state.round+":"+state.honba+":"+state.result.title;
                 if(next!=drawKey){drawKey=next;drawBegan=-1;}

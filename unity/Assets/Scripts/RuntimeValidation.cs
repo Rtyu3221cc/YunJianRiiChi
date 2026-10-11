@@ -17,7 +17,7 @@ namespace YunJian.Riichi
             folder = Path.GetFullPath("../build/unity-smoke"); Directory.CreateDirectory(folder);
             foreach (var name in new[] { "passed.txt", "failed.txt" })
                 if (File.Exists(Path.Combine(folder, name))) File.Delete(Path.Combine(folder, name));
-            var run = Environment.GetEnvironmentVariable("RIICHI_REVIEW_PREVIEW")=="1"?ReviewValidation0523.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_NATIVE_PREVIEW")=="1"?NativeFirePreview.Run(GetComponent<RiichiClient>(),folder):Run();
+            var run = Environment.GetEnvironmentVariable("RIICHI_FIDELITY_0524")=="1"?ReviewValidation0524.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_REVIEW_PREVIEW")=="1"?ReviewValidation0523.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_NATIVE_PREVIEW")=="1"?NativeFirePreview.Run(GetComponent<RiichiClient>(),folder):Run();
             while (true)
             {
                 bool next;
@@ -143,6 +143,7 @@ namespace YunJian.Riichi
                 }
             }
             var reviewProbe=ReviewValidation0523.Run(client,folder);while(reviewProbe.MoveNext())yield return reviewProbe.Current;
+            var review0524Probe=ReviewValidation0524.Run(client,folder);while(review0524Probe.MoveNext())yield return review0524Probe.Current;
             var nativeProbe=NativePresentationValidation.Run(client,folder);while(nativeProbe.MoveNext())yield return nativeProbe.Current;
             var openingProbe=ValidateOpeningAudio(client);while(openingProbe.MoveNext())yield return openingProbe.Current;
             var latestProbe=ValidateLatestFixes(client);while(latestProbe.MoveNext())yield return latestProbe.Current;

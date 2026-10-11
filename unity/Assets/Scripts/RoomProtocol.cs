@@ -7,7 +7,7 @@ namespace YunJian.Riichi
     [Serializable] public class RoomView
     {
         public string phase, pin, recovery, drawn, audioRoom;
-        public int handSeq; public long dealtAt;
+        public int handSeq,matchSeq; public long dealtAt,matchStartedAt;
         // Only this viewer's initial deal order; never part of PlayerView.
         public string[] openingHand = new string[0];
         public int version, you, n, rounds, round, dealer, honba, sticks, turn, remaining, audioSeq;
