@@ -49,10 +49,16 @@ namespace YunJian.Riichi
         }
         void UpdateDrawReveal()
         {
-            float t=Mathf.SmoothStep(0,1,(Time.unscaledTime-drawBegan)/.55f);
+            if(drawTiles.Count==0)return;
+            var fx=GetComponent<TableEffects>();
+            if(drawBegan<0){if(fx.HasPendingActions && !fx.WinActionStarted)return;drawBegan=Time.unscaledTime;GetComponent<GameAudio>()?.DrawReveal(drawKey);}
+            float age=Time.unscaledTime-drawBegan,t=HandRevealMotion.Progress(age);
+            if(cameraHand!=null && state?.phase=="result" && (state.result?.details??new WinDetail[0]).Any(d=>d.seat==state.you)){
+                foreach(var hand in handTiles){var renderer=hand.GetComponent<MeshRenderer>();var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block);block.SetFloat("_Opacity",Mathf.Clamp01(1-age/.14f));renderer.SetPropertyBlock(block);}
+            }
             foreach(var tile in drawTiles){
                 tile.Item1.localRotation=Quaternion.Euler(-90*(1-t),0,0);
-                tile.Item1.localPosition=tile.Item2+Vector3.up*original.TableLength*.29f*.5f*(1-t);
+                tile.Item1.localPosition=tile.Item2+Vector3.up*original.TableLength*.29f*.5f*Mathf.Max(0,1-t);
             }
         }
         Transform selfMelds;
@@ -133,11 +139,11 @@ namespace YunJian.Riichi
             }
             return Resources.Load<Texture2D>("Majsoul/Portraits/" + (p.bot ? "yiji" : "erjietang"));
         }
-        public void Clear(bool resetOpening=true)
+        public void Clear(bool resetOpening=true,bool keepHand=false)
         {
             if(resetOpening)opening.Reset();
-            foreach (Transform t in content) { t.gameObject.SetActive(false); Destroy(t.gameObject); }
-            exposedTiles.Clear();exposedGroups.Clear();selectedTile=null;handTiles.Clear(); handBase.Clear(); drawTiles.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); northTiles.Clear(); winningTiles.Clear(); responseTarget = null; selfMelds = null; cameraHand = null; state = null;
+            foreach (Transform t in content) { if(keepHand && t==cameraHand)continue;t.gameObject.SetActive(false); Destroy(t.gameObject); }
+            exposedTiles.Clear();exposedGroups.Clear();selectedTile=null;if(!keepHand){handTiles.Clear();handBase.Clear();cameraHand=null;}drawTiles.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); northTiles.Clear(); winningTiles.Clear(); responseTarget = null; selfMelds = null; state = null;
         }
         public int RelativeSeat(int i) => (i - state.you + state.n) % state.n;
         float Angle(int i)
@@ -236,7 +242,7 @@ namespace YunJian.Riichi
         public Vector3 NorthPoint(int seat, int extraction = 0)
         {
             var tile = NorthTarget(seat, extraction);
-            return tile != null ? tile.position : Quaternion.Euler(0, Angle(seat), 0) * new Vector3(seat == state.you ? -3.35f : 2, .02f, seat == state.you ? -3.08f : -2.70f);
+            return tile != null ? tile.position : Quaternion.Euler(0, Angle(seat), 0) * new Vector3(-2.95f, .02f, -3.10f);
         }
         public Transform MeldTarget(int seat) => meldAnchors.TryGetValue(seat, out var meld) ? meld : null;
         public Vector3 MeldPoint(int seat) { var meld = MeldTarget(seat); return meld != null ? meld.position : Quaternion.Euler(0, Angle(seat), 0) * new Vector3(0, .02f, -4.15f); }
@@ -251,7 +257,15 @@ namespace YunJian.Riichi
             var local = i == state.you ? new Vector3(-3.8f, .15f, -2.8f) : new Vector3(-2.9f, .15f, -3.7f);
             return Quaternion.Euler(0, angle, 0) * local;
         }
-        void LateUpdate() { opening.Apply(handTiles,handBase,GetComponent<GameAudio>());UpdateDrawReveal();FitCamera(Screen.width / (float)Screen.height); }
+        void LateUpdate() { opening.Apply(handTiles,handBase,GetComponent<GameAudio>());UpdateDrawReveal();ApplyDeferredDraw();FitCamera(Screen.width / (float)Screen.height); }
+        public bool DrawDeferred {get;private set;}
+        void ApplyDeferredDraw(){
+            if(state?.phase=="result")return;
+            DrawDeferred=state!=null && state.phase=="play" && state.turn==state.you && !string.IsNullOrEmpty(state.drawn) && !opening.Active && GetComponent<TableEffects>().HasPendingActions;
+            if(opening.Active || state==null || string.IsNullOrEmpty(state.drawn) || handTiles.Count==0)return;
+            var tile=handTiles[handTiles.Count-1];var renderer=tile.GetComponent<MeshRenderer>();var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block);block.SetFloat("_Opacity",DrawDeferred?0:1);renderer.SetPropertyBlock(block);
+            foreach(var collider in tile.GetComponentsInChildren<Collider>())collider.enabled=!DrawDeferred && tile.GetComponent<TileTarget>()!=null;
+        }
         public void FitCamera(float aspect)
         {
             // Preserve vertical composition on phones; fit the side hands on 16:9.
@@ -339,10 +353,11 @@ namespace YunJian.Riichi
         }
         public void Render(RoomView view)
         {
-            Clear(false); state = view; opening.Observe(view);
+            bool keepHand=view.phase=="result" && view.result!=null && !view.result.draw && cameraHand!=null && handTiles.Count>0;
+            Clear(false,keepHand);state=view;opening.Observe(view);
             bool exhausted=state.phase=="result" && state.result!=null && state.result.draw && !state.result.abort && (state.result.drawDetails?.Length??0)>0;
-            if(exhausted || state.result?.abortHand!=null){string next=state.audioRoom+":"+state.round+":"+state.honba+":"+state.result.title;
-                if(next!=drawKey){drawKey=next;drawBegan=Time.unscaledTime;GetComponent<GameAudio>()?.DrawReveal(next);}
+            if(exhausted || state.result?.abortHand!=null || state.phase=="result" && (state.result?.details?.Length??0)>0){string next=state.audioRoom+":"+state.round+":"+state.honba+":"+state.result.title;
+                if(next!=drawKey){drawKey=next;drawBegan=-1;}
             }else drawKey=null;
             if (state.phase != "play" && state.phase != "reaction" && state.phase != "result") return;
             var hub = scoreHub.Create(content, state);
@@ -387,9 +402,13 @@ namespace YunJian.Riichi
                 else if(shown!=null){
                     var revealed=new GameObject("Revealed winning hand").transform;revealed.SetParent(seat,false);
                     float pitch=.31f;float edge=Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f?4.0f:2.95f;
-                    for(int j=0;j<shown.tiles.Length;j++)Tile(revealed,shown.tiles[j],new Vector3(-2.2f+j*pitch,.02f,-edge),.29f);
+                    if(i==state.you){pitch=.37f;edge=4.05f;}
+                    for(int j=0;j<shown.tiles.Length;j++){
+                        var tile=Tile(revealed,shown.tiles[j],new Vector3((j-(shown.tiles.Length-1)*.5f)*pitch,.02f,-edge),i==state.you?.35f:.29f);
+                        drawTiles.Add(Tuple.Create(tile,tile.localPosition));
+                    }
                 }
-                else if (i == state.you) DrawHand();
+                else if (i == state.you) {if(!keepHand)DrawHand();}
                 else for (int j = 0; j < p.count - (SelfDrawWinner(i) != null ? 1 : 0); j++)
                 {
                     float edge = Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f ? 4.34f : 3.35f;
@@ -566,10 +585,10 @@ namespace YunJian.Riichi
             var extracted = new List<Transform>(); northTiles[index] = extracted;
             for (int i = 0; i < p.nuki; i++)
             {
-                var tile = Tile(north, "z4", new Vector3(self ? -3.35f : 2.0f, .02f, self ? -3.08f+i*.37f : -2.70f-i*.37f), .35f, .51f);
+                var tile = Tile(north, "z4", new Vector3(-2.95f, .02f, -3.10f+i*.37f), .35f, .51f);
                 // Rotate the glyph toward the table, with North tiles stacked
                 // along the side of each seat rather than across the corner.
-                tile.localRotation = Quaternion.Euler(0, self ? 90 : -90, 0);
+                tile.localRotation = Quaternion.Euler(0, 90, 0);
                 extracted.Add(tile);
             }
         }

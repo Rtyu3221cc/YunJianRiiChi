@@ -30,6 +30,12 @@ namespace YunJian.Riichi
         public void Reset() { Stop(); room = null; cursor = 0; }
         public void Suspend(bool flag) { suspended = flag; Reset(); }
         public void Preview() { Stop(); if (clips.TryGetValue("ron", out var clip)) output.PlayOneShot(clip); }
+        public void Observe(RoomView state){if(string.IsNullOrEmpty(state.audioRoom)){Reset();return;}if(room!=state.audioRoom){Reset();room=state.audioRoom;cursor=state.audioSeq;last=Time.unscaledTime;}}
+        public void QueuePresented(string key,PublicSound e){
+            if(room!=key || e.id<=cursor)return;cursor=e.id;if(!enabledVoice || suspended)return;
+            if(e.kind=="ron" || e.kind=="tsumo")Stop();string name=e.kind=="discard"?e.tile:e.kind;
+            if(name!=null && clips.ContainsKey(name))queue.Enqueue(Tuple.Create(name,Time.unscaledTime));
+        }
         public void Accept(RoomView state)
         {
             if (string.IsNullOrEmpty(state.audioRoom)) { Reset(); return; }

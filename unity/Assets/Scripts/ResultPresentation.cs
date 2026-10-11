@@ -67,7 +67,7 @@ namespace YunJian.Riichi
             var names=new List<string>();
             foreach(char c in value??""){
                 string glyph=c=='满'?"man":c=='贯'?"guan":c=='跳'?"tiao":c=='倍'?"bei":c=='役'?"yi":c=='三'?"san":c=='累'?"lei":c=='计'?"ji":
-                    c=='两'||c=='2'?"liang":c=='3'?"san":c=='4'?"si":c=='5'?"wu":c=='6'?"liu":null;
+                    c=='两'||c=='2'?"liang":c=='3'?"san":c=='4'||c=='四'?"si":c=='5'||c=='五'?"wu":c=='6'||c=='六'?"liu":null;
                 if(glyph!=null)names.Add("word_"+glyph);else if(char.IsDigit(c))names.Add("h_"+c);
             }
             return names.ToArray();
@@ -132,7 +132,7 @@ namespace YunJian.Riichi
             var matrix=GUI.matrix;GUI.matrix*=Matrix4x4.Translate(new Vector3((1-entrance)*1280,0,0));
             var viewport=TableViewport.Fit(Screen.width,Screen.height,Screen.safeArea,false);
             float extra=(Screen.safeArea.width/viewport.Scale-1280)/2;
-            Image("bg_jiesuan",new Rect(-extra-1.67f,-2.67f,1280+2*extra,720));
+            Image("bg_jiesuan",new Rect(-viewport.Origin.x/viewport.Scale-2,-viewport.Origin.y/viewport.Scale-2,Screen.width/viewport.Scale+4,Screen.height/viewport.Scale+4));
             var portrait=effects.Art("yiji-full");
             if(portrait!=null)GUI.DrawTexture(NativeRect(-947,424,924.567f,1392.131f),portrait,ScaleMode.ScaleToFit);
             WinningHand(d,table);
@@ -179,8 +179,15 @@ namespace YunJian.Riichi
                 GUI.matrix=scoreMatrix;
                 }
                 if(age>=sequence.titleAt && !string.IsNullOrEmpty(d.limit)){
-                    var limit=NativeRect(-62,-412,650,155,.66153848f,.4333333f,1.2f);
-                    Glyphs(limit,LimitGlyphs(d.limit),124,TextAnchor.MiddleLeft);
+                    var pointBox=NativeRect(555,-315,589,110,.49235994f,.5f,1.2f);
+                    var pointTextures=Digits(score.defen,"ww_").Concat(new[]{"word_point"}).Select(Art).Where(t=>t!=null).ToArray();
+                    float pointWidth=pointTextures.Sum(t=>88f*t.width/t.height)+Mathf.Max(0,pointTextures.Length-1)*1.5f;
+                    pointWidth*=Mathf.Min(1,Mathf.Min(pointBox.width/pointWidth,pointBox.height/88));
+                    float right=Mathf.Min(905,pointBox.xMax-pointWidth-42);
+                    var names=LimitGlyphs(d.limit);var titleTextures=names.Select(Art).Where(t=>t!=null).ToArray();
+                    float titleWidth=titleTextures.Sum(t=>124f*t.width/t.height)+Mathf.Max(0,titleTextures.Length-1)*1.5f;
+                    var limit=new Rect(right-titleWidth,558,titleWidth+1,135);
+                    Glyphs(limit,names,124,TextAnchor.MiddleRight);
                 }
             }
             GUI.matrix=matrix;

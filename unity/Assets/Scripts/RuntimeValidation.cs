@@ -17,7 +17,7 @@ namespace YunJian.Riichi
             folder = Path.GetFullPath("../build/unity-smoke"); Directory.CreateDirectory(folder);
             foreach (var name in new[] { "passed.txt", "failed.txt" })
                 if (File.Exists(Path.Combine(folder, name))) File.Delete(Path.Combine(folder, name));
-            var run = Environment.GetEnvironmentVariable("RIICHI_NATIVE_PREVIEW")=="1"?NativeFirePreview.Run(GetComponent<RiichiClient>(),folder):Run();
+            var run = Environment.GetEnvironmentVariable("RIICHI_REVIEW_PREVIEW")=="1"?ReviewValidation0523.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_NATIVE_PREVIEW")=="1"?NativeFirePreview.Run(GetComponent<RiichiClient>(),folder):Run();
             while (true)
             {
                 bool next;
@@ -53,7 +53,7 @@ namespace YunJian.Riichi
                 yield return null;
             }
             Require(client.State != null && client.State.phase == "play" && !client.Busy && client.State.options.Any(x => x.kind == "discard"), "Live practice failed to reach the human discard turn");
-            while(table.ArrangingHand)yield return null;
+            while(!client.OptionsReady)yield return null;
             var state = client.State; int before = state.players[state.you].river.Length;
             yield return null; Physics.SyncTransforms();
             var tile = FindObjectsByType<TileTarget>(FindObjectsSortMode.None).OrderBy(t => t.Index).First();
@@ -142,6 +142,7 @@ namespace YunJian.Riichi
                     Require(File.Exists(fullFile), "Full game-view capture failed at " + suffix);
                 }
             }
+            var reviewProbe=ReviewValidation0523.Run(client,folder);while(reviewProbe.MoveNext())yield return reviewProbe.Current;
             var nativeProbe=NativePresentationValidation.Run(client,folder);while(nativeProbe.MoveNext())yield return nativeProbe.Current;
             var openingProbe=ValidateOpeningAudio(client);while(openingProbe.MoveNext())yield return openingProbe.Current;
             var latestProbe=ValidateLatestFixes(client);while(latestProbe.MoveNext())yield return latestProbe.Current;
@@ -405,7 +406,7 @@ namespace YunJian.Riichi
                 {
                     var inward=Vector3.ProjectOnPlane(-tile.position,Vector3.up).normalized;
                     Require(Vector3.Dot(tile.forward,inward)>.45f,"Extracted North glyph faces away from table");
-                    Require(Mathf.Abs(tile.localPosition.x-(seat==view.you?-3.35f:2.0f))<.001f,"North tiles do not stack along the seat edge");
+                    Require(Mathf.Abs(tile.localPosition.x-(-2.95f))<.001f,"North tiles do not stack along the seat edge");
                 }
             }
         }

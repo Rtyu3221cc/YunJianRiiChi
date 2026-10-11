@@ -49,7 +49,7 @@ namespace YunJian.Riichi
         }
         public void Initialize(Vector3 point,float angle,float now,uint seed)
         {
-            StartedAt=now;transform.position=point+Vector3.up*.045f;transform.rotation=Quaternion.Euler(0,angle,0);transform.localScale=Vector3.one*(.33f/.02947767f);
+            StartedAt=now;transform.position=point+Vector3.up*.045f;var camera=GetComponentInParent<TableRenderer>()?.Camera;float yaw=camera==null?angle:Mathf.Atan2(point.x-camera.transform.position.x,point.z-camera.transform.position.z)*Mathf.Rad2Deg;transform.rotation=Quaternion.Euler(0,yaw,0);transform.localScale=Vector3.one*(.33f/.02947767f);
             var plane=new Mesh{name="Native horizontal billboard",vertices=new[]{new Vector3(-.5f,0,-.5f),new Vector3(-.5f,0,.5f),new Vector3(.5f,0,.5f),new Vector3(.5f,0,-.5f)},uv=new[]{Vector2.zero,Vector2.up,Vector2.one,Vector2.right},triangles=new[]{0,1,2,0,2,3}};
             plane.RecalculateBounds();meshes.Add(plane);
             var config=JsonUtility.FromJson<Config>(Resources.Load<TextAsset>("Majsoul/Actions/fire-effect").text);var nodes=new Transform[config.nodes.Length];

@@ -46,6 +46,7 @@ namespace YunJian.Riichi
 #if UNITY_EDITOR
         bool validationWaitInput;
 #endif
+        public bool OptionsReady => State!=null && !table.ArrangingHand && !effects.HasPendingActions;
         bool CanInspectWaits => active && State!=null && (State.phase=="play" || State.phase=="reaction") && !showRoom && page!="settings" && page!="confirm-close";
         DiscardHint ActiveWaitHint => State?.discardHints?.FirstOrDefault(h=>h.id==SelectedAction);
         bool PreviewingDiscard => CanInspectWaits && State.phase=="play" && State.turn==State.you && SelectedAction!=null && State.options.Any(o=>o.id==SelectedAction && (o.kind=="discard" || o.kind=="riichi"));
@@ -157,10 +158,10 @@ namespace YunJian.Riichi
             bool legal=action!=null && State.options.Any(o=>o.id==action && (o.kind=="discard" || o.kind=="riichi"));
             bool choosing=State.options.Any(o=>o.kind==(RiichiMode?"riichi":"discard"));
             if(choosing && !legal)return;
-            if(legal && !Busy && SelectedIndex==index && SelectedAction==action){ClearSelection();table.SelectHand(-1);Act(action);return;}
+            if(legal && OptionsReady && !Busy && SelectedIndex==index && SelectedAction==action){ClearSelection();table.SelectHand(-1);Act(action);return;}
             SelectedIndex=index;SelectedAction=legal?action:null;selectedFace=hand[index];selectedCopy=hand.Take(index).Count(t=>t==selectedFace);table.SelectHand(index);
         }
-        public void Act(string id) { if(table.ArrangingHand)return;choosingKind=null;StartCoroutine(Send(new RequestBody { op = "action", action = id })); }
+        public void Act(string id) { if(!OptionsReady)return;choosingKind=null;StartCoroutine(Send(new RequestBody { op = "action", action = id })); }
         IEnumerator Send(RequestBody req, Action success = null, bool poll = false)
         {
             if (Busy) yield break;
@@ -198,7 +199,7 @@ namespace YunJian.Riichi
                     bool changed = State == null || State.version != reply.state.version || State.phase != reply.state.phase;
                     State = reply.state;
                     if(State.phase!="play" && State.phase!="reaction")ResetWaitPress();
-                    voice.Accept(State);gameAudio.SetScene(State);
+                    voice.Observe(State);gameAudio.SetScene(State);
                     if (State.phase == "empty" || State.phase == "join") { active = false; page = "home"; table.Clear(); }
                     else
                     {
@@ -506,7 +507,7 @@ namespace YunJian.Riichi
         }
         void ChooseActionKind(string kind)
         {
-            if(Busy)return;
+            if(Busy || !OptionsReady)return;
             var choices=State.options.Where(x=>x.kind==kind).ToArray();
             if(choices.Length==1)Act(choices[0].id);
             else if(choices.Length>1)choosingKind=choosingKind==kind?null:kind;
@@ -524,6 +525,7 @@ namespace YunJian.Riichi
 #endif
         void DrawActionButtons(float width,float height)
         {
+            if(!OptionsReady)return;
             var groups=State.options.Where(x=>x.kind!="discard" && x.kind!="riichi").GroupBy(x=>x.kind).OrderBy(g=>g.Key=="pass"?1:0).ToArray();
             var rects=ActionRects(width,height);int index=0;
             if(State.options.Any(x=>x.kind=="riichi"))
@@ -549,7 +551,7 @@ namespace YunJian.Riichi
                 Rect r=new Rect(x+i*total/choices.Length,y,total/choices.Length-4,66);
                 var a=GUI.matrix.MultiplyPoint3x4(new Vector3(r.x,r.y,0));var b=GUI.matrix.MultiplyPoint3x4(new Vector3(r.xMax,r.yMax,0));uiButtons.Add(Rect.MinMaxRect(a.x,a.y,b.x,b.y));
                 var meld=choices[i].meld;var digits=meld.Skip(1).Where(char.IsDigit).ToArray();float tw=Mathf.Min(38,(r.width-8)/Mathf.Max(1,digits.Length));
-                for(int j=0;j<digits.Length;j++)GUI.DrawTexture(new Rect(r.center.x-digits.Length*tw/2+j*tw,r.y+9,tw-1,tw*1.5f),table.HandTexture(meld[0].ToString()+digits[j]),ScaleMode.ScaleToFit);
+                for(int j=0;j<digits.Length;j++)GUI.DrawTexture(new Rect(r.center.x-digits.Length*tw/2+j*tw,r.y+1,tw-1,tw*1.5f),table.HandTexture(meld[0].ToString()+digits[j]),ScaleMode.ScaleToFit);
                 bool old=GUI.enabled;GUI.enabled&=!Busy;if(GUI.Button(r,"",GUIStyle.none))Act(choices[i].id);GUI.enabled=old;
             }
         }

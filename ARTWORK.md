@@ -156,3 +156,7 @@ bg_nickname 的斜边和透明区域使完整图片矩形的中心不等于玩�
 ## Unity 0.5.22 提示框、报役和火龙卷
 
 原始 `pop_bound`/`bg_3` 以及 `showtile`、`hule_fan_out`、`fu_appear`、`score_appear`、`mangan`、`beiman`、`yakuman` 等声音从用户 APK 导出。缺失的深蓝 `pop_bg`、一姬 82 条役种/结果语音和火龙卷 305034 场景/音效使用雀魂官方固定版本资源；所有资源离线打包，来源和 SHA-256 见 `SettlementVoice/provenance.json`、`SettlementVoice/manifest.json`、`Audio/provenance.json`、`Indicators/source.json`。真实网格和原版粒子数据取代旧的程序旋风。[详细说明](docs/原版提示与结算音效.md)。
+
+## Unity 0.5.23 提示边框修正
+
+`Indicators/pop_frame.png` 从已有原版 `pop_bound` 派生，保留金色边缘与花纹，去掉半透明深蓝内部像素；原版 `pop_bg` 继续作为底图。出处、转换方式及 SHA-256 记录在 `Indicators/source.json`。其余结算字图、牌面、一姬立绘、音频和火龙卷资源沿用 0.5.22。

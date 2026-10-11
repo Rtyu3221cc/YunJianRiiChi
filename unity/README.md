@@ -1,5 +1,17 @@
 # 云间日麻 Unity 三维客户端
 
+## Unity 0.5.23 动画顺序与结算布局
+
+安卓包：[下载 Unity 0.5.23 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.23/yunjian-riichi-unity-0.5.23.apk)，versionCode 24，同签名覆盖更新。
+
+- 拔北统一放在每个座位的左角，牌的朝向随座位旋转；对手和牌时保留自己的手牌。
+- 出牌、鸣牌、立直与下一次摸牌依次呈现，吃碰胡、拔北等操作等前面的动作和理牌结束后开放。
+- 放倒手牌加入预备、加速、触桌和回弹阶段；自摸/荣和提示文字恢复较大的尺寸，火龙卷朝向当前相机。
+- 结算背景覆盖屏幕边缘；满贯标题避开点数，三倍役满等四字标题保持字号并左移。展示普通和牌、满贯各等级和一至六倍役满。
+- 听牌框去掉横线；吃牌小麻将保留左右间距，上移后给底边留出空隙。
+
+[各等级实际 Unity 预览](../dist/previews/unity-0.5.23-limits.png)、[桌面预览](../dist/previews/unity-0.5.23-review.png)、[实现说明](../docs/动画顺序与结算布局.md)、[验证记录](../dist/验证记录-unity-0.5.23.txt)。
+
 ## Unity 0.5.22 原版提示、结算报役与火龙卷
 
 安卓包：[下载 Unity 0.5.22 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.22/yunjian-riichi-unity-0.5.22.apk)，versionCode 23，同签名覆盖更新。

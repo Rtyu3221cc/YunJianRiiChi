@@ -43,7 +43,7 @@ namespace YunJian.Riichi
             float scale=Mathf.Min(.40f,Mathf.Min(r.width/(b.x+b.z+1),r.height/(b.y+b.w+1)));
             float[] dx={r.x,r.x+b.x*scale,r.xMax-b.z*scale,r.xMax},dy={r.y,r.y+b.w*scale,r.yMax-b.y*scale,r.yMax};
             float[] sx={0,b.x,t.width-b.z,t.width},sy={0,b.w,t.height-b.y,t.height};
-            foreach(var layer in name=="pop_bound"?new[]{Art("pop_bg"),t}:new[]{t}){
+            foreach(var layer in name=="pop_bound"?new[]{Art("pop_bg"),Art("pop_frame")}:new[]{t}){
                 if(layer==null)continue;
                 for(int y=0;y<3;y++)for(int x=0;x<3;x++)
                     if(dx[x+1]>dx[x] && dy[y+1]>dy[y])GUI.DrawTextureWithTexCoords(Rect.MinMaxRect(dx[x],dy[y],dx[x+1],dy[y+1]),layer,new Rect(sx[x]/t.width,1-sy[y+1]/t.height,(sx[x+1]-sx[x])/t.width,(sy[y+1]-sy[y])/t.height));

@@ -28,4 +28,8 @@ for layer in effect['layers']:
     if layer['renderMode']==4:
         mesh=layer['mesh'];assert len(mesh['indices'])%3==0 and len(mesh['positions'])//3==len(mesh['uv'])//2
 assert (assets/'Indicators/pop_bg.png').exists() and (assets/'Indicators/pop_bound.png').exists()
+for rec in json.loads((assets/'Indicators/source.json').read_text(encoding='utf8'))['sprites']:
+    file=assets/'Indicators'/(rec['name']+'.png')
+    assert file.exists() and hashlib.sha256(file.read_bytes()).hexdigest()==rec['sha256'], 'Popup hash mismatch: '+rec['name']
+
 print('PASS:',checked,'native transformed-asset hashes; 17 original audio hashes; 82 Ichihime clips; exact 305034 fire-tornado data with nine emitters/two meshes.')

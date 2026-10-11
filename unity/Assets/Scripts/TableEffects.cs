@@ -38,6 +38,7 @@ namespace YunJian.Riichi
         public int SpawnedWinEffects { get; private set; }
         static bool IsWin(PublicSound e) => e!=null && (e.kind=="ron" || e.kind=="tsumo");
         public bool ShowWinPresentation => IsWin(current) || IsWin(call) || handEvents.Any(IsWin) || callEvents.Any(IsWin) || winEffects.Count>0;
+        public bool WinActionStarted=>IsWin(current) || IsWin(call);
         readonly List<NorthPetals> northEffects = new List<NorthPetals>();
         bool handedOff;
         public int SpawnedNorthEffects { get; private set; }
@@ -45,6 +46,7 @@ namespace YunJian.Riichi
         Camera overlay;
         public int PlayedEvents { get; private set; }
         public bool IsAnimating => current != null || call != null;
+        public bool HasPendingActions => IsAnimating || handEvents.Count>0 || callEvents.Count>0;
         public bool ValidationFreeze;
         public float ValidationTime;
         public int ActiveSeat => current == null ? -1 : current.seat;
@@ -72,7 +74,7 @@ namespace YunJian.Riichi
         }
         public void Reset()
         {
-            Finish(); FinishCall(); EndImpact(); EndNorthEffects(); EndWinEffects(); winningBursts.Clear(); ClearQueuedHands(); callEvents.Clear(); room = null; cursor = 0; last = Time.unscaledTime;
+            Finish(); FinishCall(); EndImpact(); EndNorthEffects(); EndWinEffects(); winningBursts.Clear(); ClearQueuedHands(); callEvents.Clear(); room = null; cursor = 0;spokenEvent=-1; last = Time.unscaledTime;
         }
         public void Accept(RoomView view)
         {
@@ -83,7 +85,7 @@ namespace YunJian.Riichi
             cursor = Math.Max(cursor, view.audioSeq);
             if (stale) { Finish(); FinishCall(); EndNorthEffects(); EndWinEffects(); ClearQueuedHands(); callEvents.Clear(); return; }
             if(view.phase!="result" && !ShowWinPresentation)winningBursts.Clear();
-            if(fresh.Any(IsWin) && !ShowWinPresentation) {Finish();FinishCall();EndImpact();EndNorthEffects();ClearQueuedHands();callEvents.Clear();}
+            // A newly received win is queued behind unfinished discard/declaration hands.
             foreach (var item in fresh)
             {
                 if (item.seat < 0 || item.seat >= view.n) continue;
@@ -101,7 +103,7 @@ namespace YunJian.Riichi
             // does rebuild the table, so the replaced object has to be hidden again.
             // Start and hide before rendering this accepted state, rather than waiting
             // for Update next frame. Queued discards stay hidden until their hand-off.
-            if(current==null && handEvents.Count>0)Begin(handEvents.Dequeue());
+            StartQueued();
             if (current != null) HideTarget();
             foreach(var pending in handEvents)if(pending.kind=="discard"){
                 var tile=table.FindDiscard(pending.seat,pending.tile,pending.riverIndex);if(tile!=null)tile.gameObject.SetActive(false);
@@ -142,6 +144,14 @@ namespace YunJian.Riichi
             }
             clips[stem] = clip;
         }
+        int spokenEvent=-1;
+        void StartQueued(){
+            if(current!=null || call!=null || table.ArrangingHand)return;
+            int hand=handEvents.Count>0?handEvents.Peek().id:int.MaxValue,shout=callEvents.Count>0?callEvents.Peek().id:int.MaxValue,id=Math.Min(hand,shout);
+            if(id==int.MaxValue)return;
+            PublicSound item=null;if(hand==id){item=handEvents.Dequeue();Begin(item);}if(shout==id){item=callEvents.Dequeue();BeginCall(item);}
+            if(item!=null && item.id!=spokenEvent){spokenEvent=item.id;GetComponent<RoleVoice>()?.QueuePresented(room,item);}
+        }
         void Begin(PublicSound item)
         {
             if(item.kind=="discard" && item.riverIndex>0 && table.FindDiscard(item.seat,item.tile,item.riverIndex)==null)return;
@@ -174,7 +184,7 @@ namespace YunJian.Riichi
             mesh.vertices=clip.vertices[0];mesh.normals=clip.normals[0];mesh.RecalculateBounds();
             if(animatedTile!=null){
                 animatedTile.position=motion.TransformPoint(TilePoint(0))-Vector3.up*.12f;
-                animatedTile.rotation=Quaternion.Euler(0,table.SeatAngle(item.seat)+(!stick&&item.riichi?90:0),0);
+                animatedTile.rotation=item.kind=="nuki"?table.NorthTarget(item.seat,item.nuki).rotation:Quaternion.Euler(0,table.SeatAngle(item.seat)+(!stick&&item.riichi?90:0),0);
             }
             HideTarget();
         }
@@ -301,8 +311,7 @@ namespace YunJian.Riichi
         }
         void Update()
         {
-            if (current==null && handEvents.Count>0) Begin(handEvents.Dequeue());
-            if (call==null && callEvents.Count>0) BeginCall(callEvents.Dequeue());
+            StartQueued();
             UpdateImpact(); UpdateNorthEffects(); UpdateWinEffects();
             float elapsed=ValidationFreeze?ValidationTime:Time.unscaledTime-started;
             if (current!=null && elapsed >= PlayLength) { CompleteHandoff(); Finish(); }
@@ -342,7 +351,7 @@ namespace YunJian.Riichi
             var old=GUI.color;GUI.color=new Color(1,1,1,alpha);
             var bg=Art(seat==0 || (n==4 && seat==2) || (n==3 && seat==1)?"shout_vertical":"shout_horizontal");if(bg!=null)GUI.DrawTexture(new Rect(origin.x,origin.y+70,cw+80,ch-65),bg,ScaleMode.StretchToFill);
             var portrait=Art("yiji-full");if(portrait!=null)GUI.DrawTextureWithTexCoords(new Rect(origin.x,origin.y,cw,ch),portrait,new Rect(0,.45f,1,.55f));
-            var word=Art(name);if(word!=null)GUI.DrawTexture(new Rect(origin.x+170,origin.y+85,135,120),word,ScaleMode.ScaleToFit);
+            var word=Art(name);if(word!=null){bool win=call.kind=="tsumo" || call.kind=="ron";GUI.DrawTexture(win?new Rect(Mathf.Clamp(origin.x+130,8,width-253),origin.y+156,245,110):new Rect(Mathf.Clamp(origin.x+170,8,width-168),origin.y+104,160,105),word,ScaleMode.ScaleToFit);}
             GUI.color=old;
         }
 #if UNITY_EDITOR
