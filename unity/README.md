@@ -1,5 +1,13 @@
 # 云间日麻 Unity 三维客户端
 
+## Unity 0.5.29：点击樱花与牌桌复核
+
+安装包：[下载 Unity 0.5.29 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.29/yunjian-riichi-unity-0.5.29.apk)，versionCode 30，与 0.5.27／0.5.28 同证书。点击屏幕播放雀魂默认点击特效 `effect_click_default`（樱花序列帧 + 粉色闪光）；同类牌指示改为整牌统一蓝色；拔北牌缩小到与自家副露同尺寸；房间文字不再裁切；牌河错落调小。
+
+## Unity 0.5.28：牌桌光照与质感（1012-2）
+
+本地安卓包：`../dist/yunjian-riichi-unity-0.5.28.apk`，versionCode 29。[实现与来源](../docs/1012-2牌桌光照与质感.md)：按 APK `scene_mj` 移植卡通明暗与描边、原版牌下阴影、`sun_shine` 光束浮尘，房间文字底图、名称与称号尺寸、`UI_ChiPengHu` 按钮位置，以及预览纹理的渲染时机修正。
+
 ## Unity 0.5.27：恢复自家副露尺寸
 
 安装包：[Unity 0.5.27 签名兼容修正版 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.27/yunjian-riichi-unity-0.5.27-signed.apk)，versionCode 28。补齐 v1/JAR 签名并保留 v2，使用相同证书；[签名修正与验证](../docs/0.5.27安装包签名修正.md)。取消自家副露的额外缩小，保留贴底位置与手牌间距。见[尺寸修正与验证](../docs/自家副露尺寸修正.md)。

@@ -2,7 +2,7 @@
 
 ## Unity 0.5.29：点击樱花与牌桌复核
 
-本地安卓包：`dist/yunjian-riichi-unity-0.5.29.apk`，versionCode 30，v1+v2 签名，与 0.5.27／0.5.28 同证书，可覆盖更新。
+安卓包：[下载 Unity 0.5.29 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.29/yunjian-riichi-unity-0.5.29.apk)，versionCode 30，v1+v2 签名，与 0.5.27／0.5.28 同证书，可覆盖更新。SHA-256 见 `dist/SHA256-unity-0.5.29.txt`。
 
 - 点击屏幕任意位置播放雀魂默认点击特效 `effect_click_default`（樱花序列帧花瓣 + 粉色闪光，APK 原贴图，绘制在 HUD 之上）。
 - 同类牌指示改为整张牌（牌面、牌身、描边）统一染原版蓝色，修正只有牌面变蓝的问题。
