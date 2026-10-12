@@ -172,3 +172,6 @@ bg_nickname 的斜边和透明区域使完整图片矩形的中心不等于玩�
 ## Unity 0.5.24 背景、等级火焰和整局开场
 
 `bg_jiesuan1`、开场四向画框、姓名底纹、自家标签及可匹配贴图从用户APK导出；役满和胜负场景参数/网格以及缺失贴图由雀魂官方固定版本资源补充。开场四张立绘画框由原版画框和已有一姬完整立绘按原节点位置合成。出处与哈希见 Results/source.json、MatchIntro/source.json、UiEffects/source.json。[实现说明](docs/原版背景与整局开场.md)。
+# 0.5.30 新增来源
+
+`Review1012c` 中的 `cutinbg`、`cutin_line`、`rank_bg`、`sima_queshi`、`star`、`starbg` 来自所提供雀魂 APK 的原图。`cutin-layout`、`cutin-animation`、`intro-name-layout` 分别来自 `UI_CutIn`、其 AnimationClip 及 `UI_FightBegin` 的序列化数据。原 bundle、pathID 和导出文件 SHA-256 见 `Review1012c/source.json`；导入、校验脚本为 `scripts/import-review-1012c.py` 和 `scripts/verify-review-1012c.py`。一姬立绘及默认称号沿用已记录来源的现有资源，未使用生成图片。

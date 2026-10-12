@@ -1,5 +1,9 @@
 # 云间日麻 Unity 三维客户端
 
+## Unity 0.5.30：1012-3 逐项修正
+
+[下载 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.30/yunjian-riichi-unity-0.5.30.apk)，versionCode 31。见 [11项实现、来源及截图](../docs/1012-3逐项修正与截图.md)。新增资源来源记录位于 `Assets/Resources/Majsoul/Review1012c/source.json`；`RIICHI_REVIEW_1012C=1` 可运行专项截图验证。完整 Play 与专项渲染均通过，安卓真机未测。
+
 ## Unity 0.5.29：点击樱花与牌桌复核
 
 安装包：[下载 Unity 0.5.29 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.29/yunjian-riichi-unity-0.5.29.apk)，versionCode 30，与 0.5.27／0.5.28 同证书。点击屏幕播放雀魂默认点击特效 `effect_click_default`（樱花序列帧 + 粉色闪光）；同类牌指示改为整牌统一蓝色；拔北牌缩小到与自家副露同尺寸；房间文字不再裁切；牌河错落调小。

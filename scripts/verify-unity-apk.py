@@ -6,7 +6,7 @@ from pathlib import Path
 from zipfile import ZipFile
 
 root = Path(__file__).resolve().parent.parent
-apk = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else root / 'unity/Builds/yunjian-riichi-unity-0.5.29.apk'
+apk = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else root / 'unity/Builds/yunjian-riichi-unity-0.5.30.apk'
 assets = root / 'app/src/main/assets'
 with ZipFile(apk) as archive:
     assert archive.testzip() is None
@@ -94,7 +94,13 @@ with ZipFile(apk) as archive:
         if source.suffix=='.prefab' or source.parent.name=='Data':continue  # prefab and its modules are serialized into the scene data
         assert entry in names,'Missing table look asset: '+source.name
         if source.suffix=='.json':assert source.read_bytes() in archive.read(entry),'Stale table look data: '+source.name
+    for source in (root/'unity/Assets/Resources/Majsoul/Review1012c').rglob('*'):
+        if source.suffix not in ['.png','.json']:continue
+        guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text()).group(1);entry='assets/bin/Data/'+guid
+        assert entry in names,'Missing cut-in/FightBegin review resource: '+source.name
+        if source.suffix=='.json':assert source.read_bytes() in archive.read(entry),'Stale cut-in animation/layout/provenance: '+source.name
     shader_data = b''.join(archive.read(n) for n in names if 'globalgamemanagers.assets' in n)
+    assert b'UI/Default' in archive.read('assets/bin/Data/Resources/unity_builtin_extra'), 'Missing default UI shader for cut-in masking/composition'
     for source in (root/'unity/Assets/Resources/Majsoul/NativeReview').rglob('*'):
         if source.suffix not in ['.png','.json','.bytes']:continue
         guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text()).group(1);entry='assets/bin/Data/'+guid
@@ -105,7 +111,7 @@ with ZipFile(apk) as archive:
 dist = root / 'dist'
 output = dist / apk.name
 output.write_bytes(apk.read_bytes())
-checksum = 'SHA256-unity-0.5.29.txt' if len(sys.argv) == 1 else 'SHA256-' + output.stem + '.txt'
+checksum = 'SHA256-unity-0.5.30.txt' if len(sys.argv) == 1 else 'SHA256-' + output.stem + '.txt'
 (dist / checksum).write_text(hashlib.sha256(output.read_bytes()).hexdigest().upper() + '  ' + output.name + '\n', encoding='utf8')
 print('PASS: APK ZIP integrity, current offline assets, phone host/JNI, ARM64 + ARMv7, original tile atlases, exact hand animation bytes, action textures, original turn-light assets and compiled shaders.')
 print(output.name, output.stat().st_size, hashlib.sha256(output.read_bytes()).hexdigest())

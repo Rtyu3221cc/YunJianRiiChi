@@ -1,5 +1,13 @@
 # 云间日麻
 
+## Unity 0.5.30：1012-3 逐项修正
+
+安卓包：[下载 Unity 0.5.30 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.30/yunjian-riichi-unity-0.5.30.apk)，versionCode 31，v1＋v2 签名并沿用此前证书。
+
+修正积分后名次依次出现、负号、开局段位／称号／姓名、立直提示和手部同步、立直棒放置时序、四向自摸牌位置及朝向、立直后可杠／拔北及新摸牌颜色、等待确认文字和自家副露布局；接入 APK 原版胡牌横幅转场与一姬立绘。视频中的九万反光符合三麻一万／九万互相指示的规则，已提供两种局面的核对截图。
+
+[11项说明与截图](docs/1012-3逐项修正与截图.md) · [41张截图及离线确认页](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.30/yunjian-riichi-unity-0.5.30-screenshots.zip) · [截图总览](dist/previews/unity-0.5.30-review-overview.jpg)。81 项规则／协议测试、完整 Unity Play 与专项渲染检查通过；安卓真机未测。
+
 ## Unity 0.5.29：点击樱花与牌桌复核
 
 安卓包：[下载 Unity 0.5.29 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.29/yunjian-riichi-unity-0.5.29.apk)，versionCode 30，v1+v2 签名，与 0.5.27／0.5.28 同证书，可覆盖更新。SHA-256 见 `dist/SHA256-unity-0.5.29.txt`。

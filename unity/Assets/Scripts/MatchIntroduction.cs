@@ -36,18 +36,35 @@ namespace YunJian.Riichi
         }
         public void Tick(GameAudio audio){if(!Active){if(running){running=false;effect.Dispose();}return;}if(!sound && Age>=.7f){sound=true;audio?.Cue("winlose");}}
         public void Reset(){running=false;key=null;observedRoom=null;observedMatch=0;observedLobby=false;Freeze=false;effect.Dispose();}
-        Texture2D Art(string name){if(!art.TryGetValue(name,out var t))art[name]=t=Resources.Load<Texture2D>("Majsoul/MatchIntro/"+name);return t;}
+        Texture2D Art(string name){if(!art.TryGetValue(name,out var t))art[name]=t=Resources.Load<Texture2D>("Majsoul/MatchIntro/"+name)??Resources.Load<Texture2D>("Majsoul/Review1012c/"+name)??Resources.Load<Texture2D>("Majsoul/TableLook/Sprites/"+name);return t;}
+        void BadgeImage(string name,Vector2 center,Vector2 offset,Vector2 size,float unit,float px=.5f,float py=.5f){
+            var t=Art(name);var at=center+new Vector2(offset.x,-offset.y)*unit;
+            if(t!=null)GUI.DrawTexture(new Rect(at.x-size.x*unit*px,at.y-size.y*unit*(1-py),size.x*unit,size.y*unit),t);
+        }
+        void NamePanel(Rect r,string name){
+            GUI.DrawTexture(r,Art("namebg"));const float u=2f/3;
+            // UI_FightBegin/container_name: native label 45 px; rank scale .55.
+            var rank=r.center+new Vector2(-283,-9)*u;
+            BadgeImage("rank_bg",rank,new Vector2(-127.5f,126.5f),new Vector2(245,228),.55f*u,0,1);
+            BadgeImage("sima_queshi",rank,new Vector2(3.9f,10.6f),new Vector2(160,160),.55f*u);
+            foreach(var p in new[]{new Vector2(-36.5f,-75.5f),new Vector2(-71.5f,-54.5f),new Vector2(-102.5f,-7.5f)})BadgeImage("starbg",rank,p,new Vector2(67,64),.55f*u);
+            BadgeImage("star",rank,new Vector2(-36.5f,-75.5f),new Vector2(67,64),.55f*u);
+            // The native tall nameplate runs into wide-screen safe edges; lower the
+            // title 25 source pixels so the entire default title stays visible.
+            BadgeImage("notitle",r.center,new Vector2(-236,78),new Vector2(263,50),u,0,.5f);
+            GUI.Label(new Rect(r.center.x-209.9f*u,r.center.y-26*u,r.width*.65f,45*u),name,nameStyle);
+        }
         static Rect RectAt(float[] d,Vector2 offset)=>new Rect(offset.x+d[0]*2/3,offset.y+d[1]*2/3,d[2]*2/3,d[3]*2/3);
         public void Draw()
         {
             if(!Active)return;if(config==null)config=JsonUtility.FromJson<Config>(Resources.Load<TextAsset>("Majsoul/MatchIntro/layout").text);
             var matrix=GUI.matrix;GUI.matrix=Matrix4x4.identity;var color=GUI.color;GUI.color=new Color(0,0,0,Age<3?1:1-Mathf.Clamp01((Age-3.1f)/.3f));GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=color;
             var viewport=TableViewport.Fit(Screen.width,Screen.height,Screen.safeArea,false);GUI.matrix=viewport.Matrix;
-            if(nameStyle==null){var font=Resources.Load<Font>("Majsoul/Font/game");nameStyle=new GUIStyle(GUI.skin.label){font=font,fontSize=23,alignment=TextAnchor.MiddleLeft,padding=new RectOffset()};nameStyle.normal.textColor=Color.white;titleStyle=new GUIStyle(nameStyle){fontSize=16};titleStyle.normal.textColor=new Color(.77f,.80f,.88f);}
+            if(nameStyle==null){var font=Resources.Load<Font>("Majsoul/Font/game");nameStyle=new GUIStyle(GUI.skin.label){font=font,fontSize=30,alignment=TextAnchor.MiddleLeft,padding=new RectOffset(),clipping=TextClipping.Overflow};nameStyle.normal.textColor=Color.white;}
             foreach(var c in config.cells){int seat=view.n==4?(view.you+c.seat)%4:c.seat==0?view.you:c.seat==1?(view.you+1)%3:c.seat==3?(view.you+2)%3:-1;if(seat<0)continue;
                 float enter=Mathf.Pow(Mathf.Clamp01((Age-.5f)/.4f),5),exit=Mathf.Pow(Mathf.Clamp01((Age-3)/.4f),5);var from=new Vector2(c.start[0],c.start[1]);var to=new Vector2(c.end[0],c.end[1]);var offset=Vector2.LerpUnclamped(Vector2.LerpUnclamped(from,to,enter),from,exit)*2/3;
                 var bg=c.images[0];GUI.DrawTexture(RectAt(bg.rect,offset),Art(c.portraitResource),ScaleMode.StretchToFill,true);
-                var r=RectAt(c.name,offset);GUI.DrawTexture(r,Art("namebg"),ScaleMode.StretchToFill,true);GUI.Label(new Rect(r.x+26,r.y+22,r.width-30,r.height-22),view.players[seat].name,nameStyle);GUI.Label(new Rect(r.x+28,r.y-2,r.width-32,27),"暂无称号",titleStyle);
+                var r=RectAt(c.name,offset);NamePanel(r,view.players[seat].name);
                 if(c.seat==0 && c.images.Length>1)GUI.DrawTexture(RectAt(c.images[1].rect,offset),Art("myself"),ScaleMode.ScaleToFit,true);
             }
             if(Age>=1.2f && Age<3)effect.Draw(new Rect(440,180,400,360),"Majsoul/UiEffects/effect_winlose",Age-1.2f,1);

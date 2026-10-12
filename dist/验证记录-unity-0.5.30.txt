@@ -1,0 +1,12 @@
+云间日麻 Unity 0.5.30 / versionCode 31
+日期：2026-10-13；修改范围：1012-3 所列 11 项。
+规则／协议：81 项 Node 测试通过，0 失败。
+完整 Unity Play：RIICHI UNITY PLAY PASS。覆盖真实本机测试房间、出牌与射线拾取、三／四人、多个分辨率、轮询／重连、声明／响应／副露、摊牌、结算、音频与特效。
+专项实际渲染：RIICHI REVIEW 1012C PASS。覆盖从4至1位依次出现、三麻一万／九万宝牌判定、两类负分、开局雀士和称号、立直同步、立直棒排队／搬运／落点／轮询、四向自摸牌间距及朝向、合法杠／拔北／补牌颜色、两种分辨率等待文字、三种分辨率1～4组副露与手牌原大小、荣和／自摸原版横幅曲线。
+截图：41 张，均为实际 Unity 对合成测试局面的渲染，非安卓真机截图或原录像回放。截图确认页和全部原图见 unity-0.5.30-screenshots.html / yunjian-riichi-unity-0.5.30-screenshots.zip。
+素材：新增10项 APK 图片、布局及 AnimationClip 数据的 bundle/pathID/SHA-256 来源检查通过。
+Android：Unity 6000.6.4f1，IL2CPP ARM64 + ARMv7 构建通过。包名 com.yunjian.riichi.unity，versionName 0.5.30，versionCode 31，minSdk 26 / targetSdk 32 / compileSdk 36。
+APK：ZIP、当前离线资源逐字节一致、JNI/手机主机、手部动画、材质与着色器、新增转场与名牌资源及数据检查通过；UI/Default 已包含。
+签名：v1 + v2、独立 v1 校验、16 KB 对齐通过；沿用原证书 d1d8e506c6d3b62e9610dce294c07008057318fa9bafae702fb8b01f35f0dc2f。
+未执行安卓真机安装、真实触摸与多手机热点联机验证。
+0CC334EE956B87CC91A8760530923B4F4795EBBBEEE967063AF56DA177788E43  yunjian-riichi-unity-0.5.30.apk

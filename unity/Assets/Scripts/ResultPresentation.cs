@@ -38,7 +38,7 @@ namespace YunJian.Riichi
         {
             limitFire.Dispose();
             if(drawStage){drawStage=false;scores=true;started=Time.unscaledTime;skipped=0;FrozenAge=0;return;}
-            if(scores){if(Age<3.3f){skipped+=3.5f-Age;SkipSerial++;}else if(v.result.matchOver){finalPage=true;started=Time.unscaledTime;skipped=0;FrozenAge=0;}return;}
+            if(scores){if(Age<ScoreEnd(v.n)){if(Freeze)FrozenAge=ScoreEnd(v.n)+.1f;else skipped+=ScoreEnd(v.n)+.1f-Age;SkipSerial++;}else if(v.result.matchOver){finalPage=true;started=Time.unscaledTime;skipped=0;FrozenAge=0;}return;}
             var d=v.result.details[winner];
             if(Age<RevealEnd(d)){skipped=RevealEnd(d);SkipSerial++;return;}
             if(++winner>=v.result.details.Length){scores=true;winner=v.result.details.Length-1;}
@@ -61,10 +61,13 @@ namespace YunJian.Riichi
         void Glyphs(Rect r,string[] names,float height,TextAnchor align=TextAnchor.MiddleCenter)
         {
             var textures=names.Select(Art).Where(t=>t!=null).ToArray();
-            float width=textures.Sum(t=>height*t.width/t.height)+Mathf.Max(0,textures.Length-1)*1.5f;
+            // ww_minus is 69x27; the digits are 69x108. Keep the same pixel scale,
+            // rather than stretching the short dash to the full digit height.
+            float GlyphHeight(Texture2D t)=>t.name=="ww_minus"?height*t.height/108f:height;
+            float width=textures.Sum(t=>GlyphHeight(t)*t.width/t.height)+Mathf.Max(0,textures.Length-1)*1.5f;
             float scale=Mathf.Min(1,Mathf.Min(r.width/Mathf.Max(1,width),r.height/height));height*=scale;width*=scale;
             float x=align==TextAnchor.MiddleRight?r.xMax-width:align==TextAnchor.MiddleLeft?r.x:r.center.x-width/2;
-            foreach(var t in textures){float w=height*t.width/t.height;GUI.DrawTexture(new Rect(x,r.center.y-height/2,w,height),t);x+=w+1.5f*scale;}
+            foreach(var t in textures){float h=GlyphHeight(t),w=h*t.width/t.height;GUI.DrawTexture(new Rect(x,r.center.y-h/2,w,h),t);x+=w+1.5f*scale;}
         }
         static string[] Digits(int value,string prefix) => value.ToString(System.Globalization.CultureInfo.InvariantCulture).Select(c=>c=='-'?"ww_minus":prefix+c).ToArray();
         static string[] LimitGlyphs(string value)
@@ -236,6 +239,9 @@ namespace YunJian.Riichi
             return a>b || (a==b && i<seat);
         });
         public int DisplayScore(RoomView v,int seat) => Mathf.RoundToInt(Mathf.Lerp(Before(v,seat),v.players[seat].score,Mathf.SmoothStep(0,1,(Age-.8f)/1.65f))/100)*100;
+        public static float RankAt(int players,int rank)=>2.7f+(players-rank)*.36f;
+        public static float ScoreEnd(int players)=>RankAt(players,1)+.6f;
+        public bool RankVisible(RoomView v,int seat)=>Age<2.45f || Age>=RankAt(v.n,Rank(v,seat,false));
         static Vector2 Center(int relative,int n) => relative==0?new Vector2(640,570):relative==n-1?new Vector2(400,364):relative==1&&n==4?new Vector2(900,364):n==3?new Vector2(900,364):new Vector2(640,164);
         void Arrow(int from,int to,int n,float alpha)
         {
@@ -280,8 +286,9 @@ namespace YunJian.Riichi
                     number.normal.textColor=delta>=0?new Color(.38f,.86f,.22f):new Color(1,.20f,.17f);
                     GUI.Label(new Rect(r.x+108,r.y+39,130,36),(delta>=0?"+":"")+delta,number);
                 }
-                int prior=Rank(v,seat,true),rank=Rank(v,seat,false),shown=Age<2.5f?prior:rank;
-                var rankMatrix=GUI.matrix;float rankScale=Age>=2.5f?NativeReviewLayout.RankScale(Age-2.5f):1;
+                int prior=Rank(v,seat,true),rank=Rank(v,seat,false),shown=Age<2.45f?prior:rank;
+                if(!RankVisible(v,seat)){GUI.matrix=cardMatrix;continue;}
+                var rankMatrix=GUI.matrix;float rankScale=Age>=2.45f?NativeReviewLayout.RankScale(Age-RankAt(v.n,rank)):1;
                 Vector3 rankPivot=new Vector3(r.x+72,r.y+86,0);GUI.matrix*=Matrix4x4.TRS(rankPivot,Quaternion.identity,Vector3.one*rankScale)*Matrix4x4.Translate(-rankPivot);
                 Image("bg_point",new Rect(r.x+29,r.y+88,111,37));
                 Image("s_"+shown,new Rect(r.x+34,r.y+40,42,79),ScaleMode.ScaleToFit);
@@ -321,6 +328,8 @@ namespace YunJian.Riichi
             roundText.normal.textColor=gold;GUI.Label(r,value=="确认结算"?"确认":value,roundText);
             return button(r,value);
         }
+        public Rect WaitingRect=>new Rect(765,648,342,50);
+        void Waiting(){Label(WaitingRect,"已确认，等待其他玩家",22,white,TextAnchor.MiddleRight);}
         public Action Draw(RoomView v,TableRenderer table,TableEffects effects,Font gameFont,Func<Rect,string,bool> button)
         {
             Observe(v);if(text==null){font=gameFont;text=new GUIStyle(GUI.skin.label){font=font,wordWrap=false,clipping=TextClipping.Clip};number=new GUIStyle(text){font=Resources.Load<Font>("Majsoul/Settlement/score-font"),fontSize=31,alignment=TextAnchor.MiddleLeft};
@@ -328,7 +337,7 @@ namespace YunJian.Riichi
             if(finalPage){
                 Final(v,table,effects);
                 if(!v.players[v.you].ready && NativeButton(new Rect(1125,648,128,50),"确认",button))return Action.Ready;
-                if(v.players[v.you].ready)Label(new Rect(850,654,180,38),"已确认 · 等待其他玩家",17,white);
+                if(v.players[v.you].ready)Waiting();
                 if(v.host && v.players.All(p=>p.ready) && NativeButton(new Rect(1125,648,128,50),"再来一场",button))return Action.Next;
                 if(NativeButton(new Rect(28,650,142,49),"返回大厅",button))return Action.Home;
             }
@@ -336,8 +345,8 @@ namespace YunJian.Riichi
             else if(!scores){Details(v,table,effects);if(NativeButton(new Rect(1125,648,128,50),Age<RevealEnd(v.result.details[winner])?"跳过":"确认",button))Advance(v);}
             else {
                 Scores(v,table);
-                if(!v.players[v.you].ready && NativeButton(new Rect(1125,648,128,50),Age<3.3f?"跳过":v.result.matchOver?"终局":"确认结算",button)){bool finished=Age>=3.3f;Advance(v);if(finished&&!v.result.matchOver)return Action.Ready;}
-                if(v.players[v.you].ready)Label(new Rect(850,654,180,38),"已确认 · 等待其他玩家",17,white);
+                if(!v.players[v.you].ready && NativeButton(new Rect(1125,648,128,50),Age<ScoreEnd(v.n)?"跳过":v.result.matchOver?"终局":"确认结算",button)){bool finished=Age>=ScoreEnd(v.n);Advance(v);if(finished&&!v.result.matchOver)return Action.Ready;}
+                if(v.players[v.you].ready)Waiting();
                 if(v.host && v.players.All(p=>p.ready) && NativeButton(new Rect(1125,648,128,50),v.result.matchOver?"再来一场":"下一局",button))return Action.Next;
                 if(NativeButton(new Rect(28,650,142,49),"返回大厅",button))return Action.Home;
             }

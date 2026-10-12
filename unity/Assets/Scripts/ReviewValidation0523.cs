@@ -30,7 +30,8 @@ namespace YunJian.Riichi
             for(int seat=0;seat<4;seat++){
                 var win=Load(folder,"win-4-tsumo-"+seat+"-0");win.audioRoom="review-facing-"+seat;var events=win.audioEvents;int seq=win.audioSeq;win.audioEvents=new PublicSound[0];win.audioSeq=seq-1;client.ShowValidationFixture(win);yield return null;
                 fx.ValidationFreeze=true;fx.ValidationTime=.2f;fx.Accept(win);win.audioEvents=events;win.audioSeq=seq;fx.Accept(win);fx.ValidationTime=1.55f;yield return null;yield return null;
-                var effect=fx.ValidationWin;Check(effect!=null,"Winning effect not queued");fx.ValidationTime=effect.StartedAt+.45f;yield return null;
+                fx.ValidationTime=1.06f;yield return null;fx.CutIn.Freeze=true;fx.CutIn.FrozenAge=WinCutIn.Duration+.01f;fx.ValidationTime=0;yield return null;yield return null;fx.ValidationTime=1.55f;yield return null;yield return null;
+                var effect=fx.ValidationWin;Check(effect!=null,"Winning effect not queued after APK cutin");fx.ValidationTime=effect.StartedAt+.45f;yield return null;
                 var ray=effect.transform.position-table.Camera.transform.position;ray.y=0;Check(Vector3.Dot(effect.transform.forward,ray.normalized)>.999f,"Side winner has an edge-on fire sheet");
                 ScreenCapture.CaptureScreenshot(Path.Combine(folder,"review-0523-fire-seat-"+seat+".png"));yield return new WaitForSecondsRealtime(.1f);
             }

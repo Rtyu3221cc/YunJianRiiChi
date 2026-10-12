@@ -29,8 +29,8 @@ namespace YunJian.Riichi.Editor
             PlayerSettings.companyName = "YunJian";
             PlayerSettings.productName = "云间日麻 3D";
             PlayerSettings.SetApplicationIdentifier(UnityEditor.Build.NamedBuildTarget.Android, "com.yunjian.riichi.unity");
-            PlayerSettings.bundleVersion = "0.5.29";
-            PlayerSettings.Android.bundleVersionCode = 30;
+            PlayerSettings.bundleVersion = "0.5.30";
+            PlayerSettings.Android.bundleVersionCode = 31;
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel26;
             // Local, offline distribution: matches the existing phone-hosted service.
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel32;
@@ -47,7 +47,7 @@ namespace YunJian.Riichi.Editor
             var graphics = new SerializedObject(graphicsAssets[0]);
             var shaders = graphics.FindProperty("m_AlwaysIncludedShaders");
             if (shaders == null) throw new System.Exception("无法读取 Always Included Shaders，请检查编辑器版本。");
-            foreach (var name in new[] { "Standard", "Unlit/Texture", "Unlit/Transparent", "Unlit/Color", "YunJian/OriginalHand", "YunJian/OriginalTileFace", "YunJian/OriginalTileBody", "YunJian/OriginalTileOutline", "YunJian/ResponseGlow", "YunJian/TurnLight", "YunJian/NorthPetal", "YunJian/WinParticle", "YunJian/TableCloth", "YunJian/TileShadow" })
+            foreach (var name in new[] { "Standard", "Unlit/Texture", "Unlit/Transparent", "Unlit/Color", "UI/Default", "YunJian/OriginalHand", "YunJian/OriginalTileFace", "YunJian/OriginalTileBody", "YunJian/OriginalTileOutline", "YunJian/ResponseGlow", "YunJian/TurnLight", "YunJian/NorthPetal", "YunJian/WinParticle", "YunJian/TableCloth", "YunJian/TileShadow" })
             {
                 var shader = Shader.Find(name); if (shader == null) continue;
                 bool found = false; for (int i = 0; i < shaders.arraySize; i++) if (shaders.GetArrayElementAtIndex(i).objectReferenceValue == shader) found = true;
@@ -62,7 +62,7 @@ namespace YunJian.Riichi.Editor
             if (!File.Exists("Assets/Scenes/Table.unity")) CreateScene();
             Configure();
             Directory.CreateDirectory("Builds");
-            var report = BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, "Builds/yunjian-riichi-unity-0.5.29.apk", BuildTarget.Android, BuildOptions.None);
+            var report = BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, "Builds/yunjian-riichi-unity-0.5.30.apk", BuildTarget.Android, BuildOptions.None);
             if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded) throw new System.Exception("Android build failed");
         }
     }
@@ -93,6 +93,7 @@ namespace YunJian.Riichi.Editor
             if(assetPath.StartsWith("Assets/Resources/Majsoul/Results/") || assetPath.StartsWith("Assets/Resources/Majsoul/Settlement/")){t.npotScale=TextureImporterNPOTScale.None;t.wrapMode=TextureWrapMode.Clamp;}
             if(assetPath=="Assets/Resources/Majsoul/Settlement/flame-detail.png")t.wrapMode=TextureWrapMode.Repeat;
             if(assetPath.StartsWith("Assets/Resources/Majsoul/TableLook/")){t.wrapMode=TextureWrapMode.Clamp;t.npotScale=TextureImporterNPOTScale.None;if(assetPath.Contains("/Sprites/"))t.mipmapEnabled=false;}
+            if(assetPath.StartsWith("Assets/Resources/Majsoul/Review1012c/")){t.wrapMode=TextureWrapMode.Clamp;t.npotScale=TextureImporterNPOTScale.None;t.mipmapEnabled=false;}
             if(assetPath=="Assets/Resources/Majsoul/Actions/north-petals.png")
             { t.wrapMode=TextureWrapMode.Clamp; t.mipmapEnabled=false; }
         }

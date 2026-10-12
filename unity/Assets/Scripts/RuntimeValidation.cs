@@ -17,7 +17,7 @@ namespace YunJian.Riichi
             folder = Path.GetFullPath("../build/unity-smoke"); Directory.CreateDirectory(folder);
             foreach (var name in new[] { "passed.txt", "failed.txt" })
                 if (File.Exists(Path.Combine(folder, name))) File.Delete(Path.Combine(folder, name));
-            var run = Environment.GetEnvironmentVariable("RIICHI_NORTH_ONLY")=="1"?ValidateNorthEffects(GetComponent<RiichiClient>()):Environment.GetEnvironmentVariable("RIICHI_LOOK_1012B")=="1"?ReviewValidation1012b.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_FIDELITY_0526")=="1"?ReviewValidation0526.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_FIDELITY_0525")=="1"?ReviewValidation0525.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_FIDELITY_0524")=="1"?ReviewValidation0524.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_REVIEW_PREVIEW")=="1"?ReviewValidation0523.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_NATIVE_PREVIEW")=="1"?NativeFirePreview.Run(GetComponent<RiichiClient>(),folder):Run();
+            var run = Environment.GetEnvironmentVariable("RIICHI_REVIEW_1012C")=="1"?ReviewValidation1012c.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_NORTH_ONLY")=="1"?ValidateNorthEffects(GetComponent<RiichiClient>()):Environment.GetEnvironmentVariable("RIICHI_LOOK_1012B")=="1"?ReviewValidation1012b.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_FIDELITY_0526")=="1"?ReviewValidation0526.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_FIDELITY_0525")=="1"?ReviewValidation0525.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_FIDELITY_0524")=="1"?ReviewValidation0524.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_REVIEW_PREVIEW")=="1"?ReviewValidation0523.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_NATIVE_PREVIEW")=="1"?NativeFirePreview.Run(GetComponent<RiichiClient>(),folder):Run();
             while (true)
             {
                 bool next;
@@ -580,6 +580,9 @@ namespace YunJian.Riichi
                 Require(target!=null && target.name.EndsWith(" "+e.tile),"Win animation targets the wrong tile");
                 Require(fx.ValidationCallKind==kind && fx.Art(kind=="ron"?"show_rong":"show_zimo")!=null && fx.Art("yiji-full")!=null,"Win cut-in missing or character changed");
                 if(you==0){ScreenCapture.CaptureScreenshot(Path.Combine(folder,"win-"+n+"-"+kind+"-call-"+relative+".png"));yield return new WaitForSecondsRealtime(.1f);}
+                fx.ValidationTime=1.05f;yield return null;yield return null;
+                Require(fx.CutIn.Active,"APK win stripe missing after the shout");
+                fx.CutIn.Freeze=true;fx.CutIn.FrozenAge=WinCutIn.Duration+.01f;fx.ValidationTime=0;yield return null;yield return null;
                 if(kind=="tsumo")
                 {
                     Require(fx.ValidationKind==kind && fx.ValidationAnimatedTile.name==e.tile && !target.gameObject.activeSelf,"Self draw hand did not carry the exact winning tile");
@@ -601,7 +604,7 @@ namespace YunJian.Riichi
                     fx.ValidationTime=1.55f;yield return null;yield return null;
                     Require(fx.ValidationKind==null,"Zimo hand/face-down flip did not complete");
                 }
-                else {Require(fx.ValidationKind==null,"Ron incorrectly moved the winner's hand");fx.ValidationTime=.55f;yield return null;yield return null;}
+                else {Require(fx.ValidationKind==null,"Ron incorrectly moved the winner's hand");fx.ValidationTime=WinCutIn.Duration+.73f;yield return null;yield return null;}
                 var effect=fx.ValidationWin;
                 Require(effect!=null && effect.LayerCount==WinTileEffect.SourceLayerCount && effect.ParticleCount>0 && fx.SpawnedWinEffects==before+1,"Original nine-layer fire tornado burst missing/duplicated");
                 Require(Vector3.Distance(effect.transform.position,table.WinningPoint(e)+Vector3.up*.045f)<.001f,"Win effect detached from winning tile");
@@ -619,7 +622,7 @@ namespace YunJian.Riichi
                 }
                 table.Render(view);fx.Accept(view);yield return null;yield return null;
                 Require(fx.ValidationWin==effect && fx.SpawnedWinEffects==before+1 && fx.ShowWinPresentation,"Polling restarted win effect or exposed result too early");
-                fx.ValidationTime=3.1f;yield return null;yield return null;
+                fx.ValidationTime=5f;yield return null;yield return null;
                 Require(!fx.ShowWinPresentation && fx.ValidationWin==null,"Win result never becomes available or effect leaked");
                 fx.Reset();fx.Accept(view);yield return null;
                 Require(!fx.ShowWinPresentation && !fx.IsAnimating,"Reconnect replayed historical win");
@@ -629,8 +632,9 @@ namespace YunJian.Riichi
             var calls=multi.audioEvents;int lastId=multi.audioSeq;multi.audioRoom="double-ron";multi.audioSeq=lastId-2;multi.audioEvents=new PublicSound[0];client.ShowValidationFixture(multi);yield return null;
             fx.ValidationTime=.2f;fx.Accept(multi);multi.audioEvents=calls;multi.audioSeq=lastId;fx.Accept(multi);yield return null;
             int shared=fx.SpawnedWinEffects;Require(fx.ValidationCallKind=="ron","First double ron cut-in missing");
-            fx.ValidationTime=1.06f;yield return null;fx.ValidationTime=.2f;yield return null;
-            Require(fx.ValidationCallKind=="ron" && fx.SpawnedWinEffects==shared,"Second winner missing or shared discard flashes twice");
+            fx.ValidationTime=1.06f;yield return null;fx.CutIn.Freeze=true;fx.CutIn.FrozenAge=WinCutIn.Duration+.01f;fx.ValidationTime=.2f;yield return null;
+            Require(fx.ValidationCallKind=="ron" && fx.SpawnedWinEffects==shared+1,"Second winner missing or shared discard flashes twice");
+            fx.ValidationTime=1.06f;yield return null;Require(fx.SpawnedWinEffects==shared+1,"Double ron duplicates the shared tile burst");
             fx.Reset();
             // Robbing a kan/nuki must use the public robbed tile, not an older discard.
             foreach(string source in new[]{"kakan","ankan","nuki"})

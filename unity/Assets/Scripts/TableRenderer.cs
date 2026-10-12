@@ -105,7 +105,7 @@ namespace YunJian.Riichi
             Camera.clearFlags = CameraClearFlags.SolidColor; Camera.backgroundColor = Color.black;
             Camera.allowMSAA = true; QualitySettings.antiAliasing = 4;
             QualitySettings.anisotropicFiltering=AnisotropicFiltering.ForceEnable;
-            Camera.cullingMask &= ~((1 << 12) | (1 << 13) | (1 << 14));
+            Camera.cullingMask &= ~((1 << 12) | (1 << 13) | (1 << 14) | (1 << 15));
             HandCamera = new GameObject("Original orthographic hand camera").AddComponent<Camera>();
             HandCamera.transform.position = new Vector3(0, 0, -30);
             HandCamera.orthographic = true; HandCamera.orthographicSize = 9;
@@ -319,7 +319,7 @@ namespace YunJian.Riichi
             var restored=new List<Tuple<Transform,Vector3>>();
             if(meldGroups.TryGetValue(state.you,out var ownGroups))foreach(var meld in ownGroups){restored.Add(Tuple.Create(meld.group,meld.group.localPosition));meld.group.localPosition=Vector3.zero;if(meld.extra!=null){restored.Add(Tuple.Create(meld.extra,meld.extra.localPosition));meld.extra.localPosition=meld.extraRest;}}
             foreach(var group in exposedGroups){group.localPosition=Vector3.zero;group.localScale=Vector3.one;}
-            AlignSelfMelds(safe.yMin+.12f*scale/18*Screen.height,safe.xMax-18*Screen.height/600f);
+            AlignSelfMelds(safe.yMin+.32f*scale/18*Screen.height,safe.xMax-64*Screen.height/600f);
             ScaleNorthToMelds();
             float left=safe.xMin+safe.width*.05f,right=safe.xMax-safe.width*.05f;
             float handTop=safe.yMin+(OriginalTiles.HandHeight+.42f)*scale/18*Screen.height;
@@ -332,7 +332,7 @@ namespace YunJian.Riichi
                 else left=Mathf.Max(left,bounds.xMax+margin);
             }
             if(right-left>=half*2)centerX=Mathf.Clamp(centerX,left+half,right-half);
-            else {scale*=Mathf.Max(.35f,(right-left)/(half*2));half=handSpan*scale/(18*aspect)*Screen.width*.5f;centerX=(left+right)*.5f;handTop=safe.yMin+(OriginalTiles.HandHeight+.42f)*scale/18*Screen.height;}
+            else {centerX=Mathf.Max(safe.xMin+half+margin,right-half);}
             var handBand=Rect.MinMaxRect(centerX-half,safe.yMin,centerX+half,handTop);
             foreach(var group in exposedGroups)
                 if(group!=selfMelds && ProjectedBounds(group,out var bounds) && handBand.Overlaps(bounds))MoveAboveHand(group,handTop+margin);
@@ -383,10 +383,11 @@ namespace YunJian.Riichi
         void AlignSelfMelds(float bottom,float right){
             if(selfMelds==null || selfMelds.GetComponentsInChildren<BoxCollider>(true).Length==0)return;
             var first=selfMelds.GetComponentsInChildren<BoxCollider>(true).OrderBy(c=>Mathf.Abs(c.transform.localRotation.eulerAngles.y)).First();
-            // Keep the previous projected tile width while moving the group to the
-            // bottom edge. Perspective compensation must not shrink the visible tiles.
+            // Fit to a screen-space target while translating along the cloth plane.
             if(!ProjectedBounds(first.transform,out var nativeTile)||nativeTile.width<1)return;
-            float width=nativeTile.width;
+            // 1012-2 original: own upright meld outline is about 76% of a hand tile,
+            // with a visible lower margin and its right edge slightly in from the HUD.
+            float width=OriginalTiles.HandWidth/18*Screen.height*.76f;
             for(int pass=0;pass<6;pass++){
                 if(!ProjectedBounds(first.transform,out var tile)||tile.width<1)return;
                 float factor=Mathf.Clamp(width/tile.width,.65f,1.4f);selfMelds.localScale*=factor;
@@ -461,7 +462,8 @@ namespace YunJian.Riichi
             bool keepHand=view.phase=="result" && view.result!=null && !view.result.draw && cameraHand!=null && handTiles.Count>0;
             Clear(false,keepHand);state=view;opening.Observe(view,GetComponent<RiichiClient>()?.IntroRemaining??0);
             bool exhausted=state.phase=="result" && state.result!=null && state.result.draw && !state.result.abort && (state.result.drawDetails?.Length??0)>0;
-            if(exhausted || state.result?.abortHand!=null || state.phase=="result" && (state.result?.details?.Length??0)>0){string next=state.audioRoom+":"+state.round+":"+state.honba+":"+state.result.title;
+            bool terminals=state.result!=null && state.result.abort && (state.result.abortHand?.tiles?.Length??0)>0;
+            if(exhausted || terminals || state.phase=="result" && (state.result?.details?.Length??0)>0){string next=state.audioRoom+":"+state.round+":"+state.honba+":"+state.result.title;
                 if(next!=drawKey){drawKey=next;drawBegan=-1;}
             }else drawKey=null;
             if (state.phase != "play" && state.phase != "reaction" && state.phase != "result") return;
@@ -495,7 +497,7 @@ namespace YunJian.Riichi
                         drawTiles.Add(Tuple.Create(tile,tile.localPosition));
                     }
                 }
-                else if(state.phase=="result" && state.result?.abortHand?.seat==i){
+                else if(state.phase=="result" && terminals && state.result.abortHand.seat==i){
                     var reveal=new GameObject("Nine terminals hand seat "+i).transform;reveal.SetParent(seat,false);
                     var tiles=state.result.abortHand.tiles;bool self=i==state.you;float pitch=self?.37f:.31f,width=self?.35f:.29f;
                     float edge=self?4.10f:Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f?4f:3.35f;
@@ -534,7 +536,14 @@ namespace YunJian.Riichi
         {
             var tile=WinningTarget(item);if(tile!=null)return tile.position;
             int seat=item.kind=="ron"?item.from:item.seat;
-            return item.kind=="ron"?DiscardPoint(seat,item.tile):Quaternion.Euler(0,Angle(seat),0)*new Vector3(1.85f,.02f,-2.95f);
+            return item.kind=="ron"?DiscardPoint(seat,item.tile):SelfDrawPoint(seat);
+        }
+        Vector3 SelfDrawPoint(int seat){
+            var detail=SelfDrawWinner(seat);int count=detail?.tiles?.Length??13;
+            float pitch=seat==state.you?.37f:.31f,width=seat==state.you?.35f:.29f;
+            float edge=seat==state.you?4.05f:Mathf.Abs(Mathf.Sin(Angle(seat)*Mathf.Deg2Rad))>.5f?4f:2.95f;
+            // One tile past the right end of the exposed hand, on the same seat axis.
+            return Quaternion.Euler(0,Angle(seat),0)*new Vector3((count-1)*pitch/2+width+.16f,.02f,-edge);
         }
         void DrawWinningTiles()
         {
@@ -547,8 +556,8 @@ namespace YunJian.Riichi
                 string key=d.from+":"+d.winSource+":"+d.tile;
                 if(d.ron && robbed.TryGetValue(key,out var shared)){winningTiles[d.seat]=shared;continue;}
                 int seat=d.ron?d.from:d.seat;
-                Vector3 point=d.ron ? (d.winSource=="nuki"?NorthPoint(seat)+Quaternion.Euler(0,Angle(seat),0)*new Vector3(0,0,.4f):MeldPoint(seat)+Vector3.up*.16f) : Quaternion.Euler(0,Angle(seat),0)*new Vector3(1.85f,.02f,-2.95f);
-                var tile=original.CreateTable(content,d.tile,point,.33f,false,false,1);
+                Vector3 point=d.ron ? (d.winSource=="nuki"?NorthPoint(seat)+Quaternion.Euler(0,Angle(seat),0)*new Vector3(0,0,.4f):MeldPoint(seat)+Vector3.up*.16f) : SelfDrawPoint(seat);
+                var tile=original.CreateTable(content,d.tile,point,d.ron?.33f:seat==state.you?.35f:.29f,false,false,1);
                 tile.name="Winning tile "+d.seat+" "+d.tile;tile.rotation=Quaternion.Euler(0,Angle(seat),0);winningTiles[d.seat]=tile;
                 if(d.ron)robbed[key]=tile;
             }
@@ -620,7 +629,8 @@ namespace YunJian.Riichi
                     // A tile that cannot be discarded right now is dimmed and unpickable,
                     // so a riichi declaration only offers the tiles that keep tenpai.
                     foreach (var collider in tile.GetComponentsInChildren<Collider>()) collider.enabled = false;
-                    if (choosing)
+                    bool special=state.players[state.you].riichi>0 && (drawn || state.options.Any(o=>(o.kind=="kan" && (o.meld??"").Skip(1).Any(d=>char.IsDigit(d)&&TileKind(o.meld[0].ToString()+d)==TileKind(hand[i]))) || (o.kind=="nuki" && hand[i]=="z4")));
+                    if (choosing && !special)
                     {
                         var dim = new MaterialPropertyBlock(); dim.SetFloat("_Dim", 1f);
                         foreach (var handRenderer in tile.GetComponentsInChildren<MeshRenderer>()) handRenderer.SetPropertyBlock(dim);

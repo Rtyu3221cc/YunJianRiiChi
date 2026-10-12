@@ -35,6 +35,7 @@ for(const n of [3,4]){
  view.players[1].riichi=1;
  view.players.forEach((p,j)=>{p.river=Array.from({length:18},(_,i)=>({tile:'p'+(i%9+1),riichi:j===1&&i===4,called:false}));});
  view.players[0].melds=['p555+','s1111','m333+3','z777-'];view.players[0].nuki=3;
+ view.hand=view.hand.slice(0,2);view.drawn=view.hand[view.hand.length-1];
  view.players[1].score=-1200;view.players[n-1].score=125000;
  // Synthetic stress fixture, not a legal hand or replay.
  fs.writeFileSync(`build/unity-smoke/fixture-${n}.json`,JSON.stringify(view));

@@ -5,7 +5,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 
 root = Path(__file__).resolve().parent.parent
 dist = root / 'dist'
-version = '0.5.29'
+version = '0.5.30'
 apk = dist / f'yunjian-riichi-unity-{version}.apk'
 assert apk.exists(), 'Run verify-unity-apk.py first'
 compatible_apk = dist / f'yunjian-riichi-unity-{version}-signed.apk'
@@ -14,7 +14,7 @@ if compatible_apk.exists():
     apk = compatible_apk
 for name in ['README.md', 'ARTWORK.md']:
     (dist / name).write_bytes((root / name).read_bytes())
-excluded = {'.git', 'Library', 'Temp', 'Obj', 'Logs', 'UserSettings', 'Builds', '.utmp', 'node_modules', '__pycache__', 'keys'}
+excluded = {'.git', 'Library', 'Temp', 'Obj', 'Logs', 'UserSettings', 'Builds', 'build', '.utmp', 'node_modules', '__pycache__', 'keys'}
 source = dist / f'yunjian-riichi-source-{version}.zip'
 with ZipFile(source, 'w', ZIP_DEFLATED, compresslevel=9) as archive:
     for folder in ['app', 'scripts', 'tests', 'vendor', 'unity', 'docs']:
@@ -26,7 +26,7 @@ with ZipFile(source, 'w', ZIP_DEFLATED, compresslevel=9) as archive:
         archive.write(root / name, 'lan-riichi/' + name)
 release = dist / f'yunjian-riichi-unity-release-{version}.zip'
 with ZipFile(release, 'w', ZIP_DEFLATED, compresslevel=9) as archive:
-    files = [apk, *(dist / name for name in ['README.md', 'ARTWORK.md', f'SHA256-unity-{version}.txt', f'验证记录-unity-{version}.txt']), *sorted((dist / 'previews').glob(f'unity-{version}-*'))]
+    files = [apk, dist/f'unity-{version}-screenshots.html', dist/f'yunjian-riichi-unity-{version}-screenshots.zip', *(dist / name for name in ['README.md', 'ARTWORK.md', f'SHA256-unity-{version}.txt', f'验证记录-unity-{version}.txt']), *sorted((dist / 'previews').glob(f'unity-{version}-*'))]
     for file in files:
         assert file.exists(), 'Missing release artifact: ' + str(file)
         archive.write(file, file.relative_to(dist).as_posix())
@@ -34,5 +34,5 @@ for package in [source, release]:
     with ZipFile(package) as archive:
         assert archive.testzip() is None
         assert all('Majsoul_4.0.16_MC.apk' not in name and '.desktop-state' not in name and not name.endswith(('.jks','.keystore')) for name in archive.namelist())
-        assert all('.utmp' not in Path(name).parts for name in archive.namelist())
+        assert all('.utmp' not in Path(name).parts and 'build' not in Path(name).parts for name in archive.namelist())
     print(package.name, package.stat().st_size, hashlib.sha256(package.read_bytes()).hexdigest())

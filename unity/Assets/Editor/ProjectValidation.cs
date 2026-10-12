@@ -25,7 +25,7 @@ namespace YunJian.Riichi.Editor
                 Require(Resources.Load<Texture2D>("Majsoul/Hud/" + name) != null, "Missing original HUD atlas " + name);
             foreach (var name in new[] { "btn_leave", "btn_settings", "replay_collect", "left_top", "headframe-default", "ob_ting_off_btn", "ob_ting_on_btn" })
                 Require(Resources.Load<Texture2D>("Majsoul/UI/" + name) != null, "Missing HUD skin " + name);
-            foreach (var name in new[] { "YunJian/OriginalHand", "YunJian/OriginalTileFace", "YunJian/OriginalTileBody", "YunJian/OriginalTileOutline", "YunJian/ResponseGlow", "YunJian/TurnLight", "YunJian/NorthPetal", "YunJian/WinParticle", "YunJian/TableCloth", "YunJian/TileShadow", "Unlit/Transparent" })
+            foreach (var name in new[] { "YunJian/OriginalHand", "YunJian/OriginalTileFace", "YunJian/OriginalTileBody", "YunJian/OriginalTileOutline", "YunJian/ResponseGlow", "YunJian/TurnLight", "YunJian/NorthPetal", "YunJian/WinParticle", "YunJian/TableCloth", "YunJian/TileShadow", "Unlit/Transparent", "UI/Default" })
                 Require(Shader.Find(name) != null && (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null || Shader.Find(name).isSupported), "Missing/unsupported skin shader " + name);
             Require(Resources.Load<Texture2D>("Majsoul/Table/score-hub") != null, "Missing score hub");
             Require(Resources.Load<TextAsset>("Majsoul/TableLook/lighting") != null && Resources.Load<GameObject>("Majsoul/TableLook/sun_shine") != null, "Missing APK table lighting / sun_shine import");
