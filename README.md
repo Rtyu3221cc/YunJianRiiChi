@@ -1,5 +1,33 @@
 # 云间日麻
 
+## Unity 0.5.27：恢复自家副露尺寸
+
+安卓包：[下载 Unity 0.5.27 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.27/yunjian-riichi-unity-0.5.27.apk)，versionCode 28。
+
+包含下述 0.5.25／0.5.26 的特效、牌桌与终局修正，并取消自家副露贴底时采用的缩小目标，恢复此前牌的显示宽度，保留右下角位置及手牌间距。实际 Unity Play 已检查三种分辨率、1～4 组副露的尺寸、底边和遮挡，并复查吃／杠动画。见[修正记录](docs/自家副露尺寸修正.md)；安卓真机未测。
+
+## Unity 0.5.26：1012 牌桌样式与显示修正
+
+本地安卓包：`dist/yunjian-riichi-unity-0.5.26.apk`，versionCode 27。
+
+- 姓名使用原版底图／字体，房间采用“铜之间 · 三／四人东／南”；原菱形感叹号按听牌条件出现，移除左侧出牌提示。
+- 自家副露贴齐底边并与手牌分开；对家立直搬运牌对齐实际牌河目标。
+- 指示牌按自身是否为宝牌决定反光，整体反光降低 15%；改善斜视牌河的纹理采样，加入稳定的小幅错落。
+- 终局头像与字图缩小，恢复固定绿色 `+0.0`、金币和 PT 的 `+0`。
+
+[实现和验证范围](docs/1012牌桌样式与显示修正.md)。81 项规则／协议测试与 Unity 专项验证通过；安卓真机和热点联机未测。
+
+## Unity 0.5.25：1011 参考优化
+
+本地安卓包：`dist/yunjian-riichi-unity-0.5.25.apk`，versionCode 26，与 0.5.24 同签名。
+
+- 宝牌指示、红五及实际宝牌循环反光；完整杠牌组交接，加杠保留原碰。
+- 按 APK 四个独立锚点修正拔北位置；采用 12 个原版计分箭头变换。
+- 积分变化后播放排名字图提示，整场结束提供三／四人终局排名页。
+- 直接导入 APK 的役满六层粒子和吃碰两层粒子完整序列化模块，保留原贴图、网格、材质和来源记录。
+
+[修改与解包范围](docs/1011优化与解包范围.md)。本次不能称为完整恢复原工程：相关 Lua 仍加密，Shader 保留编译后资源；界面流程、UV 播放和交接代码是当前客户端适配。81 项规则／协议测试及 Unity 专项验证通过，安卓真机和热点联机未验证。
+
 ## Unity 0.5.24 原版背景、役满火焰与整局开场
 
 安卓包：[下载 Unity 0.5.24 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.24/yunjian-riichi-unity-0.5.24.apk)，versionCode 25，同签名覆盖更新。
@@ -382,4 +410,3 @@ pwsh -NoProfile -File build.ps1
 工具下载来自 Google 官方仓库，按其仓库清单 SHA-1 校验。SDK 使用受其许可约束。没有改动系统级 Android SDK / Java 安装。首次签名密钥生成在 `build/local-signing.jks`，请保留以便覆盖安装更新；源码压缩包不包含此私钥。构建流程遵循 [Android D8](https://developer.android.com/tools/d8) 和 [apksigner](https://developer.android.com/tools/apksigner) 文档，先 zipalign 后签名。
 
 `vendor/package` 保留第三方原版代码及 MIT 许可证。`scripts/bundle.cjs` 在生成的副本中仅追加“拔北宝牌”的计分输入，让它和普通宝牌一样在合法役存在后才生效。项目不需要在线 npm 安装。
-

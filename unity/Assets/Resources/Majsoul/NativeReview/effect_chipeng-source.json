@@ -1,0 +1,96 @@
+{
+  "nodes": [
+    {
+      "name": "effect_chipeng",
+      "parent": -1,
+      "position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        -0.7071068286895752,
+        -0.0,
+        -0.0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "ci",
+      "parent": 0,
+      "position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        -0.7071068286895752,
+        0.0,
+        0.0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "particle": "Data/effect_chipeng--1211266582201424669.json",
+      "renderer": "Data/effect_chipeng--3539018180933606526-renderer.json",
+      "texture": "Textures/bang",
+      "tint": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "srcBlend": 5.0,
+      "dstBlend": 1.0,
+      "renderMode": 1,
+      "sortingFudge": 0.0,
+      "lengthScale": 1.0,
+      "shaderBundle": "ShaderBundles/shader-640023996609787442",
+      "shaderName": "Legacy Shaders/Particles/Additive"
+    },
+    {
+      "name": "smoke",
+      "parent": 1,
+      "position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "particle": "Data/effect_chipeng--5656459460586145787.json",
+      "renderer": "Data/effect_chipeng-8711273087181865033-renderer.json",
+      "texture": "Textures/smoke",
+      "tint": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "srcBlend": 5.0,
+      "dstBlend": 1.0,
+      "renderMode": 2,
+      "sortingFudge": 0.0,
+      "lengthScale": 1.0,
+      "shaderBundle": "ShaderBundles/shader-640023996609787442",
+      "shaderName": "Legacy Shaders/Particles/Additive"
+    }
+  ]
+}

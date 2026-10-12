@@ -14,7 +14,8 @@ namespace YunJian.Riichi
         public int LimitFireLayers=>limitFire.LayerCount;
         public void ClearEffects()=>limitFire.Dispose();
         readonly Dictionary<string,Texture2D> art=new Dictionary<string,Texture2D>();
-        string key; int winner; bool scores,drawStage; float started, skipped;
+        string key; int winner; bool scores,drawStage,finalPage; float started, skipped;
+        public bool ShowingFinal=>finalPage;
         GUIStyle text, number, roundText; Font font;
         static readonly Color gold=new Color(1,.76f,.3f), white=new Color(.93f,.94f,.96f);
         public bool ShowingScores => scores;
@@ -24,20 +25,20 @@ namespace YunJian.Riichi
         float Age => Freeze?FrozenAge:Time.unscaledTime-started+skipped;
         public float ElapsedAge=>Age;
         public int SkipSerial {get;private set;}
-        public void Reset(){limitFire.Dispose();key=null;winner=0;scores=false;drawStage=false;skipped=0;Freeze=false;}
+        public void Reset(){limitFire.Dispose();key=null;winner=0;scores=false;drawStage=false;finalPage=false;skipped=0;Freeze=false;}
         public void Observe(RoomView v)
         {
             string next=v.audioRoom+":"+v.round+":"+v.honba+":"+v.result?.title+":"+string.Join(",",v.result?.delta??new int[0]);
             if(next==key)return;
             limitFire.Dispose();key=next;winner=0;drawStage=v.result!=null && v.result.draw && ((!v.result.abort && (v.result.drawDetails?.Length??0)>0) || v.result.title=="九种九牌");
-            scores=!drawStage && (v.result?.details==null || v.result.details.Length==0);started=Time.unscaledTime;skipped=0;
+            finalPage=false;scores=!drawStage && (v.result?.details==null || v.result.details.Length==0);started=Time.unscaledTime;skipped=0;
         }
         float RevealEnd(WinDetail d) => SettlementAudio.Sequence(d).end;
         public void Advance(RoomView v)
         {
             limitFire.Dispose();
             if(drawStage){drawStage=false;scores=true;started=Time.unscaledTime;skipped=0;FrozenAge=0;return;}
-            if(scores){skipped=3.5f;return;}
+            if(scores){if(Age<3.3f){skipped+=3.5f-Age;SkipSerial++;}else if(v.result.matchOver){finalPage=true;started=Time.unscaledTime;skipped=0;FrozenAge=0;}return;}
             var d=v.result.details[winner];
             if(Age<RevealEnd(d)){skipped=RevealEnd(d);SkipSerial++;return;}
             if(++winner>=v.result.details.Length){scores=true;winner=v.result.details.Length-1;}
@@ -45,7 +46,7 @@ namespace YunJian.Riichi
         }
         Texture2D Art(string name)
         {
-            if(!art.TryGetValue(name,out var t))art[name]=t=Resources.Load<Texture2D>("Majsoul/Settlement/"+name)??Resources.Load<Texture2D>("Majsoul/Results/"+name);
+            if(!art.TryGetValue(name,out var t))art[name]=t=Resources.Load<Texture2D>("Majsoul/Settlement/"+name)??Resources.Load<Texture2D>("Majsoul/Results/"+name)??Resources.Load<Texture2D>("Majsoul/NativeReview/Sprites/"+name)??Resources.Load<Texture2D>("Majsoul/TablePolish/"+name);
             return t;
         }
         void Image(string name,Rect r,ScaleMode mode=ScaleMode.StretchToFill)
@@ -200,7 +201,7 @@ namespace YunJian.Riichi
                     var names=LimitGlyphs(d.limit);var titleTextures=names.Select(Art).Where(t=>t!=null).ToArray();
                     float titleWidth=titleTextures.Sum(t=>124f*t.width/t.height)+Mathf.Max(0,titleTextures.Length-1)*1.5f;
                     var limit=new Rect(right-titleWidth,558,titleWidth+1,135);
-                    if(d.limit.Contains("役满") && age>=sequence.titleAt+.3f)limitFire.Draw(new Rect(limit.center.x-300,limit.center.y-145,600,260),d.limit=="役满"?"Majsoul/UiEffects/effect_yiman":"Majsoul/UiEffects/effect_yiman2",age-sequence.titleAt-.3f,25);
+                    if(d.limit.Contains("役满") && age>=sequence.titleAt+.05f)limitFire.Draw(new Rect(limit.center.x-300,limit.center.y-145,600,260),d.limit=="役满"?"Majsoul/UiEffects/effect_yiman":"Majsoul/UiEffects/effect_yiman2",age-sequence.titleAt-.05f,25);
                     Glyphs(limit,names,124,TextAnchor.MiddleRight);
                 }
             }
@@ -236,18 +237,12 @@ namespace YunJian.Riichi
         });
         public int DisplayScore(RoomView v,int seat) => Mathf.RoundToInt(Mathf.Lerp(Before(v,seat),v.players[seat].score,Mathf.SmoothStep(0,1,(Age-.8f)/1.65f))/100)*100;
         static Vector2 Center(int relative,int n) => relative==0?new Vector2(640,570):relative==n-1?new Vector2(400,364):relative==1&&n==4?new Vector2(900,364):n==3?new Vector2(900,364):new Vector2(640,164);
-        void Arrow(Vector2 a,Vector2 b,float alpha)
+        void Arrow(int from,int to,int n,float alpha)
         {
             var matrix=GUI.matrix;var old=GUI.color;GUI.color=new Color(1,1,1,alpha);
-            Vector2 delta=b-a;
-            if(Mathf.Abs(delta.x)>40 && Mathf.Abs(delta.y)>40){
-                // Original bent transfer arrow. Reflect it toward the destination.
-                GUI.matrix=matrix*Matrix4x4.TRS(new Vector3(a.x,a.y,0),Quaternion.identity,new Vector3(Mathf.Sign(delta.x),-Mathf.Sign(delta.y),1));
-                Image("scorechangearrow_1",new Rect(0,-Mathf.Abs(delta.y),Mathf.Abs(delta.x),Mathf.Abs(delta.y)));
-            }else{
-                GUI.matrix=matrix*Matrix4x4.TRS(new Vector3(a.x,a.y,0),Quaternion.Euler(0,0,Mathf.Atan2(delta.y,delta.x)*Mathf.Rad2Deg+90),Vector3.one);
-                Image("scorechangearrow_0",new Rect(-13,-delta.magnitude,26,delta.magnitude));
-            }
+            var source=NativeReviewLayout.Arrow(NativeReviewLayout.ScoreSlot(from,n),NativeReviewLayout.ScoreSlot(to,n));var center=NativeReviewLayout.ArrowCenter(source);var q=new Quaternion(source.rotation[0],source.rotation[1],source.rotation[2],source.rotation[3]);
+            GUI.matrix=matrix*Matrix4x4.TRS(new Vector3(center.x,center.y,0),Quaternion.Euler(0,0,-q.eulerAngles.z),new Vector3(source.scale[0],source.scale[1],1));
+            Image(source.size[0]>100?"scorechangearrow_1":"scorechangearrow_0",new Rect(-source.size[0]/3,-source.size[1]/3,source.size[0]*2/3,source.size[1]*2/3));
             GUI.matrix=matrix;GUI.color=old;
         }
         public static Vector2[] TransferEnds(Vector2 a,Vector2 b)
@@ -260,21 +255,18 @@ namespace YunJian.Riichi
         {
             // Original score-change title uses a brush font, not the action/result title.
             roundText.normal.textColor=gold;GUI.Label(new Rect(425,30,430,44),"东南西北"[Mathf.Clamp(v.round/v.n,0,3)]+(v.round%v.n+1).ToString()+"局  "+v.honba+"本场",roundText);
-            if(Age>.3f && Age<2.7f){
+            if(Age>.3f){
                 if(v.result.draw)foreach(int from in Enumerable.Range(0,v.n).Where(i=>v.result.delta[i]<0))foreach(int to in Enumerable.Range(0,v.n).Where(i=>v.result.delta[i]>0)){
-                    Vector2 a=Center((from-v.you+v.n)%v.n,v.n),b=Center((to-v.you+v.n)%v.n,v.n);var ends=TransferEnds(a,b);
-                    Arrow(ends[0],ends[1],Mathf.Clamp01((Age-.3f)/.3f)*Mathf.Clamp01((2.7f-Age)/.4f));
+                    Arrow((from-v.you+v.n)%v.n,(to-v.you+v.n)%v.n,v.n,Mathf.Clamp01((Age-.3f)/.3f));
                 }
                 var details=v.result.details??new WinDetail[0];
-                foreach(var d in details)foreach(int seat in Enumerable.Range(0,v.n).Where(i=>v.result.delta[i]<0)){
-                    Vector2 a=Center((seat-v.you+v.n)%v.n,v.n),b=Center((d.seat-v.you+v.n)%v.n,v.n);var ends=TransferEnds(a,b);
-                    Arrow(ends[0],ends[1],Mathf.Clamp01((Age-.3f)/.3f)*Mathf.Clamp01((2.7f-Age)/.4f));
+                foreach(var d in details)foreach(int seat in Enumerable.Range(0,v.n).Where(i=>d.score?.delta?.Length==v.n?d.score.delta[i]<0:d.ron?i==d.from:v.result.delta[i]<0)){
+                    if(seat!=d.seat)Arrow((seat-v.you+v.n)%v.n,(d.seat-v.you+v.n)%v.n,v.n,Mathf.Clamp01((Age-.3f)/.3f));
                 }
             }
             for(int seat=0;seat<v.n;seat++){
-                int relative=(seat-v.you+v.n)%v.n;Vector2 c=Center(relative,v.n);Rect r=new Rect(c.x-160,c.y-69,320,138);
+                int relative=(seat-v.you+v.n)%v.n;Rect r=NativeReviewLayout.ScoreRect(relative,v.n);Vector2 c=r.center;
                 var cardMatrix=GUI.matrix;
-                GUI.matrix=cardMatrix*Matrix4x4.Translate(new Vector3(c.x,c.y,0))*Matrix4x4.Scale(new Vector3(.8f,.8f,1))*Matrix4x4.Translate(new Vector3(-c.x,-c.y,0));
                 Image("scorechange_bg",r);
                 var portrait=table.Portrait(v.players[seat]);
                 Rect head=new Rect(r.x+219,r.y-23,85,85);
@@ -285,19 +277,41 @@ namespace YunJian.Riichi
                 int delta=v.result.delta!=null&&seat<v.result.delta.Length?v.result.delta[seat]:0;
                 // This native control is CText with haolong_0, not a sprite digit run.
                 if(Age<2.5f){
-                    number.normal.textColor=delta>=0?new Color(.69f,.91f,1):new Color(1,.43f,.34f);
-                    GUI.Label(new Rect(r.x+30,r.y+40,170,45),(delta>=0?"+":"")+delta,number);
+                    number.normal.textColor=delta>=0?new Color(.38f,.86f,.22f):new Color(1,.20f,.17f);
+                    GUI.Label(new Rect(r.x+108,r.y+39,130,36),(delta>=0?"+":"")+delta,number);
                 }
                 int prior=Rank(v,seat,true),rank=Rank(v,seat,false),shown=Age<2.5f?prior:rank;
-                if(Age>=2.5f){
+                var rankMatrix=GUI.matrix;float rankScale=Age>=2.5f?NativeReviewLayout.RankScale(Age-2.5f):1;
+                Vector3 rankPivot=new Vector3(r.x+72,r.y+86,0);GUI.matrix*=Matrix4x4.TRS(rankPivot,Quaternion.identity,Vector3.one*rankScale)*Matrix4x4.Translate(-rankPivot);
                 Image("bg_point",new Rect(r.x+29,r.y+88,111,37));
                 Image("s_"+shown,new Rect(r.x+34,r.y+40,42,79),ScaleMode.ScaleToFit);
                 Image("s_"+shown+"_"+shown,new Rect(r.x+72,r.y+83,37,37),ScaleMode.ScaleToFit);
                 if(Age>=2.5f && prior!=rank)Image(prior>rank?"upgrade_arrow":"rank_down_arrow",new Rect(r.x+112,r.y+89,31,24),ScaleMode.ScaleToFit);
-                }
+                GUI.matrix=rankMatrix;
                 GUI.matrix=cardMatrix;
             }
 
+        }
+        void Final(RoomView v,TableRenderer table,TableEffects effects){
+            roundText.normal.textColor=white;GUI.Label(new Rect(485,28,310,58),"终局",roundText);
+            var portrait=effects.Art("yiji-full");if(portrait!=null)GUI.DrawTexture(new Rect(-15,80,600,755),portrait,ScaleMode.ScaleToFit);
+            var seats=Enumerable.Range(0,v.n).OrderBy(i=>Rank(v,i,false)).ToArray();
+            for(int rank=0;rank<seats.Length;rank++){
+                int seat=seats[rank];float at=.4f+rank*.22f;float entrance=Mathf.Clamp01((Age-at)/.22f);if(entrance<=0)continue;
+                float x=445+rank*62+(1-entrance)*650,y=128+rank*(v.n==4?135:164),w=rank==0?720:625,h=rank==0?161:141;
+                // Native frame proportions, avatar viewport and placeholder rewards.
+                var bg=Art(rank==0?"bg_end0":"bg_end123");if(bg!=null)GUI.DrawTexture(new Rect(x,y,w,h),bg);
+                Image("s_"+(rank+1),new Rect(x+24,y+17,37,h*.67f),ScaleMode.ScaleToFit);Image("s_"+(rank+1)+"_"+(rank+1),new Rect(x+48,y+h*.62f,26,29),ScaleMode.ScaleToFit);
+                float headSize=h*.58f;var head=new Rect(x+91,y+15,headSize,headSize);Image("bg_head1",head);var face=table.Portrait(v.players[seat]);if(face!=null)GUI.DrawTexture(new Rect(head.x+3,head.y+3,head.width-6,head.height-6),face,ScaleMode.ScaleToFit);
+                float bodyX=head.xMax+18,rewardsX=x+w*.835f;
+                Label(new Rect(bodyX,y+9,rewardsX-bodyX-50,33),v.players[seat].name,rank==0?23:20,white,TextAnchor.MiddleLeft);
+                float pointHeight=h*.34f,pointWidth=Mathf.Min(w*.30f,rewardsX-bodyX-100);
+                Glyphs(new Rect(bodyX,y+h*.40f,pointWidth,pointHeight+6),Digits(v.players[seat].score,"ww_"),pointHeight,TextAnchor.MiddleLeft);
+                Label(new Rect(bodyX+pointWidth+7,y+h*.43f,90,38),"+0.0",rank==0?27:23,new Color(.28f,.76f,.45f),TextAnchor.MiddleLeft);
+                Image("gold0",new Rect(rewardsX,y+20,28,28),ScaleMode.ScaleToFit);Image("PT",new Rect(rewardsX+10,y+61,27,27),ScaleMode.ScaleToFit);
+                Label(new Rect(rewardsX+33,y+16,64,35),"+0",22,new Color(.28f,.76f,.45f),TextAnchor.MiddleLeft);Label(new Rect(rewardsX+43,y+57,54,35),"+0",22,new Color(.28f,.76f,.45f),TextAnchor.MiddleLeft);
+                if(seat==v.you)Image("myself",new Rect(rewardsX-66,y+9,53,27),ScaleMode.ScaleToFit);
+            }
         }
         bool NativeButton(Rect r,string value,Func<Rect,string,bool> button)
         {
@@ -311,11 +325,18 @@ namespace YunJian.Riichi
         {
             Observe(v);if(text==null){font=gameFont;text=new GUIStyle(GUI.skin.label){font=font,wordWrap=false,clipping=TextClipping.Clip};number=new GUIStyle(text){font=Resources.Load<Font>("Majsoul/Settlement/score-font"),fontSize=31,alignment=TextAnchor.MiddleLeft};
                 roundText=new GUIStyle(text){font=Resources.Load<Font>("Majsoul/Settlement/round-font-chs"),fontSize=31,alignment=TextAnchor.MiddleCenter};}
-            if(drawStage){DrawRound(v,table);if(NativeButton(new Rect(1125,648,128,50),Age<.7f?"跳过":"确认",button))Advance(v);}
+            if(finalPage){
+                Final(v,table,effects);
+                if(!v.players[v.you].ready && NativeButton(new Rect(1125,648,128,50),"确认",button))return Action.Ready;
+                if(v.players[v.you].ready)Label(new Rect(850,654,180,38),"已确认 · 等待其他玩家",17,white);
+                if(v.host && v.players.All(p=>p.ready) && NativeButton(new Rect(1125,648,128,50),"再来一场",button))return Action.Next;
+                if(NativeButton(new Rect(28,650,142,49),"返回大厅",button))return Action.Home;
+            }
+            else if(drawStage){DrawRound(v,table);if(NativeButton(new Rect(1125,648,128,50),Age<.7f?"跳过":"确认",button))Advance(v);}
             else if(!scores){Details(v,table,effects);if(NativeButton(new Rect(1125,648,128,50),Age<RevealEnd(v.result.details[winner])?"跳过":"确认",button))Advance(v);}
             else {
                 Scores(v,table);
-                if(!v.players[v.you].ready && NativeButton(new Rect(1125,648,128,50),"确认结算",button)){Advance(v);return Action.Ready;}
+                if(!v.players[v.you].ready && NativeButton(new Rect(1125,648,128,50),Age<3.3f?"跳过":v.result.matchOver?"终局":"确认结算",button)){bool finished=Age>=3.3f;Advance(v);if(finished&&!v.result.matchOver)return Action.Ready;}
                 if(v.players[v.you].ready)Label(new Rect(850,654,180,38),"已确认 · 等待其他玩家",17,white);
                 if(v.host && v.players.All(p=>p.ready) && NativeButton(new Rect(1125,648,128,50),v.result.matchOver?"再来一场":"下一局",button))return Action.Next;
                 if(NativeButton(new Rect(28,650,142,49),"返回大厅",button))return Action.Home;

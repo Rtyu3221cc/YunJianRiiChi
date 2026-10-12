@@ -73,7 +73,7 @@ namespace YunJian.Riichi
                 else if(view.result.details!=null && winner<view.result.details.Length){
                     var plan=Sequence(view.result.details[winner]);foreach(var row in plan.rows)if(crossed(row.at)){Voice(row.voice);audio.Cue("hule_fan_out",row.voice==null?1:.5f);}
                     if(crossed(plan.fuAt))audio.Cue("fu_appear");if(crossed(plan.pointsAt))audio.Cue("score_appear");
-                    if(plan.titleVoice!=null){if(crossed(plan.titleAt+.3f))audio.Cue(plan.drum);if(crossed(plan.titleAt+.5f))Voice(plan.titleVoice);}
+                    if(plan.titleVoice!=null){if(crossed(plan.titleAt+(plan.drum=="yakuman"?.15f:.3f)))audio.Cue(plan.drum);if(crossed(plan.titleAt+.5f))Voice(plan.titleVoice);}
                 }
             }
             previous=age;

@@ -1,5 +1,9 @@
 # 图像资源来源
 
+Unity 0.5.26 的 `TablePolish` 包含同一 APK 提取的 `hint` 菱形感叹号、姓名底图、纹饰、金币、PT 以及姓名使用的 `SimHei` 字体。来源及 SHA-256 见该目录 `source.json`；未绘制替代菱形图标。
+
+Unity 0.5.25 的 `NativeReview` 来源是同一份用户提供的雀魂 APK：原宝牌反光贴图／网格、四向拔北锚点、12 个箭头变换、排名与终局图片、役满 6 + 6 组及吃碰 2 组粒子模块。逐项 bundle、pathID 与哈希见该目录 `provenance.json`；编译后 Shader 和加密脚本保留为证据。[解包范围](docs/1011优化与解包范围.md)没有将这些内容称为完整可编译的原工程或原始 Shader／脚本源码。
+
 本地试玩版 0.3.0 使用用户提供的 `Majsoul_4.0.16_MC.apk` 中的以下美术资源。这些图片并非本项目原创，也不属于规则引擎的 MIT 许可。
 
 - `tiles/*.png`：默认手牌图集，共 37 张（含三张赤五），每张 80 × 129。原路径：`myassets/deco/mjpface/mjpface_default/3d/texture/hand.png`，图集尺寸 800 × 516。

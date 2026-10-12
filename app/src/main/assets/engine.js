@@ -11,7 +11,7 @@ function avatar(value){check(typeof value==='string'&&value.length<=12288&&(valu
 function player(name,token){return {name,avatar:"",token:token||randomHex(18),recovery:randomHex(6),score:0,hand:'',river:[],riichi:0,ippatsu:false,nuki:0,temp:false,permanent:false,kans:0,ready:false,requests:[]}}
 class Room{
  constructor(host,save,snapshot){this.host=host;this.save=save||(()=>{});this.s=snapshot?JSON.parse(snapshot):null;this.seen={};}
- sound(kind,seat,tile,riichi,nuki,win){const s=this.s;s.audioSeq=(s.audioSeq||0)+1;s.audioEvents=(s.audioEvents||[]).concat({id:s.audioSeq,kind,seat,tile:tile||null,riichi:!!riichi,...(kind==='discard'?{riverIndex:s.players[seat].river.length}:{}),...(nuki?{nuki}:{}),...(win?{from:win.from,winSource:win.kind}:{}),at:Date.now()}).slice(-24);}
+ sound(kind,seat,tile,riichi,nuki,win,meld){const s=this.s;s.audioSeq=(s.audioSeq||0)+1;s.audioEvents=(s.audioEvents||[]).concat({id:s.audioSeq,kind,seat,tile:tile||null,riichi:!!riichi,...(kind==='discard'?{riverIndex:s.players[seat].river.length}:{}),...(nuki?{nuki}:{}),...(win?{from:win.from,winSource:win.kind}:{}),...(meld?{meld:meld.value,meldKind:meld.kind,meldIndex:meld.index,from:meld.from}:{}),at:Date.now()}).slice(-24);}
  addBot(){const s=this.s;check(s.players.length<s.n,'座位已满');let n=1;while(s.players.some(p=>p.name==='AI · '+n))n++;const p=player('AI · '+n);p.bot=true;s.players.push(p);}
  tick(){
   const s=this.s;if(!s||!g.RiichiAI||!['play','reaction'].includes(s.phase)||Date.now()<(s.matchOpeningUntil||0))return {ok:true,idle:true};
@@ -156,7 +156,7 @@ class Room{
   if(kind!=='discard'){
    this.interrupt();const h=this.h(from);
    if(kind==='nuki'){h.decrease('z',4);h._zimo=null;this.put(from,h);s.players[from].nuki++;this.sound('nuki',from,'z4',false,s.players[from].nuki);this.log(s.players[from].name+' 拔北');this.draw(from,'nuki');}
-   else {h.gang(q.meld);this.put(from,h);s.players[from].kans++;this.sound('kan',from,q.meld.slice(0,2));this.log(s.players[from].name+' 开杠');this.draw(from,'kan');}
+   else {h.gang(q.meld);this.put(from,h);s.players[from].kans++;this.sound('kan',from,q.meld.slice(0,2),false,0,null,{value:q.meld,kind,index:h._fulou.indexOf(q.meld),from});this.log(s.players[from].name+' 开杠');this.draw(from,'kan');}
    return;
   }
   if(q.riichi){s.players[from].score-=1000;s.sticks++;this.sound(s.players[from].riichi===2?'double-riichi':'riichi',from);this.sound('riichi-stick',from);if(s.n===4&&s.players.every(p=>p.riichi))return this.abort('四家立直');}
@@ -165,7 +165,7 @@ class Room{
   if(!this.remain())return this.exhaust();
   const caller=order.find(i=>/^(pon|minkan):/.test(q.replies[i]||''))??order.find(i=>/^chi:/.test(q.replies[i]||''));
   if(caller!==undefined){
-   const action=q.replies[caller],m=action.slice(action.indexOf(':')+1);this.interrupt();this.put(caller,this.h(caller).fulou(m));this.sound(action.startsWith('minkan:')?'kan':action.split(':')[0],caller,tile);
+   const action=q.replies[caller],m=action.slice(action.indexOf(':')+1);this.interrupt();this.put(caller,this.h(caller).fulou(m));this.sound(action.startsWith('minkan:')?'kan':action.split(':')[0],caller,tile,false,0,null,{value:m,kind:action.split(':')[0],index:this.h(caller)._fulou.length-1,from});
    s.players[from].river[s.players[from].river.length-1].called=true;
    s.turn=caller;s.pending=null;s.phase='play';s.drawKind='call';this.log(s.players[caller].name+' '+({pon:'碰',chi:'吃',minkan:'明杠'}[action.split(':')[0]]));
    if(action.startsWith('minkan:')){s.players[caller].kans++;this.draw(caller,'kan');}

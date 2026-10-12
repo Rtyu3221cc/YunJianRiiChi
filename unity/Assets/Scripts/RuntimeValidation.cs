@@ -17,7 +17,7 @@ namespace YunJian.Riichi
             folder = Path.GetFullPath("../build/unity-smoke"); Directory.CreateDirectory(folder);
             foreach (var name in new[] { "passed.txt", "failed.txt" })
                 if (File.Exists(Path.Combine(folder, name))) File.Delete(Path.Combine(folder, name));
-            var run = Environment.GetEnvironmentVariable("RIICHI_FIDELITY_0524")=="1"?ReviewValidation0524.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_REVIEW_PREVIEW")=="1"?ReviewValidation0523.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_NATIVE_PREVIEW")=="1"?NativeFirePreview.Run(GetComponent<RiichiClient>(),folder):Run();
+            var run = Environment.GetEnvironmentVariable("RIICHI_FIDELITY_0526")=="1"?ReviewValidation0526.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_FIDELITY_0525")=="1"?ReviewValidation0525.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_FIDELITY_0524")=="1"?ReviewValidation0524.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_REVIEW_PREVIEW")=="1"?ReviewValidation0523.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_NATIVE_PREVIEW")=="1"?NativeFirePreview.Run(GetComponent<RiichiClient>(),folder):Run();
             while (true)
             {
                 bool next;

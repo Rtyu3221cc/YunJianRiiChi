@@ -42,7 +42,7 @@ namespace YunJian.Riichi
         GUIStyle caption, centered, tableButton;
         TableViewport viewport;
         readonly Dictionary<string, Texture2D> skin = new Dictionary<string, Texture2D>();
-        bool showHints;
+        GUIStyle namePlateText,playerTitle,roomCaption;
         const float WaitHoldDelay=.35f;
         static readonly WaitDetail[] NoWaits=new WaitDetail[0];
         bool waitPressCaptured,waitPressCancelled,waitHoldVisible;
@@ -53,6 +53,7 @@ namespace YunJian.Riichi
 #endif
         public bool OptionsReady => State!=null && !introduction.Active && !table.ArrangingHand && !effects.HasPendingActions;
         bool CanInspectWaits => active && State!=null && (State.phase=="play" || State.phase=="reaction") && !showRoom && page!="settings" && page!="confirm-close";
+        public bool WaitIndicatorVisible => CanInspectWaits && ((State.waitDetails?.Length??0)>0 || State.phase=="play"&&State.turn==State.you&&(State.discardHints??new DiscardHint[0]).Any(h=>(h.waits?.Length??0)>0));
         DiscardHint ActiveWaitHint => State?.discardHints?.FirstOrDefault(h=>h.id==SelectedAction);
         bool PreviewingDiscard => CanInspectWaits && State.phase=="play" && State.turn==State.you && SelectedAction!=null && State.options.Any(o=>o.id==SelectedAction && (o.kind=="discard" || o.kind=="riichi"));
         // A selected legal discard previews its resulting hand. Otherwise the
@@ -226,7 +227,7 @@ namespace YunJian.Riichi
         bool UpdateWaitPointer(Vector2 point,bool down,bool held,bool up,float now)
         {
             bool consumed=waitPressCaptured;
-            if(!CanInspectWaits){ResetWaitPress();return consumed;}
+            if(!WaitIndicatorVisible){ResetWaitPress();return consumed;}
             if(down && waitButtonScreenRect.Contains(point)){
                 waitPressCaptured=true;waitPressCancelled=false;waitPressStarted=now;consumed=true;
             }
@@ -333,7 +334,7 @@ namespace YunJian.Riichi
         }
         Texture2D Skin(string name)
         {
-            if (!skin.TryGetValue(name, out var texture)) { texture = Resources.Load<Texture2D>("Majsoul/UI/" + name); skin[name] = texture; }
+            if (!skin.TryGetValue(name, out var texture)) { texture = Resources.Load<Texture2D>("Majsoul/UI/" + name)??Resources.Load<Texture2D>("Majsoul/TablePolish/"+name); skin[name] = texture; }
             return texture;
         }
         bool SkinButton(Rect r, string sprite, string tooltip)
@@ -453,7 +454,8 @@ namespace YunJian.Riichi
             }
             HudNumber(State.sticks, ox + 117*k, oy + 139*k, k);
             HudNumber(State.honba, ox + 256*k, oy + 139*k, k);
-            ShadowLabel(new Rect(ox + 23*k, oy + 186*k, 290*k, 51*k), "云间 · " + (State.n == 3 ? "三人" : "四人") + (State.rounds == 1 ? "东" : "半庄"), caption, new Color(.94f, .78f, .49f));
+            if(roomCaption==null){roomCaption=new GUIStyle(centered){font=Resources.Load<Font>("Majsoul/Settlement/round-font-chs"),fontSize=24};namePlateText=new GUIStyle(centered){font=Resources.Load<Font>("Majsoul/TablePolish/name-font"),fontSize=16};playerTitle=new GUIStyle(centered){font=Resources.Load<Font>("Majsoul/Settlement/round-font-chs"),fontSize=16};}
+            ShadowLabel(new Rect(ox + 4*k, oy + 189*k, 325*k, 43*k), "铜之间 · " + (State.n == 3 ? "三人" : "四人") + (State.rounds == 1 ? "东" : "南"), roomCaption, new Color(.94f, .78f, .49f));
             foreach (var p in State.players.Select((v, i) => new { v, i }))
             {
                 int seat = table.RelativeSeat(p.i);
@@ -461,14 +463,14 @@ namespace YunJian.Riichi
                 bool turn = State.turn == p.i;
                 GUI.DrawTexture(new Rect(anchor.x, anchor.y, 62, 62), table.Portrait(p.v), ScaleMode.ScaleAndCrop);
                 PortraitFrame(new Rect(anchor.x - 3, anchor.y - 3, 68, 68), turn);
-                ShadowLabel(new Rect(anchor.x - 35, anchor.y + 64, 132, 19), p.v.name, centered, Color.white);
-                ShadowLabel(new Rect(anchor.x - 35, anchor.y + 82, 132, 19), "东南西北"[p.v.wind] + "家 · " + p.v.score, centered, new Color(.69f, .77f, .94f));
+                var nameRect=new Rect(anchor.x-38,anchor.y+65,138,23);GUI.DrawTexture(nameRect,Skin("bg_name_1"),ScaleMode.StretchToFill);
+                namePlateText.fontSize=p.v.name.Length>11?12:p.v.name.Length>8?14:16;ShadowLabel(nameRect,p.v.name,namePlateText,Color.white);
+                var titleRect=new Rect(anchor.x-45,anchor.y+88,152,24);var deco=Skin("highlight_deco_1");if(deco!=null)GUI.DrawTexture(new Rect(titleRect.x,titleRect.center.y-1,titleRect.width,2),deco,ScaleMode.StretchToFill);
+                ShadowLabel(titleRect,"暂无称号",playerTitle,new Color(.73f,.76f,.80f));
             }
             if(passive)return;
             string status = State.phase == "result" ? State.result.title : State.phase == "reaction" ? (State.options.Length > 0 ? "请选择操作" : "等待其他玩家响应") : State.turn == State.you ? "轮到你出牌" : State.players[State.turn].name + " 的回合";
-            if (showHints || State.phase == "reaction") ShadowLabel(new Rect(w * .5f - 210, h - 128, 420, 26), status, centered, Color.white);
-            if (SkinButton(new Rect(24, h - 66, 36, 36), showHints ? "ob_ting_on_btn" : "ob_ting_off_btn", "切换出牌提示")) showHints = !showHints;
-            ShadowLabel(new Rect(4, h - 31, 76, 18), "出牌提示", centered, new Color(.66f, .75f, .92f));
+            if (State.phase == "reaction") ShadowLabel(new Rect(w * .5f - 210, h - 128, 420, 26), status, centered, Color.white);
             if (RiichiMode) GUI.Label(new Rect(w * .5f - 210, h - 105, 420, 22), "选牌后再点一次 · 立直打出", centered);
             var bounds=table.HandScreenBounds();
             var top=viewport.FromScreen(new Vector2(bounds.xMin,bounds.yMax),Screen.height);
@@ -479,8 +481,8 @@ namespace YunJian.Riichi
                 CurrentFuritenPanel=new Rect(top.x-bw-4,(top.y+bottom.y-bh)/2,bw,bh);
                 TableIndicators.Image("pic_zhengting",CurrentFuritenPanel);
             }
-            DrawWaitButton(new Rect(w-64,h-91,36,36));
-            ShadowLabel(new Rect(w-88,h-54,84,18),"听牌提示",centered,new Color(.66f,.75f,.92f));
+            CurrentWaitButton=new Rect();waitButtonScreenRect=new Rect();
+            if(WaitIndicatorVisible)DrawWaitButton(new Rect(w-64,h-111,36,36));
             CurrentWaitPanel=new Rect();
             if(CurrentWaitDetails.Length>0 && bounds.width>0){
                 CurrentWaitPanel=TableIndicators.WaitRect(CurrentWaitDetails.Length,new Vector2((top.x+bottom.x)/2,0),top.y-10,w*.70f);
@@ -495,7 +497,7 @@ namespace YunJian.Riichi
             CurrentWaitButton=r;
             var a=GUI.matrix.MultiplyPoint3x4(new Vector3(r.x,r.y,0));var b=GUI.matrix.MultiplyPoint3x4(new Vector3(r.xMax,r.yMax,0));
             waitButtonScreenRect=Rect.MinMaxRect(a.x,a.y,b.x,b.y);uiButtons.Add(waitButtonScreenRect);
-            var texture=Skin(waitHoldVisible?"ob_ting_on_btn":"ob_ting_off_btn");
+            var texture=Skin("hint");
             if(texture!=null)GUI.DrawTexture(r,texture,ScaleMode.ScaleToFit);
             GUI.Label(r,new GUIContent("","长按查看听牌"),GUIStyle.none);
         }

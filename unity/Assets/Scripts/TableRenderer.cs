@@ -13,7 +13,14 @@ namespace YunJian.Riichi
         public Camera HandCamera { get; private set; }
         OriginalTiles original;
         readonly ReferenceScoreHub scoreHub = new ReferenceScoreHub();
-        public Texture DoraTexture(string tile,bool match=false) => original.DoraTexture(tile,match);
+        public Texture DoraTexture(string tile,bool match=false) => original.DoraTexture(tile,match,state!=null&&IsDora(tile));
+        public bool IsDora(string tile){
+            if(string.IsNullOrEmpty(tile))return false;if(tile.Length>1&&tile[1]=='0')return true;
+            foreach(string indicator in state.indicators??new string[0]){
+                int value=indicator[1]-'0';if(value==0)value=5;int next=indicator[0]=='z'?(value<=4?value%4+1:(value-4)%3+5):state.n==3&&indicator[0]=='m'?(value==1?9:1):value%9+1;
+                if(tile==indicator[0].ToString()+next)return true;
+            }return false;
+        }
         public Texture HandTexture(string tile) => original.HandTexture(tile);
         Transform content;
         RoomView state;
@@ -66,6 +73,13 @@ namespace YunJian.Riichi
         readonly Dictionary<int, List<Transform>> riverTiles = new Dictionary<int, List<Transform>>();
         readonly Dictionary<int, Transform> stickAnchors = new Dictionary<int, Transform>();
         readonly Dictionary<int, Transform> meldAnchors = new Dictionary<int, Transform>();
+        public sealed class MeldVisual {public Transform group,anchor,extra;public string value;public Vector3 extraRest;}
+        readonly Dictionary<int,List<MeldVisual>> meldGroups=new Dictionary<int,List<MeldVisual>>();
+        public MeldVisual EventMeld(PublicSound e){
+            if(!meldGroups.TryGetValue(e.seat,out var list)||list.Count==0)return null;
+            if(!string.IsNullOrEmpty(e.meld)){var exact=list.FirstOrDefault(m=>m.value==e.meld);if(exact!=null)return exact;}
+            return list[list.Count-1];
+        }
         readonly Dictionary<int, List<Transform>> northTiles = new Dictionary<int, List<Transform>>();
         readonly Dictionary<int, Transform> winningTiles = new Dictionary<int, Transform>();
         readonly TileGeometry geometry = new TileGeometry();
@@ -80,6 +94,7 @@ namespace YunJian.Riichi
             Camera.fieldOfView = 28; Camera.nearClipPlane = .1f; Camera.farClipPlane = 50;
             Camera.clearFlags = CameraClearFlags.SolidColor; Camera.backgroundColor = Color.black;
             Camera.allowMSAA = true; QualitySettings.antiAliasing = 4;
+            QualitySettings.anisotropicFiltering=AnisotropicFiltering.ForceEnable;
             Camera.cullingMask &= ~((1 << 12) | (1 << 13) | (1 << 14));
             HandCamera = new GameObject("Original orthographic hand camera").AddComponent<Camera>();
             HandCamera.transform.position = new Vector3(0, 0, -30);
@@ -280,7 +295,10 @@ namespace YunJian.Riichi
             float centerX = safe.center.x;
             // Keep the native quad height. Public edge groups yield space when
             // their silhouettes would otherwise force the foreground hand to shrink.
-            foreach(var group in exposedGroups)group.localPosition=Vector3.zero;
+            var restored=new List<Tuple<Transform,Vector3>>();
+            if(meldGroups.TryGetValue(state.you,out var ownGroups))foreach(var meld in ownGroups){restored.Add(Tuple.Create(meld.group,meld.group.localPosition));meld.group.localPosition=Vector3.zero;if(meld.extra!=null){restored.Add(Tuple.Create(meld.extra,meld.extra.localPosition));meld.extra.localPosition=meld.extraRest;}}
+            foreach(var group in exposedGroups){group.localPosition=Vector3.zero;group.localScale=Vector3.one;}
+            AlignSelfMelds(safe.yMin+.12f*scale/18*Screen.height,safe.xMax-18*Screen.height/600f);
             float left=safe.xMin+safe.width*.05f,right=safe.xMax-safe.width*.05f;
             float handTop=safe.yMin+(OriginalTiles.HandHeight+.42f)*scale/18*Screen.height;
             float margin=10*Screen.height/780f;
@@ -292,15 +310,37 @@ namespace YunJian.Riichi
                 else left=Mathf.Max(left,bounds.xMax+margin);
             }
             if(right-left>=half*2)centerX=Mathf.Clamp(centerX,left+half,right-half);
-            else centerX=Mathf.Clamp(centerX,safe.xMin+safe.width*.05f+half,safe.xMax-safe.width*.05f-half);
+            else {scale*=Mathf.Max(.35f,(right-left)/(half*2));half=handSpan*scale/(18*aspect)*Screen.width*.5f;centerX=(left+right)*.5f;handTop=safe.yMin+(OriginalTiles.HandHeight+.42f)*scale/18*Screen.height;}
             var handBand=Rect.MinMaxRect(centerX-half,safe.yMin,centerX+half,handTop);
             foreach(var group in exposedGroups)
-                if(ProjectedBounds(group,out var bounds) && handBand.Overlaps(bounds))MoveAboveHand(group,handTop+margin);
+                if(group!=selfMelds && ProjectedBounds(group,out var bounds) && handBand.Overlaps(bounds))MoveAboveHand(group,handTop+margin);
             float x = ((centerX / Screen.width) - .5f) * 18 * aspect;
             float bottom = -9 + safe.y / Screen.height * 18;
             cameraHand.position = new Vector3(x, bottom + (OriginalTiles.HandHeight / 2 + .12f) * scale, 0);
             cameraHand.rotation = Quaternion.identity;
             cameraHand.localScale = Vector3.one * scale;
+            foreach(var saved in restored)if(saved.Item1!=null)saved.Item1.localPosition=saved.Item2;
+        }
+        void AlignSelfMelds(float bottom,float right){
+            if(selfMelds==null || selfMelds.GetComponentsInChildren<BoxCollider>(true).Length==0)return;
+            var first=selfMelds.GetComponentsInChildren<BoxCollider>(true).OrderBy(c=>Mathf.Abs(c.transform.localRotation.eulerAngles.y)).First();
+            // Keep the previous projected tile width while moving the group to the
+            // bottom edge. Perspective compensation must not shrink the visible tiles.
+            if(!ProjectedBounds(first.transform,out var nativeTile)||nativeTile.width<1)return;
+            float width=nativeTile.width;
+            for(int pass=0;pass<6;pass++){
+                if(!ProjectedBounds(first.transform,out var tile)||tile.width<1)return;
+                float factor=Mathf.Clamp(width/tile.width,.65f,1.4f);selfMelds.localScale*=factor;
+                if(!ProjectedBounds(selfMelds,out var bounds))return;
+                TranslateOnCloth(selfMelds,new Vector2(right-bounds.xMax,bottom-bounds.yMin));
+            }
+        }
+        void TranslateOnCloth(Transform group,Vector2 pixels){
+            float lowest=float.MaxValue;Vector3 point=Vector3.zero,screen=Vector3.zero;
+            foreach(var box in group.GetComponentsInChildren<BoxCollider>(true))for(int corner=0;corner<8;corner++){
+                var offset=Vector3.Scale(box.size*.5f,new Vector3((corner&1)==0?-1:1,(corner&2)==0?-1:1,(corner&4)==0?-1:1));var world=box.transform.TransformPoint(box.center+offset);var p=Camera.WorldToScreenPoint(world);if(p.z>0&&p.y<lowest){lowest=p.y;point=world;screen=p;}
+            }
+            if(lowest==float.MaxValue)return;var ray=Camera.ScreenPointToRay(new Vector3(screen.x+pixels.x,screen.y+pixels.y,0));if(new Plane(Vector3.up,point).Raycast(ray,out float distance)){var delta=ray.GetPoint(distance)-point;delta.y=0;group.position+=delta;}
         }
         void MoveAboveHand(Transform group,float bottom)
         {
@@ -336,7 +376,7 @@ namespace YunJian.Riichi
         Transform Tile(Transform parent, string tile, Vector3 position, float w = .28f, float h = .42f, bool hidden = false, bool sideways = false, float opacity = 1)
         {
             var root = original.CreateTable(parent, tile, position, w, hidden, sideways, opacity);
-            if(!hidden)exposedTiles.Add(Tuple.Create(root,tile));
+            if(!hidden){exposedTiles.Add(Tuple.Create(root,tile));if(IsDora(tile))OriginalTiles.AddShine(root,false);}
             var shadow = new GameObject("Contact shadow"); shadow.transform.SetParent(root, false);
             shadow.transform.localPosition = new Vector3(.018f, .002f - position.y, -.022f);
             shadow.AddComponent<MeshFilter>().sharedMesh = geometry.Get(w + .02f, w * original.TableLength + .02f, true);
@@ -451,6 +491,11 @@ namespace YunJian.Riichi
                 if(d.ron)robbed[key]=tile;
             }
         }
+        public static Vector3 RiverScatter(int seat,int rawIndex,int round,int honba){
+            uint seed=unchecked((uint)((seat+1)*1973+(rawIndex+1)*9277+round*7919+honba*313));
+            float next(){seed=1664525u*seed+1013904223u;return (seed>>8)/16777215f*2-1;}
+            return new Vector3(next()*.005f,next()*.012f,next()*1.2f);
+        }
         void DrawRiver(Transform parent, PlayerView p, int seatIndex)
         {
             var visible = VisibleRiver(p); var rendered = new List<Transform>();riverTiles[seatIndex]=rendered;
@@ -461,7 +506,9 @@ namespace YunJian.Riichi
                 for (int j = 0; j < row.Length; j++)
                 {
                     var r = row[j]; float width = r.riichi ? .44f : .33f;
-                    var tile=Tile(parent, r.tile, new Vector3(cursor + width / 2, 0, -1.48f - start / 6 * .45f), .33f, .44f, false, r.riichi);
+                    int raw=Array.IndexOf(p.river,r);var scatter=RiverScatter(seatIndex,raw,state.round,state.honba);
+                    var tile=Tile(parent, r.tile, new Vector3(cursor + width / 2+scatter.x, 0, -1.48f - start / 6 * .46f+scatter.y), .33f, .44f, false, r.riichi);
+                    tile.localRotation=Quaternion.Euler(0,(r.riichi?90:0)+scatter.z,0);
                     tile.name="River "+(start+j)+" "+r.tile;rendered.Add(tile);
                     // The marker belongs to the seat that can actually call, not to
                     // every discard while any seat still has a pending decision.
@@ -499,6 +546,7 @@ namespace YunJian.Riichi
                 var choice = choices.FirstOrDefault(a => a.tile == hand[i] && a.id.EndsWith("_", StringComparison.Ordinal) == drawn);
                 Vector3 pos = new Vector3(-width / 2 + i * pitch + (drawn ? .4f : 0), 0, 0);
                 var tile = original.CreateHand(cameraHand, hand[i], pos);
+                if(IsDora(hand[i]))OriginalTiles.AddShine(tile,true);
                 // A presentation hand must not cast a giant floating shadow onto the table.
                 foreach (var renderer in tile.GetComponentsInChildren<Renderer>()) { renderer.shadowCastingMode = ShadowCastingMode.Off; renderer.receiveShadows = false; }
                 handTiles.Add(tile); handBase.Add(pos);
@@ -537,11 +585,14 @@ namespace YunJian.Riichi
             float meldZ = Mathf.Abs(angle)>135 ? -3.50f : p == state.players[state.you] ? -4.10f : -4.20f;
             Transform anchor=null;
             var root=new GameObject("Exposed melds").transform;root.SetParent(parent,false);parent=root;
+            var groups=new List<MeldVisual>();meldGroups[index]=groups;
             if (index == state.you) selfMelds = root;
             exposedGroups.Add(root);
             // Read backwards so the first meld remains nearest the player's right edge.
             foreach (string meld in p.melds)
             {
+                var group=new GameObject("Meld "+groups.Count).transform;group.SetParent(root,false);parent=group;
+                var visual=new MeldVisual{group=group,value=meld};groups.Add(visual);
                 var digits = meld.Skip(1).Where(char.IsDigit).ToList(); int marker = meld.IndexOfAny(new[] { '-', '=', '+' });
                 char direction = marker >= 0 ? meld[marker] : '\0';
                 int called = marker >= 0 ? meld.Substring(1, marker - 1).Count(char.IsDigit) - 1 : -1;
@@ -563,8 +614,9 @@ namespace YunJian.Riichi
                     {
                         float w = piece.Item2 ? .53f : .37f;
                         var calledTile = Tile(parent, meld[0].ToString() + piece.Item1, new Vector3(x + w / 2, .02f, meldZ), .35f, .51f, false, piece.Item2);
+                        if(visual.anchor==null || piece.Item2)visual.anchor=calledTile;
                         if (piece.Item2) anchor = calledTile;
-                        if (added && piece.Item2) Tile(parent, meld[0].ToString() + extra, new Vector3(x + w / 2, .17f, meldZ), .35f, .51f, false, true);
+                        if (added && piece.Item2){visual.extra=Tile(parent, meld[0].ToString() + extra, new Vector3(x + w / 2, .17f, meldZ), .35f, .51f, false, true);visual.extraRest=visual.extra.localPosition;}
                         x += w;
                     }
                     cursor = start - .16f; continue;
@@ -574,21 +626,20 @@ namespace YunJian.Riichi
                 {
                     var concealed = Tile(parent, meld[0].ToString() + pieces[j].Item1, new Vector3(cursor + j * .37f, .02f, meldZ), .35f, .51f, pieces[j].Item3);
                     if (anchor == null) anchor = concealed;
+                    if(visual.anchor==null)visual.anchor=concealed;
                 }
                 cursor -= .16f;
             }
             if (anchor != null) meldAnchors[index] = anchor;
             // Source babei anchor lies inward of, and separate from, the meld corner.
-            var north=new GameObject("Extracted North").transform;north.SetParent(parent.parent,false);
+            var north=new GameObject("Extracted North").transform;north.SetParent(root.parent,false);
             exposedGroups.Add(north);
             bool self=index==state.you;
             var extracted = new List<Transform>(); northTiles[index] = extracted;
             for (int i = 0; i < p.nuki; i++)
             {
-                var tile = Tile(north, "z4", new Vector3(-2.95f, .02f, -3.10f+i*.37f), .35f, .51f);
-                // Rotate the glyph toward the table, with North tiles stacked
-                // along the side of each seat rather than across the corner.
-                tile.localRotation = Quaternion.Euler(0, 90, 0);
+                var tile = Tile(north, "z4", NativeReviewLayout.NorthLocal(NativeReviewLayout.Physical(RelativeSeat(index),state.n),i,angle), .35f, .51f);
+                tile.localRotation = Quaternion.identity;
                 extracted.Add(tile);
             }
         }

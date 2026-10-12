@@ -18,6 +18,7 @@ namespace YunJian.Riichi
         readonly float outlineScale;
         readonly Dictionary<string, Material> materials = new Dictionary<string, Material>();
         readonly Dictionary<string, RenderTexture> doraTextures = new Dictionary<string, RenderTexture>();
+        readonly Dictionary<string,Transform> liveDora=new Dictionary<string,Transform>();
         readonly Dictionary<string, RenderTexture> handTextures = new Dictionary<string, RenderTexture>();
         Camera doraCamera, handPreviewCamera;
         public OriginalTiles()
@@ -69,6 +70,7 @@ namespace YunJian.Riichi
                 // Table face is the 50 x 70 interior of the existing 52 x 72 crop.
                 // The original mesh's face submesh supplies the UV mapping.
                 m = new Material(Shader.Find("YunJian/OriginalTileFace")) { mainTexture = Resources.Load<Texture2D>("Majsoul/TableTiles/" + tile) };
+                if(m.mainTexture!=null){m.mainTexture.anisoLevel=16;m.mainTexture.filterMode=FilterMode.Trilinear;m.mainTexture.mipMapBias=-.35f;}
                 m.mainTextureScale = new Vector2(50f / 52, 70f / 72); m.mainTextureOffset = new Vector2(1f / 52, 1f / 72);
             }
             materials[key] = m; return m;
@@ -80,6 +82,10 @@ namespace YunJian.Riichi
             var r = t.gameObject.AddComponent<MeshRenderer>(); r.sharedMaterial = Face(tile, true); r.shadowCastingMode = ShadowCastingMode.Off; r.receiveShadows = false;
             t.gameObject.AddComponent<BoxCollider>().size = new Vector3(HandWidth, HandHeight, .04f);
             return t;
+        }
+        public static void AddShine(Transform tile,bool hand){
+            var parent=hand?tile:tile.Find("Original tile");if(parent.Find("APK dora shine")!=null)return;
+            var shine=new GameObject("APK dora shine");shine.layer=parent.gameObject.layer;shine.transform.SetParent(parent,false);shine.AddComponent<NativeDoraShine>().Initialize(hand);
         }
         public Transform CreateTable(Transform parent, string tile, Vector3 position, float width, bool hidden, bool sideways, float opacity)
         {
@@ -159,11 +165,13 @@ namespace YunJian.Riichi
             root.gameObject.SetActive(false); UnityEngine.Object.Destroy(root.gameObject);
             handTextures[key] = target; return target;
         }
-        public Texture DoraTexture(string tile,bool match=false)
+        public Texture DoraTexture(string tile,bool match=false,bool shine=false)
         {
-            bool hidden=string.IsNullOrEmpty(tile);match&=!hidden;
-            string key = (hidden ? "back" : tile)+(match?"/blue":"");
-            if (doraTextures.TryGetValue(key, out var cached)) return cached;
+            bool hidden=string.IsNullOrEmpty(tile);match&=!hidden;shine&=!hidden;
+            string key = (hidden ? "back" : tile)+(match?"/blue":"")+(shine?"/shine":"");
+            if (doraTextures.TryGetValue(key, out var cached)) {
+                if(shine){var model=liveDora[key];model.gameObject.SetActive(true);model.GetComponentInChildren<NativeDoraShine>().Apply();doraCamera.targetTexture=cached;doraCamera.Render();doraCamera.targetTexture=null;model.gameObject.SetActive(false);}return cached;
+            }
             if (doraCamera == null)
             {
                 doraCamera = new GameObject("Dora tile preview camera").AddComponent<Camera>();
@@ -173,15 +181,16 @@ namespace YunJian.Riichi
             }
             Vector3 origin = new Vector3(50,50,50);
             var root = CreateTable(null, tile, origin, 1, hidden, false, 1);
+            if(shine)AddShine(root,false);
             MatchModel(root,match);
             foreach (var t in root.GetComponentsInChildren<Transform>()) t.gameObject.layer = 13;
             doraCamera.transform.position = origin + new Vector3(0,4,-.65f);
             doraCamera.transform.LookAt(origin + Vector3.up * TableDepth / 2, Vector3.forward);
             var target = new RenderTexture(108,162,24,RenderTextureFormat.ARGB32) { antiAliasing = 4, name = "Dora " + key };
             target.Create(); doraCamera.targetTexture = target; doraCamera.Render(); doraCamera.targetTexture = null;
-            root.gameObject.SetActive(false); UnityEngine.Object.Destroy(root.gameObject);
+            root.gameObject.SetActive(false);if(shine)liveDora[key]=root;else UnityEngine.Object.Destroy(root.gameObject);
             doraTextures[key] = target; return target;
         }
-        public void Dispose() { UnityEngine.Object.Destroy(tableMesh); UnityEngine.Object.Destroy(handMesh);UnityEngine.Object.Destroy(outlineMesh);UnityEngine.Object.Destroy(glowMesh); UnityEngine.Object.Destroy(shell);UnityEngine.Object.Destroy(outline);UnityEngine.Object.Destroy(glow); foreach (var m in materials.Values) UnityEngine.Object.Destroy(m); foreach (var t in doraTextures.Values) { t.Release(); UnityEngine.Object.Destroy(t); } foreach (var t in handTextures.Values) { t.Release(); UnityEngine.Object.Destroy(t); } if (doraCamera != null) UnityEngine.Object.Destroy(doraCamera.gameObject); if (handPreviewCamera != null) UnityEngine.Object.Destroy(handPreviewCamera.gameObject); }
+        public void Dispose() {foreach(var model in liveDora.Values)if(model!=null)UnityEngine.Object.Destroy(model.gameObject);liveDora.Clear(); UnityEngine.Object.Destroy(tableMesh); UnityEngine.Object.Destroy(handMesh);UnityEngine.Object.Destroy(outlineMesh);UnityEngine.Object.Destroy(glowMesh); UnityEngine.Object.Destroy(shell);UnityEngine.Object.Destroy(outline);UnityEngine.Object.Destroy(glow); foreach (var m in materials.Values) UnityEngine.Object.Destroy(m); foreach (var t in doraTextures.Values) { t.Release(); UnityEngine.Object.Destroy(t); } foreach (var t in handTextures.Values) { t.Release(); UnityEngine.Object.Destroy(t); } if (doraCamera != null) UnityEngine.Object.Destroy(doraCamera.gameObject); if (handPreviewCamera != null) UnityEngine.Object.Destroy(handPreviewCamera.gameObject); }
     }
 }

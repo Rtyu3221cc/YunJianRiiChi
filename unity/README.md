@@ -1,5 +1,19 @@
 # 云间日麻 Unity 三维客户端
 
+## Unity 0.5.27：恢复自家副露尺寸
+
+安装包：[Unity 0.5.27 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.27/yunjian-riichi-unity-0.5.27.apk)，versionCode 28。取消自家副露的额外缩小，保留贴底位置与手牌间距。见[修正与验证记录](../docs/自家副露尺寸修正.md)。
+
+## Unity 0.5.26：1012 牌桌样式与显示修正
+
+本地安装包：`../dist/yunjian-riichi-unity-0.5.26.apk`，versionCode 27。[实现和验证范围](../docs/1012牌桌样式与显示修正.md)包含姓名／房间样式、原菱形听牌按钮、自家副露贴底、指示牌与反光、对家立直落地、牌河采样及终局比例。
+
+## Unity 0.5.25：1011 参考优化
+
+本地安装包为 `../dist/yunjian-riichi-unity-0.5.25.apk`，versionCode 26。
+
+宝牌循环反光、暗／明／加杠交接、四向拔北位置、12 个原版计分箭头、计分后排名与整场终局页已更新。役满和吃碰粒子使用 APK 完整序列化模块导入。原始及转换资料位于 `Assets/Resources/Majsoul/NativeReview`；[来源和解包限制](../docs/1011优化与解包范围.md)明确区分已恢复资产与当前客户端的适配代码。
+
 ## Unity 0.5.24 原版背景、役满火焰与整局开场
 
 安卓包：[下载 Unity 0.5.24 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.24/yunjian-riichi-unity-0.5.24.apk)，versionCode 25，同签名覆盖更新。
