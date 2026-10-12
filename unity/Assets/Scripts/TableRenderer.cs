@@ -53,6 +53,7 @@ namespace YunJian.Riichi
         static string TileKind(string tile) => string.IsNullOrEmpty(tile)?null:tile.Replace("0","5");
         string drawKey;float drawBegan;
         readonly List<Tuple<Transform,Vector3>> drawTiles=new List<Tuple<Transform,Vector3>>();
+        readonly List<Transform> winningRows=new List<Transform>();
         public Rect HandScreenBounds()
         {
             if(handTiles.Count==0)return new Rect();
@@ -70,10 +71,15 @@ namespace YunJian.Riichi
             if(drawTiles.Count==0)return;
             var fx=GetComponent<TableEffects>();
             if(drawBegan<0){if(fx.HasPendingActions && !fx.WinActionStarted)return;drawBegan=Time.unscaledTime;GetComponent<GameAudio>()?.DrawReveal(drawKey);}
-            float age=Time.unscaledTime-drawBegan,t=HandRevealMotion.Progress(age);
-            if(cameraHand!=null && state?.phase=="result" && (state.result?.details??new WinDetail[0]).Any(d=>d.seat==state.you)){
+            float age=Time.unscaledTime-drawBegan;
+            bool selfWinner=state?.phase=="result" && (state.result?.details??new WinDetail[0]).Any(d=>d.seat==state.you);
+            if(cameraHand!=null && selfWinner){
                 foreach(var hand in handTiles){var renderer=hand.GetComponent<MeshRenderer>();var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block);block.SetFloat("_Opacity",Mathf.Clamp01(1-age/.14f));renderer.SetPropertyBlock(block);}
+                if(age<.14f)return;
+                cameraHand.gameObject.SetActive(false);
             }
+            foreach(var row in winningRows)row.gameObject.SetActive(true);
+            float t=HandRevealMotion.Progress(age-(selfWinner ? .14f : 0));
             foreach(var tile in drawTiles){
                 tile.Item1.localRotation=Quaternion.Euler(-90*(1-t),0,0);
                 tile.Item1.localPosition=tile.Item2+Vector3.up*original.TableLength*.29f*.5f*Mathf.Max(0,1-t);
@@ -179,7 +185,7 @@ namespace YunJian.Riichi
         {
             if(resetOpening)opening.Reset();
             foreach (Transform t in content) { if(keepHand && t==cameraHand)continue;t.gameObject.SetActive(false); Destroy(t.gameObject); }
-            exposedTiles.Clear();exposedGroups.Clear();selectedTile=null;if(!keepHand){handTiles.Clear();handBase.Clear();cameraHand=null;}drawTiles.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); northTiles.Clear(); winningTiles.Clear(); responseTarget = null; selfMelds = null; state = null;
+            exposedTiles.Clear();exposedGroups.Clear();selectedTile=null;if(!keepHand){handTiles.Clear();handBase.Clear();cameraHand=null;}drawTiles.Clear();winningRows.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); northTiles.Clear(); winningTiles.Clear(); responseTarget = null; selfMelds = null; state = null;
         }
         public int RelativeSeat(int i) => (i - state.you + state.n) % state.n;
         float Angle(int i)
@@ -245,6 +251,9 @@ namespace YunJian.Riichi
         public Transform ResponseTarget => responseTarget;
 #if UNITY_EDITOR
         public bool ValidationLegacyMeldFit;
+        public bool ValidationPreviousMeldPosition;
+        public bool ValidationStandingHandVisible=>cameraHand!=null && cameraHand.gameObject.activeInHierarchy;
+        public bool ValidationWinningRowVisible=>winningRows.Any(r=>r!=null && r.gameObject.activeInHierarchy);
         // 0 = playable, 1 = dimmed by the riichi declaration filter.
         public float ValidationHandDim(int index)
         {
@@ -325,7 +334,11 @@ namespace YunJian.Riichi
 #if UNITY_EDITOR
             if(ValidationLegacyMeldFit)meldBottom=.32f;
 #endif
-            AlignSelfMelds(safe.yMin+meldBottom*scale/18*Screen.height,safe.xMax-64*Screen.height/600f);
+            float meldBottomPixel=safe.yMin+meldBottom*scale/18*Screen.height-7;
+#if UNITY_EDITOR
+            if(ValidationPreviousMeldPosition)meldBottomPixel+=7;
+#endif
+            AlignSelfMelds(Mathf.Max(safe.yMin,meldBottomPixel),safe.xMax-64*Screen.height/600f);
             ScaleNorthToMelds();
             float left=safe.xMin+safe.width*.05f,right=safe.xMax-safe.width*.05f;
             float handTop=safe.yMin+(OriginalTiles.HandHeight+.42f)*scale/18*Screen.height;
@@ -543,7 +556,7 @@ namespace YunJian.Riichi
                     }
                 }
                 else if(shown!=null){
-                    var revealed=new GameObject("Revealed winning hand").transform;revealed.SetParent(seat,false);
+                    var revealed=new GameObject("Revealed winning hand").transform;revealed.SetParent(seat,false);revealed.gameObject.SetActive(false);winningRows.Add(revealed);
                     float pitch=.31f;float edge=Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f?4.0f:2.95f;
                     if(i==state.you){pitch=.37f;edge=4.05f;}
                     for(int j=0;j<shown.tiles.Length;j++){

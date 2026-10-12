@@ -359,7 +359,7 @@ namespace YunJian.Riichi
             float elapsed=ValidationFreeze?ValidationTime:Time.unscaledTime-started;
             if (current!=null && elapsed >= PlayLength) { CompleteHandoff(); Finish(); }
             if(cutInWin!=null && (ValidationFreeze?ValidationTime:Time.unscaledTime-callStarted)>=1.05f){
-                winCutIn.Play();if(cutInWin.kind=="ron")SpawnWin(cutInWin,(ValidationFreeze?0:Time.unscaledTime)+WinCutIn.Duration+.18f);cutInWin=null;
+                winCutIn.Play();GetComponent<GameAudio>()?.Cue("cutin");if(cutInWin.kind=="ron")SpawnWin(cutInWin,(ValidationFreeze?0:Time.unscaledTime)+WinCutIn.Duration+.18f);cutInWin=null;
             }
             if (call!=null && (ValidationFreeze?ValidationTime:Time.unscaledTime-callStarted) >= 1.05f) FinishCall();
             if (current==null || motion==null || clip==null) return;

@@ -1,0 +1,12 @@
+云间日麻 Unity 0.5.32 / versionCode 33
+修正：荣和／自摸站立手牌与倒牌重叠；原APK横幅cutin及开局winlose音效；自家副露下移7像素。
+81项Node规则／协议通过。
+完整Unity Play：RIICHI UNITY PLAY PASS。
+专项Unity Play：RIICHI REVIEW 0532 PASS；逐帧检查两种自家和牌与轮询期间没有同时显示站立／摊开手牌，败家手牌保留；原APK cutin/winlose音频资源、实际AudioSource播放、开局与胜负字同步、暂停恢复后触发及一次性触发检查通过；两种分辨率的副露下移7像素且牌大小不变。
+音频重新从Majsoul_4.0.16_MC.apk AudioClip直接导出为PCM WAV；源路径、bundle/pathID、SHA-256与时长在Audio/provenance.json。音频来源及全部既有原版资源哈希检查通过。
+11张实际Unity截图、1张副露对照及2份原APK音效试听；测试局面为合成场景，非安卓真机截图。
+Android：Unity 6000.6.4f1 / IL2CPP / ARM64 + ARMv7 / com.yunjian.riichi.unity / 0.5.32 / versionCode 33。
+APK ZIP、当前离线脚本、JNI主机、手部动画、音频／贴图／着色器／转场资源通过。
+v1 + v2、独立v1校验、16 KB对齐、原证书兼容通过。
+未执行安卓真机或多手机热点联机验证。
+34FD299A2D1A53885B3A1177F58DB2554DD3386F7B962042C069C02D9AA023B4  yunjian-riichi-unity-0.5.32.apk

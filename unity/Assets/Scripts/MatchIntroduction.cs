@@ -34,7 +34,7 @@ namespace YunJian.Riichi
             if(!validation){PlayerPrefs.SetInt(pref,1);PlayerPrefs.Save();}
             began=Time.unscaledTime;running=true;sound=false;Started++;
         }
-        public void Tick(GameAudio audio){if(!Active){if(running){running=false;effect.Dispose();}return;}if(!sound && Age>=.7f){sound=true;audio?.Cue("winlose");}}
+        public void Tick(GameAudio audio){if(!Active){if(running){running=false;effect.Dispose();}return;}if(!sound && Age>=1.2f && audio!=null)sound=audio.Cue("winlose");}
         public void Reset(){running=false;key=null;observedRoom=null;observedMatch=0;observedLobby=false;Freeze=false;effect.Dispose();}
         Texture2D Art(string name){if(!art.TryGetValue(name,out var t))art[name]=t=Resources.Load<Texture2D>("Majsoul/MatchIntro/"+name)??Resources.Load<Texture2D>("Majsoul/Review1012c/"+name)??Resources.Load<Texture2D>("Majsoul/TableLook/Sprites/"+name);return t;}
         void BadgeImage(string name,Vector2 center,Vector2 offset,Vector2 size,float unit,float px=.5f,float py=.5f){

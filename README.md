@@ -1,5 +1,11 @@
 # 云间日麻
 
+## Unity 0.5.32：和牌交接与原版音效
+
+[下载 Unity 0.5.32 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.32/yunjian-riichi-unity-0.5.32.apk)，versionCode 33，沿用原证书。
+
+修正荣和／自摸站立手牌与摊牌重叠；从雀魂 APK 提取和牌横幅 `cutin` 与开局名牌 `winlose` 原版音效，并接入一次性播放；自家副露下移7像素，尺寸保持。[实现与来源](docs/0.5.32和牌交接与原版音效.md) · [截图和音效试听包](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.32/yunjian-riichi-unity-0.5.32-screenshots.zip)。安卓真机未测。
+
 ## Unity 0.5.31：自家副露尺寸与称号间距
 
 [下载 Unity 0.5.31 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.31/yunjian-riichi-unity-0.5.31.apk)，versionCode 32，沿用原证书。

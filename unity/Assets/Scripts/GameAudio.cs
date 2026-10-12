@@ -56,10 +56,10 @@ namespace YunJian.Riichi
             AudioClip clip=kind=="discard" || kind=="nuki"?discard:kind=="riichi-stick"?stick:kind=="tsumo"?tsumo:kind=="chi" || kind=="pon" || kind=="kan"?meld:null;
             if(clip==null)return;LandingSounds++;Play(clip);
         }
-        public void Cue(string name,float gain=1){
-            if(!inTable || suspended || string.IsNullOrEmpty(name))return;
+        public bool Cue(string name,float gain=1){
+            if(!inTable || suspended || string.IsNullOrEmpty(name))return false;
             if(!cues.TryGetValue(name,out var clip))cues[name]=clip=Load(name);
-            if(clip==null)return;PlayedCues.Add(name);if(effectsEnabled)effects.PlayOneShot(clip,gain);
+            if(clip==null)return false;PlayedCues.Add(name);if(effectsEnabled)effects.PlayOneShot(clip,gain);return true;
         }
         public void DrawReveal(string next){if(next==drawKey)return;drawKey=next;Cue("showtile");}
         public void PreviewDiscard(){Play(discard);}

@@ -11,7 +11,8 @@ for rec in records:
     assert file.exists(), 'Missing resource: '+rec['output']
     assert hashlib.sha256(file.read_bytes()).hexdigest()==rec['sha256'], 'Source hash mismatch: '+rec['output']
     checked+=1
-for rec in json.loads((assets/'Audio/provenance.json').read_text(encoding='utf8'))['clips']:
+audio_records=json.loads((assets/'Audio/provenance.json').read_text(encoding='utf8'))['clips']
+for rec in audio_records:
     candidates=list((assets/'Audio').glob(rec['resource'].rsplit('/',1)[1]+'.*'))
     file=next(p for p in candidates if p.suffix in ['.mp3','.wav'])
     assert hashlib.sha256(file.read_bytes()).hexdigest()==rec['sha256'], 'Table audio hash mismatch: '+file.name
@@ -40,4 +41,4 @@ for folder in ['UiEffects','MatchIntro']:
 for name in ['effect_yiman','effect_yiman2']:
     ui=json.loads((assets/'UiEffects'/(name+'.json')).read_text(encoding='utf8'))
     assert len(ui['layers'])==6 and any(l.get('colors')for l in ui['layers']) and any(l.get('box')for l in ui['layers'])
-print('PASS:',checked,'native transformed-asset hashes; 17 original audio hashes; 82 Ichihime clips; exact 305034 fire-tornado data with nine emitters/two meshes.')
+print('PASS:',checked,'native transformed-asset hashes;',len(audio_records),'original audio hashes; 82 Ichihime clips; exact 305034 fire-tornado data with nine emitters/two meshes.')

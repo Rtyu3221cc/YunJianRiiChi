@@ -40,6 +40,7 @@ namespace YunJian.Riichi.Editor
             var resultDigit=Resources.Load<Texture2D>("Majsoul/Results/ww_0");
             Require(resultDigit.width==69 && resultDigit.height==108,"Native point digit aspect was altered by import");
             Require(Resources.Load<Font>("Majsoul/Font/game") != null, "Missing Chinese font");
+            foreach(var sound in new[]{"cutin","winlose"})Require(Resources.Load<AudioClip>("Majsoul/Audio/"+sound)!=null,"Missing original presentation sound "+sound);
             var manifest = JsonUtility.FromJson<VoiceManifest>(Resources.Load<TextAsset>("Majsoul/voice-manifest").text);
             Require(manifest.provider == "yiji", "Active pack must be the one-role Ichihime pack");
             foreach (var clip in manifest.clips) Require(Resources.Load<AudioClip>(clip.resource) != null, "Missing audio " + clip.resource);

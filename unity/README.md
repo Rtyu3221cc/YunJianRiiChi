@@ -1,5 +1,9 @@
 # 云间日麻 Unity 三维客户端
 
+## Unity 0.5.32：和牌交接与原版音效
+
+[下载 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.32/yunjian-riichi-unity-0.5.32.apk)，versionCode 33。[来源及截图](../docs/0.5.32和牌交接与原版音效.md)。`RIICHI_REVIEW_0532=1` 执行专项渲染和音效验证。
+
 ## Unity 0.5.31：副露尺寸与称号间距
 
 [下载 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.31/yunjian-riichi-unity-0.5.31.apk)，versionCode 32。[对照说明与截图](../docs/0.5.31副露尺寸与称号间距.md)。`RIICHI_REVIEW_0531=1` 运行专项渲染检查。
