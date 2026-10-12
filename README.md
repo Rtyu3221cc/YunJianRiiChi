@@ -1,5 +1,27 @@
 # 云间日麻
 
+## Unity 0.5.29：点击樱花与牌桌复核
+
+本地安卓包：`dist/yunjian-riichi-unity-0.5.29.apk`，versionCode 30，v1+v2 签名，与 0.5.27／0.5.28 同证书，可覆盖更新。
+
+- 点击屏幕任意位置播放雀魂默认点击特效 `effect_click_default`（樱花序列帧花瓣 + 粉色闪光，APK 原贴图，绘制在 HUD 之上）。
+- 同类牌指示改为整张牌（牌面、牌身、描边）统一染原版蓝色，修正只有牌面变蓝的问题。
+- 左上房间文字不再被裁切；牌河错落幅度调小约 30%。
+- 拔北牌按投影后的牌面大小缩小，不大于自家副露牌面；拔北动作中搬运的牌同步缩放。
+
+[修正说明与验证](docs/1012-2牌桌光照与质感.md#0529-复核修正)。安卓真机未测。
+
+## Unity 0.5.28：牌桌光照与质感（1012-2）
+
+本地安卓包：`dist/yunjian-riichi-unity-0.5.28.apk`，versionCode 29，v1+v2 签名，与 0.5.27 同证书，可覆盖更新。
+
+- 麻将牌改用 APK `scene_mj` 方向光与 `Catfood/Cartoon_nonoutline` 卡通明暗（从编译后 GLES3 程序移植）：牌面全亮、朝向玩家的侧面 .81，牌身按原 `mjp_mid` 混合牌背与牌面图集；描边改用原 shader 实际输出的 `_Tint`。
+- 每张牌下加入原版 `effect_shadow` 软阴影；牌桌加入原版 `room/sun_shine` 光束与浮尘粒子（完整序列化模块）。
+- 左上房间文字加入原 `bg_type` 底图；玩家名称按原 `container_name` 尺寸缩小，“暂无称号”改用官方 `notitle` 图片；吃碰杠胡拔北按钮按原 `UI_ChiPengHu` 位置居中偏右；牌河错落加大；桌布亮度按参考图校准。
+- 宝牌栏和小麻将预览不再在 `OnGUI` 中渲染，修正加入粒子后宝牌栏显示为青色的问题。
+
+[实现、来源与验证](docs/1012-2牌桌光照与质感.md)。安卓真机未测。
+
 ## Unity 0.5.27：恢复自家副露尺寸
 
 安卓包：[下载 Unity 0.5.27 签名兼容修正版 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.27/yunjian-riichi-unity-0.5.27-signed.apk)，versionCode 28。

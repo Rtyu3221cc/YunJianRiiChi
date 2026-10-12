@@ -25,9 +25,12 @@ namespace YunJian.Riichi.Editor
                 Require(Resources.Load<Texture2D>("Majsoul/Hud/" + name) != null, "Missing original HUD atlas " + name);
             foreach (var name in new[] { "btn_leave", "btn_settings", "replay_collect", "left_top", "headframe-default", "ob_ting_off_btn", "ob_ting_on_btn" })
                 Require(Resources.Load<Texture2D>("Majsoul/UI/" + name) != null, "Missing HUD skin " + name);
-            foreach (var name in new[] { "YunJian/OriginalHand", "YunJian/OriginalTileBody", "YunJian/OriginalTileOutline", "YunJian/ResponseGlow", "YunJian/TurnLight", "YunJian/NorthPetal", "YunJian/WinParticle", "YunJian/TableCloth", "Unlit/Transparent" })
+            foreach (var name in new[] { "YunJian/OriginalHand", "YunJian/OriginalTileFace", "YunJian/OriginalTileBody", "YunJian/OriginalTileOutline", "YunJian/ResponseGlow", "YunJian/TurnLight", "YunJian/NorthPetal", "YunJian/WinParticle", "YunJian/TableCloth", "YunJian/TileShadow", "Unlit/Transparent" })
                 Require(Shader.Find(name) != null && (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null || Shader.Find(name).isSupported), "Missing/unsupported skin shader " + name);
             Require(Resources.Load<Texture2D>("Majsoul/Table/score-hub") != null, "Missing score hub");
+            Require(Resources.Load<TextAsset>("Majsoul/TableLook/lighting") != null && Resources.Load<GameObject>("Majsoul/TableLook/sun_shine") != null, "Missing APK table lighting / sun_shine import");
+            foreach (var name in new[] { "Textures/shadow", "Textures/yuanqiu2", "Sprites/bg_type", "Sprites/notitle" })
+                Require(Resources.Load<Texture2D>("Majsoul/TableLook/" + name) != null, "Missing table look art " + name);
             foreach (var name in new[] { "show_rong","show_zimo","fire-fire_bai_add","fire-fire_bai_alpha","fire-yuanqiu2","win-yuanqiu2","win-shanguang","win-bao","win-Light2","win-thunder","win-lizi","win-kuosan","op_chi","op_peng","op_gang","op_hu","op_zimo","op_lizhi","op_babei","op_liuju","op_x","shout_horizontal","shout_vertical","shout_peng","shout_chi","shout_gang","shout_babei","north-petals","yiji-full","response-arrow","response-glow","hand-skin","hand-nails" })
                 Require(Resources.Load<Texture2D>("Majsoul/Actions/"+name)!=null,"Missing action art "+name);
             Require(Resources.Load<TextAsset>("Majsoul/Actions/discard-hand")!=null && Resources.Load<TextAsset>("Majsoul/Actions/discard-hand-frames")!=null,"Missing original discard animation");

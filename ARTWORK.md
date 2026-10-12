@@ -1,5 +1,9 @@
 # 图像资源来源
 
+Unity 0.5.29 的点击樱花使用官方 CDN 场景 `scene/effect_click_default.lh` 的图层参数与 `plane1X1-Plane01.lm` 平面网格；花瓣贴图为用户 APK `myassets/necessary/texture/yinghua.png`（即已有的 `UiEffects/native-ui-floower_00000.png`），闪光为 APK `myassets/common3d/texture/shanguang.png`（已有 `Actions/win-shanguang.png`）。来源与哈希见 `UiEffects/click-source.json`。
+
+Unity 0.5.28 的 `TableLook` 来自同一 APK：`scene_mj` 方向光、`Catfood` 卡通明暗与描边参数、`effect_shadow` 的 `shadow.png`、`room/sun_shine` 粒子及其 `yuanqiu2.png`、`bg_type` 底图；“暂无称号”为官方 `extendRes/title/notitle.png`（XOR 0x49 解码）。来源与哈希见 `TableLook/source.json`。
+
 Unity 0.5.26 的 `TablePolish` 包含同一 APK 提取的 `hint` 菱形感叹号、姓名底图、纹饰、金币、PT 以及姓名使用的 `SimHei` 字体。来源及 SHA-256 见该目录 `source.json`；未绘制替代菱形图标。
 
 Unity 0.5.25 的 `NativeReview` 来源是同一份用户提供的雀魂 APK：原宝牌反光贴图／网格、四向拔北锚点、12 个箭头变换、排名与终局图片、役满 6 + 6 组及吃碰 2 组粒子模块。逐项 bundle、pathID 与哈希见该目录 `provenance.json`；编译后 Shader 和加密脚本保留为证据。[解包范围](docs/1011优化与解包范围.md)没有将这些内容称为完整可编译的原工程或原始 Shader／脚本源码。

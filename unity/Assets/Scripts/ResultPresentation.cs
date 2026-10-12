@@ -89,7 +89,7 @@ namespace YunJian.Riichi
             Image(title,new Rect(x-80,y+4,76,36),ScaleMode.ScaleToFit);
             for(int i=0;i<5;i++){
                 // Match the table HUD's indicators, including the selected back skin.
-                GUI.DrawTexture(new Rect(x+i*29,y,28,43.5f),table.DoraTexture(i<tiles.Length?tiles[i]:null),ScaleMode.ScaleToFit);
+                var preview=table.DoraTexture(i<tiles.Length?tiles[i]:null);if(preview!=null)GUI.DrawTexture(new Rect(x+i*29,y,28,43.5f),preview,ScaleMode.ScaleToFit);
             }
         }
         // UI_Win prefab coordinates are 1920 x 1080, center anchored.
@@ -127,7 +127,7 @@ namespace YunJian.Riichi
             var matrix=GUI.matrix;var anchor=NativePoint(x,y);
             GUI.matrix*=Matrix4x4.TRS(new Vector3(anchor.x,anchor.y,0),Quaternion.Euler(0,0,-6),Vector3.one);
             Image(title,new Rect(-80.27f,5.13f,100.33f,53.67f),ScaleMode.ScaleToFit);
-            for(int i=0;i<5;i++)GUI.DrawTexture(new Rect(i*37.33f,0,37.33f,56),table.DoraTexture(i<tiles.Length?tiles[i]:null),ScaleMode.ScaleToFit);
+            for(int i=0;i<5;i++){var preview=table.DoraTexture(i<tiles.Length?tiles[i]:null);if(preview!=null)GUI.DrawTexture(new Rect(i*37.33f,0,37.33f,56),preview,ScaleMode.ScaleToFit);}
             GUI.matrix=matrix;
         }
         static readonly Vector2[] NativeYakuOffsets={new Vector2(119.72f,12.6f),new Vector2(70.72f,-81.4f),new Vector2(103.72f,-170.4f),new Vector2(214.72f,-243.4f),new Vector2(655.72f,82.6f),new Vector2(744.72f,10.6f),new Vector2(772.72f,-78.4f),new Vector2(665.72f,-184.4f)};

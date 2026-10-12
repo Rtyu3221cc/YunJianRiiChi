@@ -17,7 +17,7 @@ namespace YunJian.Riichi
             folder = Path.GetFullPath("../build/unity-smoke"); Directory.CreateDirectory(folder);
             foreach (var name in new[] { "passed.txt", "failed.txt" })
                 if (File.Exists(Path.Combine(folder, name))) File.Delete(Path.Combine(folder, name));
-            var run = Environment.GetEnvironmentVariable("RIICHI_FIDELITY_0526")=="1"?ReviewValidation0526.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_FIDELITY_0525")=="1"?ReviewValidation0525.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_FIDELITY_0524")=="1"?ReviewValidation0524.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_REVIEW_PREVIEW")=="1"?ReviewValidation0523.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_NATIVE_PREVIEW")=="1"?NativeFirePreview.Run(GetComponent<RiichiClient>(),folder):Run();
+            var run = Environment.GetEnvironmentVariable("RIICHI_NORTH_ONLY")=="1"?ValidateNorthEffects(GetComponent<RiichiClient>()):Environment.GetEnvironmentVariable("RIICHI_LOOK_1012B")=="1"?ReviewValidation1012b.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_FIDELITY_0526")=="1"?ReviewValidation0526.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_FIDELITY_0525")=="1"?ReviewValidation0525.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_FIDELITY_0524")=="1"?ReviewValidation0524.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_REVIEW_PREVIEW")=="1"?ReviewValidation0523.Run(GetComponent<RiichiClient>(),folder):Environment.GetEnvironmentVariable("RIICHI_NATIVE_PREVIEW")=="1"?NativeFirePreview.Run(GetComponent<RiichiClient>(),folder):Run();
             while (true)
             {
                 bool next;
@@ -26,7 +26,7 @@ namespace YunJian.Riichi
                 if (!next) break;
                 yield return run.Current;
             }
-            File.WriteAllText(Path.Combine(folder, "passed.txt"), "Actual Unity Play mode: live AI room, delayed second-click discard, raycast, 3/4-seat rendering, safe-area pointer roundtrips, 4 resolutions, 8 role clips, called-river removal, grouped chi choices, all 4 discard hand directions at 15 time samples with opaque materials, call cut-ins, event dedup/reconnect; original 224-vertex outlines, model-foot response glow in 4 directions, 0-4 own melds without hand overlap at 4 resolutions, and 4 inward-facing North tiles per seat. Original turn-light particles: four directions, rendered fade/peak/fade, one-second looping and stable phase across polling. North extraction: all three viewer seats/directions, original cut-in, carried tile/landing match, independent previous North and meld visibility, nine visible flutter petals, survival across polling/hand completion, cleanup and event dedup/reconnect. Win effects: original ron/tsumo cut-ins, Zimo hand and exact tile landing in all 3/4 directions and rotated viewers; nine-layer fire tornado particles, video flame spiral and rubble with visible camera pixels, delayed settlement, double ron, robbed tile targets and polling/reconnect cleanup. Fixture screenshots are synthetic layout scenes, not replays.");
+            File.WriteAllText(Path.Combine(folder, "passed.txt"), "Actual Unity Play mode: live AI room, delayed second-click discard, raycast, 3/4-seat rendering, safe-area pointer roundtrips, 4 resolutions, 8 role clips, called-river removal, grouped chi choices, all 4 discard hand directions at 15 time samples with opaque materials, call cut-ins, event dedup/reconnect; original 224-vertex outlines, model-foot response glow in 4 directions, 0-4 own melds without hand overlap at 4 resolutions, and 4 inward-facing North tiles per seat. Original turn-light particles: four directions, rendered fade/peak/fade, one-second looping and stable phase across polling. North extraction: all three viewer seats/directions, original cut-in, carried tile/landing match, independent previous North and meld visibility, no petal burst on landing (sakura belongs to screen taps), survival across polling/hand completion and event dedup/reconnect. Win effects: original ron/tsumo cut-ins, Zimo hand and exact tile landing in all 3/4 directions and rotated viewers; nine-layer fire tornado particles, video flame spiral and rubble with visible camera pixels, delayed settlement, double ron, robbed tile targets and polling/reconnect cleanup. Fixture screenshots are synthetic layout scenes, not replays.");
             Debug.Log("RIICHI UNITY PLAY PASS"); EditorApplication.Exit(0);
         }
         IEnumerator Run()
@@ -241,7 +241,10 @@ namespace YunJian.Riichi
             }
             // The riichi declaration uses the longer public LiQiPai clip, lies the
             // carried tile sideways and only swaps in the river tile when it settles.
-            effectFixture.last=new LastDiscard {from=0,tile=effectFixture.players[0].river.Last().tile};
+            // A declaration discard is marked in the river and therefore lies sideways there;
+            // the carried tile copies its river tile, so mark this fixture realistically too.
+            var declaration=effectFixture.players[0].river.Last();declaration.riichi=true;
+            effectFixture.last=new LastDiscard {from=0,tile=declaration.tile};
             client.ShowValidationFixture(effectFixture);yield return null;Physics.SyncTransforms();
             fx.ValidationPlay(0,"discard",effectFixture.players[0].river.Last().tile,true);
             yield return null;yield return null;
@@ -250,7 +253,11 @@ namespace YunJian.Riichi
             Require(Mathf.Abs(fx.ValidationHandoff-1.2667f)<.01f,"Riichi tile hand-off is not the settle time");
             var carried=fx.ValidationAnimatedTile;
             Require(carried!=null,"Riichi discard has no carried tile");
-            Require(Mathf.Abs(Mathf.DeltaAngle(carried.eulerAngles.y,table.SeatAngle(0)+90f))<.5f,"Riichi carried tile is not sideways");
+            // The carried declaration tile copies its river tile exactly, including that
+            // tile's stable yaw jitter (RiverScatter), so the hand-off cannot snap.
+            var carriedTarget=fx.ValidationTarget;
+            Require(carriedTarget!=null && Mathf.Abs(Mathf.DeltaAngle(carried.eulerAngles.y,carriedTarget.eulerAngles.y))<.5f,"Riichi carried tile does not match its river tile");
+            Require(Mathf.Abs(Mathf.DeltaAngle(carried.eulerAngles.y,table.SeatAngle(0)+90f))<=2.5f,"Riichi carried tile is not sideways");
             for(int sample=0;sample<14;sample++)
             {
                 fx.ValidationTime=Mathf.Min(sample*fx.ValidationPlayLength/14,fx.ValidationPlayLength-.03f);yield return null;yield return null;
@@ -322,7 +329,8 @@ namespace YunJian.Riichi
                 int riverCount=renderedSeat.Cast<Transform>().Count(t=>t.name.StartsWith("River ",StringComparison.Ordinal));
                 Require(riverCount==view.players[i].river.Count(r=>!r.called),"Claimed tile remains in the river");
                 var melds=renderedSeat.Find("Exposed melds");
-                foreach(Transform piece in melds)Require(piece.localPosition.z <= -3.5f,"Melds are still inside concealed hand row");
+                // 0.5.25 groups each meld under "Meld n"; the tiles are the group's children.
+                foreach(Transform group in melds)foreach(Transform piece in group)Require(piece.localPosition.z <= -3.5f,"Melds are still inside concealed hand row");
                 if (i == view.you) continue;
                 var seat = publicRoot.Find("Seat " + i);
                 var tiles = seat.Cast<Transform>().Where(t => t.name == "Standing concealed hand").ToArray();
@@ -403,11 +411,16 @@ namespace YunJian.Riichi
             {
                 var north=root.Find("Seat "+seat+"/Extracted North");
                 Require(north.childCount==view.players[seat].nuki,"North tile count changed");
-                foreach(Transform tile in north)
+                int physical=NativeReviewLayout.Physical(table.RelativeSeat(seat),view.n);
+                for(int index=0;index<north.childCount;index++)
                 {
+                    var tile=north.GetChild(index);
                     var inward=Vector3.ProjectOnPlane(-tile.position,Vector3.up).normalized;
                     Require(Vector3.Dot(tile.forward,inward)>.45f,"Extracted North glyph faces away from table");
-                    Require(Mathf.Abs(tile.localPosition.x-(-2.95f))<.001f,"North tiles do not stack along the seat edge");
+                    // 0.5.25 replaced the fixed -2.95 row with the scene_mj babei_n anchors,
+                    // one 0.0355-unit span apart, facing the owner like a discard.
+                    var expected=NativeReviewLayout.NorthLocal(physical,index,table.SeatAngle(seat));
+                    Require(Vector3.Distance(tile.localPosition,expected)<.001f && Mathf.Abs(Mathf.DeltaAngle(tile.localRotation.eulerAngles.y,0))<.01f,"North tiles are not on the APK seat anchor");
                 }
             }
         }
@@ -808,9 +821,20 @@ namespace YunJian.Riichi
                 {
                     ScreenCapture.CaptureScreenshot(Path.Combine(folder,"north-call-"+relative+".png"));yield return new WaitForSecondsRealtime(.12f);
                 }
-                fx.ValidationTime=.60f;yield return null;yield return null;
+                // Since 0.5.25 North uses the shorter Dapai clip. A seat facing the camera
+                // enters from beyond its own table edge, so the hand is only inside the frame
+                // during the first part of the reach; require it to be visible somewhere there.
                 var handRenderer=GameObject.Find("Original hand seat "+seat).GetComponentInChildren<MeshRenderer>();
-                Require(VisibleEffectPixels(table,handRenderer)>30,"North hand mesh never reaches the visible table");
+                int handPixels=0;float handSample=0;
+                foreach(float fraction in new[]{.3f,.45f,.6f})
+                {
+                    fx.ValidationTime=fx.ValidationHandoff*fraction;yield return null;yield return null;
+                    int pixels=VisibleEffectPixels(table,handRenderer);
+                    if(pixels>handPixels){handPixels=pixels;handSample=fx.ValidationTime;}
+                    if(handPixels>30)break;
+                }
+                fx.ValidationTime=handSample;
+                Require(handPixels>30,"North hand mesh never reaches the visible table: you="+you+" seat="+seat+" pixels="+handPixels+" t="+handSample);
                 if(you==0)Capture(table,Path.Combine(folder,"north-hand-"+relative+".png"),1688,780);
                 // Real polling rebuilds table objects without resetting the effect.
                 table.Render(view);fx.Accept(view);yield return null;yield return null;
@@ -819,19 +843,15 @@ namespace YunJian.Riichi
                 Require(Vector3.Distance(fx.ValidationAnimatedTile.position,table.NorthPoint(seat,2))<.002f,"Carried North does not land at the extracted tile");
                 Require(Quaternion.Angle(fx.ValidationAnimatedTile.rotation,table.NorthTarget(seat,2).rotation)<.1f,"North glyph snaps during hand-off");
                 Require(!fx.ValidationAnimatedTile.gameObject.activeSelf && table.NorthTarget(seat,2).gameObject.activeSelf,"North tile hand-off failed");
-                Require(fx.ValidationPetals!=null && fx.SpawnedNorthEffects==spawned+1,"North landing did not spawn exactly one burst");
-                var petals=fx.ValidationPetals;
+                // The sakura burst belongs to screen taps (ScreenTapEffect), never to North.
+                Require(fx.ValidationPetals==null && fx.SpawnedNorthEffects==spawned,"North landing spawned a petal burst");
                 fx.ValidationTime=1.1f;yield return null;yield return null;
-                Require(fx.ValidationKind==null && fx.ValidationPetals==petals && petals.ParticleCount==9,"Petals did not outlive the hand");
-                Require(Vector3.Distance(petals.transform.position,table.NorthPoint(seat,2)+Vector3.up*.14f)<.001f,"Petals detached from the extracted North");
-                Require(VisibleEffectPixels(table,petals.GetComponent<ParticleSystemRenderer>())>12,"Native sakura particles are invisible to the table camera");
-                if(you==0)Capture(table,Path.Combine(folder,"north-petals-"+relative+".png"),1688,780);
+                Require(fx.ValidationKind==null && table.NorthTarget(seat,2).gameObject.activeSelf,"North hand did not finish on the landed tile");
+                if(you==0)Capture(table,Path.Combine(folder,"north-landed-"+relative+".png"),1688,780);
                 table.Render(view);fx.Accept(view);yield return null;yield return null;
-                Require(fx.ValidationPetals==petals && fx.SpawnedNorthEffects==spawned+1 && table.NorthTarget(seat,2).gameObject.activeSelf,"Polling restarted/hid landed North petals");
-                fx.ValidationTime=2.5f;yield return null;yield return null;
-                Require(fx.ValidationPetals==null && fx.SpawnedNorthEffects==spawned+1,"North petals leaked or respawned");
+                Require(fx.SpawnedNorthEffects==spawned && table.NorthTarget(seat,2).gameObject.activeSelf,"Polling restarted or hid the landed North");
                 fx.Reset();fx.Accept(view);yield return null;
-                Require(!fx.IsAnimating && fx.ValidationPetals==null,"Reconnect replayed a historical North extraction");
+                Require(!fx.IsAnimating,"Reconnect replayed a historical North extraction");
             }
             // Event indices keep two closely queued extractions on their own tiles.
             view.you=0;view.players[0].nuki=3;client.ShowValidationFixture(view);yield return null;

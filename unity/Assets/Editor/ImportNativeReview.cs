@@ -9,8 +9,17 @@ namespace YunJian.Riichi.Editor {
   [Serializable] class ParticleEnvelope {public ParticleBody ParticleSystem;}
   static Vector3 V(float[] v)=>new Vector3(v[0],v[1],v[2]);
   public static void Run(){
-   const string folder="Assets/Resources/Majsoul/NativeReview/";AssetDatabase.Refresh();
-   foreach(string name in new[]{"effect_yiman","effect_yiman2","effect_chipeng"}){
+   AssetDatabase.Refresh();
+   foreach(string name in new[]{"effect_yiman","effect_yiman2","effect_chipeng"})Import("Assets/Resources/Majsoul/NativeReview/",name);
+   AssetDatabase.SaveAssets();Debug.Log("NATIVE APK MODULE IMPORT PASS");
+  }
+  // scene_mj/room/sun_shine exported by scripts/import-table-look.py.
+  public static void RunTableLook(){
+   AssetDatabase.Refresh();Import("Assets/Resources/Majsoul/TableLook/","sun_shine");
+   AssetDatabase.SaveAssets();Debug.Log("TABLE LOOK MODULE IMPORT PASS");
+  }
+  static void Import(string folder,string name){
+   {
     var config=JsonUtility.FromJson<NativeEffectSource>(File.ReadAllText(folder+name+"-source.json"));var root=new GameObject(name);var nodes=new Transform[config.nodes.Length];
     for(int i=0;i<nodes.Length;i++){
      var n=config.nodes[i];nodes[i]=new GameObject(n.name).transform;nodes[i].SetParent(n.parent<0?root.transform:nodes[n.parent],false);nodes[i].localPosition=V(n.position);nodes[i].localRotation=new Quaternion(n.rotation[0],n.rotation[1],n.rotation[2],n.rotation[3]);nodes[i].localScale=V(n.scale);
@@ -26,7 +35,6 @@ namespace YunJian.Riichi.Editor {
     }
     PrefabUtility.SaveAsPrefabAsset(root,folder+name+".prefab");UnityEngine.Object.DestroyImmediate(root);
    }
-   AssetDatabase.SaveAssets();Debug.Log("NATIVE APK MODULE IMPORT PASS");
   }
  }
 }

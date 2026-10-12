@@ -5,7 +5,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 
 root = Path(__file__).resolve().parent.parent
 dist = root / 'dist'
-version = '0.5.27'
+version = '0.5.29'
 apk = dist / f'yunjian-riichi-unity-{version}.apk'
 assert apk.exists(), 'Run verify-unity-apk.py first'
 compatible_apk = dist / f'yunjian-riichi-unity-{version}-signed.apk'

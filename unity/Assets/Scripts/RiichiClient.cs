@@ -28,6 +28,8 @@ namespace YunJian.Riichi
         bool musicMuted, effectsMuted;
         float musicVolume=.35f, effectsVolume=.8f;
         TableEffects effects;
+        ScreenTapEffect tap;
+        public ScreenTapEffect Tap => tap;
         readonly ResultPresentation resultDisplay=new ResultPresentation();
         readonly MatchIntroduction introduction=new MatchIntroduction();
         public float IntroRemaining=>introduction.Remaining;
@@ -42,7 +44,7 @@ namespace YunJian.Riichi
         GUIStyle caption, centered, tableButton;
         TableViewport viewport;
         readonly Dictionary<string, Texture2D> skin = new Dictionary<string, Texture2D>();
-        GUIStyle namePlateText,playerTitle,roomCaption;
+        GUIStyle namePlateText,roomCaption;
         const float WaitHoldDelay=.35f;
         static readonly WaitDetail[] NoWaits=new WaitDetail[0];
         bool waitPressCaptured,waitPressCancelled,waitHoldVisible;
@@ -103,6 +105,7 @@ namespace YunJian.Riichi
             effects = gameObject.AddComponent<TableEffects>();
             voice = gameObject.AddComponent<RoleVoice>();
             gameAudio = gameObject.AddComponent<GameAudio>();settlementAudio=gameObject.AddComponent<SettlementAudio>();
+            tap = gameObject.AddComponent<ScreenTapEffect>();
             musicMuted=PlayerPrefs.GetInt("riichi.musicMuted",0)!=0;effectsMuted=PlayerPrefs.GetInt("riichi.effectsMuted",0)!=0;
             musicVolume=PlayerPrefs.GetFloat("riichi.musicVolume",.35f);effectsVolume=PlayerPrefs.GetFloat("riichi.effectsVolume",.8f);
             gameAudio.Configure(!musicMuted,musicVolume,!effectsMuted,effectsVolume);
@@ -242,6 +245,8 @@ namespace YunJian.Riichi
         void Update()
         {
             introduction.Tick(gameAudio);
+            // Every press, on the table or the HUD, gets Majsoul's sakura tap burst.
+            if(Input.GetMouseButtonDown(0))tap.Play(Input.mousePosition);
             if(State?.phase=="result" && (State.result.draw || !effects.ShowWinPresentation)){resultDisplay.Observe(State);settlementAudio.Tick(State,resultDisplay,true,gameAudio);}
             else if(State?.phase!="result")settlementAudio.Reset();
             bool waitInputConsumed=waitPressCaptured;
@@ -334,7 +339,7 @@ namespace YunJian.Riichi
         }
         Texture2D Skin(string name)
         {
-            if (!skin.TryGetValue(name, out var texture)) { texture = Resources.Load<Texture2D>("Majsoul/UI/" + name)??Resources.Load<Texture2D>("Majsoul/TablePolish/"+name); skin[name] = texture; }
+            if (!skin.TryGetValue(name, out var texture)) { texture = Resources.Load<Texture2D>("Majsoul/UI/" + name)??Resources.Load<Texture2D>("Majsoul/TablePolish/"+name)??Resources.Load<Texture2D>("Majsoul/TableLook/Sprites/"+name); skin[name] = texture; }
             return texture;
         }
         bool SkinButton(Rect r, string sprite, string tooltip)
@@ -364,6 +369,12 @@ namespace YunJian.Riichi
             GUI.color = old;
         }
         void OnGUI()
+        {
+            OriginalTiles.InGui = true;
+            try { DrawGui(); } finally { OriginalTiles.InGui = false; }
+            tap.Render();
+        }
+        void DrawGui()
         {
             if(introduction.Active){introduction.Draw();return;}
             Styles(); uiButtons.Clear(); var previous = GUI.matrix;
@@ -450,12 +461,15 @@ namespace YunJian.Riichi
             {
                 Rect tile = new Rect(ox + (28+i*56)*k, oy + 44*k, 54*k, 81*k);
                 string indicator=i<State.indicators.Length?State.indicators[i]:null;
-                GUI.DrawTexture(tile,table.DoraTexture(indicator,table.IsMatchingTile(indicator)),ScaleMode.ScaleToFit);
+                var preview=table.DoraTexture(indicator,table.IsMatchingTile(indicator));if(preview!=null)GUI.DrawTexture(tile,preview,ScaleMode.ScaleToFit);
             }
             HudNumber(State.sticks, ox + 117*k, oy + 139*k, k);
             HudNumber(State.honba, ox + 256*k, oy + 139*k, k);
-            if(roomCaption==null){roomCaption=new GUIStyle(centered){font=Resources.Load<Font>("Majsoul/Settlement/round-font-chs"),fontSize=24};namePlateText=new GUIStyle(centered){font=Resources.Load<Font>("Majsoul/TablePolish/name-font"),fontSize=16};playerTitle=new GUIStyle(centered){font=Resources.Load<Font>("Majsoul/Settlement/round-font-chs"),fontSize=16};}
-            ShadowLabel(new Rect(ox + 4*k, oy + 189*k, 325*k, 43*k), "铜之间 · " + (State.n == 3 ? "三人" : "四人") + (State.rounds == 1 ? "东" : "南"), roomCaption, new Color(.94f, .78f, .49f));
+            // The brush font's ascenders exceed its line box; never clip the caption.
+            if(roomCaption==null){roomCaption=new GUIStyle(centered){font=Resources.Load<Font>("Majsoul/Settlement/round-font-chs"),fontSize=24,clipping=TextClipping.Overflow};namePlateText=new GUIStyle(centered){font=Resources.Load<Font>("Majsoul/TablePolish/name-font"),fontSize=11};}
+            // container_lefttop/gamemode: bg_type band (23,186,290,51); lb_mode 309 wide, colour (.91,.686,.443).
+            var band=new Rect(ox + 23*k, oy + 186*k, 290*k, 51*k);GUI.DrawTexture(band, Skin("bg_type"), ScaleMode.StretchToFill);
+            ShadowLabel(new Rect(band.center.x - 309*k/2, band.y, 309*k, band.height), "铜之间 · " + (State.n == 3 ? "三人" : "四人") + (State.rounds == 1 ? "东" : "南"), roomCaption, new Color(.91f, .686f, .443f));
             foreach (var p in State.players.Select((v, i) => new { v, i }))
             {
                 int seat = table.RelativeSeat(p.i);
@@ -463,14 +477,17 @@ namespace YunJian.Riichi
                 bool turn = State.turn == p.i;
                 GUI.DrawTexture(new Rect(anchor.x, anchor.y, 62, 62), table.Portrait(p.v), ScaleMode.ScaleAndCrop);
                 PortraitFrame(new Rect(anchor.x - 3, anchor.y - 3, 68, 68), turn);
-                var nameRect=new Rect(anchor.x-38,anchor.y+65,138,23);GUI.DrawTexture(nameRect,Skin("bg_name_1"),ScaleMode.StretchToFill);
-                namePlateText.fontSize=p.v.name.Length>11?12:p.v.name.Length>8?14:16;ShadowLabel(nameRect,p.v.name,namePlateText,Color.white);
-                var titleRect=new Rect(anchor.x-45,anchor.y+88,152,24);var deco=Skin("highlight_deco_1");if(deco!=null)GUI.DrawTexture(new Rect(titleRect.x,titleRect.center.y-1,titleRect.width,2),deco,ScaleMode.StretchToFill);
-                ShadowLabel(titleRect,"暂无称号",playerTitle,new Color(.73f,.76f,.80f));
+                // UI_DesktopInfo container_name: bg_name_1 180x30 x.9, label 32pt x.7 x.9;
+                // title 208x40 x.9 directly below. Same .55 canvas factor as the dora panel.
+                float cx=anchor.x+31;var nameRect=new Rect(cx-162*k/2,anchor.y+66,162*k,27*k);GUI.DrawTexture(nameRect,Skin("bg_name_1"),ScaleMode.StretchToFill);
+                namePlateText.fontSize=p.v.name.Length>11?9:p.v.name.Length>8?10:11;ShadowLabel(nameRect,p.v.name,namePlateText,Color.white);
+                // Players without a title show the official extendRes/title/notitle image.
+                GUI.DrawTexture(new Rect(cx-187*k/2,nameRect.yMax,187*k,36*k),Skin("notitle"),ScaleMode.ScaleToFit);
             }
             if(passive)return;
             string status = State.phase == "result" ? State.result.title : State.phase == "reaction" ? (State.options.Length > 0 ? "请选择操作" : "等待其他玩家响应") : State.turn == State.you ? "轮到你出牌" : State.players[State.turn].name + " 的回合";
-            if (State.phase == "reaction") ShadowLabel(new Rect(w * .5f - 210, h - 128, 420, 26), status, centered, Color.white);
+            // With choices the centred button row speaks for itself; it occupies this band.
+            if (State.phase == "reaction" && (State.options.Length == 0 || !OptionsReady)) ShadowLabel(new Rect(w * .5f - 210, h - 128, 420, 26), status, centered, Color.white);
             if (RiichiMode) GUI.Label(new Rect(w * .5f - 210, h - 105, 420, 22), "选牌后再点一次 · 立直打出", centered);
             var bounds=table.HandScreenBounds();
             var top=viewport.FromScreen(new Vector2(bounds.xMin,bounds.yMax),Screen.height);
@@ -511,8 +528,10 @@ namespace YunJian.Riichi
         public Rect[] ActionRects(float width,float height)
         {
             int count=State.options.Where(x=>x.kind!="discard" && x.kind!="riichi").Select(x=>x.kind).Distinct().Count()+(State.options.Any(x=>x.kind=="riichi")?1:0);
-            float buttonWidth=Mathf.Min(156,(width*.62f-20)/Mathf.Max(1,count));
-            return Enumerable.Range(0,count).Select(i=>new Rect(width-100-(count-i)*buttonWidth,height-168,buttonWidth-5,72)).ToArray();
+            // UI_ChiPengHu / UI_LiqiZimo container_btns: (-317,-230) from the centre, scale .7;
+            // 384x186 buttons, pivot (.5,.2), filled from the container's right edge.
+            float u=Mathf.Min(width/1920f,height/1080f),bw=384*.7f*u,bh=186*.7f*u,py=height/2+(230+(75+55.8f)*.7f)*u;
+            return Enumerable.Range(0,count).Select(i=>{int slot=count-1-i;float px=width/2+(-317+(1152-192-384*slot)*.7f)*u;return new Rect(px-bw/2,py-bh*.8f,bw,bh);}).ToArray();
         }
         void ChooseActionKind(string kind)
         {
@@ -553,7 +572,8 @@ namespace YunJian.Riichi
             if(previewKind==null)return;
             var choices=State.options.Where(x=>x.kind==previewKind).ToArray();if(choices.Length==0)return;
             float choiceWidth=134;float total=Mathf.Min(width*.82f,choices.Length*choiceWidth);
-            float x=width-100-total,y=height-258;
+            // Keep the combination panel above the button row, right-aligned with it.
+            float x=Mathf.Max(28,rects[rects.Length-1].xMax-total),y=rects[0].y-90;
             TableIndicators.Panel(new Rect(x-28,y-24,total+56,112),containTiles:true);
             for(int i=0;i<choices.Length;i++)
             {
@@ -624,7 +644,7 @@ namespace YunJian.Riichi
         {
             switch (kind) { case "ron": return "荣和"; case "tsumo": return "自摸"; case "pon": return "碰"; case "chi": return "吃"; case "kan": case "minkan": return "杠"; case "nuki": return "拔北"; case "abort9": return "九种九牌"; case "pass": return "过"; default: return kind; }
         }
-        void OnApplicationPause(bool pause) { if(pause){introduction.Reset();resultDisplay.ClearEffects();ResetWaitPress();}voice.Suspend(pause);settlementAudio.Suspend(pause);gameAudio.Suspend(pause);if(pause)table.Opening.Cancel();effects.Reset(); }
+        void OnApplicationPause(bool pause) { if(pause){introduction.Reset();resultDisplay.ClearEffects();ResetWaitPress();tap.Clear();}voice.Suspend(pause);settlementAudio.Suspend(pause);gameAudio.Suspend(pause);if(pause)table.Opening.Cancel();effects.Reset(); }
         void OnDestroy() { introduction.Reset();resultDisplay.Reset();bridge?.Dispose(); }
     }
 }

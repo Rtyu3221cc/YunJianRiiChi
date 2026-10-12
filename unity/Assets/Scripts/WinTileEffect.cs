@@ -88,7 +88,8 @@ namespace YunJian.Riichi
                 else if(l.renderMode==2){renderer.mesh=plane;renderer.alignment=ParticleSystemRenderSpace.World;}
                 else renderer.alignment=ParticleSystemRenderSpace.View;
                 renderer.lengthScale=l.stretch;renderer.velocityScale=0;renderer.cameraVelocityScale=0;renderer.SetActiveVertexStreams(new List<ParticleSystemVertexStream>{ParticleSystemVertexStream.Position,ParticleSystemVertexStream.Color,ParticleSystemVertexStream.UV});
-                var material=new Material(Shader.Find("YunJian/WinParticle")){mainTexture=Resources.Load<Texture2D>(textures+l.texture)};material.SetColor("_TintColor",C(l.tint));material.SetFloat("_DstBlend",l.blendDst==1?1:10);renderer.sharedMaterial=material;materials.Add(material);systems.Add(p);
+                // A name with a folder ("Actions/win-shanguang") reuses a texture from another Majsoul folder.
+                var material=new Material(Shader.Find("YunJian/WinParticle")){mainTexture=Resources.Load<Texture2D>(l.texture.Contains("/")?"Majsoul/"+l.texture:textures+l.texture)};material.SetColor("_TintColor",C(l.tint));material.SetFloat("_DstBlend",l.blendDst==1?1:10);renderer.sharedMaterial=material;materials.Add(material);systems.Add(p);
             }
             Sample(-1);
         }

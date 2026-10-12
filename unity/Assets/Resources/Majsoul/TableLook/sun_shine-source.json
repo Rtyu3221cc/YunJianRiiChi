@@ -1,0 +1,106 @@
+{
+  "nodes": [
+    {
+      "name": "sun_shine",
+      "parent": -1,
+      "position": [
+        0.23399999737739563,
+        0.3970000147819519,
+        0.1860000044107437
+      ],
+      "rotation": [
+        -0.7013447880744934,
+        -0.0,
+        -0.7128221988677979,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "particle": "Data/sun_shine-8442814060244600131.json",
+      "renderer": "Data/sun_shine--8739001221702014614-renderer.json",
+      "texture": "Textures/yuanqiu2",
+      "tint": [
+        0.4852941036224365,
+        0.4852941036224365,
+        0.4852941036224365,
+        0.5
+      ],
+      "srcBlend": 5.0,
+      "dstBlend": 1.0,
+      "renderMode": 0,
+      "shaderName": "Legacy Shaders/Particles/Additive",
+      "material": "yuanqiu2"
+    },
+    {
+      "name": "Particle System",
+      "parent": 0,
+      "position": [
+        -0.13500000536441803,
+        0.22699999809265137,
+        -0.5960000157356262
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "particle": "Data/sun_shine--52096389528148302.json",
+      "renderer": "Data/sun_shine-6962740547618179767-renderer.json",
+      "texture": "Textures/yuanqiu2",
+      "tint": [
+        0.4852941036224365,
+        0.4852941036224365,
+        0.4852941036224365,
+        0.5
+      ],
+      "srcBlend": 5.0,
+      "dstBlend": 1.0,
+      "renderMode": 0,
+      "shaderName": "Legacy Shaders/Particles/Additive",
+      "material": "yuanqiu2"
+    },
+    {
+      "name": "shine (2)",
+      "parent": 0,
+      "position": [
+        0.0,
+        0.0,
+        0.03099999949336052
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "particle": "Data/sun_shine-1410813479824524702.json",
+      "renderer": "Data/sun_shine--7468721023172478146-renderer.json",
+      "texture": "Textures/yuanqiu2",
+      "tint": [
+        0.4852941036224365,
+        0.4852941036224365,
+        0.4852941036224365,
+        0.5
+      ],
+      "srcBlend": 5.0,
+      "dstBlend": 1.0,
+      "renderMode": 0,
+      "shaderName": "Legacy Shaders/Particles/Additive",
+      "material": "yuanqiu2"
+    }
+  ]
+}

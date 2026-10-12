@@ -1,0 +1,337 @@
+{
+ "nodes": [
+  {
+   "name": "effect_click_default",
+   "parent": -1,
+   "position": [
+    0,
+    0,
+    0
+   ],
+   "rotation": [
+    0,
+    0,
+    0,
+    -1
+   ],
+   "scale": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "effect_click_default",
+   "parent": 0,
+   "position": [
+    0,
+    0,
+    0
+   ],
+   "rotation": [
+    0,
+    0,
+    0,
+    -1
+   ],
+   "scale": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "Particle System",
+   "parent": 1,
+   "position": [
+    0,
+    0,
+    0
+   ],
+   "rotation": [
+    0,
+    0,
+    0,
+    -1
+   ],
+   "scale": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "gaoliang",
+   "parent": 2,
+   "position": [
+    0,
+    0,
+    0.2
+   ],
+   "rotation": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "scale": [
+    1,
+    1,
+    1
+   ]
+  }
+ ],
+ "layers": [
+  {
+   "name": "Particle System",
+   "node": 2,
+   "duration": 3,
+   "delay": 0,
+   "gravity": 0.2,
+   "rate": 0,
+   "maxParticles": 1000,
+   "renderMode": 0,
+   "stretch": 1.5,
+   "colorMin": [
+    1,
+    0.7352941,
+    0.9160243,
+    0.834
+   ],
+   "colorMax": [
+    1,
+    0.875,
+    0.9551724,
+    1
+   ],
+   "size3d": [],
+   "size3dMin": [],
+   "alpha": [
+    {
+     "time": 0,
+     "value": 0
+    },
+    {
+     "time": 0.05587854,
+     "value": 1
+    },
+    {
+     "time": 0.4176547,
+     "value": 1
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "size": [],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    4,
+    5
+   ],
+   "frames": [
+    {
+     "time": 0,
+     "value": 0.0
+    },
+    {
+     "time": 1,
+     "value": 0.9999000000000001
+    }
+   ],
+   "cycles": 1,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 6,
+     "max": 12
+    }
+   ],
+   "texture": "native-ui-floower_00000",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 771,
+   "lifeMin": 0.5,
+   "lifeMax": 1.4,
+   "sizeMin": 0.2,
+   "sizeMax": 0.7,
+   "speedMin": 1,
+   "speedMax": 1,
+   "rotationMin": 0,
+   "rotationMax": 360,
+   "shape": 7,
+   "radius": 0.13,
+   "coneAngle": 25,
+   "angularSpeed": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "box": [],
+   "nativeShape": true,
+   "randomDirection": 0,
+   "colors": [
+    {
+     "time": 0,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "time": 1,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "name": "gaoliang",
+   "node": 3,
+   "duration": 5,
+   "delay": 0,
+   "gravity": 0,
+   "rate": 0,
+   "maxParticles": 1000,
+   "renderMode": 4,
+   "stretch": 2,
+   "colorMin": [
+    1,
+    0.4926471,
+    0.7970588,
+    1
+   ],
+   "colorMax": [
+    1,
+    0.4926471,
+    0.7970588,
+    1
+   ],
+   "size3d": [],
+   "size3dMin": [],
+   "alpha": [
+    {
+     "time": 0,
+     "value": 0
+    },
+    {
+     "time": 0.523537,
+     "value": 1
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "size": [],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    1,
+    1
+   ],
+   "frames": [],
+   "cycles": 1,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 0,
+     "max": 1
+    }
+   ],
+   "texture": "Actions/win-shanguang",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 1,
+   "lifeMin": 0.2,
+   "lifeMax": 0.2,
+   "sizeMin": 1.1,
+   "sizeMax": 1.1,
+   "speedMin": 0,
+   "speedMax": 0,
+   "rotationMin": 0,
+   "rotationMax": 0,
+   "shape": -1,
+   "radius": 0.01,
+   "coneAngle": 0,
+   "angularSpeed": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "box": [],
+   "nativeShape": true,
+   "randomDirection": 0,
+   "colors": [
+    {
+     "time": 0,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "time": 1,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   ],
+   "mesh": {
+    "positions": [
+     -1.2699999809265137,
+     1.2699999809265137,
+     -0.0,
+     1.2699999809265137,
+     1.2699999809265137,
+     -0.0,
+     -1.2699999809265137,
+     -1.2699999809265137,
+     -0.0,
+     1.2699999809265137,
+     -1.2699999809265137,
+     -0.0
+    ],
+    "uv": [
+     0.0,
+     1.0,
+     1.0,
+     1.0,
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "indices": [
+     0,
+     1,
+     2,
+     3,
+     2,
+     1
+    ]
+   }
+  }
+ ]
+}

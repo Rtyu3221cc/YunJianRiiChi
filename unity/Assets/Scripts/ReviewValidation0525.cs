@@ -13,7 +13,8 @@ namespace YunJian.Riichi {
   static float Pixels(Texture texture){var rt=(RenderTexture)texture;var old=RenderTexture.active;RenderTexture.active=rt;var image=new Texture2D(rt.width,rt.height,TextureFormat.RGBA32,false);image.ReadPixels(new Rect(0,0,rt.width,rt.height),0,0);image.Apply();float sum=image.GetPixels().Sum(c=>c.r+c.g+c.b);UnityEngine.Object.Destroy(image);RenderTexture.active=old;return sum;}
   public static IEnumerator Run(RiichiClient client,string folder){
    var table=client.GetComponent<TableRenderer>();var fx=client.GetComponent<TableEffects>();var audio=client.GetComponent<GameAudio>();Size(936,435);for(int i=0;i<7;i++)yield return null;
-   var v=Load(folder,"preview-4");v.indicators=new[]{"p4","z3"};v.hand=new[]{"m0","p5","p0","s0","s3","s4","s6","s7","s8","z1","z2","z3","z4"};foreach(var p in v.players){p.melds=new string[0];p.nuki=2;}
+   // Since 0.5.26 an indicator shines only when it is itself dora: p3 makes p4 dora.
+   var v=Load(folder,"preview-4");v.indicators=new[]{"p4","p3"};v.hand=new[]{"m0","p5","p0","s0","s3","s4","s6","s7","s8","z1","z2","z3","z4"};foreach(var p in v.players){p.melds=new string[0];p.nuki=2;}
    client.ShowValidationFixture(v);yield return null;Check(table.IsDora("p5")&&table.IsDora("s0")&&!table.IsDora("s3"),"Dora/red detection is wrong");
    NativeDoraShine.ValidationAge=.05f;float a=Pixels(table.DoraTexture("p4"));NativeDoraShine.ValidationAge=.55f;float b=Pixels(table.DoraTexture("p4"));Check(Mathf.Abs(a-b)>1,"Dora indicator is frozen in a cached texture");
    foreach(int n in new[]{3,4})foreach(int you in Enumerable.Range(0,n)){

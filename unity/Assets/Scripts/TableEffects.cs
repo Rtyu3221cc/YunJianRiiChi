@@ -193,6 +193,8 @@ namespace YunJian.Riichi
             if(animatedTile!=null){
                 animatedTile.position=motion.TransformPoint(TilePoint(0))-Vector3.up*.12f;
                 animatedTile.rotation=item.kind=="nuki"?table.NorthTarget(item.seat,item.nuki).rotation:Quaternion.Euler(0,table.SeatAngle(item.seat)+(!stick&&item.riichi?90:0),0);
+                // Carry North at the landed tile's (meld-matched) size so it does not pop.
+                if(item.kind=="nuki")animatedTile.localScale=Vector3.one*(TableRenderer.MeldWidth/.33f)*table.NorthTarget(item.seat,item.nuki).localScale.x;
             }
             if(movingMeld!=null){meldTarget=item.meldKind=="kakan"?movingMeld.extra:movingMeld.group;meldFinal=meldTarget.position;meldRotation=meldTarget.rotation;motion.position-=motion.TransformVector(TilePoint(SourceHandoff));}
             HideTarget();

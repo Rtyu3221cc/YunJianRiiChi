@@ -12,6 +12,9 @@ namespace YunJian.Riichi
         [Serializable] class MeshData { public float[] vertices, normals, uv; public int[] body, face; }
         [Serializable] class OutlineData { public float[] vertices,color; public int[] triangles;public float scale; }
         public const float HandHeight = 2.54f, HandWidth = HandHeight * .62f;
+        // Camera.Render inside OnGUI leaves the GUI pass showing an unrendered target.
+        // Event.current is not reliably null outside OnGUI, so RiichiClient.OnGUI sets this.
+        public static bool InGui;
         public readonly float TableLength, TableDepth;
         readonly Mesh tableMesh, handMesh, outlineMesh, glowMesh;
         readonly Material shell, outline, glow;
@@ -35,13 +38,17 @@ namespace YunJian.Riichi
             tableMesh = new Mesh { name = "Original mjp_new 001", vertices = vertices, normals = normals, uv = uv, subMeshCount = 2 };
             tableMesh.SetTriangles(d.body, 0); tableMesh.SetTriangles(d.face, 1); tableMesh.RecalculateBounds();
             TableLength = tableMesh.bounds.size.z; TableDepth = tableMesh.bounds.size.y;
+            // mjp_mid: back skin as _MainTex, face atlas body column as _TileTex.
             shell = new Material(Shader.Find("YunJian/OriginalTileBody")) { mainTexture = Texture("table-back") };
-            shell.SetFloat("_Depth", TableDepth);
+            var body = TableLook.Body; shell.SetTexture("_TileTex", Texture("table-face"));
+            shell.SetTextureScale("_TileTex", new Vector2(body.tileTexScale[0], body.tileTexScale[1])); shell.SetTextureOffset("_TileTex", new Vector2(body.tileTexOffset[0], body.tileTexOffset[1]));
+            TableLook.Apply(shell, body);
             var edge=JsonUtility.FromJson<OutlineData>(Resources.Load<TextAsset>("Majsoul/OriginalTile/outline").text);
             var edgeVertices=new Vector3[edge.vertices.Length/3];
             for(int i=0;i<edgeVertices.Length;i++)edgeVertices[i]=new Vector3(-edge.vertices[i*3],edge.vertices[i*3+2]+depth/2,edge.vertices[i*3+1])/width;
             outlineMesh=new Mesh {name="Original maque_outline 031",vertices=edgeVertices,triangles=edge.triangles};outlineMesh.RecalculateBounds();
-            outlineScale=edge.scale;outline=new Material(Shader.Find("YunJian/OriginalTileOutline")) {color=new Color(edge.color[0],edge.color[1],edge.color[2],edge.color[3])};
+            // Catfood/Outline outputs the material's _Tint; _OutlineColor in outline.json is unused by it.
+            outlineScale=edge.scale;outline=new Material(Shader.Find("YunJian/OriginalTileOutline")) {color=TableLook.OutlineColor};
             glowMesh=new Mesh {name="Ground particle quad",vertices=new[]{new Vector3(-.5f,0,-.5f),new Vector3(-.5f,0,.5f),new Vector3(.5f,0,.5f),new Vector3(.5f,0,-.5f)},uv=new[]{new Vector2(0,0),new Vector2(0,1),new Vector2(1,1),new Vector2(1,0)},triangles=new[]{0,1,2,0,2,3}};
             glowMesh.RecalculateBounds();glow=new Material(Shader.Find("YunJian/ResponseGlow")) {mainTexture=Resources.Load<Texture2D>("Majsoul/Actions/response-glow")};
             handMesh = new Mesh { name = "Original orthographic hand quad",
@@ -72,6 +79,7 @@ namespace YunJian.Riichi
                 m = new Material(Shader.Find("YunJian/OriginalTileFace")) { mainTexture = Resources.Load<Texture2D>("Majsoul/TableTiles/" + tile) };
                 if(m.mainTexture!=null){m.mainTexture.anisoLevel=16;m.mainTexture.filterMode=FilterMode.Trilinear;m.mainTexture.mipMapBias=-.35f;}
                 m.mainTextureScale = new Vector2(50f / 52, 70f / 72); m.mainTextureOffset = new Vector2(1f / 52, 1f / 72);
+                TableLook.Apply(m, TableLook.Face);
             }
             materials[key] = m; return m;
         }
@@ -146,6 +154,8 @@ namespace YunJian.Riichi
         {
             string key = string.IsNullOrEmpty(tile) ? "back" : tile;
             if (handTextures.TryGetValue(key, out var cached)) return cached;
+            // Never render from inside OnGUI; TableRenderer prewarms every face on Awake.
+            if (OriginalTiles.InGui) return null;
             if (handPreviewCamera == null) {
                 handPreviewCamera = new GameObject("Result hand preview camera").AddComponent<Camera>();
                 handPreviewCamera.enabled = false; handPreviewCamera.orthographic = true;
@@ -165,13 +175,16 @@ namespace YunJian.Riichi
             root.gameObject.SetActive(false); UnityEngine.Object.Destroy(root.gameObject);
             handTextures[key] = target; return target;
         }
-        public Texture DoraTexture(string tile,bool match=false,bool shine=false)
+        // Camera.Render must not run inside OnGUI (the GUI pass then shows an unrendered
+        // target). TableRenderer.LateUpdate calls this with refresh=true; OnGUI only reads.
+        public Texture DoraTexture(string tile,bool match=false,bool shine=false,bool refresh=false)
         {
             bool hidden=string.IsNullOrEmpty(tile);match&=!hidden;shine&=!hidden;
             string key = (hidden ? "back" : tile)+(match?"/blue":"")+(shine?"/shine":"");
             if (doraTextures.TryGetValue(key, out var cached)) {
-                if(shine){var model=liveDora[key];model.gameObject.SetActive(true);model.GetComponentInChildren<NativeDoraShine>().Apply();doraCamera.targetTexture=cached;doraCamera.Render();doraCamera.targetTexture=null;model.gameObject.SetActive(false);}return cached;
+                if(shine&&refresh&&!InGui){var model=liveDora[key];model.gameObject.SetActive(true);model.GetComponentInChildren<NativeDoraShine>().Apply();doraCamera.targetTexture=cached;doraCamera.Render();doraCamera.targetTexture=null;model.gameObject.SetActive(false);}return cached;
             }
+            if(InGui)return null;
             if (doraCamera == null)
             {
                 doraCamera = new GameObject("Dora tile preview camera").AddComponent<Camera>();

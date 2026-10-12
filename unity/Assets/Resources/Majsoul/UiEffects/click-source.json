@@ -1,0 +1,32 @@
+[
+  {
+    "source": "https://game.maj-soul.com/1/v0.10.1.w/scene/scene_click_effect.ls",
+    "sha256": "430ee1aca85088ee945e33d847bc86e47050c2625dfc2f20cf54f69673bdfbbf"
+  },
+  {
+    "source": "https://game.maj-soul.com/1/v0.10.1.w/scene/effect_click_default.lh",
+    "sha256": "8e6df234227838c58626e99747af0f91400b203829a8d1ade16e1f22f5ba6163"
+  },
+  {
+    "source": "https://game.maj-soul.com/1/v0.10.1.w/scene/Assets/Resource/entrance/floower_00000.lmat",
+    "sha256": "c3618674b9ed51b6e584efb66457117a0a5bb5b10235d863d7428d0299bc6765"
+  },
+  {
+    "source": "https://game.maj-soul.com/1/v0.10.237.w/scene/Assets/Resource/effect/texture/paimian.lmat",
+    "sha256": "e0cfd7585f728d9f25ec517271e82584aec66f9a5f07bcabb456c07f74f8af20"
+  },
+  {
+    "source": "https://game.maj-soul.com/1/v0.10.1.w/scene/Assets/Resource/effect/mesh/plane1X1-Plane01.lm",
+    "sha256": "3395656235bd09af5ee46d8fc4f3c92068bfdb21eba97f78a80a51206b3f3c5b"
+  },
+  {
+    "output": "UiEffects/effect_click_default.json",
+    "sha256": "503a4466aef5cc38a728abda752df65b9cdd40be0b3d0cb2b08dcc306db8968f",
+    "cameraOrthographicHeight": 18,
+    "textures": {
+      "native-ui-floower_00000": "APK myassets/necessary/texture/yinghua.png",
+      "win-shanguang": "APK myassets/common3d/texture/shanguang.png"
+    },
+    "adaptation": "Bursts use their maximum count, as in the other WinTileEffect imports. Laya shapeType 7 maps to the existing circle emitter."
+  }
+]

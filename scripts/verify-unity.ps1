@@ -8,7 +8,8 @@ if ($Mode -eq 'Android') {
  $hostSourceTask = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../app/src/main/assets'))
  $hostTargetTask = Join-Path $projectTask 'Assets/Plugins/Android/riichi-host.androidlib/assets'
  foreach ($hostFileTask in (Get-ChildItem -LiteralPath $hostSourceTask -File -Recurse)) {
-  $hostRelativeTask = [IO.Path]::GetRelativePath($hostSourceTask,$hostFileTask.FullName)
+  # Windows PowerShell 5.1 has no [IO.Path]::GetRelativePath.
+  $hostRelativeTask = $hostFileTask.FullName.Substring($hostSourceTask.TrimEnd('\','/').Length + 1)
   $hostDestinationTask = Join-Path $hostTargetTask $hostRelativeTask
   New-Item -ItemType Directory -Force (Split-Path $hostDestinationTask -Parent) | Out-Null
   Copy-Item -LiteralPath $hostFileTask.FullName -Destination $hostDestinationTask -Force
@@ -16,6 +17,8 @@ if ($Mode -eq 'Android') {
 }
 if (!$EditorPath) {
  $candidateTask = Get-ChildItem -LiteralPath 'C:/Program Files/Unity/Hub/Editor' -Filter 'Unity.exe' -Recurse -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+ # Unity Hub's per-version install location; this machine keeps editors on D:.
+ if (!$candidateTask) { $candidateTask = Get-Item -LiteralPath 'D:/Unity/Lib/6000.6.4f1/Editor/Unity.exe' -ErrorAction SilentlyContinue }
  if ($candidateTask) { $EditorPath = $candidateTask.FullName }
  if (!$EditorPath) {
   $hubPathTask = Join-Path $env:APPDATA 'UnityHub/secondaryInstallPath.json'
@@ -29,7 +32,7 @@ if (!$EditorPath) {
 if (!$EditorPath -or !(Test-Path -LiteralPath $EditorPath)) { throw 'Unity Editor is not installed yet. Pass -EditorPath after installing it.' }
 if ($Mode -eq 'Android' -and $projectTask -match '[^\x00-\x7F]') {
  # Android/IL2CPP rejects Unicode project paths. Keep the maintained project in place.
- $pathHashTask = [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData([Text.Encoding]::UTF8.GetBytes($projectTask))).Substring(0,12).ToLower()
+ $pathHashTask = (-join ([Security.Cryptography.SHA256]::Create().ComputeHash([Text.Encoding]::UTF8.GetBytes($projectTask)) | ForEach-Object { $_.ToString('x2') })).Substring(0,12)
  $projectTask = Join-Path ([IO.Path]::GetTempPath()) "codex-riichi-build-$pathHashTask"
  if ($projectTask -match '[^\x00-\x7F]') { throw 'TEMP also contains non-ASCII characters; set TEMP to an ASCII directory before Android build.' }
  New-Item -ItemType Directory -Force $projectTask | Out-Null
@@ -51,12 +54,12 @@ if ($unityTask.ExitCode -ne 0) { throw "Unity validation failed (exit $($unityTa
 if ($Mode -ne 'Android') {
  $markerTask = if ($Mode -eq 'Play') { 'RIICHI UNITY PLAY PASS' } else { 'RIICHI UNITY VALIDATION PASS' }
  if (!(Select-String -LiteralPath $logTask -SimpleMatch $markerTask -Quiet)) { throw 'Unity exited without the validation success marker.' }
-} elseif (!(Test-Path -LiteralPath (Join-Path $projectTask 'Builds/yunjian-riichi-unity-0.5.27.apk'))) { throw 'Unity did not produce the Android APK.' }
+} elseif (!(Test-Path -LiteralPath (Join-Path $projectTask 'Builds/yunjian-riichi-unity-0.5.29.apk'))) { throw 'Unity did not produce the Android APK.' }
 if ($Mode -eq 'Android' -and $projectTask -ne $originalProjectTask) {
  New-Item -ItemType Directory -Force (Join-Path $originalProjectTask 'Builds') | Out-Null
- Copy-Item -LiteralPath (Join-Path $projectTask 'Builds/yunjian-riichi-unity-0.5.27.apk') -Destination (Join-Path $originalProjectTask 'Builds/yunjian-riichi-unity-0.5.27.apk') -Force
+ Copy-Item -LiteralPath (Join-Path $projectTask 'Builds/yunjian-riichi-unity-0.5.29.apk') -Destination (Join-Path $originalProjectTask 'Builds/yunjian-riichi-unity-0.5.29.apk') -Force
 }
 if ($Mode -eq 'Android') {
- & (Join-Path $PSScriptRoot 'sign-unity-apk.ps1') -ApkPath (Join-Path $originalProjectTask 'Builds/yunjian-riichi-unity-0.5.27.apk') -EditorPath $EditorPath
+ & (Join-Path $PSScriptRoot 'sign-unity-apk.ps1') -ApkPath (Join-Path $originalProjectTask 'Builds/yunjian-riichi-unity-0.5.29.apk') -EditorPath $EditorPath
 }
 Get-Content -LiteralPath $logTask -Tail 20

@@ -13,7 +13,17 @@ namespace YunJian.Riichi
         public Camera HandCamera { get; private set; }
         OriginalTiles original;
         readonly ReferenceScoreHub scoreHub = new ReferenceScoreHub();
-        public Texture DoraTexture(string tile,bool match=false) => original.DoraTexture(tile,match,state!=null&&IsDora(tile));
+        // Outside OnGUI this also re-renders a shining preview; inside it only reads.
+        public Texture DoraTexture(string tile,bool match=false) => original.DoraTexture(tile,match,state!=null&&IsDora(tile),!OriginalTiles.InGui);
+        // Render the indicator and settlement dora/ura previews before the GUI pass reads them.
+        void RefreshDoraPreviews()
+        {
+            if(state==null || (state.phase!="play" && state.phase!="reaction" && state.phase!="result"))return;
+            original.DoraTexture(null,false,false,true);
+            foreach(string indicator in state.indicators??new string[0])original.DoraTexture(indicator,IsMatchingTile(indicator),IsDora(indicator),true);
+            foreach(var detail in state.result?.details??new WinDetail[0])foreach(string tile in detail.ura??new string[0])original.DoraTexture(tile,false,IsDora(tile),true);
+        }
+        static readonly string[] AllFaces="m0 m1 m2 m3 m4 m5 m6 m7 m8 m9 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 s0 s1 s2 s3 s4 s5 s6 s7 s8 s9 z1 z2 z3 z4 z5 z6 z7".Split(' ');
         public bool IsDora(string tile){
             if(string.IsNullOrEmpty(tile))return false;if(tile.Length>1&&tile[1]=='0')return true;
             foreach(string indicator in state.indicators??new string[0]){
@@ -32,7 +42,8 @@ namespace YunJian.Riichi
         public bool ArrangingHand => opening.Active;
         public HandOpening Opening => opening;
         Material ivory, frame, felt, red, gold, contactShadow;
-        Texture2D shadowTexture;
+        Mesh shadowQuad;
+        Vector2 shadowFootprint;
         Font font;
         Transform cameraHand;
         Transform responseTarget;
@@ -82,7 +93,6 @@ namespace YunJian.Riichi
         }
         readonly Dictionary<int, List<Transform>> northTiles = new Dictionary<int, List<Transform>>();
         readonly Dictionary<int, Transform> winningTiles = new Dictionary<int, Transform>();
-        readonly TileGeometry geometry = new TileGeometry();
 
         void Awake()
         {
@@ -101,7 +111,12 @@ namespace YunJian.Riichi
             HandCamera.orthographic = true; HandCamera.orthographicSize = 9;
             HandCamera.clearFlags = CameraClearFlags.Depth; HandCamera.depth = Camera.depth + 1;
             HandCamera.cullingMask = 1 << 12; HandCamera.allowMSAA = true;
+            // The Catfood tile shaders only read the direction of scene_mj/light.
+            Shader.SetGlobalVector("_MjLightDir", TableLook.LightDirection);
             original = new OriginalTiles();
+            // GUI panels (chi choices, waits, settlement) read these; render them up front.
+            original.HandTexture(null); foreach (var face in AllFaces) original.HandTexture(face);
+            new GameObject("Original room sun_shine").AddComponent<SunShine>();
             var lamp = new GameObject("SoftLight").AddComponent<Light>(); lamp.type = LightType.Directional;
             lamp.transform.rotation = Quaternion.Euler(65, -22, 0); lamp.intensity = .8f;
             lamp.shadows = LightShadows.Soft; lamp.shadowStrength = .6f; lamp.shadowBias = .015f;
@@ -109,8 +124,13 @@ namespace YunJian.Riichi
             RenderSettings.ambientMode = AmbientMode.Flat;
             RenderSettings.ambientLight = new Color(.42f, .40f, .38f);
             ivory = Material("Ivory", new Color(.90f, .89f, .85f));
-            shadowTexture = new Texture2D(1, 1); shadowTexture.SetPixel(0, 0, new Color(0, 0, 0, .24f)); shadowTexture.Apply();
-            contactShadow = new Material(Shader.Find("Unlit/Transparent")) { mainTexture = shadowTexture, renderQueue = 2400 };
+            var tileShadow = TableLook.TileShadow; shadowFootprint = TableLook.ShadowFootprint;
+            contactShadow = new Material(Shader.Find("YunJian/TileShadow")) { mainTexture = Resources.Load<Texture2D>("Majsoul/TableLook/" + tileShadow.texture) };
+            contactShadow.SetColor("_Tint", TableLook.ColorOf(tileShadow.tint));
+            shadowQuad = new Mesh { name = "Original effect_shadow plane",
+                vertices = new[] { new Vector3(-.5f,0,-.5f), new Vector3(-.5f,0,.5f), new Vector3(.5f,0,.5f), new Vector3(.5f,0,-.5f) },
+                uv = new[] { Vector2.zero, Vector2.up, Vector2.one, Vector2.right }, triangles = new[] { 0,1,2,0,2,3 } };
+            shadowQuad.RecalculateBounds();
             frame = Material("Frame", new Color(.13f, .08f, .12f));
             red = Material("RiichiDot", new Color(.76f, .09f, .12f)); gold = Material("Selection", new Color(1, .73f, .2f));
             felt = new Material(Shader.Find("YunJian/TableCloth"));
@@ -272,7 +292,7 @@ namespace YunJian.Riichi
             var local = i == state.you ? new Vector3(-3.8f, .15f, -2.8f) : new Vector3(-2.9f, .15f, -3.7f);
             return Quaternion.Euler(0, angle, 0) * local;
         }
-        void LateUpdate() { opening.Apply(handTiles,handBase,GetComponent<GameAudio>());UpdateDrawReveal();ApplyDeferredDraw();FitCamera(Screen.width / (float)Screen.height); }
+        void LateUpdate() { opening.Apply(handTiles,handBase,GetComponent<GameAudio>());UpdateDrawReveal();ApplyDeferredDraw();FitCamera(Screen.width / (float)Screen.height);RefreshDoraPreviews(); }
         public bool DrawDeferred {get;private set;}
         void ApplyDeferredDraw(){
             if(state?.phase=="result")return;
@@ -285,7 +305,8 @@ namespace YunJian.Riichi
         {
             // Preserve vertical composition on phones; fit the side hands on 16:9.
             Camera.fieldOfView = 2 * Mathf.Atan(Mathf.Tan(28 * Mathf.Deg2Rad / 2) * Mathf.Max(1, 1.9f / aspect)) * Mathf.Rad2Deg;
-            if (cameraHand == null) return;
+            // Without a foreground hand no group is moved, so the native positions apply.
+            if (cameraHand == null) { ScaleNorthToMelds(); return; }
             Rect safe = Screen.safeArea;
             float safeWidth = safe.width / Screen.width, safeHeight = safe.height / Screen.height;
             float handSpan = Mathf.Max(1, handTiles.Count) * OriginalTiles.HandWidth + .4f;
@@ -299,6 +320,7 @@ namespace YunJian.Riichi
             if(meldGroups.TryGetValue(state.you,out var ownGroups))foreach(var meld in ownGroups){restored.Add(Tuple.Create(meld.group,meld.group.localPosition));meld.group.localPosition=Vector3.zero;if(meld.extra!=null){restored.Add(Tuple.Create(meld.extra,meld.extra.localPosition));meld.extra.localPosition=meld.extraRest;}}
             foreach(var group in exposedGroups){group.localPosition=Vector3.zero;group.localScale=Vector3.one;}
             AlignSelfMelds(safe.yMin+.12f*scale/18*Screen.height,safe.xMax-18*Screen.height/600f);
+            ScaleNorthToMelds();
             float left=safe.xMin+safe.width*.05f,right=safe.xMax-safe.width*.05f;
             float handTop=safe.yMin+(OriginalTiles.HandHeight+.42f)*scale/18*Screen.height;
             float margin=10*Screen.height/780f;
@@ -320,6 +342,43 @@ namespace YunJian.Riichi
             cameraHand.rotation = Quaternion.identity;
             cameraHand.localScale = Vector3.one * scale;
             foreach(var saved in restored)if(saved.Item1!=null)saved.Item1.localPosition=saved.Item2;
+        }
+        public const float MeldWidth=.35f;
+#if UNITY_EDITOR
+        public float ValidationMeldFaceWidth(int seat)=>Mathf.Min(MeldFaceWidth(state.you),MeldFaceWidth(seat));        public float ValidationFaceWidth(Transform tile)=>FaceWidth(tile);
+#endif
+        // Native meld corner (DrawMelds' first group) in seat space, before any screen fitting.
+        Vector3 NativeMeldPoint(int seat){float angle=Angle(seat);float cursor=angle<-45?3.50f:4.20f;float z=Mathf.Abs(angle)>135?-3.50f:seat==state.you?-4.10f:-4.20f;return Quaternion.Euler(0,angle,0)*new Vector3(cursor-.55f,.02f,z);}
+        // Apparent size of a tile's top face: square root of its projected area, so screen
+        // position, perspective skew and the seat's rotation do not bias the comparison.
+        float FaceWidth(Vector3 foot,Quaternion rotation,float width)
+        {
+            float top=original.TableDepth*width,length=original.TableLength*width;
+            var p=new Vector2[4];int i=0;foreach(var c in new[]{new Vector2(-1,-1),new Vector2(1,-1),new Vector2(1,1),new Vector2(-1,1)})p[i++]=Camera.WorldToScreenPoint(foot+rotation*new Vector3(c.x*width/2,top,c.y*length/2));
+            float area=0;for(int k=0;k<4;k++){var a=p[k];var b=p[(k+1)%4];area+=a.x*b.y-b.x*a.y;}
+            return Mathf.Sqrt(Mathf.Abs(area)/2);
+        }
+        float FaceWidth(Transform tile)=>FaceWidth(tile.position,tile.rotation,MeldWidth*tile.lossyScale.x);
+        // That seat's displayed upright meld tile, or the native meld corner without melds.
+        float MeldFaceWidth(int seat)
+        {
+            if(meldGroups.TryGetValue(seat,out var groups)){
+                var tile=groups.SelectMany(g=>g.group.GetComponentsInChildren<BoxCollider>(true)).Select(c=>c.transform).Where(t=>t.gameObject.activeInHierarchy)
+                    .OrderBy(t=>Mathf.Abs(Mathf.DeltaAngle(t.localRotation.eulerAngles.y,0))).FirstOrDefault();
+                if(tile!=null)return FaceWidth(tile);
+            }
+            return FaceWidth(NativeMeldPoint(seat),Quaternion.Euler(0,Angle(seat),0),MeldWidth);
+        }
+        // 1012-2 review: North tiles read larger than the player's melds (most of all the
+        // left seat's, right in front of the camera). Shrink every North so its face is no
+        // larger than the player's own meld faces, or than that seat's melds if smaller.
+        void ScaleNorthToMelds()
+        {
+            if(state==null)return;float player=MeldFaceWidth(state.you);
+            foreach(var entry in northTiles){
+                if(entry.Value.Count==0)continue;float reference=Mathf.Min(player,MeldFaceWidth(entry.Key));
+                foreach(var tile in entry.Value){if(tile==null)continue;tile.localScale=Vector3.one;float own=FaceWidth(tile);tile.localScale=Vector3.one*(own>1?Mathf.Clamp(reference/own,.6f,1f):1);}
+            }
         }
         void AlignSelfMelds(float bottom,float right){
             if(selfMelds==null || selfMelds.GetComponentsInChildren<BoxCollider>(true).Length==0)return;
@@ -377,11 +436,17 @@ namespace YunJian.Riichi
         {
             var root = original.CreateTable(parent, tile, position, w, hidden, sideways, opacity);
             if(!hidden){exposedTiles.Add(Tuple.Create(root,tile));if(IsDora(tile))OriginalTiles.AddShine(root,false);}
-            var shadow = new GameObject("Contact shadow"); shadow.transform.SetParent(root, false);
-            shadow.transform.localPosition = new Vector3(.018f, .002f - position.y, -.022f);
-            shadow.AddComponent<MeshFilter>().sharedMesh = geometry.Get(w + .02f, w * original.TableLength + .02f, true);
-            var sr = shadow.AddComponent<MeshRenderer>(); sr.sharedMaterial = contactShadow; sr.shadowCastingMode = ShadowCastingMode.Off;
+            ContactShadow(root, .002f - position.y, w, w * original.TableLength);
             return root;
+        }
+        // Original mjp_new/effect_shadow: soft shadow.png centred under the tile footprint.
+        void ContactShadow(Transform parent, float y, float width, float length)
+        {
+            var shadow = new GameObject("Contact shadow"); shadow.transform.SetParent(parent, false);
+            shadow.transform.localPosition = new Vector3(0, y, 0);
+            shadow.transform.localScale = new Vector3(width * shadowFootprint.x, 1, length * shadowFootprint.y);
+            shadow.AddComponent<MeshFilter>().sharedMesh = shadowQuad;
+            var sr = shadow.AddComponent<MeshRenderer>(); sr.sharedMaterial = contactShadow; sr.shadowCastingMode = ShadowCastingMode.Off; sr.receiveShadows = false;
         }
         void Text(Transform parent, string text, Vector3 position, float size, Color color, float angle = 0)
         {
@@ -453,10 +518,7 @@ namespace YunJian.Riichi
                 {
                     float edge = Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f ? 4.34f : 3.35f;
                     var tile = original.CreateStandingBack(seat, new Vector3(-1.86f + j*.31f, 0, -edge), .29f);
-                    var shadow = new GameObject("Standing hand contact shadow"); shadow.transform.SetParent(tile, false);
-                    shadow.transform.localPosition = new Vector3(.018f, .002f, -.022f);
-                    shadow.AddComponent<MeshFilter>().sharedMesh = geometry.Get(.31f, original.TableDepth * .29f + .04f, true);
-                    var sr = shadow.AddComponent<MeshRenderer>(); sr.sharedMaterial = contactShadow; sr.shadowCastingMode = ShadowCastingMode.Off;
+                    ContactShadow(tile, .002f, .29f, original.TableDepth * .29f);
                 }
             }
             DrawWinningTiles();
@@ -491,10 +553,12 @@ namespace YunJian.Riichi
                 if(d.ron)robbed[key]=tile;
             }
         }
+        // Stable per-discard offset (x, z) and yaw in degrees. 0.5.26 (.005/.012/1.2) read as
+        // too orderly and 0.5.28 (.010/.014/2.0) as too messy; this is ~70% of the latter.
         public static Vector3 RiverScatter(int seat,int rawIndex,int round,int honba){
             uint seed=unchecked((uint)((seat+1)*1973+(rawIndex+1)*9277+round*7919+honba*313));
             float next(){seed=1664525u*seed+1013904223u;return (seed>>8)/16777215f*2-1;}
-            return new Vector3(next()*.005f,next()*.012f,next()*1.2f);
+            return new Vector3(next()*.007f,next()*.010f,next()*1.4f);
         }
         void DrawRiver(Transform parent, PlayerView p, int seatIndex)
         {
@@ -638,18 +702,18 @@ namespace YunJian.Riichi
             var extracted = new List<Transform>(); northTiles[index] = extracted;
             for (int i = 0; i < p.nuki; i++)
             {
-                var tile = Tile(north, "z4", NativeReviewLayout.NorthLocal(NativeReviewLayout.Physical(RelativeSeat(index),state.n),i,angle), .35f, .51f);
+                var tile = Tile(north, "z4", NativeReviewLayout.NorthLocal(NativeReviewLayout.Physical(RelativeSeat(index),state.n),i,angle), MeldWidth, .51f);
                 tile.localRotation = Quaternion.identity;
                 extracted.Add(tile);
             }
         }
         void OnDestroy()
         {
-            geometry.Dispose(); original?.Dispose(); scoreHub.Dispose();
+            original?.Dispose(); scoreHub.Dispose();
             foreach (var mat in faces.Values) Destroy(mat);
             foreach (var texture in portraits.Values) Destroy(texture);
             foreach (var mat in new[] { ivory, frame, felt, red, gold, contactShadow }) if (mat != null) Destroy(mat);
-            if (shadowTexture != null) Destroy(shadowTexture);
+            if (shadowQuad != null) Destroy(shadowQuad);
         }
     }
 }

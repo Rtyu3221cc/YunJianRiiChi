@@ -21,9 +21,10 @@ namespace YunJian.Riichi
             losing.audioRoom=before.audioRoom;client.ValidationApplyState(losing);Check(GameObject.Find("Camera-facing hand")==hand && table.HandScreenBounds().height>20,"Losing hand was destroyed at opponent win");
             fx.ValidationFreeze=true;fx.ValidationTime=.5f;fx.Accept(before);fx.Accept(losing);yield return null;yield return null;
             ScreenCapture.CaptureScreenshot(Path.Combine(folder,"review-0523-opponent-win-hand.png"));yield return new WaitForSecondsRealtime(.1f);
-            // Every seat's extracted North is in its left corner with the same local yaw.
+            // scene_mj babei_n carries the same rotation as that seat's river anchor hai_n,
+            // so each North faces its owner like a discard; position is the APK anchor.
             var layout=Load(folder,"effects");foreach(var p in layout.players)p.nuki=3;client.ShowValidationFixture(layout);yield return null;
-            for(int seat=0;seat<layout.n;seat++){var tile=table.NorthTarget(seat,1);Check(tile.localPosition.x<0 && Quaternion.Angle(tile.localRotation,Quaternion.Euler(0,90,0))<.01f,"North local corner/yaw wrong");}
+            for(int seat=0;seat<layout.n;seat++){var tile=table.NorthTarget(seat,1);var expected=NativeReviewLayout.NorthLocal(NativeReviewLayout.Physical(table.RelativeSeat(seat),layout.n),0,table.SeatAngle(seat));Check(Quaternion.Angle(tile.localRotation,Quaternion.identity)<.01f && Vector3.Distance(tile.localPosition,expected)<.001f,"North anchor/yaw differs from APK babei/hai");}
             ScreenCapture.CaptureScreenshot(Path.Combine(folder,"review-0523-north.png"));yield return new WaitForSecondsRealtime(.1f);
             // Same material/native plane in all winning directions; its column faces the camera.
             for(int seat=0;seat<4;seat++){
@@ -40,7 +41,7 @@ namespace YunJian.Riichi
             Check(!client.OptionsReady && fx.ValidationCallKind==null && fx.ValidationKind=="discard","Call started before previous discard finished");
             fx.ValidationTime=.65f;yield return null;yield return null;Check(fx.ValidationCallKind=="pon" && !client.OptionsReady,"Queued meld did not follow previous hand");fx.Reset();yield return null;Check(client.OptionsReady,"Actions never unlocked after animation");
             Check(HandRevealMotion.Progress(.12f)<.08f && HandRevealMotion.Progress(.36f)>1 && HandRevealMotion.Progress(.44f)<1,"Push-down lacks acceleration/contact/settle");
-            Debug.Log("RIICHI REVIEW 0523 PASS: preserved losing hand, every North corner/yaw, camera-facing fire in all four seats, chronological calls and gated options, nonlinear reveal.");
+            Debug.Log("RIICHI REVIEW 0523 PASS: preserved losing hand, every North at its APK anchor facing its owner, camera-facing fire in all four seats, chronological calls and gated options, nonlinear reveal.");
             Resolution(754,347);for(int f=0;f<7;f++)yield return null;
             var data=Load(folder,"win-4-tsumo-0-0");data.audioEvents=new PublicSound[0];var d=data.result.details[0];
             var limits=new[]{"普通和牌","满贯","跳满","倍满","三倍满","累计役满","役满","两倍役满","三倍役满","四倍役满","五倍役满","六倍役满"};var points=new[]{1000,8000,12000,16000,24000,32000,32000,64000,96000,128000,160000,192000};
