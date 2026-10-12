@@ -1,5 +1,11 @@
 # 云间日麻
 
+## Unity 0.5.31：自家副露尺寸与称号间距
+
+[下载 Unity 0.5.31 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.31/yunjian-riichi-unity-0.5.31.apk)，versionCode 32，沿用原证书。
+
+重新按雀魂原图校准自家副露的实际轮廓：可见宽度较0.5.30增大约28%，手牌大小保持不变；开局称号向用户名下移约10像素。[副露前后与原图对照](dist/previews/unity-0.5.31-meld-comparison.png) · [称号对照](dist/previews/unity-0.5.31-title-comparison.png) · [修正说明](docs/0.5.31副露尺寸与称号间距.md)。81项规则／协议及专项实际渲染检查通过；安卓真机未测。
+
 ## Unity 0.5.30：1012-3 逐项修正
 
 安卓包：[下载 Unity 0.5.30 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.30/yunjian-riichi-unity-0.5.30.apk)，versionCode 31，v1＋v2 签名并沿用此前证书。

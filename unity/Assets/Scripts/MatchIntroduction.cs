@@ -49,9 +49,8 @@ namespace YunJian.Riichi
             BadgeImage("sima_queshi",rank,new Vector2(3.9f,10.6f),new Vector2(160,160),.55f*u);
             foreach(var p in new[]{new Vector2(-36.5f,-75.5f),new Vector2(-71.5f,-54.5f),new Vector2(-102.5f,-7.5f)})BadgeImage("starbg",rank,p,new Vector2(67,64),.55f*u);
             BadgeImage("star",rank,new Vector2(-36.5f,-75.5f),new Vector2(67,64),.55f*u);
-            // The native tall nameplate runs into wide-screen safe edges; lower the
-            // title 25 source pixels so the entire default title stays visible.
-            BadgeImage("notitle",r.center,new Vector2(-236,78),new Vector2(263,50),u,0,.5f);
+            // Keep a small gap between the title and the player name.
+            BadgeImage("notitle",r.center,new Vector2(-236,64),new Vector2(263,50),u,0,.5f);
             GUI.Label(new Rect(r.center.x-209.9f*u,r.center.y-26*u,r.width*.65f,45*u),name,nameStyle);
         }
         static Rect RectAt(float[] d,Vector2 offset)=>new Rect(offset.x+d[0]*2/3,offset.y+d[1]*2/3,d[2]*2/3,d[3]*2/3);

@@ -81,6 +81,7 @@ namespace YunJian.Riichi
         }
         Transform selfMelds;
         readonly List<Transform> exposedGroups=new List<Transform>();
+        readonly Dictionary<Mesh,Vector3[]> tileVertices=new Dictionary<Mesh,Vector3[]>();
         readonly Dictionary<int, List<Transform>> riverTiles = new Dictionary<int, List<Transform>>();
         readonly Dictionary<int, Transform> stickAnchors = new Dictionary<int, Transform>();
         readonly Dictionary<int, Transform> meldAnchors = new Dictionary<int, Transform>();
@@ -243,6 +244,7 @@ namespace YunJian.Riichi
         }
         public Transform ResponseTarget => responseTarget;
 #if UNITY_EDITOR
+        public bool ValidationLegacyMeldFit;
         // 0 = playable, 1 = dimmed by the riichi declaration filter.
         public float ValidationHandDim(int index)
         {
@@ -319,7 +321,11 @@ namespace YunJian.Riichi
             var restored=new List<Tuple<Transform,Vector3>>();
             if(meldGroups.TryGetValue(state.you,out var ownGroups))foreach(var meld in ownGroups){restored.Add(Tuple.Create(meld.group,meld.group.localPosition));meld.group.localPosition=Vector3.zero;if(meld.extra!=null){restored.Add(Tuple.Create(meld.extra,meld.extra.localPosition));meld.extra.localPosition=meld.extraRest;}}
             foreach(var group in exposedGroups){group.localPosition=Vector3.zero;group.localScale=Vector3.one;}
-            AlignSelfMelds(safe.yMin+.32f*scale/18*Screen.height,safe.xMax-64*Screen.height/600f);
+            float meldBottom=.85f;
+#if UNITY_EDITOR
+            if(ValidationLegacyMeldFit)meldBottom=.32f;
+#endif
+            AlignSelfMelds(safe.yMin+meldBottom*scale/18*Screen.height,safe.xMax-64*Screen.height/600f);
             ScaleNorthToMelds();
             float left=safe.xMin+safe.width*.05f,right=safe.xMax-safe.width*.05f;
             float handTop=safe.yMin+(OriginalTiles.HandHeight+.42f)*scale/18*Screen.height;
@@ -331,11 +337,20 @@ namespace YunJian.Riichi
                 if(group==selfMelds || bounds.center.x>=safe.center.x)right=Mathf.Min(right,bounds.xMin-margin);
                 else left=Mathf.Max(left,bounds.xMax+margin);
             }
-            if(right-left>=half*2)centerX=Mathf.Clamp(centerX,left+half,right-half);
+            bool handFits=right-left>=half*2;
+            if(handFits)centerX=Mathf.Clamp(centerX,left+half,right-half);
             else {centerX=Mathf.Max(safe.xMin+half+margin,right-half);}
             var handBand=Rect.MinMaxRect(centerX-half,safe.yMin,centerX+half,handTop);
-            foreach(var group in exposedGroups)
-                if(group!=selfMelds && ProjectedBounds(group,out var bounds) && handBand.Overlaps(bounds))MoveAboveHand(group,handTop+margin);
+            var hud=TableViewport.Fit(Screen.width,Screen.height,safe,true);
+            float avatarLeft=hud.Origin.x+(hud.Width*.26f-3)*hud.Scale,avatarRight=avatarLeft+68*hud.Scale;
+            float avatarTop=Screen.height-(hud.Origin.y+(hud.Height*.83f-107)*hud.Scale);
+            foreach(var group in exposedGroups){
+                if((group!=selfMelds || !handFits) && ProjectedBounds(group,out var bounds) && handBand.Overlaps(bounds)){
+                    float clearance=handTop+margin;
+                    if(group==selfMelds && bounds.xMin<avatarRight && bounds.xMax>avatarLeft)clearance=Mathf.Max(clearance,avatarTop+margin);
+                    MoveAboveHand(group,clearance);
+                }
+            }
             float x = ((centerX / Screen.width) - .5f) * 18 * aspect;
             float bottom = -9 + safe.y / Screen.height * 18;
             cameraHand.position = new Vector3(x, bottom + (OriginalTiles.HandHeight / 2 + .12f) * scale, 0);
@@ -346,6 +361,7 @@ namespace YunJian.Riichi
         public const float MeldWidth=.35f;
 #if UNITY_EDITOR
         public float ValidationMeldFaceWidth(int seat)=>Mathf.Min(MeldFaceWidth(state.you),MeldFaceWidth(seat));        public float ValidationFaceWidth(Transform tile)=>FaceWidth(tile);
+        public Rect ValidationTileOutline(Transform tile)=>ProjectedTileOutline(tile);
 #endif
         // Native meld corner (DrawMelds' first group) in seat space, before any screen fitting.
         Vector3 NativeMeldPoint(int seat){float angle=Angle(seat);float cursor=angle<-45?3.50f:4.20f;float z=Mathf.Abs(angle)>135?-3.50f:seat==state.you?-4.10f:-4.20f;return Quaternion.Euler(0,angle,0)*new Vector3(cursor-.55f,.02f,z);}
@@ -383,17 +399,37 @@ namespace YunJian.Riichi
         void AlignSelfMelds(float bottom,float right){
             if(selfMelds==null || selfMelds.GetComponentsInChildren<BoxCollider>(true).Length==0)return;
             var first=selfMelds.GetComponentsInChildren<BoxCollider>(true).OrderBy(c=>Mathf.Abs(c.transform.localRotation.eulerAngles.y)).First();
-            // Fit to a screen-space target while translating along the cloth plane.
-            if(!ProjectedBounds(first.transform,out var nativeTile)||nativeTile.width<1)return;
-            // 1012-2 original: own upright meld outline is about 76% of a hand tile,
-            // with a visible lower margin and its right edge slightly in from the HUD.
-            float width=OriginalTiles.HandWidth/18*Screen.height*.76f;
+            // The collider's rectangular footprint overestimates the visible rounded
+            // tile under perspective. Fit the actual APK mesh/outline vertices instead.
+            // 1012-2 reference, normalized to the game viewport: an upright meld tile
+            // white tile is 55-58 px wide in a 1280x720 viewport. Including its
+            // model rim/outline, use .98 of the original foreground quad width.
+            float width=OriginalTiles.HandWidth/18*Screen.height*.98f;
+#if UNITY_EDITOR
+            if(ValidationLegacyMeldFit)width=OriginalTiles.HandWidth/18*Screen.height*.76f;
+#endif
             for(int pass=0;pass<6;pass++){
-                if(!ProjectedBounds(first.transform,out var tile)||tile.width<1)return;
+                var tile=ProjectedTileOutline(first.transform);if(tile.width<1)return;
+#if UNITY_EDITOR
+                if(ValidationLegacyMeldFit)ProjectedBounds(first.transform,out tile);
+#endif
                 float factor=Mathf.Clamp(width/tile.width,.65f,1.4f);selfMelds.localScale*=factor;
                 if(!ProjectedBounds(selfMelds,out var bounds))return;
                 TranslateOnCloth(selfMelds,new Vector2(right-bounds.xMax,bottom-bounds.yMin));
             }
+        }
+        Rect ProjectedTileOutline(Transform tile){
+            Vector2 min=new Vector2(float.MaxValue,float.MaxValue),max=new Vector2(float.MinValue,float.MinValue);bool any=false;
+            var model=tile.Find("Original tile");if(model==null)return new Rect();
+            var projection=Camera.projectionMatrix*Camera.worldToCameraMatrix;var viewport=Camera.pixelRect;
+            foreach(var filter in model.GetComponentsInChildren<MeshFilter>(true)){
+                if(filter.name!="Original tile" && filter.name!="Original tile outline")continue;
+                var mesh=filter.sharedMesh;if(mesh==null)continue;
+                if(!tileVertices.TryGetValue(mesh,out var vertices))tileVertices[mesh]=vertices=mesh.vertices;
+                var matrix=projection*filter.transform.localToWorldMatrix;
+                foreach(var vertex in vertices){var clip=matrix*new Vector4(vertex.x,vertex.y,vertex.z,1);if(clip.w<=0)continue;var p=new Vector2(viewport.x+(clip.x/clip.w*.5f+.5f)*viewport.width,viewport.y+(clip.y/clip.w*.5f+.5f)*viewport.height);min=Vector2.Min(min,p);max=Vector2.Max(max,p);any=true;}
+            }
+            return any?Rect.MinMaxRect(min.x,min.y,max.x,max.y):new Rect();
         }
         void TranslateOnCloth(Transform group,Vector2 pixels){
             float lowest=float.MaxValue;Vector3 point=Vector3.zero,screen=Vector3.zero;

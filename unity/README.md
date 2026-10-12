@@ -1,5 +1,9 @@
 # 云间日麻 Unity 三维客户端
 
+## Unity 0.5.31：副露尺寸与称号间距
+
+[下载 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.31/yunjian-riichi-unity-0.5.31.apk)，versionCode 32。[对照说明与截图](../docs/0.5.31副露尺寸与称号间距.md)。`RIICHI_REVIEW_0531=1` 运行专项渲染检查。
+
 ## Unity 0.5.30：1012-3 逐项修正
 
 [下载 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.30/yunjian-riichi-unity-0.5.30.apk)，versionCode 31。见 [11项实现、来源及截图](../docs/1012-3逐项修正与截图.md)。新增资源来源记录位于 `Assets/Resources/Majsoul/Review1012c/source.json`；`RIICHI_REVIEW_1012C=1` 可运行专项截图验证。完整 Play 与专项渲染均通过，安卓真机未测。
