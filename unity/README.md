@@ -2,7 +2,7 @@
 
 ## Unity 0.5.27：恢复自家副露尺寸
 
-安装包：[Unity 0.5.27 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.27/yunjian-riichi-unity-0.5.27.apk)，versionCode 28。取消自家副露的额外缩小，保留贴底位置与手牌间距。见[修正与验证记录](../docs/自家副露尺寸修正.md)。
+安装包：[Unity 0.5.27 签名兼容修正版 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.27/yunjian-riichi-unity-0.5.27-signed.apk)，versionCode 28。补齐 v1/JAR 签名并保留 v2，使用相同证书；[签名修正与验证](../docs/0.5.27安装包签名修正.md)。取消自家副露的额外缩小，保留贴底位置与手牌间距。见[尺寸修正与验证](../docs/自家副露尺寸修正.md)。
 
 ## Unity 0.5.26：1012 牌桌样式与显示修正
 

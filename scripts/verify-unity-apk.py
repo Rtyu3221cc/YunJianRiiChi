@@ -11,6 +11,9 @@ assets = root / 'app/src/main/assets'
 with ZipFile(apk) as archive:
     assert archive.testzip() is None
     names = archive.namelist()
+    assert 'META-INF/MANIFEST.MF' in names, 'Missing v1/JAR signature manifest; run scripts/sign-unity-apk.ps1'
+    signature_files = [name for name in names if re.fullmatch(r'META-INF/[^/]+\.SF', name)]
+    assert any(any(name[:-3] + suffix in names for suffix in ['.RSA', '.DSA', '.EC']) for name in signature_files), 'Missing v1 signature file or certificate'
     for file in assets.rglob('*'):
         if file.is_file():
             entry = 'assets/' + file.relative_to(assets).as_posix()

@@ -56,4 +56,7 @@ if ($Mode -eq 'Android' -and $projectTask -ne $originalProjectTask) {
  New-Item -ItemType Directory -Force (Join-Path $originalProjectTask 'Builds') | Out-Null
  Copy-Item -LiteralPath (Join-Path $projectTask 'Builds/yunjian-riichi-unity-0.5.27.apk') -Destination (Join-Path $originalProjectTask 'Builds/yunjian-riichi-unity-0.5.27.apk') -Force
 }
+if ($Mode -eq 'Android') {
+ & (Join-Path $PSScriptRoot 'sign-unity-apk.ps1') -ApkPath (Join-Path $originalProjectTask 'Builds/yunjian-riichi-unity-0.5.27.apk') -EditorPath $EditorPath
+}
 Get-Content -LiteralPath $logTask -Tail 20

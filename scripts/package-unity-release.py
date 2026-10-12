@@ -8,6 +8,10 @@ dist = root / 'dist'
 version = '0.5.27'
 apk = dist / f'yunjian-riichi-unity-{version}.apk'
 assert apk.exists(), 'Run verify-unity-apk.py first'
+compatible_apk = dist / f'yunjian-riichi-unity-{version}-signed.apk'
+if compatible_apk.exists():
+    assert hashlib.sha256(compatible_apk.read_bytes()).digest() == hashlib.sha256(apk.read_bytes()).digest(), 'Stale compatibility APK alias'
+    apk = compatible_apk
 for name in ['README.md', 'ARTWORK.md']:
     (dist / name).write_bytes((root / name).read_bytes())
 excluded = {'.git', 'Library', 'Temp', 'Obj', 'Logs', 'UserSettings', 'Builds', '.utmp', 'node_modules', '__pycache__', 'keys'}

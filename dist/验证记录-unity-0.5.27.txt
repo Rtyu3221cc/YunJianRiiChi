@@ -4,7 +4,9 @@
 12 个布局的单张宽度与此前尺寸最大偏差：0.000540 像素。
 副露贴底、与手牌分开、未超出安全区；吃／杠动画实际截图复查。
 既有 1012 专项验证通过：听牌按钮、指示牌、反光、牌河、立直落地、终局页面。
-Android IL2CPP ARM64 + ARMv7 构建通过；APK 资源、ZIP、v2 签名及 16 KB 对齐通过。
+Android IL2CPP ARM64 + ARMv7 构建通过；APK 资源、ZIP、v1 + v2 签名及 16 KB 对齐通过。
 视觉修正阶段未重复运行规则测试；GitHub 发布前在独立发布目录复核 81 项规则／协议测试，全部通过。未进行安卓真机、热点联机验证。
 预览为实际 Unity 渲染的合成局面。
-658BB09737F1B66EE366B86E03C85CCA1FF55E9F288FBB529A78A1FDDC2F4E49  yunjian-riichi-unity-0.5.27.apk
+F13F122F2ED1D37B028B11B37B48178D4711EC35BD2214BE6719D020A44A4ED9  yunjian-riichi-unity-0.5.27-signed.apk
+
+签名兼容修正：补齐 META-INF/MANIFEST.MF、ANDROIDD.SF、ANDROIDD.RSA；apksigner 强制 API 23 范围同时验证 v1/v2，并单独验证 v1，均通过。证书不变，运行内容逐项比较不变。
