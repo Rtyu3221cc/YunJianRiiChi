@@ -305,14 +305,42 @@ namespace YunJian.Riichi
             var local = i == state.you ? new Vector3(-3.8f, .15f, -2.8f) : new Vector3(-2.9f, .15f, -3.7f);
             return Quaternion.Euler(0, angle, 0) * local;
         }
-        void LateUpdate() { opening.Apply(handTiles,handBase,GetComponent<GameAudio>());UpdateDrawReveal();ApplyDeferredDraw();FitCamera(Screen.width / (float)Screen.height);RefreshDoraPreviews(); }
+        void LateUpdate() { opening.Apply(handTiles,handBase,GetComponent<GameAudio>());UpdateDrawReveal();ApplyDeferredDraw();RefreshHandChoices();FitCamera(Screen.width / (float)Screen.height);RefreshDoraPreviews(); }
         public bool DrawDeferred {get;private set;}
+        public bool RevealingDraw {get;private set;}
+        string ownDrawKey;float ownDrawAt=-1;
         void ApplyDeferredDraw(){
-            if(state?.phase=="result")return;
+            if(state?.phase=="result"){RevealingDraw=false;DrawDeferred=false;return;}
             DrawDeferred=state!=null && state.phase=="play" && state.turn==state.you && !string.IsNullOrEmpty(state.drawn) && !opening.Active && GetComponent<TableEffects>().HasPendingActions;
-            if(opening.Active || state==null || string.IsNullOrEmpty(state.drawn) || handTiles.Count==0)return;
-            var tile=handTiles[handTiles.Count-1];var renderer=tile.GetComponent<MeshRenderer>();var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block);block.SetFloat("_Opacity",DrawDeferred?0:1);renderer.SetPropertyBlock(block);
-            foreach(var collider in tile.GetComponentsInChildren<Collider>())collider.enabled=!DrawDeferred && tile.GetComponent<TileTarget>()!=null;
+            RevealingDraw=false;
+            if(state==null || state.phase!="play" || state.turn!=state.you || string.IsNullOrEmpty(state.drawn) || handTiles.Count==0){ownDrawKey=null;ownDrawAt=-1;return;}
+            string next=state.audioRoom+":"+state.handSeq+":"+state.round+":"+state.honba+":"+state.players.Sum(p=>p.river.Length)+":"+state.players[state.you].nuki+":"+state.players[state.you].melds.Length+":"+state.drawn;
+            if(next!=ownDrawKey){ownDrawKey=next;ownDrawAt=-1;}
+            if(opening.Active){ownDrawAt=Time.unscaledTime-.16f;return;}
+            if(DrawDeferred)ownDrawAt=-1;else if(ownDrawAt<0)ownDrawAt=Time.unscaledTime;
+            float t=DrawDeferred?0:Mathf.Clamp01((Time.unscaledTime-ownDrawAt)/.16f);RevealingDraw=DrawDeferred || t<1;
+            var tile=handTiles[handTiles.Count-1];var renderer=tile.GetComponent<MeshRenderer>();var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block);block.SetFloat("_Opacity",t);renderer.SetPropertyBlock(block);
+            var pos=tile.localPosition;pos.x=handBase[handBase.Count-1].x+.4f*(1-Mathf.SmoothStep(0,1,t));tile.localPosition=pos;
+        }
+        public static Choice HandChoice(RoomView view,string face,bool drawn,bool riichiMode){
+            var options=view.options??new Choice[0];bool riichi=riichiMode && options.Any(o=>o.kind=="riichi");
+            var matching=options.Where(o=>o.kind==(riichi?"riichi":"discard") && o.tile==face).ToArray();
+            var exact=matching.FirstOrDefault(o=>(o.id??"").TrimEnd('*').EndsWith("_",StringComparison.Ordinal)==drawn);
+            // A unique physical tile is unambiguous even when an older host omits
+            // the tsumogiri marker; never manufacture an action absent from options.
+            return exact??(drawn && view.hand.Count(t=>t==face)==1?matching.FirstOrDefault():null);
+        }
+        void RefreshHandChoices(){
+            if(state==null || (state.phase!="play" && state.phase!="reaction"))return;
+            var view=Client.State??state;bool choosing=(view.options??new Choice[0]).Any(o=>o.kind==(Client.RiichiMode && view.options.Any(a=>a.kind=="riichi")?"riichi":"discard"));
+            bool ready=!opening.Active && !GetComponent<TableEffects>().HasPendingActions && !RevealingDraw;
+            for(int i=0;i<handTiles.Count;i++){
+                bool drawn=!string.IsNullOrEmpty(view.drawn) && i==handTiles.Count-1;string face=HandFace(i);var choice=HandChoice(view,face,drawn,Client.RiichiMode);
+                bool special=view.players[view.you].riichi>0 && (drawn || view.options.Any(o=>(o.kind=="kan" && (o.meld??"").Skip(1).Any(d=>char.IsDigit(d)&&TileKind(o.meld[0].ToString()+d)==TileKind(face))) || (o.kind=="nuki" && face=="z4")));
+                var renderer=handTiles[i].GetComponent<MeshRenderer>();var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block);block.SetFloat("_Dim",ready && choosing && choice==null && !special?1:0);renderer.SetPropertyBlock(block);
+                var target=handTiles[i].GetComponent<TileTarget>();if(target==null && (choice!=null || !choosing))target=handTiles[i].gameObject.AddComponent<TileTarget>();if(target!=null){target.Index=i;target.Action=choice?.id;}
+                foreach(var collider in handTiles[i].GetComponentsInChildren<Collider>())collider.enabled=ready && (choice!=null || !choosing);
+            }
         }
         public void FitCamera(float aspect)
         {
@@ -669,14 +697,14 @@ namespace YunJian.Riichi
             if (!string.IsNullOrEmpty(state.drawn)) { int at = hand.LastIndexOf(state.drawn); if (at >= 0) { hand.RemoveAt(at); hand.Add(state.drawn); } }
             const float pitch = OriginalTiles.HandWidth;
             float width = (hand.Count - 1) * pitch + (!string.IsNullOrEmpty(state.drawn) ? .4f : 0);
-            var choices = state.options.Where(x => x.kind == (Client.RiichiMode ? "riichi" : "discard")).ToArray();
+            var choices = state.options.Where(x => x.kind == (Client.RiichiMode && state.options.Any(o=>o.kind=="riichi") ? "riichi" : "discard")).ToArray();
             // Only a seat that actually has a discard decision dims the tiles it cannot
             // play; while another seat is acting every tile keeps its normal look.
             bool choosing = choices.Length > 0;
             for (int i = 0; i < hand.Count; i++)
             {
                 bool drawn = winner==null && !string.IsNullOrEmpty(state.drawn) && i == hand.Count - 1;
-                var choice = choices.FirstOrDefault(a => a.tile == hand[i] && a.id.EndsWith("_", StringComparison.Ordinal) == drawn);
+                var choice = HandChoice(state,hand[i],drawn,Client.RiichiMode);
                 Vector3 pos = new Vector3(-width / 2 + i * pitch + (drawn ? .4f : 0), 0, 0);
                 var tile = original.CreateHand(cameraHand, hand[i], pos);
                 if(IsDora(hand[i]))OriginalTiles.AddShine(tile,true);
@@ -686,15 +714,9 @@ namespace YunJian.Riichi
                 if (choice != null || !choosing && (state.phase=="play" || state.phase=="reaction")) { var target = tile.gameObject.AddComponent<TileTarget>(); target.Index = i; target.Action = choice?.id; }
                 else
                 {
-                    // A tile that cannot be discarded right now is dimmed and unpickable,
-                    // so a riichi declaration only offers the tiles that keep tenpai.
+                    // The action target is unavailable; LateUpdate applies colour only
+                    // after queued actions and the drawn-tile reveal have completed.
                     foreach (var collider in tile.GetComponentsInChildren<Collider>()) collider.enabled = false;
-                    bool special=state.players[state.you].riichi>0 && (drawn || state.options.Any(o=>(o.kind=="kan" && (o.meld??"").Skip(1).Any(d=>char.IsDigit(d)&&TileKind(o.meld[0].ToString()+d)==TileKind(hand[i]))) || (o.kind=="nuki" && hand[i]=="z4")));
-                    if (choosing && !special)
-                    {
-                        var dim = new MaterialPropertyBlock(); dim.SetFloat("_Dim", 1f);
-                        foreach (var handRenderer in tile.GetComponentsInChildren<MeshRenderer>()) handRenderer.SetPropertyBlock(dim);
-                    }
                 }
             }
             SelectHand(Client.SelectedIndex);

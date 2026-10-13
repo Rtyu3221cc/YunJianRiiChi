@@ -53,7 +53,7 @@ namespace YunJian.Riichi
 #if UNITY_EDITOR
         bool validationWaitInput;
 #endif
-        public bool OptionsReady => State!=null && !introduction.Active && !table.ArrangingHand && !effects.HasPendingActions;
+        public bool OptionsReady => State!=null && !introduction.Active && !table.ArrangingHand && !table.RevealingDraw && !effects.HasPendingActions;
         bool CanInspectWaits => active && State!=null && (State.phase=="play" || State.phase=="reaction") && !showRoom && page!="settings" && page!="confirm-close";
         public bool WaitIndicatorVisible => CanInspectWaits && ((State.waitDetails?.Length??0)>0 || State.phase=="play"&&State.turn==State.you&&(State.discardHints??new DiscardHint[0]).Any(h=>(h.waits?.Length??0)>0));
         DiscardHint ActiveWaitHint => State?.discardHints?.FirstOrDefault(h=>h.id==SelectedAction);
@@ -157,7 +157,7 @@ namespace YunJian.Riichi
             if(index<0){ClearSelection();return;}
             SelectedIndex=index;bool drawn=!string.IsNullOrEmpty(State.drawn) && index==hand.Count-1;
             var choices=State.options.Where(o=>o.kind==(RiichiMode?"riichi":"discard")).ToArray();
-            SelectedAction=choices.FirstOrDefault(o=>o.tile==selectedFace && o.id.EndsWith("_",StringComparison.Ordinal)==drawn)?.id;
+            SelectedAction=TableRenderer.HandChoice(State,selectedFace,drawn,RiichiMode)?.id;
             if(choices.Length>0 && SelectedAction==null)ClearSelection();
         }
         public void SelectTile(int index, string action)

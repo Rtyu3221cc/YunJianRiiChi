@@ -1,5 +1,11 @@
 # 云间日麻
 
+## Unity 0.5.34：立直摸牌时序与供托说明
+
+[下载 Unity 0.5.34 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.34/yunjian-riichi-unity-0.5.34.apk)，versionCode 35，沿用原证书。
+
+立直手牌等上一家动作与自家摸牌展示完成后再置灰，可打的四条保持正常色；结算新增和牌分数／供托来源说明，12000和牌＋1000立直供托合计13000，点炮者只付12000。[实现与截图](docs/0.5.34立直摸牌时序与供托说明.md) · [截图确认包](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.34/yunjian-riichi-unity-0.5.34-screenshots.zip)。安卓真机未测。
+
 ## Unity 0.5.33：手牌中轴与副露位置
 
 [下载重新核验的 Unity 0.5.33 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.33/yunjian-riichi-unity-0.5.33-signed.apk)，versionCode 34，沿用原证书。完整文件73,408,552字节；[签名与下载复核](docs/0.5.33安装包签名与下载复核.md)。

@@ -234,6 +234,8 @@ namespace YunJian.Riichi
             }
         }
         public static int Before(RoomView v,int seat) => v.players[seat].score-(v.result?.delta!=null&&seat<v.result.delta.Length?v.result.delta[seat]:0);
+        public static int RiichiAward(RoomView v,int seat)=>Mathf.Max(0,(v.result?.details??new WinDetail[0]).Where(d=>d.seat==seat && d.score?.delta?.Length==v.n).Sum(d=>d.score.delta.Sum()));
+        public static string ScoreBreakdown(RoomView v,int seat){int award=RiichiAward(v,seat);if(award==0)return null;int delta=v.result.delta[seat];return "和牌 "+(delta-award>=0?"+":"")+(delta-award)+"  供托 +"+award;}
         public static int Rank(RoomView v,int seat,bool before) => 1+Enumerable.Range(0,v.n).Count(i=>{
             int a=before?Before(v,i):v.players[i].score,b=before?Before(v,seat):v.players[seat].score;
             return a>b || (a==b && i<seat);
@@ -286,6 +288,8 @@ namespace YunJian.Riichi
                     number.normal.textColor=delta>=0?new Color(.38f,.86f,.22f):new Color(1,.20f,.17f);
                     GUI.Label(new Rect(r.x+108,r.y+39,130,36),(delta>=0?"+":"")+delta,number);
                 }
+                string breakdown=ScoreBreakdown(v,seat);
+                if(breakdown!=null)Label(new Rect(r.x+12,r.yMax+3,r.width-24,23),breakdown,17,white);
                 int prior=Rank(v,seat,true),rank=Rank(v,seat,false),shown=Age<2.45f?prior:rank;
                 if(!RankVisible(v,seat)){GUI.matrix=cardMatrix;continue;}
                 var rankMatrix=GUI.matrix;float rankScale=Age>=2.45f?NativeReviewLayout.RankScale(Age-RankAt(v.n,rank)):1;
