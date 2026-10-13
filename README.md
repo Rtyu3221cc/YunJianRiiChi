@@ -1,5 +1,11 @@
 # 云间日麻
 
+## Unity 0.5.35：提示、手牌衔接与AI思考
+
+[下载 Unity 0.5.35 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.35/yunjian-riichi-unity-0.5.35.apk)，versionCode 36，沿用原证书。
+
+修正长按听牌、对家自摸手牌衔接、胜负缩小、原版荣和／自摸提示、北牌紧邻与放置时序、流局摊牌大小／位置；加入AI随机500～800ms思考及原版All Last，移除对局等待响应文字。[逐项修改与截图](docs/0.5.35逐项修正.md) · [第10项尺寸分析](docs/牌桌尺寸计算分析-0.5.35.md)。安卓真机未测。
+
 ## Unity 0.5.34：立直摸牌时序与供托说明
 
 [下载 Unity 0.5.34 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.34/yunjian-riichi-unity-0.5.34.apk)，versionCode 35，沿用原证书。

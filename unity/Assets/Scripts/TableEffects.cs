@@ -125,6 +125,7 @@ namespace YunJian.Riichi
                 var stick=table.StickTarget(pending.seat);if(stick!=null)stick.gameObject.SetActive(false);
             }
             foreach(var pending in handEvents.Where(e=>e.kind=="tsumo"))table.WinningTarget(pending)?.gameObject.SetActive(false);
+            foreach(var pending in handEvents.Where(e=>e.kind=="nuki"))table.NorthTarget(pending.seat,pending.nuki)?.gameObject.SetActive(false);
         }
         void ClearQueuedHands()
         {
@@ -133,6 +134,7 @@ namespace YunJian.Riichi
             }
             foreach(var e in handEvents.Where(e=>e.kind=="riichi-stick"))table.StickTarget(e.seat)?.gameObject.SetActive(true);
             foreach(var e in handEvents.Where(e=>e.kind=="tsumo"))table.WinningTarget(e)?.gameObject.SetActive(true);
+            foreach(var e in handEvents.Where(e=>e.kind=="nuki"))table.NorthTarget(e.seat,e.nuki)?.gameObject.SetActive(true);
             handEvents.Clear();
         }
         void LoadClip(string stem)
@@ -395,6 +397,7 @@ namespace YunJian.Riichi
         {
             if(winCutIn.Active){winCutIn.Draw(width,height);return;}
             if (call==null) return;
+            if(IsWin(call)){NativeAnnouncements.DrawWin(call.kind,table.RelativeSeat(call.seat),n,width,height,ValidationFreeze?ValidationTime:Time.unscaledTime-callStarted);return;}
             string name=CallArt(call.kind);if(name==null)return;
             float time=ValidationFreeze?ValidationTime:Time.unscaledTime-callStarted;
             float alpha=Mathf.Clamp01(time/.12f)*Mathf.Clamp01((1.05f-time)/.2f);

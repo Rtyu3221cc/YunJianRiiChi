@@ -5,7 +5,7 @@ require('./app/src/main/assets/ai.js');
 const {Room}=require('./app/src/main/assets/engine.js'),dir=path.join(__dirname,'app/src/main/assets'),saveFile=path.join(__dirname,process.env.RIICHI_STATE_FILE||'.desktop-state.json');
 const secret=process.env.RIICHI_HOST_SECRET||require('node:crypto').randomBytes(24).toString('hex');
 const room=new Room(secret,s=>fs.writeFileSync(saveFile,s),fs.existsSync(saveFile)?fs.readFileSync(saveFile,'utf8')||null:null);
-setInterval(()=>{const r=room.tick();if(!r.ok)console.error('AI:',r.error)},850).unref();
+setInterval(()=>{const r=room.tick();if(!r.ok)console.error('AI:',r.error)},50).unref();
 const addresses=()=>Object.values(os.networkInterfaces()).flat().filter(x=>x.family==='IPv4'&&!x.internal).map(x=>'http://'+x.address+':8765');
 http.createServer(async(req,res)=>{res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; media-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'");
  try{if(req.headers.origin&&req.headers.origin!=='http://'+req.headers.host){res.writeHead(403);return res.end()}
@@ -17,4 +17,3 @@ http.createServer(async(req,res)=>{res.setHeader('Cache-Control','no-store');res
  res.setHeader('Content-Type',entry[1]+'; charset=utf-8');res.end(fs.readFileSync(path.join(dir,entry[0])));
  }catch(e){res.writeHead(400);res.end('Invalid request')}
 }).listen(Number(process.env.RIICHI_PORT)||8765,'0.0.0.0',()=>console.log('Local test host: http://127.0.0.1:'+(Number(process.env.RIICHI_PORT)||8765)+'/#host='+secret+'\nLAN: '+addresses().join(', ')));
-

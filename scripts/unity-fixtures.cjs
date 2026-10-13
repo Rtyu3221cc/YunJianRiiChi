@@ -12,11 +12,11 @@ for(const n of [3,4]) {
   const token=room.s.players[0].token;
   room.dispatch({op:'start',token,version:room.s.version});
   // Synthetic preview generation runs after the presentation interval.
-  room.s.matchOpeningUntil=0;
+  room.s.matchOpeningUntil=0;room.s.roundOpeningUntil=0;
   for(let step=0;step<600&&room.s.phase!=='result';step++) {
    const view=room.view(0);
    if(view.phase==='play' && view.options.some(a=>a.kind==='discard') && view.players.reduce((total,p)=>total+p.river.length,0)>=n*8) {preview=view;break;}
-   const result=room.tick();if(!result.ok)throw Error(result.error);
+   let clock=Date.now();room._aiNow=()=>clock;let result=room.tick();if(result.waitMs){clock+=result.waitMs;result=room.tick();}if(!result.ok)throw Error(result.error);
    if(result.idle) {
     const action=globalThis.RiichiAI.choose(room.view(0));
     if(!action)throw Error('No human preview action');

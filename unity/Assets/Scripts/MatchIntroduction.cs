@@ -36,7 +36,7 @@ namespace YunJian.Riichi
         }
         public void Tick(GameAudio audio){if(!Active){if(running){running=false;effect.Dispose();}return;}if(!sound && Age>=1.2f && audio!=null)sound=audio.Cue("winlose");}
         public void Reset(){running=false;key=null;observedRoom=null;observedMatch=0;observedLobby=false;Freeze=false;effect.Dispose();}
-        Texture2D Art(string name){if(!art.TryGetValue(name,out var t))art[name]=t=Resources.Load<Texture2D>("Majsoul/MatchIntro/"+name)??Resources.Load<Texture2D>("Majsoul/Review1012c/"+name)??Resources.Load<Texture2D>("Majsoul/TableLook/Sprites/"+name);return t;}
+        Texture2D Art(string name){if(!art.TryGetValue(name,out var t))art[name]=t=Resources.Load<Texture2D>("Majsoul/MatchIntro/"+name)??Resources.Load<Texture2D>("Majsoul/Presentation0535/"+name)??Resources.Load<Texture2D>("Majsoul/Review1012c/"+name)??Resources.Load<Texture2D>("Majsoul/TableLook/Sprites/"+name);return t;}
         void BadgeImage(string name,Vector2 center,Vector2 offset,Vector2 size,float unit,float px=.5f,float py=.5f){
             var t=Art(name);var at=center+new Vector2(offset.x,-offset.y)*unit;
             if(t!=null)GUI.DrawTexture(new Rect(at.x-size.x*unit*px,at.y-size.y*unit*(1-py),size.x*unit,size.y*unit),t);
@@ -66,8 +66,12 @@ namespace YunJian.Riichi
                 var r=RectAt(c.name,offset);NamePanel(r,view.players[seat].name);
                 if(c.seat==0 && c.images.Length>1)GUI.DrawTexture(RectAt(c.images[1].rect,offset),Art("myself"),ScaleMode.ScaleToFit,true);
             }
-            if(Age>=1.2f && Age<3)effect.Draw(new Rect(440,180,400,360),"Majsoul/UiEffects/effect_winlose",Age-1.2f,1);
+            if(Age>=1.2f && Age<3){
+                float age=Age-1.2f;effect.Draw(new Rect(0,0,1280,720),"Majsoul/Presentation0535/victory-particles",age,1);
+                float size=VictorySize(age);var old=GUI.color;GUI.color=new Color(1,1,1,Mathf.Clamp01(age/.035f));GUI.DrawTexture(new Rect(632-size/2,358-size*189/205/2,size,size*189/205),Art("winlose"),ScaleMode.ScaleToFit);GUI.color=old;
+            }
             GUI.matrix=matrix;GUI.color=color;
         }
+        public static float VictorySize(float age)=>200*Mathf.Lerp(1.8f,1,Mathf.SmoothStep(0,1,Mathf.Clamp01(age/.22f)));
     }
 }

@@ -10,13 +10,16 @@ function tiles(h){const a=[];for(const s of ['m','p','s','z'])for(let n=1;n<h._b
 function avatar(value){check(typeof value==='string'&&value.length<=12288&&(value===''||/^data:image\/jpeg;base64,\/9j\/[A-Za-z0-9+/]*={0,2}$/.test(value)),'头像格式或大小不正确');return value}
 function player(name,token){return {name,avatar:"",token:token||randomHex(18),recovery:randomHex(6),score:0,hand:'',river:[],riichi:0,ippatsu:false,nuki:0,temp:false,permanent:false,kans:0,ready:false,requests:[]}}
 class Room{
- constructor(host,save,snapshot){this.host=host;this.save=save||(()=>{});this.s=snapshot?JSON.parse(snapshot):null;this.seen={};}
+ constructor(host,save,snapshot){this.host=host;this.save=save||(()=>{});this.s=snapshot?JSON.parse(snapshot):null;this.seen={};this._aiNow=()=>Date.now();this._aiPlan=null;}
  sound(kind,seat,tile,riichi,nuki,win,meld){const s=this.s;s.audioSeq=(s.audioSeq||0)+1;s.audioEvents=(s.audioEvents||[]).concat({id:s.audioSeq,kind,seat,tile:tile||null,riichi:!!riichi,...(kind==='discard'?{riverIndex:s.players[seat].river.length}:{}),...(nuki?{nuki}:{}),...(win?{from:win.from,winSource:win.kind}:{}),...(meld?{meld:meld.value,meldKind:meld.kind,meldIndex:meld.index,from:meld.from}:{}),at:Date.now()}).slice(-24);}
  addBot(){const s=this.s;check(s.players.length<s.n,'座位已满');let n=1;while(s.players.some(p=>p.name==='AI · '+n))n++;const p=player('AI · '+n);p.bot=true;s.players.push(p);}
  tick(){
-  const s=this.s;if(!s||!g.RiichiAI||!['play','reaction'].includes(s.phase)||Date.now()<(s.matchOpeningUntil||0))return {ok:true,idle:true};
+  const s=this.s;if(!s||!g.RiichiAI||!['play','reaction'].includes(s.phase)||Date.now()<Math.max(s.matchOpeningUntil||0,s.roundOpeningUntil||0))return {ok:true,idle:true};
   const i=s.phase==='play'?s.turn:s.players.findIndex((p,j)=>p.bot&&this.options(j).length);
   if(i<0||!s.players[i].bot)return {ok:true,idle:true};
+  const key=[s.audioRoom,s.version,s.phase,i,s.audioSeq].join(':'),now=this._aiNow();
+  if(this._aiPlan?.key!==key)this._aiPlan={key,until:now+500+Math.floor(Math.random()*301)};
+  if(now<this._aiPlan.until)return {ok:true,idle:true,waitMs:this._aiPlan.until-now};
   const before=JSON.stringify(s);
   try{const action=g.RiichiAI.choose(this.view(i));if(!action)return {ok:true,idle:true};this.act(i,action);s.version++;this.save(JSON.stringify(s));return {ok:true,action};}
   catch(e){this.s=JSON.parse(before);return {ok:false,error:String(e.message||e)}}
@@ -112,7 +115,7 @@ class Room{
    for(let k=0;k<4;k++)wall.push(suit+(s.red&&suit!=='z'&&n===5&&k===0?0:n));
   }
   shuffle(wall);s.rinshan=wall.splice(0,4);s.indicators=wall.splice(0,5);s.ura=wall.splice(0,5);s.deadFill=[];s.wall=wall;
-  s.handSeq=(s.handSeq||0)+1;s.dealtAt=Date.now();
+  s.handSeq=(s.handSeq||0)+1;s.dealtAt=Date.now();s.roundOpeningUntil=s.dealtAt+1800;
   s.interrupted=false;s.phase='play';s.pending=null;s.result=null;s.log=[];s.last=null;s.turn=s.dealer;s.drawKind='normal';
   for(let i=0;i<s.n;i++){let p=s.players[i],dealt=wall.splice(0,13);Object.assign(p,{dealt,hand:new M.Shoupai(dealt).toString(),river:[],riichi:0,ippatsu:false,nuki:0,temp:false,permanent:false,kans:0,ready:false});}
   this.draw(s.dealer);s.players[s.dealer].dealt.push(this.h(s.dealer)._zimo);this.log('开局');

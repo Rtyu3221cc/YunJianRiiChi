@@ -54,6 +54,7 @@ namespace YunJian.Riichi
         string drawKey;float drawBegan;
         readonly List<Tuple<Transform,Vector3>> drawTiles=new List<Tuple<Transform,Vector3>>();
         readonly List<Transform> winningRows=new List<Transform>();
+        readonly Dictionary<int,Transform> standingHands=new Dictionary<int,Transform>();
         public Rect HandScreenBounds()
         {
             if(handTiles.Count==0)return new Rect();
@@ -78,11 +79,12 @@ namespace YunJian.Riichi
                 if(age<.14f)return;
                 cameraHand.gameObject.SetActive(false);
             }
+            foreach(var detail in state.result?.details??new WinDetail[0])if(standingHands.TryGetValue(detail.seat,out var standing))standing.gameObject.SetActive(false);
             foreach(var row in winningRows)row.gameObject.SetActive(true);
             float t=HandRevealMotion.Progress(age-(selfWinner ? .14f : 0));
             foreach(var tile in drawTiles){
                 tile.Item1.localRotation=Quaternion.Euler(-90*(1-t),0,0);
-                tile.Item1.localPosition=tile.Item2+Vector3.up*original.TableLength*.29f*.5f*Mathf.Max(0,1-t);
+                tile.Item1.localPosition=tile.Item2+Vector3.up*tile.Item1.GetComponent<BoxCollider>().size.z*.5f*Mathf.Max(0,1-t);
             }
         }
         Transform selfMelds;
@@ -183,8 +185,8 @@ namespace YunJian.Riichi
         }
         public void Clear(bool resetOpening=true,bool keepHand=false)
         {
-            if(resetOpening)opening.Reset();
-            foreach (Transform t in content) { if(keepHand && t==cameraHand)continue;t.gameObject.SetActive(false); Destroy(t.gameObject); }
+            if(resetOpening){opening.Reset();foreach(var standing in standingHands.Values)if(standing!=null){standing.gameObject.SetActive(false);Destroy(standing.gameObject);}standingHands.Clear();}
+            foreach (Transform t in content) { if(keepHand && t==cameraHand || standingHands.Values.Contains(t))continue;t.gameObject.SetActive(false); Destroy(t.gameObject); }
             exposedTiles.Clear();exposedGroups.Clear();selectedTile=null;if(!keepHand){handTiles.Clear();handBase.Clear();cameraHand=null;}drawTiles.Clear();winningRows.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); northTiles.Clear(); winningTiles.Clear(); responseTarget = null; selfMelds = null; state = null;
         }
         public int RelativeSeat(int i) => (i - state.you + state.n) % state.n;
@@ -446,6 +448,8 @@ namespace YunJian.Riichi
             foreach(var entry in northTiles){
                 if(entry.Value.Count==0)continue;float reference=Mathf.Min(player,MeldFaceWidth(entry.Key));
                 foreach(var tile in entry.Value){if(tile==null)continue;tile.localScale=Vector3.one;float own=FaceWidth(tile);tile.localScale=Vector3.one*(own>1?Mathf.Clamp(reference/own,.6f,1f):1);}
+                float cursor=0,previous=0;var basePoint=NativeReviewLayout.NorthLocal(NativeReviewLayout.Physical(RelativeSeat(entry.Key),state.n),0,Angle(entry.Key));
+                for(int k=0;k<entry.Value.Count;k++){var tile=entry.Value[k];float width=MeldWidth*tile.localScale.x;if(k>0)cursor+=(previous+width)/2+.001f;tile.localPosition=basePoint-new Vector3(cursor,0,0);previous=width;}
             }
         }
         void AlignSelfMelds(float bottom,float right){
@@ -547,6 +551,11 @@ namespace YunJian.Riichi
         }
         public void Render(RoomView view)
         {
+            var keepSeats=view.phase=="result" && view.result!=null && !view.result.draw && state?.you==view.you?(view.result.details??new WinDetail[0]).Select(d=>d.seat).ToArray():new int[0];
+            foreach(var pair in standingHands.ToArray()){
+                if(keepSeats.Contains(pair.Key)&&pair.Value!=null)pair.Value.SetParent(content,true);
+                else {if(pair.Value!=null){pair.Value.gameObject.SetActive(false);Destroy(pair.Value.gameObject);}standingHands.Remove(pair.Key);}
+            }
             bool keepHand=view.phase=="result" && view.result!=null && !view.result.draw && cameraHand!=null && handTiles.Count>0;
             Clear(false,keepHand);state=view;opening.Observe(view,GetComponent<RiichiClient>()?.IntroRemaining??0);
             bool exhausted=state.phase=="result" && state.result!=null && state.result.draw && !state.result.abort && (state.result.drawDetails?.Length??0)>0;
@@ -578,10 +587,10 @@ namespace YunJian.Riichi
                 if(exhausted){
                     var d=state.result.drawDetails.FirstOrDefault(x=>x.seat==i);
                     var hand=new GameObject("Draw hand seat "+i).transform;hand.SetParent(seat,false);
-                    int count=d!=null && d.tenpai?d.tiles.Length:p.count;float pitch=.31f;
-                    float edge=i==state.you?3.08f:Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f?4f:3.35f;
+                    int count=d!=null && d.tenpai?d.tiles.Length:p.count;bool self=i==state.you;float pitch=self?.37f:.31f;
+                    float edge=self?(d!=null&&d.tenpai?4.05f:4.34f):Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f?4f:3.35f;
                     for(int j=0;j<count;j++){
-                        var tile=Tile(hand,d!=null&&d.tenpai?d.tiles[j]:"z5",new Vector3((j-(count-1)*.5f)*pitch,.02f,-edge),.29f,.42f,d==null||!d.tenpai);
+                        var tile=Tile(hand,d!=null&&d.tenpai?d.tiles[j]:"z5",new Vector3(self?-2.22f+j*pitch:(j-(count-1)*.5f)*pitch,.02f,-edge),self?.35f:.29f,.42f,d==null||!d.tenpai);
                         drawTiles.Add(Tuple.Create(tile,tile.localPosition));
                     }
                 }
@@ -595,6 +604,7 @@ namespace YunJian.Riichi
                     }
                 }
                 else if(shown!=null){
+                    if(i!=state.you && !standingHands.ContainsKey(i))CreateStandingHand(seat,i,shown.tiles.Length);
                     var revealed=new GameObject("Revealed winning hand").transform;revealed.SetParent(seat,false);revealed.gameObject.SetActive(false);winningRows.Add(revealed);
                     float pitch=.31f;float edge=Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f?4.0f:2.95f;
                     if(i==state.you){pitch=.37f;edge=4.05f;}
@@ -604,17 +614,19 @@ namespace YunJian.Riichi
                     }
                 }
                 else if (i == state.you) {if(!keepHand)DrawHand();}
-                else for (int j = 0; j < p.count - (SelfDrawWinner(i) != null ? 1 : 0); j++)
-                {
-                    float edge = Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f ? 4.34f : 3.35f;
-                    var tile = original.CreateStandingBack(seat, new Vector3(-1.86f + j*.31f, 0, -edge), .29f);
-                    ContactShadow(tile, .002f, .29f, original.TableDepth * .29f);
-                }
+                else CreateStandingHand(seat,i,p.count);
             }
             DrawWinningTiles();
             SelectHand(Client.SelectedIndex);
         }
         WinDetail SelfDrawWinner(int seat) => state.phase=="result" ? state.result?.details?.FirstOrDefault(d=>d.seat==seat && !d.ron) : null;
+        void CreateStandingHand(Transform seat,int index,int count){
+            var root=new GameObject("Standing hand seat "+index).transform;root.SetParent(seat,false);standingHands[index]=root;
+            for(int j=0;j<count;j++){
+                float edge=Mathf.Abs(Mathf.Sin(Angle(index)*Mathf.Deg2Rad))>.5f?4.34f:3.35f;
+                var tile=original.CreateStandingBack(root,new Vector3(-1.86f+j*.31f,0,-edge),.29f);ContactShadow(tile,.002f,.29f,original.TableDepth*.29f);
+            }
+        }
         public Transform WinningTarget(PublicSound item)
         {
             if(item.kind=="ron" && (string.IsNullOrEmpty(item.winSource) || item.winSource=="discard"))return FindDiscard(item.from,item.tile);

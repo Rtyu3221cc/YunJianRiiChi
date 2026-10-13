@@ -23,7 +23,7 @@ public class RoomService extends Service {
  private PowerManager.WakeLock wake;
  private AtomicFile state;
  private boolean started;
- private final Runnable aiTick=new Runnable(){public void run(){if(started&&engine!=null)engine.evaluateJavascript("room.tick()",v->{if(started)main.postDelayed(this,850);});}};
+ private final Runnable aiTick=new Runnable(){public void run(){if(started&&engine!=null)engine.evaluateJavascript("room.tick()",v->{if(started)main.postDelayed(this,50);});}};
  public static String hostSecret(Context c){
   android.content.SharedPreferences p=c.getSharedPreferences("room",0);String v=p.getString("host",null);
   if(v==null){byte[] b=new byte[24];new SecureRandom().nextBytes(b);StringBuilder s=new StringBuilder();for(byte x:b)s.append(String.format(java.util.Locale.ROOT,"%02x",x&255));v=s.toString();p.edit().putString("host",v).commit();}return v;

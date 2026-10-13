@@ -6,7 +6,7 @@ from importlib import import_module
 
 root = Path(__file__).resolve().parent.parent
 dist = root / 'dist'
-version = '0.5.34'
+version = '0.5.35'
 apk = dist / f'yunjian-riichi-unity-{version}.apk'
 assert apk.exists(), 'Run verify-unity-apk.py first'
 signature = import_module('verify-apk-signature').verify_signature(apk)
