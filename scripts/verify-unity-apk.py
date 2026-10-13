@@ -4,10 +4,12 @@ import re
 import sys
 from pathlib import Path
 from zipfile import ZipFile
+from importlib import import_module
 
 root = Path(__file__).resolve().parent.parent
 apk = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else root / 'unity/Builds/yunjian-riichi-unity-0.5.33.apk'
 assets = root / 'app/src/main/assets'
+signature = import_module('verify-apk-signature').verify_signature(apk)
 with ZipFile(apk) as archive:
     assert archive.testzip() is None
     names = archive.namelist()
@@ -115,3 +117,5 @@ checksum = 'SHA256-unity-0.5.33.txt' if len(sys.argv) == 1 else 'SHA256-' + outp
 (dist / checksum).write_text(hashlib.sha256(output.read_bytes()).hexdigest().upper() + '  ' + output.name + '\n', encoding='utf8')
 print('PASS: APK ZIP integrity, current offline assets, phone host/JNI, ARM64 + ARMv7, original tile atlases, exact hand animation bytes, action textures, original turn-light assets and compiled shaders.')
 print(output.name, output.stat().st_size, hashlib.sha256(output.read_bytes()).hexdigest())
+assert hashlib.sha256(output.read_bytes()).hexdigest() == signature['sha256'], 'Distributed APK differs from signature-verified file'
+print('PASS: final APK v1 + v2, independent v1, original certificate and 16 KB alignment.')

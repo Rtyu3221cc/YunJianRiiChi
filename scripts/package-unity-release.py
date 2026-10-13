@@ -2,16 +2,22 @@
 import hashlib
 from pathlib import Path
 from zipfile import ZipFile, ZIP_DEFLATED
+from importlib import import_module
 
 root = Path(__file__).resolve().parent.parent
 dist = root / 'dist'
 version = '0.5.33'
 apk = dist / f'yunjian-riichi-unity-{version}.apk'
 assert apk.exists(), 'Run verify-unity-apk.py first'
+signature = import_module('verify-apk-signature').verify_signature(apk)
+assert (dist/f'SHA256-unity-{version}.txt').read_text(encoding='utf8').split()[0].lower() == signature['sha256'], 'Final release APK checksum is stale'
 compatible_apk = dist / f'yunjian-riichi-unity-{version}-signed.apk'
 if compatible_apk.exists():
     assert hashlib.sha256(compatible_apk.read_bytes()).digest() == hashlib.sha256(apk.read_bytes()).digest(), 'Stale compatibility APK alias'
     apk = compatible_apk
+apk_checksum = dist / (f'SHA256-unity-{version}.txt' if apk.name == f'yunjian-riichi-unity-{version}.apk' else 'SHA256-' + apk.stem + '.txt')
+assert apk_checksum.exists(), 'Missing checksum for the selected APK filename'
+assert apk_checksum.read_text(encoding='utf8').split()[0].lower() == signature['sha256'], 'Selected APK checksum is stale'
 for name in ['README.md', 'ARTWORK.md']:
     (dist / name).write_bytes((root / name).read_bytes())
 excluded = {'.git', 'Library', 'Temp', 'Obj', 'Logs', 'UserSettings', 'Builds', 'build', '.utmp', 'node_modules', '__pycache__', 'keys'}
@@ -26,7 +32,7 @@ with ZipFile(source, 'w', ZIP_DEFLATED, compresslevel=9) as archive:
         archive.write(root / name, 'lan-riichi/' + name)
 release = dist / f'yunjian-riichi-unity-release-{version}.zip'
 with ZipFile(release, 'w', ZIP_DEFLATED, compresslevel=9) as archive:
-    files = [apk, dist/f'unity-{version}-screenshots.html', dist/f'yunjian-riichi-unity-{version}-screenshots.zip', *(dist / name for name in ['README.md', 'ARTWORK.md', f'SHA256-unity-{version}.txt', f'验证记录-unity-{version}.txt']), *sorted((dist / 'previews').glob(f'unity-{version}-*'))]
+    files = [apk, apk_checksum, dist/f'unity-{version}-screenshots.html', dist/f'yunjian-riichi-unity-{version}-screenshots.zip', *(dist / name for name in ['README.md', 'ARTWORK.md', f'验证记录-unity-{version}.txt']), *sorted((dist / 'previews').glob(f'unity-{version}-*'))]
     for file in files:
         assert file.exists(), 'Missing release artifact: ' + str(file)
         archive.write(file, file.relative_to(dist).as_posix())
