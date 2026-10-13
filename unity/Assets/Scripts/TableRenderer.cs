@@ -297,6 +297,9 @@ namespace YunJian.Riichi
         public Transform MeldTarget(int seat) => meldAnchors.TryGetValue(seat, out var meld) ? meld : null;
         public Vector3 MeldPoint(int seat) { var meld = MeldTarget(seat); return meld != null ? meld.position : Quaternion.Euler(0, Angle(seat), 0) * new Vector3(0, .02f, -4.15f); }
         public static RiverTile[] VisibleRiver(PlayerView player) => player.river.Where(r=>!r.called).ToArray();
+        public static bool RiichiSideways(PlayerView player,int rawIndex){
+            bool pending=false;for(int i=0;i<player.river.Length;i++){var tile=player.river[i];if(tile.riichi)pending=true;if(i==rawIndex)return pending;if(pending&&!tile.called)pending=false;}return false;
+        }
         Transform Seat(int i)
         {
             var t = new GameObject("Seat " + i).transform; t.SetParent(content, false); t.localRotation = Quaternion.Euler(0, Angle(i), 0); return t;
@@ -678,10 +681,10 @@ namespace YunJian.Riichi
                 float cursor = -1.06f;
                 for (int j = 0; j < row.Length; j++)
                 {
-                    var r = row[j]; float width = r.riichi ? .44f : .33f;
-                    int raw=Array.IndexOf(p.river,r);var scatter=RiverScatter(seatIndex,raw,state.round,state.honba);
-                    var tile=Tile(parent, r.tile, new Vector3(cursor + width / 2+scatter.x, 0, -1.48f - start / 6 * .46f+scatter.y), .33f, .44f, false, r.riichi);
-                    tile.localRotation=Quaternion.Euler(0,(r.riichi?90:0)+scatter.z,0);
+                    var r = row[j];int raw=Array.IndexOf(p.river,r);bool sideways=RiichiSideways(p,raw);float width=sideways?.44f:.33f;
+                    var scatter=RiverScatter(seatIndex,raw,state.round,state.honba);
+                    var tile=Tile(parent, r.tile, new Vector3(cursor + width / 2+scatter.x, 0, -1.48f - start / 6 * .46f+scatter.y), .33f, .44f, false, sideways);
+                    tile.localRotation=Quaternion.Euler(0,(sideways?90:0)+scatter.z,0);
                     tile.name="River "+(start+j)+" "+r.tile;rendered.Add(tile);
                     // The marker belongs to the seat that can actually call, not to
                     // every discard while any seat still has a pending decision.

@@ -7,7 +7,7 @@ from zipfile import ZipFile
 from importlib import import_module
 
 root = Path(__file__).resolve().parent.parent
-apk = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else root / 'unity/Builds/yunjian-riichi-unity-0.5.35.apk'
+apk = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else root / 'unity/Builds/yunjian-riichi-unity-0.5.36.apk'
 assets = root / 'app/src/main/assets'
 signature = import_module('verify-apk-signature').verify_signature(apk)
 with ZipFile(apk) as archive:
@@ -113,12 +113,12 @@ with ZipFile(apk) as archive:
     for source in (root/'unity/Assets/Resources/Majsoul/Presentation0535').glob('*'):
         if source.suffix not in ('.png','.json'):continue
         guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text(encoding='utf8')).group(1);entry='assets/bin/Data/'+guid
-        assert entry in names,'Missing 0.5.35 APK presentation resource: '+source.name
-        if source.suffix=='.json':assert source.read_bytes() in archive.read(entry),'Stale 0.5.35 layout/provenance'
+        assert entry in names,'Missing 0.5.36 APK presentation resource: '+source.name
+        if source.suffix=='.json':assert source.read_bytes() in archive.read(entry),'Stale 0.5.36 layout/provenance'
 dist = root / 'dist'
 output = dist / apk.name
 output.write_bytes(apk.read_bytes())
-checksum = 'SHA256-unity-0.5.35.txt' if len(sys.argv) == 1 else 'SHA256-' + output.stem + '.txt'
+checksum = 'SHA256-unity-0.5.36.txt' if len(sys.argv) == 1 else 'SHA256-' + output.stem + '.txt'
 (dist / checksum).write_text(hashlib.sha256(output.read_bytes()).hexdigest().upper() + '  ' + output.name + '\n', encoding='utf8')
 print('PASS: APK ZIP integrity, current offline assets, phone host/JNI, ARM64 + ARMv7, original tile atlases, exact hand animation bytes, action textures, original turn-light assets and compiled shaders.')
 print(output.name, output.stat().st_size, hashlib.sha256(output.read_bytes()).hexdigest())

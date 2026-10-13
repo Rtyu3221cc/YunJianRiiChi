@@ -1,5 +1,5 @@
 const {test}=require('node:test'),assert=require('node:assert/strict');
-const {selectTile,riverRows,riichiPlaced}=require('../app/src/main/assets/table-layout.js');
+const {selectTile,riverRows,riichiPlaced,riichiSideways}=require('../app/src/main/assets/table-layout.js');
 test('selected tile submits on a later second click with no double-click timer',()=>{
  let choice=selectTile(null,3,'discard:p2');assert.equal(choice.submit,false);
  choice=selectTile(choice,3,'discard:p2');assert.equal(choice.submit,true);
@@ -16,4 +16,11 @@ test('riichi stick appears after declaration survives, never during its ron wind
  assert.equal(riichiPlaced(s,0),false);assert.equal(riichiPlaced(s,1),true);
  s.pending=null;assert.equal(riichiPlaced(s,0),true);
  s.players[0].riichi=0;assert.equal(riichiPlaced(s,0),false);
+});
+test('called declaration and called replacement carry the marker across rows, without mutating history',()=>{
+ const river=[...Array.from({length:5},()=>({tile:'p1'})),{tile:'p2',riichi:true,called:true},{tile:'p3',called:true},{tile:'p4'},{tile:'p5'}];const before=JSON.stringify(river);
+ assert.deepEqual(riichiSideways(river),[false,false,false,false,false,true,true,true,false]);assert.equal(JSON.stringify(river),before);
+});
+test('uncalled riichi declaration remains the only sideways marker',()=>{
+ assert.deepEqual(riichiSideways([{tile:'p1'},{tile:'p2',riichi:true},{tile:'p3'},{tile:'p4'}]),[false,true,false,false]);
 });

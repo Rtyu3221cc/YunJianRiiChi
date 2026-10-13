@@ -1,5 +1,11 @@
 # 云间日麻
 
+## Unity 0.5.36：立直横置标记顺延
+
+[下载 Unity 0.5.36 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.36/yunjian-riichi-unity-0.5.36.apk)，versionCode 37，沿用原证书。
+
+立直宣言牌被吃碰杠拿走后，下一张弃牌横置；再次被拿走时继续顺延，后续普通牌恢复通常方向。显示标记与真实立直宣言分开，不重复扣分或放棒。[修改说明与截图](docs/0.5.36立直横置标记顺延.md)。安卓真机未测。
+
 ## Unity 0.5.35：提示、手牌衔接与AI思考
 
 [下载 Unity 0.5.35 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.35/yunjian-riichi-unity-0.5.35.apk)，versionCode 36，沿用原证书。
