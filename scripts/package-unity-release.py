@@ -6,7 +6,7 @@ from importlib import import_module
 
 root = Path(__file__).resolve().parent.parent
 dist = root / 'dist'
-version = '0.5.38'
+version = '0.5.39'
 apk = dist / f'yunjian-riichi-unity-{version}.apk'
 assert apk.exists(), 'Run verify-unity-apk.py first'
 signature = import_module('verify-apk-signature').verify_signature(apk)
@@ -18,9 +18,9 @@ if compatible_apk.exists():
 apk_checksum = dist / (f'SHA256-unity-{version}.txt' if apk.name == f'yunjian-riichi-unity-{version}.apk' else 'SHA256-' + apk.stem + '.txt')
 assert apk_checksum.exists(), 'Missing checksum for the selected APK filename'
 assert apk_checksum.read_text(encoding='utf8').split()[0].lower() == signature['sha256'], 'Selected APK checksum is stale'
-rollback_apk = dist/'yunjian-riichi-unity-0.5.37-rollback-v39.apk'
+rollback_apk = dist/'yunjian-riichi-unity-0.5.38-rollback-v40.apk'
 rollback_report = import_module('verify-apk-signature').verify_signature(rollback_apk)
-assert (dist/'SHA256-rollback-unity-0.5.38.txt').read_text(encoding='utf8').split()[0].lower() == rollback_report['sha256']
+assert (dist/'SHA256-rollback-unity-0.5.39.txt').read_text(encoding='utf8').split()[0].lower() == rollback_report['sha256']
 for name in ['README.md', 'ARTWORK.md']:
     (dist / name).write_bytes((root / name).read_bytes())
 excluded = {'.git', 'Library', 'Temp', 'Obj', 'Logs', 'UserSettings', 'Builds', 'build', '.utmp', 'node_modules', '__pycache__', 'keys'}
@@ -35,7 +35,7 @@ with ZipFile(source, 'w', ZIP_DEFLATED, compresslevel=9) as archive:
         archive.write(root / name, 'lan-riichi/' + name)
 release = dist / f'yunjian-riichi-unity-release-{version}.zip'
 with ZipFile(release, 'w', ZIP_DEFLATED, compresslevel=9) as archive:
-    files = [apk, apk_checksum, rollback_apk, dist/'SHA256-rollback-unity-0.5.38.txt', dist/'rollback-unity-0.5.38.json', dist/f'unity-{version}-screenshots.html', dist/f'yunjian-riichi-unity-{version}-screenshots.zip', *(dist / name for name in ['README.md', 'ARTWORK.md', f'验证记录-unity-{version}.txt']), *sorted((dist / 'previews').glob(f'unity-{version}-*'))]
+    files = [apk, apk_checksum, rollback_apk, dist/'SHA256-rollback-unity-0.5.39.txt', dist/'rollback-unity-0.5.39.json', dist/f'unity-{version}-screenshots.html', dist/f'yunjian-riichi-unity-{version}-screenshots.zip', *(dist / name for name in ['README.md', 'ARTWORK.md', f'验证记录-unity-{version}.txt']), *sorted((dist / 'previews').glob(f'unity-{version}-*'))]
     for file in files:
         assert file.exists(), 'Missing release artifact: ' + str(file)
         archive.write(file, file.relative_to(dist).as_posix())

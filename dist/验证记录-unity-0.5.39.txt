@@ -1,0 +1,11 @@
+Unity 0.5.39 opponent hand/meld clearance update, versionCode 40.
+Other-player standing, winning and exhaustive-draw hands move along each player's row according to actual meld model/outline bounds. Self-draw tiles follow the revealed row. Retains unified tile sizes, cameras, own foreground hand size, meld size/contact and the approved increased clearance.
+Actual Unity Play targeted regression passed: 3680 geometry assertions across three/four seats, viewers 0 and 1, 1688x780 and 1280x720, 0..4 melds, own open/concealed cases, polling/rebuild, opponent self-draw including carried/landed tile and exhaustive face-up/down rows.
+Additional actual Unity checks passed: 0.5.34 riichi draw colour timing/legal tile and riichi-pot breakdown; 0.5.35 wait hold, hand continuity, native announcements, victory shrink, North adjacency/queued visibility, exhaustive row and All Last; 0.5.36 called riichi-marker transfer; 0.5.38 meld edge contact and pon motion.
+17 actual Unity screenshots: 2 approved 0.5.38 baseline renders and 15 corrected renders; synthetic fixtures, not device screenshots.
+88 rule/protocol tests checked in curated publication before upload. Current offline assets, phone host/JNI, ARM64+ARMv7 and native build verified.
+Main APK bytes 73749460; SHA-256 29ef991c4193e7e6b320d83a057f159710318209dedc7aa3f718afa24316bdc5.
+Rollback APK bytes 73741268; SHA-256 bf03b58a8df34c02f4186e2c3ed3e49ba5ea7a5f76c6182f9639cdae3bec31ca.
+Both APKs: v1/v2 and API-23-only v1 signatures, original certificate d1d8e506c6d3b62e9610dce294c07008057318fa9bafae702fb8b01f35f0dc2f and 16KB alignment verified for the final files, release-ZIP copies and fresh complete independent GitHub downloads.
+Rollback preserves 0.5.38 program/resources byte for byte; only manifest versionCode raised to40 and re-signed. Baseline commit f1e9f41debdc1bc4c696e569a8b2edd0da2dceda; rollback branch and original source/APK copies retained.
+Android device installation, visual confirmation and hotspot networking remain untested.

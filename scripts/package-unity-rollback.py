@@ -17,19 +17,19 @@ from zipfile import ZipFile
 
 root = Path(__file__).resolve().parent.parent
 parser = argparse.ArgumentParser()
-parser.add_argument('--source', type=Path, default=root/'dist/yunjian-riichi-unity-0.5.37.apk')
-parser.add_argument('--version-code', type=int, default=39)
+parser.add_argument('--source', type=Path, default=root/'dist/yunjian-riichi-unity-0.5.38.apk')
+parser.add_argument('--version-code', type=int, default=40)
 args = parser.parse_args()
-assert 38 <= args.version_code <= 2147483647
+assert 39 <= args.version_code <= 2147483647
 source = args.source.resolve()
 verify = importlib.import_module('verify-apk-signature').verify_signature
 source_report = verify(source)
-assert source_report['sha256'] == 'c9183eff2b0f7c7833f97a92f92b5674ccbd96504260ae778f517f4d8e0ae397', 'Unexpected rollback baseline'
-work = root/'build/rollback-0538'
+assert source_report['sha256'] == '65251eed387e8f877f104ff886e0a0ef97ad888acd734c381fcc613dbe25d200', 'Unexpected rollback baseline'
+work = root/'build/rollback-0539'
 work.mkdir(exist_ok=True)
 unsigned = work/'rollback-unaligned.apk'
 aligned = work/'rollback-aligned.apk'
-target = root/f'dist/yunjian-riichi-unity-0.5.37-rollback-v{args.version_code}.apk'
+target = root/f'dist/yunjian-riichi-unity-0.5.38-rollback-v{args.version_code}.apk'
 
 def change_version_code(data, value):
     result = bytearray(data)
@@ -65,7 +65,7 @@ def change_version_code(data, value):
                     ns, name, _ = struct.unpack_from('<3I', data, p)
                     if strings[name] == 'versionCode':
                         assert strings[ns] == 'http://schemas.android.com/apk/res/android'
-                        assert data[p+15] in (0x10, 0x11) and struct.unpack_from('<I', data, p+16)[0] == 38
+                        assert data[p+15] in (0x10, 0x11) and struct.unpack_from('<I', data, p+16)[0] == 39
                         struct.pack_into('<I', result, p+8, 0xffffffff)
                         struct.pack_into('<I', result, p+16, value)
                         changed += 1
@@ -101,9 +101,9 @@ with ZipFile(source) as old, ZipFile(target) as new:
         assert new.read(name) == (manifest if name == 'AndroidManifest.xml' else old.read(name)), 'Rollback payload changed: '+name
 badging = subprocess.check_output([str(sdk/'aapt.exe'), 'dump', 'badging', str(target)], text=True, encoding='utf8')
 package = next(line for line in badging.splitlines() if line.startswith('package:'))
-assert "name='com.yunjian.riichi.unity'" in package and f"versionCode='{args.version_code}'" in package and "versionName='0.5.37'" in package
-report.update(baselineSHA256=source_report['sha256'], versionCode=args.version_code, versionName='0.5.37', unchangedPlayerPayloads=True)
-(target.parent/'rollback-unity-0.5.38.json').write_text(json.dumps(report, indent=2)+'\n', encoding='utf8')
-(target.parent/'SHA256-rollback-unity-0.5.38.txt').write_text(report['sha256'].upper()+'  '+target.name+'\n', encoding='utf8')
-print('PASS: old 0.5.37 player payloads unchanged; Android versionCode '+str(args.version_code)+', same certificate, v1/v2/independent-v1 and 16 KB alignment.')
+assert "name='com.yunjian.riichi.unity'" in package and f"versionCode='{args.version_code}'" in package and "versionName='0.5.38'" in package
+report.update(baselineSHA256=source_report['sha256'], versionCode=args.version_code, versionName='0.5.38', unchangedPlayerPayloads=True)
+(target.parent/'rollback-unity-0.5.39.json').write_text(json.dumps(report, indent=2)+'\n', encoding='utf8')
+(target.parent/'SHA256-rollback-unity-0.5.39.txt').write_text(report['sha256'].upper()+'  '+target.name+'\n', encoding='utf8')
+print('PASS: old 0.5.38 player payloads unchanged; Android versionCode '+str(args.version_code)+', same certificate, v1/v2/independent-v1 and 16 KB alignment.')
 print(json.dumps(report, indent=2))

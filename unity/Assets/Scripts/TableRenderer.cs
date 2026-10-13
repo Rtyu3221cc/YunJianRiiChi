@@ -56,6 +56,8 @@ namespace YunJian.Riichi
         readonly List<Tuple<Transform,Vector3>> drawTiles=new List<Tuple<Transform,Vector3>>();
         readonly List<Transform> winningRows=new List<Transform>();
         readonly Dictionary<int,Transform> standingHands=new Dictionary<int,Transform>();
+        sealed class OpponentRow {public Transform root;public int seat,count;public bool selfDraw;}
+        readonly List<OpponentRow> opponentRows=new List<OpponentRow>();
         public Rect HandScreenBounds()
         {
             if(handTiles.Count==0)return new Rect();
@@ -187,6 +189,7 @@ namespace YunJian.Riichi
         public void Clear(bool resetOpening=true,bool keepHand=false)
         {
             if(resetOpening){opening.Reset();foreach(var standing in standingHands.Values)if(standing!=null){standing.gameObject.SetActive(false);Destroy(standing.gameObject);}standingHands.Clear();}
+            opponentRows.RemoveAll(row=>row.root==null || !standingHands.Values.Contains(row.root));
             foreach (Transform t in content) { if(keepHand && t==cameraHand || standingHands.Values.Contains(t))continue;t.gameObject.SetActive(false); Destroy(t.gameObject); }
             exposedTiles.Clear();exposedGroups.Clear();selectedTile=null;if(!keepHand){handTiles.Clear();handBase.Clear();cameraHand=null;}drawTiles.Clear();winningRows.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); northTiles.Clear(); winningTiles.Clear(); responseTarget = null; selfMelds = null; state = null;
         }
@@ -353,7 +356,7 @@ namespace YunJian.Riichi
             // Preserve vertical composition on phones; fit the side hands on 16:9.
             Camera.fieldOfView = 2 * Mathf.Atan(Mathf.Tan(28 * Mathf.Deg2Rad / 2) * Mathf.Max(1, 1.9f / aspect)) * Mathf.Rad2Deg;
             // Without a foreground hand no group is moved, so the native positions apply.
-            if (cameraHand == null) return;
+            if (cameraHand == null) {AlignOpponentRows();return;}
             Rect safe = Screen.safeArea;
 #if UNITY_EDITOR
             if(ValidationSafeArea.HasValue)safe=ValidationSafeArea.Value;
@@ -414,6 +417,7 @@ namespace YunJian.Riichi
             cameraHand.rotation = Quaternion.identity;
             cameraHand.localScale = Vector3.one * scale;
             foreach(var saved in restored)if(saved.Item1!=null)saved.Item1.localPosition=saved.Item2;
+            AlignOpponentRows();
         }
         public const float MeldWidth=TableTileGeometry.Width;
 #if UNITY_EDITOR
@@ -565,6 +569,7 @@ namespace YunJian.Riichi
                     var d=state.result.drawDetails.FirstOrDefault(x=>x.seat==i);
                     var hand=new GameObject("Draw hand seat "+i).transform;hand.SetParent(seat,false);
                     int count=d!=null && d.tenpai?d.tiles.Length:p.count;bool self=i==state.you;float pitch=Geometry.Pitch;
+                    PlaceOpponentRow(hand,seat,i,count);
                     float edge=self?(d!=null&&d.tenpai?4.05f:4.34f):Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f?4f:3.35f;
                     for(int j=0;j<count;j++){
                         var tile=Tile(hand,d!=null&&d.tenpai?d.tiles[j]:"z5",new Vector3(self?-2.22f+j*pitch:(j-(count-1)*.5f)*pitch,.02f,-edge),d==null||!d.tenpai);
@@ -574,6 +579,7 @@ namespace YunJian.Riichi
                 else if(state.phase=="result" && terminals && state.result.abortHand.seat==i){
                     var reveal=new GameObject("Nine terminals hand seat "+i).transform;reveal.SetParent(seat,false);
                     var tiles=state.result.abortHand.tiles;bool self=i==state.you;float pitch=Geometry.Pitch;
+                    PlaceOpponentRow(reveal,seat,i,tiles.Length);
                     float edge=self?4.10f:Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f?4f:3.35f;
                     for(int j=0;j<tiles.Length;j++){
                         var tile=Tile(reveal,tiles[j],new Vector3((j-(tiles.Length-1)*.5f)*pitch,.02f,-edge));
@@ -583,6 +589,7 @@ namespace YunJian.Riichi
                 else if(shown!=null){
                     if(i!=state.you && !standingHands.ContainsKey(i))CreateStandingHand(seat,i,shown.tiles.Length);
                     var revealed=new GameObject("Revealed winning hand").transform;revealed.SetParent(seat,false);revealed.gameObject.SetActive(false);winningRows.Add(revealed);
+                    PlaceOpponentRow(revealed,seat,i,shown.tiles.Length,!shown.ron);
                     float pitch=Geometry.Pitch;float edge=Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f?4.0f:2.95f;
                     if(i==state.you)edge=4.05f;
                     for(int j=0;j<shown.tiles.Length;j++){
@@ -599,10 +606,54 @@ namespace YunJian.Riichi
         WinDetail SelfDrawWinner(int seat) => state.phase=="result" ? state.result?.details?.FirstOrDefault(d=>d.seat==seat && !d.ron) : null;
         void CreateStandingHand(Transform seat,int index,int count){
             var root=new GameObject("Standing hand seat "+index).transform;root.SetParent(seat,false);standingHands[index]=root;
+            PlaceOpponentRow(root,seat,index,count);
             for(int j=0;j<count;j++){
                 float edge=Mathf.Abs(Mathf.Sin(Angle(index)*Mathf.Deg2Rad))>.5f?4.34f:3.35f;
                 var tile=original.CreateStandingBack(root,new Vector3((j-(count-1)*.5f)*Geometry.Pitch,0,-edge));ContactShadow(tile,.002f,TableTileGeometry.Width,Geometry.Depth);
             }
+        }
+        void PlaceOpponentRow(Transform root,Transform seat,int index,int count,bool selfDraw=false){
+            if(index==state.you)return;
+            opponentRows.Add(new OpponentRow{root=root,seat=index,count=count,selfDraw=selfDraw});
+            root.localPosition=Vector3.right*OpponentHandOffset(seat,index,count,selfDraw);
+        }
+        void AlignOpponentRows(){
+            if(state==null)return;
+            foreach(var row in opponentRows){
+                if(row.root==null || row.seat==state.you || !meldGroups.TryGetValue(row.seat,out var groups) || groups.Count==0)continue;
+                var seat=groups[0].group.parent.parent;
+                row.root.position=seat.TransformPoint(Vector3.right*OpponentHandOffset(seat,row.seat,row.count,row.selfDraw));
+                row.root.rotation=seat.rotation;
+            }
+            foreach(var detail in state.result?.details??new WinDetail[0])
+                if(!detail.ron && detail.seat!=state.you && winningTiles.TryGetValue(detail.seat,out var target))target.position=SelfDrawPoint(detail.seat);
+        }
+        // Melds occupy the player's right end of the same row. Keep the concealed
+        // hand at its usual centre unless its visible edge enters that occupied span.
+        // Translate only along the player's row, preserving scale and table-edge depth.
+        float OpponentHandOffset(Transform seat,int index,int count,bool selfDraw=false){
+            if(index==state.you || count<=0 || !meldGroups.TryGetValue(index,out var groups) || groups.Count==0)return 0;
+            float left=float.MaxValue;
+            foreach(var group in groups)foreach(var box in group.group.GetComponentsInChildren<BoxCollider>(true)){
+                if(box.transform==group.extra)continue;
+                var model=box.transform.Find("Original tile");if(model==null)continue;
+                foreach(var mesh in model.GetComponentsInChildren<MeshFilter>(true)){
+                    if(mesh.name!="Original tile" && mesh.name!="Original tile outline")continue;
+                    var bounds=mesh.sharedMesh.bounds;var toSeat=seat.worldToLocalMatrix*mesh.transform.localToWorldMatrix;
+                    // Use the resting meld position rather than its temporary call-hand offset.
+                    float animatedX=seat.InverseTransformVector(group.group.parent.TransformVector(group.group.localPosition)).x;
+                    for(int corner=0;corner<8;corner++){
+                        var offset=Vector3.Scale(bounds.extents,new Vector3((corner&1)==0?-1:1,(corner&2)==0?-1:1,(corner&4)==0?-1:1));
+                        left=Mathf.Min(left,toSeat.MultiplyPoint3x4(bounds.center+offset).x-animatedX);
+                    }
+                }
+            }
+            if(left==float.MaxValue)return 0;
+            float handRight=(count-1)*Geometry.Pitch*.5f+Geometry.MeldSlot(false)*.5f;
+            if(selfDraw)handRight+=Geometry.Pitch+Geometry.GroupGap;
+            // A standing tile also projects beyond its footprint at side angles.
+            // Leave a small visual separation after clearing the physical overlap.
+            return Mathf.Min(0,left-Geometry.GroupGap*3-handRight);
         }
         public Transform WinningTarget(PublicSound item)
         {
@@ -620,7 +671,9 @@ namespace YunJian.Riichi
             float pitch=Geometry.Pitch;
             float edge=seat==state.you?4.05f:Mathf.Abs(Mathf.Sin(Angle(seat)*Mathf.Deg2Rad))>.5f?4f:2.95f;
             // One tile past the right end of the exposed hand, on the same seat axis.
-            return Quaternion.Euler(0,Angle(seat),0)*new Vector3((count-1)*pitch/2+Geometry.Pitch+Geometry.GroupGap,.02f,-edge);
+            var parent=meldGroups.TryGetValue(seat,out var groups) && groups.Count>0?groups[0].group.parent.parent:null;
+            float shift=parent==null?0:OpponentHandOffset(parent,seat,count,true);
+            return Quaternion.Euler(0,Angle(seat),0)*new Vector3(shift+(count-1)*pitch/2+Geometry.Pitch+Geometry.GroupGap,.02f,-edge);
         }
         void DrawWinningTiles()
         {

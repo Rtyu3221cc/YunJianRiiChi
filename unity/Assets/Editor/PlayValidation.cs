@@ -12,6 +12,12 @@ namespace YunJian.Riichi.Editor
             SessionState.SetBool(Key, true);
             EditorApplication.isPlaying = true;
         }
+        public static void RenderPreview()
+        {
+            UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Scenes/Table.unity");
+            SessionState.SetBool(Key, true);
+            EditorApplication.isPlaying = true;
+        }
         static void Changed(PlayModeStateChange state)
         {
             if (state != PlayModeStateChange.EnteredPlayMode || !SessionState.GetBool(Key, false)) return;

@@ -1,5 +1,11 @@
 # 云间日麻
 
+## Unity 0.5.39：其他玩家手牌避让副露
+
+[下载0.5.39 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.39/yunjian-riichi-unity-0.5.39.apk)，versionCode 40，沿用原证书。
+
+其他玩家的站立手牌、和牌摊牌和流局摊牌按副露可见边缘避让，自摸牌随摊牌平移；保留统一牌尺寸、副露贴靠与用户确认的较大间距。[修改与回滚说明](docs/0.5.39其他玩家手牌避让与回滚.md) · [17张前后对照与回归截图](dist/unity-0.5.39-screenshots.html) · [0.5.38回滚APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.39/yunjian-riichi-unity-0.5.38-rollback-v40.apk)。安卓真机未测。
+
 ## Unity 0.5.38：副露贴靠
 
 [下载0.5.38 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.38/yunjian-riichi-unity-0.5.38.apk)，versionCode 39，沿用原证书。
