@@ -16,6 +16,7 @@ namespace YunJian.Riichi
         // Event.current is not reliably null outside OnGUI, so RiichiClient.OnGUI sets this.
         public static bool InGui;
         public readonly float TableLength, TableDepth;
+        public readonly TableTileGeometry Geometry;
         readonly Mesh tableMesh, handMesh, outlineMesh, glowMesh;
         readonly Material shell, outline, glow;
         readonly float outlineScale;
@@ -27,7 +28,7 @@ namespace YunJian.Riichi
         public OriginalTiles()
         {
             var d = JsonUtility.FromJson<MeshData>(Resources.Load<TextAsset>("Majsoul/OriginalTile/mesh").text);
-            const float width = .02947767f, depth = .01913448f;
+            const float width = TableTileGeometry.SourceWidth, depth = TableTileGeometry.SourceDepth;
             var vertices = new Vector3[d.vertices.Length / 3]; var normals = new Vector3[vertices.Length]; var uv = new Vector2[vertices.Length];
             for (int i = 0; i < vertices.Length; i++)
             {
@@ -49,6 +50,7 @@ namespace YunJian.Riichi
             outlineMesh=new Mesh {name="Original maque_outline 031",vertices=edgeVertices,triangles=edge.triangles};outlineMesh.RecalculateBounds();
             // Catfood/Outline outputs the material's _Tint; _OutlineColor in outline.json is unused by it.
             outlineScale=edge.scale;outline=new Material(Shader.Find("YunJian/OriginalTileOutline")) {color=TableLook.OutlineColor};
+            Geometry = new TableTileGeometry(tableMesh.bounds, outlineMesh.bounds, outlineScale);
             glowMesh=new Mesh {name="Ground particle quad",vertices=new[]{new Vector3(-.5f,0,-.5f),new Vector3(-.5f,0,.5f),new Vector3(.5f,0,.5f),new Vector3(.5f,0,-.5f)},uv=new[]{new Vector2(0,0),new Vector2(0,1),new Vector2(1,1),new Vector2(1,0)},triangles=new[]{0,1,2,0,2,3}};
             glowMesh.RecalculateBounds();glow=new Material(Shader.Find("YunJian/ResponseGlow")) {mainTexture=Resources.Load<Texture2D>("Majsoul/Actions/response-glow")};
             handMesh = new Mesh { name = "Original orthographic hand quad",
@@ -95,7 +97,10 @@ namespace YunJian.Riichi
             var parent=hand?tile:tile.Find("Original tile");if(parent.Find("APK dora shine")!=null)return;
             var shine=new GameObject("APK dora shine");shine.layer=parent.gameObject.layer;shine.transform.SetParent(parent,false);shine.AddComponent<NativeDoraShine>().Initialize(hand);
         }
-        public Transform CreateTable(Transform parent, string tile, Vector3 position, float width, bool hidden, bool sideways, float opacity)
+        public Transform CreateTable(Transform parent, string tile, Vector3 position, bool hidden=false, bool sideways=false, float opacity=1)
+            => CreateModel(parent,tile,position,TableTileGeometry.Width,hidden,sideways,opacity);
+        // Fixed-size GUI previews are separate from gameplay geometry.
+        Transform CreateModel(Transform parent, string tile, Vector3 position, float width, bool hidden, bool sideways, float opacity)
         {
             var root = new GameObject(hidden ? "Concealed" : tile).transform; root.SetParent(parent, false); root.localPosition = position;
             if (sideways) root.localRotation = Quaternion.Euler(0,90,0);
@@ -133,12 +138,13 @@ namespace YunJian.Riichi
             var renderer=light.gameObject.AddComponent<MeshRenderer>();renderer.sharedMaterial=glow;renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;
             return light;
         }
-        public Transform CreateStandingBack(Transform parent, Vector3 position, float width)
+        public Transform CreateStandingBack(Transform parent, Vector3 position)
         {
             // A player's concealed hand stands on its short edge, with the back
             // facing the table centre (+Z in seat space). Face-down kans still
             // use CreateTable and must keep their horizontal pose.
-            var root = CreateTable(parent, "", position, width, true, false, 1);
+            const float width=TableTileGeometry.Width;
+            var root = CreateTable(parent, "", position, true, false, 1);
             root.name = "Standing concealed hand";
             var model = root.Find("Original tile");
             model.localRotation = Quaternion.Euler(-90, 0, 0);
@@ -193,7 +199,7 @@ namespace YunJian.Riichi
                 doraCamera.cullingMask = 1 << 13; doraCamera.nearClipPlane = .1f; doraCamera.farClipPlane = 10;
             }
             Vector3 origin = new Vector3(50,50,50);
-            var root = CreateTable(null, tile, origin, 1, hidden, false, 1);
+            var root = CreateModel(null, tile, origin, 1, hidden, false, 1);
             if(shine)AddShine(root,false);
             MatchModel(root,match);
             foreach (var t in root.GetComponentsInChildren<Transform>()) t.gameObject.layer = 13;

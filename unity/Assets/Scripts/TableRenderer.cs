@@ -12,6 +12,7 @@ namespace YunJian.Riichi
         public Camera Camera { get; private set; }
         public Camera HandCamera { get; private set; }
         OriginalTiles original;
+        public TableTileGeometry Geometry => original.Geometry;
         readonly ReferenceScoreHub scoreHub = new ReferenceScoreHub();
         // Outside OnGUI this also re-renders a shining preview; inside it only reads.
         public Texture DoraTexture(string tile,bool match=false) => original.DoraTexture(tile,match,state!=null&&IsDora(tile),!OriginalTiles.InGui);
@@ -107,7 +108,7 @@ namespace YunJian.Riichi
         {
             var cameraObject = new GameObject("TableCamera"); Camera = cameraObject.AddComponent<Camera>();
             cameraObject.AddComponent<AudioListener>();
-            const float sourceUnits = .33f / .02947767f;
+            const float sourceUnits = TableTileGeometry.SourceUnits;
             Camera.transform.position = new Vector3(0, .846f, -.882f) * sourceUnits;
             Camera.transform.rotation = new Quaternion(.398749113f, 0, 0, .917060137f);
             Camera.fieldOfView = 28; Camera.nearClipPlane = .1f; Camera.farClipPlane = 50;
@@ -196,7 +197,7 @@ namespace YunJian.Riichi
             return d == 0 ? 0 : d == 1 ? (state.n == 3 ? 180 : -90) : d == state.n - 1 ? 90 : 180;
         }
         public float SeatAngle(int i) => Angle(i);
-        public Transform CreateEffectTile(string tile) => original.CreateTable(null,tile,Vector3.zero,.33f,false,false,1);
+        public Transform CreateEffectTile(string tile,Transform target=null){var result=original.CreateTable(null,tile,Vector3.zero);if(target!=null)TableTileGeometry.CopyShape(target,result);return result;}
         // Original effect_chipeng ('ci' particle, effect_fulu/bang) is an additive flash;
         // the shader's _Tint scales it to nothing for the fade-out. See
         // Actions/meld-effect-provenance.json.
@@ -352,7 +353,7 @@ namespace YunJian.Riichi
             // Preserve vertical composition on phones; fit the side hands on 16:9.
             Camera.fieldOfView = 2 * Mathf.Atan(Mathf.Tan(28 * Mathf.Deg2Rad / 2) * Mathf.Max(1, 1.9f / aspect)) * Mathf.Rad2Deg;
             // Without a foreground hand no group is moved, so the native positions apply.
-            if (cameraHand == null) { ScaleNorthToMelds(); return; }
+            if (cameraHand == null) return;
             Rect safe = Screen.safeArea;
 #if UNITY_EDITOR
             if(ValidationSafeArea.HasValue)safe=ValidationSafeArea.Value;
@@ -383,7 +384,6 @@ namespace YunJian.Riichi
             if(ValidationPrevious0533Layout)meldBottomPixel+=8;
 #endif
             AlignSelfMelds(Mathf.Max(safe.yMin,meldBottomPixel),safe.xMax-64*Screen.height/600f);
-            ScaleNorthToMelds();
             float left=safe.xMin+safe.width*.05f,right=safe.xMax-safe.width*.05f;
             float handTop=safe.yMin+(OriginalTiles.HandHeight+.42f)*scale/18*Screen.height;
             float margin=10*Screen.height/780f;
@@ -415,7 +415,7 @@ namespace YunJian.Riichi
             cameraHand.localScale = Vector3.one * scale;
             foreach(var saved in restored)if(saved.Item1!=null)saved.Item1.localPosition=saved.Item2;
         }
-        public const float MeldWidth=.35f;
+        public const float MeldWidth=TableTileGeometry.Width;
 #if UNITY_EDITOR
         public float ValidationMeldFaceWidth(int seat)=>Mathf.Min(MeldFaceWidth(state.you),MeldFaceWidth(seat));        public float ValidationFaceWidth(Transform tile)=>FaceWidth(tile);
         public Rect ValidationTileOutline(Transform tile)=>ProjectedTileOutline(tile);
@@ -431,7 +431,7 @@ namespace YunJian.Riichi
             float area=0;for(int k=0;k<4;k++){var a=p[k];var b=p[(k+1)%4];area+=a.x*b.y-b.x*a.y;}
             return Mathf.Sqrt(Mathf.Abs(area)/2);
         }
-        float FaceWidth(Transform tile)=>FaceWidth(tile.position,tile.rotation,MeldWidth*tile.lossyScale.x);
+        float FaceWidth(Transform tile)=>FaceWidth(tile.position,tile.rotation,TableTileGeometry.WorldWidth(tile));
         // That seat's displayed upright meld tile, or the native meld corner without melds.
         float MeldFaceWidth(int seat)
         {
@@ -442,37 +442,11 @@ namespace YunJian.Riichi
             }
             return FaceWidth(NativeMeldPoint(seat),Quaternion.Euler(0,Angle(seat),0),MeldWidth);
         }
-        // 1012-2 review: North tiles read larger than the player's melds (most of all the
-        // left seat's, right in front of the camera). Shrink every North so its face is no
-        // larger than the player's own meld faces, or than that seat's melds if smaller.
-        void ScaleNorthToMelds()
-        {
-            if(state==null)return;float player=MeldFaceWidth(state.you);
-            foreach(var entry in northTiles){
-                if(entry.Value.Count==0)continue;float reference=Mathf.Min(player,MeldFaceWidth(entry.Key));
-                foreach(var tile in entry.Value){if(tile==null)continue;tile.localScale=Vector3.one;float own=FaceWidth(tile);tile.localScale=Vector3.one*(own>1?Mathf.Clamp(reference/own,.6f,1f):1);}
-                float cursor=0,previous=0;var basePoint=NativeReviewLayout.NorthLocal(NativeReviewLayout.Physical(RelativeSeat(entry.Key),state.n),0,Angle(entry.Key));
-                for(int k=0;k<entry.Value.Count;k++){var tile=entry.Value[k];float width=MeldWidth*tile.localScale.x;if(k>0)cursor+=(previous+width)/2+.001f;tile.localPosition=basePoint-new Vector3(cursor,0,0);previous=width;}
-            }
-        }
+        // Retain the approved screen-space corner using translation on the cloth.
+        // No parent scaling: every tile keeps the shared physical dimensions.
         void AlignSelfMelds(float bottom,float right){
-            if(selfMelds==null || selfMelds.GetComponentsInChildren<BoxCollider>(true).Length==0)return;
-            var first=selfMelds.GetComponentsInChildren<BoxCollider>(true).OrderBy(c=>Mathf.Abs(c.transform.localRotation.eulerAngles.y)).First();
-            // The collider's rectangular footprint overestimates the visible rounded
-            // tile under perspective. Fit the actual APK mesh/outline vertices instead.
-            // 1012-2 reference, normalized to the game viewport: an upright meld tile
-            // white tile is 55-58 px wide in a 1280x720 viewport. Including its
-            // model rim/outline, use .98 of the original foreground quad width.
-            float width=OriginalTiles.HandWidth/18*Screen.height*.98f;
-#if UNITY_EDITOR
-            if(ValidationLegacyMeldFit)width=OriginalTiles.HandWidth/18*Screen.height*.76f;
-#endif
-            for(int pass=0;pass<6;pass++){
-                var tile=ProjectedTileOutline(first.transform);if(tile.width<1)return;
-#if UNITY_EDITOR
-                if(ValidationLegacyMeldFit)ProjectedBounds(first.transform,out tile);
-#endif
-                float factor=Mathf.Clamp(width/tile.width,.65f,1.4f);selfMelds.localScale*=factor;
+            if(selfMelds==null)return;
+            for(int pass=0;pass<4;pass++){
                 if(!ProjectedBounds(selfMelds,out var bounds))return;
                 TranslateOnCloth(selfMelds,new Vector2(right-bounds.xMax,bottom-bounds.yMin));
             }
@@ -528,11 +502,11 @@ namespace YunJian.Riichi
             }
             bounds=any?Rect.MinMaxRect(min.x,min.y,max.x,max.y):new Rect();return any;
         }
-        Transform Tile(Transform parent, string tile, Vector3 position, float w = .28f, float h = .42f, bool hidden = false, bool sideways = false, float opacity = 1)
+        Transform Tile(Transform parent, string tile, Vector3 position, bool hidden = false, bool sideways = false, float opacity = 1)
         {
-            var root = original.CreateTable(parent, tile, position, w, hidden, sideways, opacity);
+            var root = original.CreateTable(parent, tile, position, hidden, sideways, opacity);
             if(!hidden){exposedTiles.Add(Tuple.Create(root,tile));if(IsDora(tile))OriginalTiles.AddShine(root,false);}
-            ContactShadow(root, .002f - position.y, w, w * original.TableLength);
+            ContactShadow(root, .002f - position.y, TableTileGeometry.Width, Geometry.Length);
             return root;
         }
         // Original mjp_new/effect_shadow: soft shadow.png centred under the tile footprint.
@@ -590,29 +564,29 @@ namespace YunJian.Riichi
                 if(exhausted){
                     var d=state.result.drawDetails.FirstOrDefault(x=>x.seat==i);
                     var hand=new GameObject("Draw hand seat "+i).transform;hand.SetParent(seat,false);
-                    int count=d!=null && d.tenpai?d.tiles.Length:p.count;bool self=i==state.you;float pitch=self?.37f:.31f;
+                    int count=d!=null && d.tenpai?d.tiles.Length:p.count;bool self=i==state.you;float pitch=Geometry.Pitch;
                     float edge=self?(d!=null&&d.tenpai?4.05f:4.34f):Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f?4f:3.35f;
                     for(int j=0;j<count;j++){
-                        var tile=Tile(hand,d!=null&&d.tenpai?d.tiles[j]:"z5",new Vector3(self?-2.22f+j*pitch:(j-(count-1)*.5f)*pitch,.02f,-edge),self?.35f:.29f,.42f,d==null||!d.tenpai);
+                        var tile=Tile(hand,d!=null&&d.tenpai?d.tiles[j]:"z5",new Vector3(self?-2.22f+j*pitch:(j-(count-1)*.5f)*pitch,.02f,-edge),d==null||!d.tenpai);
                         drawTiles.Add(Tuple.Create(tile,tile.localPosition));
                     }
                 }
                 else if(state.phase=="result" && terminals && state.result.abortHand.seat==i){
                     var reveal=new GameObject("Nine terminals hand seat "+i).transform;reveal.SetParent(seat,false);
-                    var tiles=state.result.abortHand.tiles;bool self=i==state.you;float pitch=self?.37f:.31f,width=self?.35f:.29f;
+                    var tiles=state.result.abortHand.tiles;bool self=i==state.you;float pitch=Geometry.Pitch;
                     float edge=self?4.10f:Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f?4f:3.35f;
                     for(int j=0;j<tiles.Length;j++){
-                        var tile=Tile(reveal,tiles[j],new Vector3((j-(tiles.Length-1)*.5f)*pitch,.02f,-edge),width);
+                        var tile=Tile(reveal,tiles[j],new Vector3((j-(tiles.Length-1)*.5f)*pitch,.02f,-edge));
                         drawTiles.Add(Tuple.Create(tile,tile.localPosition));
                     }
                 }
                 else if(shown!=null){
                     if(i!=state.you && !standingHands.ContainsKey(i))CreateStandingHand(seat,i,shown.tiles.Length);
                     var revealed=new GameObject("Revealed winning hand").transform;revealed.SetParent(seat,false);revealed.gameObject.SetActive(false);winningRows.Add(revealed);
-                    float pitch=.31f;float edge=Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f?4.0f:2.95f;
-                    if(i==state.you){pitch=.37f;edge=4.05f;}
+                    float pitch=Geometry.Pitch;float edge=Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f?4.0f:2.95f;
+                    if(i==state.you)edge=4.05f;
                     for(int j=0;j<shown.tiles.Length;j++){
-                        var tile=Tile(revealed,shown.tiles[j],new Vector3((j-(shown.tiles.Length-1)*.5f)*pitch,.02f,-edge),i==state.you?.35f:.29f);
+                        var tile=Tile(revealed,shown.tiles[j],new Vector3((j-(shown.tiles.Length-1)*.5f)*pitch,.02f,-edge));
                         drawTiles.Add(Tuple.Create(tile,tile.localPosition));
                     }
                 }
@@ -627,7 +601,7 @@ namespace YunJian.Riichi
             var root=new GameObject("Standing hand seat "+index).transform;root.SetParent(seat,false);standingHands[index]=root;
             for(int j=0;j<count;j++){
                 float edge=Mathf.Abs(Mathf.Sin(Angle(index)*Mathf.Deg2Rad))>.5f?4.34f:3.35f;
-                var tile=original.CreateStandingBack(root,new Vector3(-1.86f+j*.31f,0,-edge),.29f);ContactShadow(tile,.002f,.29f,original.TableDepth*.29f);
+                var tile=original.CreateStandingBack(root,new Vector3((j-(count-1)*.5f)*Geometry.Pitch,0,-edge));ContactShadow(tile,.002f,TableTileGeometry.Width,Geometry.Depth);
             }
         }
         public Transform WinningTarget(PublicSound item)
@@ -643,10 +617,10 @@ namespace YunJian.Riichi
         }
         Vector3 SelfDrawPoint(int seat){
             var detail=SelfDrawWinner(seat);int count=detail?.tiles?.Length??13;
-            float pitch=seat==state.you?.37f:.31f,width=seat==state.you?.35f:.29f;
+            float pitch=Geometry.Pitch;
             float edge=seat==state.you?4.05f:Mathf.Abs(Mathf.Sin(Angle(seat)*Mathf.Deg2Rad))>.5f?4f:2.95f;
             // One tile past the right end of the exposed hand, on the same seat axis.
-            return Quaternion.Euler(0,Angle(seat),0)*new Vector3((count-1)*pitch/2+width+.16f,.02f,-edge);
+            return Quaternion.Euler(0,Angle(seat),0)*new Vector3((count-1)*pitch/2+Geometry.Pitch+Geometry.GroupGap,.02f,-edge);
         }
         void DrawWinningTiles()
         {
@@ -660,7 +634,7 @@ namespace YunJian.Riichi
                 if(d.ron && robbed.TryGetValue(key,out var shared)){winningTiles[d.seat]=shared;continue;}
                 int seat=d.ron?d.from:d.seat;
                 Vector3 point=d.ron ? (d.winSource=="nuki"?NorthPoint(seat)+Quaternion.Euler(0,Angle(seat),0)*new Vector3(0,0,.4f):MeldPoint(seat)+Vector3.up*.16f) : SelfDrawPoint(seat);
-                var tile=original.CreateTable(content,d.tile,point,d.ron?.33f:seat==state.you?.35f:.29f,false,false,1);
+                var tile=original.CreateTable(content,d.tile,point);
                 tile.name="Winning tile "+d.seat+" "+d.tile;tile.rotation=Quaternion.Euler(0,Angle(seat),0);winningTiles[d.seat]=tile;
                 if(d.ron)robbed[key]=tile;
             }
@@ -681,9 +655,9 @@ namespace YunJian.Riichi
                 float cursor = -1.06f;
                 for (int j = 0; j < row.Length; j++)
                 {
-                    var r = row[j];int raw=Array.IndexOf(p.river,r);bool sideways=RiichiSideways(p,raw);float width=sideways?.44f:.33f;
+                    var r = row[j];int raw=Array.IndexOf(p.river,r);bool sideways=RiichiSideways(p,raw);float width=Geometry.Slot(sideways);
                     var scatter=RiverScatter(seatIndex,raw,state.round,state.honba);
-                    var tile=Tile(parent, r.tile, new Vector3(cursor + width / 2+scatter.x, 0, -1.48f - start / 6 * .46f+scatter.y), .33f, .44f, false, sideways);
+                    var tile=Tile(parent, r.tile, new Vector3(cursor + width / 2+scatter.x, 0, -1.48f - start / 6 * Geometry.RiverRowPitch+scatter.y), false, sideways);
                     tile.localRotation=Quaternion.Euler(0,(sideways?90:0)+scatter.z,0);
                     tile.name="River "+(start+j)+" "+r.tile;rendered.Add(tile);
                     // The marker belongs to the seat that can actually call, not to
@@ -691,9 +665,9 @@ namespace YunJian.Riichi
                     if(SelfCanCall && state.phase=="reaction" && state.pending!=null && state.pending.kind=="discard" && state.pending.from==seatIndex && start+j==visible.Length-1)
                     {
                         responseTarget=tile;
-                        original.CreateResponseGlow(tile, .33f);
+                        original.CreateResponseGlow(tile, TableTileGeometry.Width);
                     }
-                    cursor += width + .015f;
+                    cursor += width;
                 }
             }
         }
@@ -779,27 +753,27 @@ namespace YunJian.Riichi
                     pieces.AddRange(digits.Select(d => Tuple.Create(d, false, false)));
                     int slot = direction == '-' ? 0 : direction == '=' ? 1 : pieces.Count;
                     pieces.Insert(slot, Tuple.Create(claimed, true, false));
-                    float start = cursor - pieces.Sum(x => x.Item2 ? .53f : .37f);
+                    float start = cursor - pieces.Sum(x => Geometry.Slot(x.Item2));
                     float x = start;
                     foreach (var piece in pieces)
                     {
-                        float w = piece.Item2 ? .53f : .37f;
-                        var calledTile = Tile(parent, meld[0].ToString() + piece.Item1, new Vector3(x + w / 2, .02f, meldZ), .35f, .51f, false, piece.Item2);
+                        float w = Geometry.Slot(piece.Item2);
+                        var calledTile = Tile(parent, meld[0].ToString() + piece.Item1, new Vector3(x + w / 2, .02f, meldZ), false, piece.Item2);
                         if(visual.anchor==null || piece.Item2)visual.anchor=calledTile;
                         if (piece.Item2) anchor = calledTile;
-                        if (added && piece.Item2){visual.extra=Tile(parent, meld[0].ToString() + extra, new Vector3(x + w / 2, .17f, meldZ), .35f, .51f, false, true);visual.extraRest=visual.extra.localPosition;}
+                        if (added && piece.Item2){visual.extra=Tile(parent, meld[0].ToString() + extra, new Vector3(x + w / 2, .02f+Geometry.StackRise, meldZ), false, true);visual.extraRest=visual.extra.localPosition;}
                         x += w;
                     }
-                    cursor = start - .16f; continue;
+                    cursor = start - Geometry.GroupGap; continue;
                 }
-                cursor -= pieces.Count * .37f;
+                cursor -= pieces.Count * Geometry.Pitch;
                 for (int j = 0; j < pieces.Count; j++)
                 {
-                    var concealed = Tile(parent, meld[0].ToString() + pieces[j].Item1, new Vector3(cursor + j * .37f, .02f, meldZ), .35f, .51f, pieces[j].Item3);
+                    var concealed = Tile(parent, meld[0].ToString() + pieces[j].Item1, new Vector3(cursor + j * Geometry.Pitch, .02f, meldZ), pieces[j].Item3);
                     if (anchor == null) anchor = concealed;
                     if(visual.anchor==null)visual.anchor=concealed;
                 }
-                cursor -= .16f;
+                cursor -= Geometry.GroupGap;
             }
             if (anchor != null) meldAnchors[index] = anchor;
             // Source babei anchor lies inward of, and separate from, the meld corner.
@@ -809,7 +783,7 @@ namespace YunJian.Riichi
             var extracted = new List<Transform>(); northTiles[index] = extracted;
             for (int i = 0; i < p.nuki; i++)
             {
-                var tile = Tile(north, "z4", NativeReviewLayout.NorthLocal(NativeReviewLayout.Physical(RelativeSeat(index),state.n),i,angle), MeldWidth, .51f);
+                var tile = Tile(north, "z4", NativeReviewLayout.NorthLocal(NativeReviewLayout.Physical(RelativeSeat(index),state.n),0,angle)-new Vector3(i*Geometry.NorthPitch,0,0));
                 tile.localRotation = Quaternion.identity;
                 extracted.Add(tile);
             }

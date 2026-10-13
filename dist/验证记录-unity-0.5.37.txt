@@ -1,0 +1,10 @@
+Unity 0.5.37 desktop tile geometry trial. Android versionCode 38.
+Baseline: fe4f470cee984ae0f851e61cb81e1fe3ae2684b9, local rollback branch and immutable 0.5.36 source/APK/release copies.
+88 Node rule tests passed. Actual Unity Play 0537 geometry/action checks, 0535 presentation regressions and 0536 riichi-marker regressions passed.
+38 actual Unity screenshots: 13 baseline / 25 trial; same synthetic fixtures, not device screenshots. Win table comparisons hide settlement UI only in editor validation.
+1162 world-width samples approximately 0.35. Uniform standing/revealed/river/meld/North/winning geometry; carried/landed shape equality and polling handoffs; 1..4 own melds preserve foreground size; North adjacency; draw poses; kan physical stack thickness.
+ARM64/ARMv7 native renderer binaries differ from baseline. Current engine assets/phone host/JNI and required APK resources verified.
+Trial APK: 73,741,268 bytes, SHA-256 c9183eff2b0f7c7833f97a92f92b5674ccbd96504260ae778f517f4d8e0ae397.
+v1/v2 plus API-23-only v1, original certificate d1d8e506c6d3b62e9610dce294c07008057318fa9bafae702fb8b01f35f0dc2f, and 16KB alignment passed.
+Rollback APK: old 0.5.36 payloads unchanged, manifest versionCode 38, same package/certificate; 73,741,268 bytes; SHA-256 81ba5bf792e88e6b2dfe09f789de3ab97a6bef1e28814dac24279aac8be667b8. Same signature/alignment gates passed.
+Independent complete GitHub downloads are checked after publication. Actual Android installation and visual fidelity require user confirmation.

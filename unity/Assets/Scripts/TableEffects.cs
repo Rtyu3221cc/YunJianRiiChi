@@ -191,7 +191,7 @@ namespace YunJian.Riichi
             motion.position=anchor+Vector3.up*.12f;
             motion.rotation=Quaternion.Euler(0,table.SeatAngle(item.seat)+180,0);
             // Zimo lifts the whole original arm; fit its larger sweep to this table.
-            motion.localScale=Vector3.one*(.33f/.02947767f*(item.kind=="tsumo"?.36f:.9f));
+            motion.localScale=Vector3.one*(TableTileGeometry.SourceUnits*(item.kind=="tsumo"?.36f:.9f));
             // Fulu's node_tile is offset from its root; align its settle keyframe
             // with the event's North tile, including the inward-facing glyph.
             if (item.kind=="discard" || item.kind=="riichi-stick" || item.kind=="nuki" || item.kind=="tsumo") motion.position -= motion.TransformVector(TilePoint(SourceHandoff));
@@ -200,8 +200,8 @@ namespace YunJian.Riichi
             var renderer=hand.AddComponent<MeshRenderer>();renderer.sharedMaterials=new[]{body,nails};renderer.shadowCastingMode=ShadowCastingMode.Off;
             movingMeld=GroupCall?table.EventMeld(item):null;
             animatedTile = GroupCall?null:stick ? table.CreateEffectStick()
-                        : item.kind=="nuki" ? table.CreateEffectTile("z4")
-                        : string.IsNullOrEmpty(item.tile) ? null : table.CreateEffectTile(item.tile);
+                        : item.kind=="nuki" ? table.CreateEffectTile("z4",table.NorthTarget(item.seat,item.nuki))
+                        : string.IsNullOrEmpty(item.tile) ? null : table.CreateEffectTile(item.tile,item.kind=="tsumo"?table.WinningTarget(item):table.FindDiscard(item.seat,item.tile,item.riverIndex));
             if (animatedTile != null)
             {
                 foreach(var child in animatedTile.GetComponentsInChildren<Transform>())child.gameObject.layer=14;
@@ -211,10 +211,8 @@ namespace YunJian.Riichi
             if(animatedTile!=null){
                 animatedTile.position=motion.TransformPoint(TilePoint(0))-Vector3.up*.12f;
                 animatedTile.rotation=item.kind=="nuki"?table.NorthTarget(item.seat,item.nuki).rotation:Quaternion.Euler(0,table.SeatAngle(item.seat)+(!stick&&item.riichi?90:0),0);
-                // Carry North at the landed tile's (meld-matched) size so it does not pop.
-                if(item.kind=="nuki")animatedTile.localScale=Vector3.one*(TableRenderer.MeldWidth/.33f)*table.NorthTarget(item.seat,item.nuki).localScale.x;
                 if(item.kind=="tsumo"){
-                    var target=table.WinningTarget(item);if(target!=null){animatedTile.rotation=target.rotation;animatedTile.localScale=Vector3.one*target.GetComponent<BoxCollider>().size.x/.33f;}
+                    var target=table.WinningTarget(item);if(target!=null)animatedTile.rotation=target.rotation;
                 }
             }
             if(movingMeld!=null){meldTarget=item.meldKind=="kakan"?movingMeld.extra:movingMeld.group;meldFinal=meldTarget.position;meldRotation=meldTarget.rotation;motion.position-=motion.TransformVector(TilePoint(SourceHandoff));}
@@ -317,7 +315,7 @@ namespace YunJian.Riichi
             EndImpact();
             impact=new GameObject("APK meld impact").transform;impact.SetParent(transform,false);nativeImpact=impact.gameObject.AddComponent<NativeParticleEffect>();nativeImpact.Initialize("effect_chipeng",(uint)(current.id+1));
             impact.position = MeldImpactPoint();
-            impact.rotation = Quaternion.Euler(0,table.SeatAngle(current.seat),0);impact.localScale=Vector3.one*(.33f/.02947767f);
+            impact.rotation = Quaternion.Euler(0,table.SeatAngle(current.seat),0);impact.localScale=Vector3.one*(TableTileGeometry.SourceUnits);
             impactStarted = ValidationFreeze ? ValidationTime : Time.unscaledTime;
         }
         void EndImpact()

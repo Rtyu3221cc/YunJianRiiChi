@@ -1,5 +1,11 @@
 # 云间日麻
 
+## Unity 0.5.37：桌面牌尺寸统一试验
+
+[下载0.5.37试验APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.37/yunjian-riichi-unity-0.5.37.apk)，versionCode 38，沿用原证书。
+
+桌面牌共用原模型尺寸和透视相机，动画牌继承落地目标尺寸；移除副露与拔北独立缩放，保留区域锚点及操作手牌大小。[改动、验证和回滚说明](docs/0.5.37牌桌尺寸统一试验与回滚.md) · [38张前后截图](dist/unity-0.5.37-screenshots.html) · [0.5.36回滚APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.37/yunjian-riichi-unity-0.5.36-rollback-v38.apk)。回滚包保留0.5.36程序内容，versionCode同为38。安卓真机未测。
+
 ## Unity 0.5.36：立直横置标记顺延
 
 [下载 Unity 0.5.36 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.36/yunjian-riichi-unity-0.5.36.apk)，versionCode 37，沿用原证书。

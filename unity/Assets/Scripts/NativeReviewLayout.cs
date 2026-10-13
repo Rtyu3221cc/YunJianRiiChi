@@ -9,7 +9,7 @@ namespace YunJian.Riichi {
   public static int Physical(int relative,int n)=>relative==0?0:n==3?(relative==1?2:3):relative;
   public static Vector3 NorthLocal(int physical,int index,float seatAngle){
    if(north==null)north=JsonUtility.FromJson<Placements>(Resources.Load<TextAsset>("Majsoul/NativeReview/north-anchors").text);
-   var a=north.anchors[physical];const float units=.33f/.02947767f;
+   var a=north.anchors[physical];const float units=TableTileGeometry.SourceUnits;
    return Quaternion.Inverse(Quaternion.Euler(0,seatAngle,0))*new Vector3(-a.position[0],0,-a.position[2])*units+new Vector3(-index*a.span*units,.02f,0);
   }
   static Placements Score=>score??(score=JsonUtility.FromJson<Placements>(Resources.Load<TextAsset>("Majsoul/NativeReview/score-layout").text));

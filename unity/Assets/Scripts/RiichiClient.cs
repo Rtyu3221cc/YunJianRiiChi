@@ -74,6 +74,7 @@ namespace YunJian.Riichi
         bool validationSession;
 
 #if UNITY_EDITOR
+        public bool ValidationTableOnly;
         public void BeginValidationPractice(string hostSecret)
         {
             validationSession = true; endpoint = "http://127.0.0.1:8765";
@@ -614,6 +615,9 @@ namespace YunJian.Riichi
                 bool enabled=GUI.enabled;GUI.enabled=false;DrawTableUI(true);GUI.enabled=enabled;
                 viewport=TableViewport.Fit(Screen.width,Screen.height,Screen.safeArea,false);GUI.matrix=resultMatrix;
             }
+#if UNITY_EDITOR
+            if(ValidationTableOnly)return;
+#endif
             GUI.matrix=Matrix4x4.identity;GUI.color=new Color(0,0,0,State.result.draw ? .38f : .68f);GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=resultColor;GUI.matrix=resultMatrix;
             var action=resultDisplay.Draw(State,table,effects,font,ResultButton);
             if(action==ResultPresentation.Action.Ready)StartCoroutine(Send(new RequestBody{op="ready"}));
