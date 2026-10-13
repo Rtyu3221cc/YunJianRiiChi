@@ -1,5 +1,11 @@
 # 云间日麻
 
+## Unity 0.5.33：手牌中轴与副露位置
+
+[下载 Unity 0.5.33 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.33/yunjian-riichi-unity-0.5.33.apk)，versionCode 34，沿用原证书。
+
+自家副露在0.5.32基础上再下移8像素，保持放大后的尺寸；修正手机左右安全边距不对称时手牌偏离牌桌中轴，保留实际遮挡时的避让。[实现与实际截图](docs/0.5.33手牌中轴与副露位置.md) · [截图确认包](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.33/yunjian-riichi-unity-0.5.33-screenshots.zip)。安卓真机未测。
+
 ## Unity 0.5.32：和牌交接与原版音效
 
 [下载 Unity 0.5.32 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.32/yunjian-riichi-unity-0.5.32.apk)，versionCode 33，沿用原证书。

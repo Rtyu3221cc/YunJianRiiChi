@@ -252,6 +252,8 @@ namespace YunJian.Riichi
 #if UNITY_EDITOR
         public bool ValidationLegacyMeldFit;
         public bool ValidationPreviousMeldPosition;
+        public bool ValidationPrevious0533Layout;
+        public Rect? ValidationSafeArea;
         public bool ValidationStandingHandVisible=>cameraHand!=null && cameraHand.gameObject.activeInHierarchy;
         public bool ValidationWinningRowVisible=>winningRows.Any(r=>r!=null && r.gameObject.activeInHierarchy);
         // 0 = playable, 1 = dimmed by the riichi declaration filter.
@@ -319,12 +321,20 @@ namespace YunJian.Riichi
             // Without a foreground hand no group is moved, so the native positions apply.
             if (cameraHand == null) { ScaleNorthToMelds(); return; }
             Rect safe = Screen.safeArea;
+#if UNITY_EDITOR
+            if(ValidationSafeArea.HasValue)safe=ValidationSafeArea.Value;
+#endif
             float safeWidth = safe.width / Screen.width, safeHeight = safe.height / Screen.height;
             float handSpan = Mathf.Max(1, handTiles.Count) * OriginalTiles.HandWidth + .4f;
             // Source hand camera: orthographic size 9, 2.54-high quad, x scale .62.
             HandCamera.orthographicSize = 9;
             float scale = Mathf.Min(safeHeight, 18 * aspect * safeWidth * .9f / handSpan);
-            float centerX = safe.center.x;
+            // The cloth/hub camera uses the whole viewport. An asymmetric phone
+            // safe area must constrain clipping, rather than move the table axis.
+            float centerX = Camera.WorldToScreenPoint(Vector3.zero).x;
+#if UNITY_EDITOR
+            if(ValidationPrevious0533Layout)centerX=safe.center.x;
+#endif
             // Keep the native quad height. Public edge groups yield space when
             // their silhouettes would otherwise force the foreground hand to shrink.
             var restored=new List<Tuple<Transform,Vector3>>();
@@ -334,9 +344,10 @@ namespace YunJian.Riichi
 #if UNITY_EDITOR
             if(ValidationLegacyMeldFit)meldBottom=.32f;
 #endif
-            float meldBottomPixel=safe.yMin+meldBottom*scale/18*Screen.height-7;
+            float meldBottomPixel=safe.yMin+meldBottom*scale/18*Screen.height-15;
 #if UNITY_EDITOR
             if(ValidationPreviousMeldPosition)meldBottomPixel+=7;
+            if(ValidationPrevious0533Layout)meldBottomPixel+=8;
 #endif
             AlignSelfMelds(Mathf.Max(safe.yMin,meldBottomPixel),safe.xMax-64*Screen.height/600f);
             ScaleNorthToMelds();

@@ -1,0 +1,15 @@
+云间日麻 Unity 0.5.33
+versionCode 34；ARM64＋ARMv7；com.yunjian.riichi.unity。
+实际 Unity Play 专项通过：复现左右不对称安全边距造成的偏移；13/14张手牌在三麻／四麻、四种分辨率下对齐牌桌中轴，手牌尺寸不变。常用横屏副露底边比0.5.32下移8像素、实际可见宽度不变；1～4组副露无手牌／头像遮挡或裁切。4:3窄画面保留既有上移避让。
+APK资源与ZIP完整性检查通过：离线主机/JNI、现行规则资源、两种ABI、原版贴图、动画字节及shader。
+v1＋v2签名、独立v1验证、16KB对齐均通过；证书SHA-256：d1d8e506c6d3b62e9610dce294c07008057318fa9bafae702fb8b01f35f0dc2f。
+截图：10张实际Unity渲染＋2张等比例对照图；合成测试局面，非安卓真机截图。安卓真机与多手机热点联机未测。
+Asymmetric left safe area 90px: old hand offset=45px; new offset=0px; unchanged dimensions=(908.75, 112.75)
+(936.00, 435.00): meld down=7.999961px; old/new visible tile width=37.29669/37.29675px
+(1280.00, 720.00): meld down=7.999462px; old/new visible tile width=61.73242/61.7323px
+(1751.00, 799.00): meld down=7.999731px; old/new visible tile width=68.50598/68.50598px
+(1024.00, 768.00): meld down=3.051758E-05px; old/new visible tile width=61.16052/60.83618px; narrow-viewport overlap fallback
+
+APK SHA-256：7578D6DD1FE348DC0AC10DC8043EF2DB776B3A1DFC20B65CE1CB8A40474B0574  yunjian-riichi-unity-0.5.33.apk
+
+发布源码中的规则／协议 Node 测试：81项全部通过，0失败。
