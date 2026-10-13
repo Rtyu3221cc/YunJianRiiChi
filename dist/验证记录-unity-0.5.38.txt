@@ -1,0 +1,9 @@
+Unity 0.5.38 meld visible-edge contact update, versionCode 39.
+Runtime change limited to meld packing: no extra within-group clearance or inter-group gap; concealed-kan centers aligned; model sizes, cameras and layout anchors preserved.
+Actual Unity Play check passed: visible edge contact in three/four-seat directions, one to four own melds at 1688x780 and 1280x720, unchanged model/foreground sizes, sideways/hidden/added kans, polling and original pon motion.
+19 actual Unity screenshots: 8 approved 0.5.37 baseline / 11 corrected renders; synthetic fixtures, not device screenshots.
+88 rule tests checked in curated publication before upload. Current offline assets, phone host/JNI, ARM64+ARMv7 and native build changes verified.
+Trial APK SHA-256 65251eed387e8f877f104ff886e0a0ef97ad888acd734c381fcc613dbe25d200, bytes 73741268.
+Both APKs: v1/v2 and API-23-only v1, original certificate d1d8e506c6d3b62e9610dce294c07008057318fa9bafae702fb8b01f35f0dc2f, 16KB alignment verified.
+Rollback preserves approved 0.5.37 player/resources byte for byte; only manifest versionCode raised to39 and re-signed. Baseline commit 31e30f97b420792ce0bc5267c997150be686ef20, rollback branch and source/APK copies retained.
+Complete independent GitHub downloads checked after publication. Actual Android installation and visual confirmation pending.

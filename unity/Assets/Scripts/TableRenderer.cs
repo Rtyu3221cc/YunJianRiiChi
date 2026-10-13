@@ -753,27 +753,26 @@ namespace YunJian.Riichi
                     pieces.AddRange(digits.Select(d => Tuple.Create(d, false, false)));
                     int slot = direction == '-' ? 0 : direction == '=' ? 1 : pieces.Count;
                     pieces.Insert(slot, Tuple.Create(claimed, true, false));
-                    float start = cursor - pieces.Sum(x => Geometry.Slot(x.Item2));
+                    float start = cursor - pieces.Sum(x => Geometry.MeldSlot(x.Item2));
                     float x = start;
                     foreach (var piece in pieces)
                     {
-                        float w = Geometry.Slot(piece.Item2);
+                        float w = Geometry.MeldSlot(piece.Item2);
                         var calledTile = Tile(parent, meld[0].ToString() + piece.Item1, new Vector3(x + w / 2, .02f, meldZ), false, piece.Item2);
                         if(visual.anchor==null || piece.Item2)visual.anchor=calledTile;
                         if (piece.Item2) anchor = calledTile;
                         if (added && piece.Item2){visual.extra=Tile(parent, meld[0].ToString() + extra, new Vector3(x + w / 2, .02f+Geometry.StackRise, meldZ), false, true);visual.extraRest=visual.extra.localPosition;}
                         x += w;
                     }
-                    cursor = start - Geometry.GroupGap; continue;
+                    cursor = start; continue;
                 }
-                cursor -= pieces.Count * Geometry.Pitch;
+                cursor -= pieces.Count * Geometry.MeldSlot(false);
                 for (int j = 0; j < pieces.Count; j++)
                 {
-                    var concealed = Tile(parent, meld[0].ToString() + pieces[j].Item1, new Vector3(cursor + j * Geometry.Pitch, .02f, meldZ), pieces[j].Item3);
+                    var concealed = Tile(parent, meld[0].ToString() + pieces[j].Item1, new Vector3(cursor + (j+.5f) * Geometry.MeldSlot(false), .02f, meldZ), pieces[j].Item3);
                     if (anchor == null) anchor = concealed;
                     if(visual.anchor==null)visual.anchor=concealed;
                 }
-                cursor -= Geometry.GroupGap;
             }
             if (anchor != null) meldAnchors[index] = anchor;
             // Source babei anchor lies inward of, and separate from, the meld corner.

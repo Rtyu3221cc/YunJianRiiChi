@@ -1,5 +1,11 @@
 # 云间日麻
 
+## Unity 0.5.38：副露贴靠
+
+[下载0.5.38 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.38/yunjian-riichi-unity-0.5.38.apk)，versionCode 39，沿用原证书。
+
+同一副露组内和组间按可见牌边缘贴靠，保留0.5.37的尺寸、透视和区域对齐。[修改与回滚说明](docs/0.5.38副露贴靠.md) · [19张前后对照](dist/unity-0.5.38-screenshots.html) · [0.5.37回滚APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.38/yunjian-riichi-unity-0.5.37-rollback-v39.apk)。安卓真机未测。
+
 ## Unity 0.5.37：桌面牌尺寸统一试验
 
 [下载0.5.37试验APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.37/yunjian-riichi-unity-0.5.37.apk)，versionCode 38，沿用原证书。

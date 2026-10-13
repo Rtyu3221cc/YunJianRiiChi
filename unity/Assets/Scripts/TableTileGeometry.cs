@@ -27,6 +27,9 @@ namespace YunJian.Riichi
         }
 
         public float Slot(bool sideways) => sideways ? SidewaysPitch : Pitch;
+        // Pack the visible rims together without clearance. Using collider width
+        // alone makes the expanded APK outline cover the neighbouring tile face.
+        public float MeldSlot(bool sideways) => Slot(sideways) - .001f;
 
         public static float WorldWidth(Transform tile)
         {
