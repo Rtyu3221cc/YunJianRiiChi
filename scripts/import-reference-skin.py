@@ -6,7 +6,7 @@ UnityPy.config.FALLBACK_UNITY_VERSION='2022.3.62f2c1'
 warnings.filterwarnings('ignore')
 root=pathlib.Path('unity/Assets/Resources/Majsoul')
 out=root/'UI';out.mkdir(parents=True,exist_ok=True)
-names={'btn_leave','btn_settings','btn_rule','left_top','bg_name','bg_nickname','bg_name_1','bg_head1_mask','bg_action','bg_chipengchoose','btn_skip','btn_emo','botton_zhandou','ob_ting_off_btn','ob_ting_on_btn','replay_collect','bg_type','bg_point','state_1','state_2','line_zhandou'}
+names={'btn_leave','btn_settings','btn_rule','left_top','bg_name','bg_nickname','bg_name_1','bg_head1_mask','bg_action','bg_chipengchoose','btn_skip','btn_emo','botton_zhandou','ob_ting_off_btn','ob_ting_on_btn','button_text_bottom_s','replay_collect','bg_type','bg_point','state_1','state_2','line_zhandou'}
 rows=[json.loads(s) for s in open('build/reference/catalog.jsonl',encoding='utf8')]
 row=next(r for r in rows if any('atlas_mj_main_common_0.png' in p for p in r.get('paths',[])))
 records=[]

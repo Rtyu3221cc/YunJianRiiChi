@@ -3,7 +3,7 @@ using System;
 namespace YunJian.Riichi
 {
     // This DTO contains only Room.view() public state, never the host snapshot.
-    [Serializable] public class RoomReply { public bool ok, networkError; public string error, token; public RoomView state; }
+    [Serializable] public class RoomReply { public bool ok, networkError; public string error, token, code; public RoomView state; }
     [Serializable] public class RoomView
     {
         public string phase, pin, recovery, drawn, audioRoom;
@@ -26,8 +26,8 @@ namespace YunJian.Riichi
     [Serializable] public class LobbyRoomView { public string category; public bool red, managed; }
     [Serializable] public class PlayerView
     {
-        public string name, avatar;
-        public bool bot, ready, online;
+        public string name, avatar, autoReason;
+        public bool bot, auto, ready, online;
         public int score, wind, riichi, nuki, count;
         public string[] melds = new string[0];
         public RiverTile[] river = new RiverTile[0];
@@ -48,9 +48,9 @@ namespace YunJian.Riichi
     [Serializable] public class ScoreDetail { public int fu, fanshu, defen, damanguan;public int[] delta; }
     [Serializable] public class RequestBody
     {
-        public string op, token, host, name, pin, recovery, action, id, category;
-        public int version, n, rounds, seat;
-        public bool red = true, bots, fillBots, lobbyFlow, ready;
+        public string op, token, host, name, pin, recovery, action, id, category, room;
+        public int version, n, rounds, seat, handSeq;
+        public bool red = true, bots, fillBots, lobbyFlow, ready, enabled, present=true;
     }
     [Serializable] public class HostConfig { public string host, error; public string[] addresses; public bool ready; }
 }

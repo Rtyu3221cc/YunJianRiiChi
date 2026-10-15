@@ -1,5 +1,17 @@
 # 云间日麻
 
+## Unity 0.5.42：终局、回座与 AI 托管
+
+[下载 0.5.42 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.42/yunjian-riichi-unity-0.5.42.apk)，versionCode 43，包名 com.yunjian.riichi.unity，沿用原证书。
+
+优化大厅人物与三个场次招牌的入退场方向、创建页遮罩与图文对齐；细化终局暗遮罩、排名、铜币／PT、自家标识和底部按钮。统一“食断”尺寸的中弹窗及原版动画，取消／离开左侧深色、确认／继续右侧黄色；修复按钮黑色接缝和 AI 托管文字底托拉伸，回座提示采用三行排版。
+
+终局“下一局(9)”逐秒减至 0 自动确认，保留房间设置和玩家；三个场次与“牌局”灯笼共用原连接回座，不再输入恢复码。房主主动退出结束整桌，客人主动退出由电脑接替；意外断线保留回座资格。支持手动托管、180 秒操作超时及离线托管，返回后可收回操作；同局域网按房号加入，也可接替真正电脑位。既有核心牌理、计分和 AI 决策算法保持原样。
+
+118 项 Node 测试、1100 项 Unity 大厅断言通过；另完成既有完整 Play 牌桌回归，后者不计入精确断言数量。最终 APK 的离线资源、双架构、ZIP 完整性、v1／v2、API 23 独立 v1、原证书及 16 KB 对齐均需通过发布核验。真机安装、触摸、Android 后台 Service 与多手机局域网尚未验证；没有房主迁移机制。
+
+[本版界面与三段动画](dist/session-ui-0.5.42/index.html) · [验证记录](dist/验证记录-unity-0.5.42.md) · [机器可读结果](dist/unity-0.5.42-verification.json) · [校验和](dist/SHA256-unity-0.5.42.txt) · [新对话交接 HTML](docs/handoff-unity-0.5.42.html)。安装包及源码／发布 ZIP 由 [GitHub Release](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/tag/unity-0.5.42) 分发；Unity APK 不加入源码 Git／LFS。
+
 ## Unity 0.5.41：大厅与准备房间
 
 [下载 0.5.41 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.41/yunjian-riichi-unity-0.5.41.apk)，versionCode 42，沿用原证书。

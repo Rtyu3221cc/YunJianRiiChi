@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>云间日麻 Unity 0.5.42 · 新对话交接</title>
+<style>
+:root{color-scheme:light;--ink:#203047;--muted:#607087;--line:#d8e1ed;--paper:#fff;--blue:#254d80;--soft:#eef4fc;--gold:#b77912}
+*{box-sizing:border-box}body{margin:0;background:#f3f5f9;color:var(--ink);font-family:"Microsoft YaHei","PingFang SC",sans-serif;line-height:1.75}main{max-width:1160px;margin:auto;padding:34px 28px 80px}header,section{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:25px 30px;margin-bottom:22px}header{border-top:6px solid var(--blue)}h1{font-size:30px;line-height:1.4;margin:0 0 10px}h2{font-size:23px;line-height:1.5;margin:0 0 15px}h3{font-size:18px;margin:24px 0 8px}p{margin:10px 0}a{color:#1d5c9f;text-decoration-thickness:1px;text-underline-offset:3px}code,pre,textarea{font-family:Consolas,"Microsoft YaHei",monospace}code{background:#edf1f7;padding:2px 5px;border-radius:4px;overflow-wrap:anywhere}pre{background:#152437;color:#e7edf6;border-radius:8px;overflow:auto;padding:18px;font-size:13px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere}ul,ol{padding-left:25px;margin:12px 0}li{margin:7px 0}table{width:100%;border-collapse:collapse;font-size:14px;margin:15px 0;table-layout:fixed}th,td{text-align:left;vertical-align:top;padding:12px;border:1px solid var(--line);overflow-wrap:anywhere}th{background:var(--soft);font-weight:600}th:first-child,td:first-child{width:29%}.muted{color:var(--muted);font-size:14px}.notice{background:#fff6df;border-left:4px solid var(--gold);padding:12px 16px;margin:15px 0}.info{background:var(--soft);border-left:4px solid var(--blue);padding:12px 16px;margin:15px 0}.badge{display:inline-block;padding:3px 10px;margin:0 8px 8px 0;border-radius:20px;background:#edf3fc;color:#244b7e;font-size:13px}.badge.warn{background:#fff0cd;color:#85560b}.tools{position:sticky;top:0;z-index:2;display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:#f3f5f9ee;backdrop-filter:blur(8px);padding:13px 0;margin-bottom:18px}button,input{font:inherit;border-radius:7px;border:1px solid #bacbdf;padding:9px 13px}button{background:var(--blue);color:white;cursor:pointer}button:hover{background:#173a66}input{background:white;min-width:240px;flex:1}nav{display:flex;gap:8px 18px;flex-wrap:wrap;margin-top:18px;font-size:14px}textarea{display:block;width:100%;min-height:440px;resize:vertical;padding:16px;border:1px solid var(--line);background:#f8fafc;color:var(--ink);border-radius:8px;line-height:1.7;font-size:13px}.path{display:block;font-family:Consolas,"Microsoft YaHei",monospace;font-size:13px;overflow-wrap:anywhere}.status{font-size:14px;color:var(--muted)}[hidden]{display:none!important}.twocol{display:grid;grid-template-columns:1fr 1fr;gap:18px}.twocol>div{padding:14px 17px;background:#f6f8fc;border-radius:8px}details{margin:15px 0}summary{font-weight:600;cursor:pointer}footer{font-size:13px;color:var(--muted);text-align:center}strong{font-weight:650}@media(max-width:760px){main{padding:16px 12px 45px}header,section{padding:20px 17px}h1{font-size:25px}h2{font-size:21px}.twocol{grid-template-columns:1fr}table{font-size:12px}th,td{padding:8px}input{min-width:0;width:100%}.tools button{font-size:14px}}@media print{body{background:#fff;font-size:11pt}main{max-width:none;padding:0}header,section{border:0;border-radius:0;padding:10px 0;margin:0 0 16px;break-inside:avoid}h2,h3{break-after:avoid}.tools,nav,button,.no-print{display:none!important}section[hidden]{display:block!important}pre{background:#f1f3f5;color:#111}a{color:#111}textarea{height:auto;min-height:540px;font-size:9pt}table{font-size:9pt}footer{margin-top:20px}}
+</style>
+</head>
+<body>
+<main>
+<p><a href="../dist/session-ui-0.5.42/index.html">当前版本效果图与三段动画</a> · <a href="0.5.42结算回座与托管.md">本轮修改与验证说明</a></p>
+<header>
+<h1>云间日麻 Unity 0.5.42 · 新对话交接</h1>
+<p>本文件汇总本整段对话的实现范围、已确认的交互和美术要求、开发及发布路径。新对话先读本页，再检查实际源码、当前 Git 状态与验证记录。</p>
+<div><span class="badge">Unity 6000.6.4f1</span><span class="badge">Android versionCode 43</span><span class="badge">中文 · 离线局域网</span><span class="badge warn">真机安装 / 多手机联机未测</span></div>
+<p class="muted">交接日期：2026-10-16（Asia/Shanghai）。版本与发布结果以本页元信息及实际远端核验为准；历史预览不代表最新 APK。</p>
+<div class="notice" id="pendingNotice">本版标识、安装包与测试字段已填写。确切源码提交通过 unity-0.5.42 标签解析，发布与下载核验结果见附带记录。</div>
+<nav><a href="#release">发布元信息</a><a href="#scope">授权边界</a><a href="#lobby">大厅与房间</a><a href="#motion">动画</a><a href="#session">牌局生命周期</a><a href="#latest">本轮细化</a><a href="#files">文件职责</a><a href="#workflow">命令与验证</a><a href="#copy">复制交接摘要</a></nav>
+</header>
+
+<div class="tools no-print"><input id="search" type="search" aria-label="搜索正文" placeholder="搜索正文：例如 托管、签名、字体、路径"><button id="copyTop" type="button">一键复制给新对话的交接摘要</button><button id="print" type="button">打印 / 保存 PDF</button><span id="status" class="status" role="status" aria-live="polite"></span></div>
+
+<section id="release" data-search>
+<h2>1. 版本与发布元信息</h2>
+<table><tbody>
+<tr><th>项目</th><td>云间日麻 / YunJian Riichi，Unity 原生界面，Android 本机房主服务</td></tr>
+<tr><th>目标版本</th><td><strong>0.5.42 / Android versionCode 43</strong>；包名 <code>com.yunjian.riichi.unity</code>，沿用原证书覆盖更新。</td></tr>
+<tr><th>本版发布引用（通过标签解析确切提交）</th><td><code>unity-0.5.42；git rev-parse unity-0.5.42^{commit}</code></td></tr>
+<tr><th>APK 文件</th><td><a href="../dist/yunjian-riichi-unity-0.5.42.apk">yunjian-riichi-unity-0.5.42.apk</a><span class="path">D:/MyWorkSpace/YunJianRiichi_Codex/dist/yunjian-riichi-unity-0.5.42.apk</span></td></tr>
+<tr><th>完整 APK 字节数</th><td><code>83171647</code></td></tr>
+<tr><th>完整 APK SHA-256</th><td><code>b0c8ce59eea039a930d1d08764826c3d5f9410af9846973804cc82b419609bf8</code></td></tr>
+<tr><th>本版 Unity 检查统计</th><td><code>1100 项大厅/房间断言（472+628）；完整牌桌回归另记通过</code>；测试范围、命令及各项结果应同时查阅本版验证记录，不用旧版数字代替。</td></tr>
+<tr><th>GitHub 仓库</th><td><a href="https://github.com/Rtyu3221cc/YunJianRiiChi">Rtyu3221cc/YunJianRiiChi</a>，发布分支 <code>main</code>。</td></tr>
+<tr><th>本版 Release</th><td><a href="https://github.com/Rtyu3221cc/YunJianRiiChi/releases/tag/unity-0.5.42">unity-0.5.42</a> · <a href="https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.42/yunjian-riichi-unity-0.5.42.apk">APK 下载直链</a>。链接目标须经本轮发布完成后核验。</td></tr>
+<tr><th>之前已发布版本</th><td>0.5.41 / versionCode 42，commit <code>a1dbffea4b40f38947ddcae3f07bd353d9c40f57</code>。旧版 APK 82,981,445 字节，SHA256 <code>407a97ad40f8f244cfd3828c5c9fd53ab4d9fcf99ffad6c795d3dcde63016f88</code>。</td></tr>
+</tbody></table>
+<p class="notice"><strong>真机未测：</strong>编译、桌面 Unity 检查、HTTP 联调、签名和完整下载核验不能证明实体 Android 安装、触摸、音频、前后台 Service 或多设备局域网行为已经通过。</p>
+</section>
+
+<section id="scope" data-search>
+<h2>2. 当前授权、用户偏好与技术边界</h2>
+<p><strong>本轮用户已明确要求：完成修改后进行测试、生成 APK、提交 Git，并生成给新对话的交接 HTML。</strong>这取代此前“仅出效果、不测试、不打包、不上传”的阶段性限制。终局、退出、续局、回座与 AI 托管也由用户明确提出，允许修改相应牌桌 UI 与会话生命周期；不能据早期“不要修改牌桌打牌代码”误判这些要求未授权。</p>
+<p>修改仍限于明确涉及的交互、生命周期和界面。已有出牌、吃碰杠、立直、和牌、计分、流局判定与 AI 决策算法不应顺带重构。参考基线是 0.5.39；本轮新增会话逻辑不能被误称为整段牌桌代码仍与基线逐字相同。</p>
+<ul>
+<li>原版截图、视频和雀魂 APK 的布局及素材是美术来源。先查项目已有资源；缺少时再从本地 APK 提取，保留来源、pathID、hash / border 等 provenance。不要用通用控件或重新绘制图代替原版。</li>
+<li>用户按细节逐项审阅，关心位置、字号、透明度、裁切、动画方向及节奏。提供真实 Unity 截图；动画提供可播放视频，明确演示状态和真实流程联调的区别。</li>
+<li><strong>字体偏下不是普遍现象。</strong>不要添加全局字体上移、按字体统一偏移等补丁。每个控件单独校准；<code>RoomCentered</code> 默认零偏移，批准值与待审阅值分开。</li>
+<li>所有新业务弹窗统一复用“食断”解释的中弹窗：逻辑尺寸约 <code>852.3 × 510</code>，原版背景、金边、角饰、关闭按钮及 <code>ui_pop / ui_popout</code> 动画。</li>
+<li>双按钮：取消 / 离开 / 放弃位于左侧，使用深色按钮；确认 / 继续 / 执行位于右侧，使用黄色按钮。单按钮使用既有黄色确认按钮，不强行添加取消。</li>
+<li>用户已确认高级规则采用引擎的真实默认值；不要把未接入引擎的数值控件做成看似生效。当前长考时间显示“无限制”且不可取消。</li>
+<li>不要自动迁移到云服务、接入雀魂账号业务、付费寻觅或排行榜；已恢复的这些入口只提供本地说明。</li>
+</ul>
+<p>最初规划文档：<span class="path">D:/MyWorkSpace/plan/云间日麻主界面任务规划-1013-1.docx</span>参考视频主要位于 <code>D:/MyWorkSpace/video/1013</code>，截图主要位于 <code>D:/MyWorkSpace/video/1012-3</code>。截图内标注是本轮设计输入；其他文件里的说明需结合用户当前指令判断。</p>
+</section>
+
+<section id="lobby" data-search>
+<h2>3. 本段对话累计完成：大厅、创建房间与准备房间</h2>
+<h3>主大厅与友人场入口</h3>
+<ul>
+<li>段位场、比赛场、友人场三块主招牌按要求扩大约 15%；右下既有菜单也按要求放大 15%。</li>
+<li>友人场展开使用原版“创设房间 / 加入房间”字样素材；补回底部“限时免费”与划线，修正透明度。</li>
+<li>设置和截图按钮按可见大小统一；补回活动、邮件、牌局、公告、右侧问号、右下寻觅。后三个灯笼最终文字为“邮件 / 牌局 / 公告”，沿用原版风雨粗毛楷风格。</li>
+<li>左上雀士与初心徽章按原版构图，暂无称号复用牌桌已有的 <code>TableLook/Sprites/notitle</code>，不是普通文字仿制。玩家名的字号和基线逐步手调，最后一次用户要求在当时效果上向下 3px，勿重置已认可位置。</li>
+<li>标题“友人场”与“建立房间”的字号和定位保持一致，标题在弹窗打开时也不能因 <code>GUI.enabled</code> 等状态意外变灰。</li>
+</ul>
+<h3>创建房间</h3>
+<ul>
+<li>建立房间标题与底部装饰重新匹配参考大小、居中位置。比赛、局数、长考时间、高级设置各行图标与文字留间距并按各自可见 alpha 范围水平对齐。</li>
+<li>只开放真实支持的三 / 四人、东风 / 半庄、赤牌；“一局”曾被讨论，未作为已支持选项承诺。高级设置默认展开，长考时间“无限制”保持选中。</li>
+<li>高级设置尖角对准“开启”按钮；数值键盘复刻原版输入区、1–9、清空 / 0 / 退格、确认与关闭布局，加入房间键盘与其统一。</li>
+<li>问号解释、友人场感叹号说明复用原版框体；规则说明按视频核对版式与点击动画，修正吃碰演示、立直棒裁切。准备房间规则说明也进入同一个规则窗口。</li>
+<li>创建页面的背景遮罩及横向分隔线铺满物理屏幕，消除左侧露缝；标题与交互控件仍遵循安全区，不以突破安全区修复按钮布局。</li>
+</ul>
+<h3>准备房间</h3>
+<ul>
+<li>玩家卡片靠左，房间规则栏靠最右；原版卡片金边、内底、樱花纹与裁切重新核对，黑色底部不得超出卡片金框。</li>
+<li>姓名组件使用原版墨迹底、段位徽章、花瓣、暂无称号和姓名布局，区别房主与电脑，不能把底部统一缩放成细长条。</li>
+<li>邀请好友、新增电脑、准备印章、房主标识、开始按钮按原版素材与字体；开始文字水平垂直居中。</li>
+<li>规则栏有外层透明底托、各项原版背景与上下装饰，可滚动；“半庄 / 无限制”稍减字号保证不溢出，行内文字按本控件校准。</li>
+<li>取消额外的踢人确认；退出 / 解散弹窗统一中弹窗。保留规则说明右侧的役种入口；此前曾错误增加 / 移除的历史意见不能覆盖最终明确保留要求。</li>
+</ul>
+</section>
+
+<section id="motion" data-search>
+<h2>4. 大厅动画：方向已反复对照，不要改反</h2>
+<div class="twocol"><div><strong>人物：从右向左入场</strong><p>起点在最终位置右侧，略越过最终位置向左超调，再轻微回弹。视频实测有效延迟约 0.15s，位移时长约 0.25s，采用 OutBack；原 prefab 的默认 0.2s 留作来源证据。</p></div><div><strong>三个场招牌：从左向右入场</strong><p>每块牌各有斜向位移、透明度及超调回弹。使用视频逐帧跟踪得到的各自轨道，不统一套用同一条单向缓动。</p></div></div>
+<ul>
+<li>招牌退场先轻微放大，再以各自 native pivot 缩小并淡出；不是整体向上平移。</li>
+<li>从友人场子页返回时保留人物及周围控件，只重播主招牌；从创建页面完整返回大厅时，顶部、底部、左下按钮及人物均重新入场。</li>
+<li>顶部项跟随 <code>container_top</code>；底部各按钮分段延迟上移，寻觅使用 <code>btn_xunmi</code> 原轨道（约延迟 0.2s、时长 0.2s）。</li>
+<li>友人场标题 / 创建和加入卡片读取原版 AnimationClip 曲线；卡片内容使用原版 Mask，先绘制加入再绘制创建，以匹配遮挡。</li>
+<li>固定编辑器时钟输出真实 Unity 帧，视频通常 60fps，无声；半速视频供方向核对。只渲染预览不等于连接真实手机。</li>
+</ul>
+<p>主要数据：<code>Majsoul/Lobby/garden-motion.json</code>、<code>sign-entry-motion.json</code>、<code>create-label-layout.json</code>。不要无检查地重跑整个提取脚本覆盖后续视频标定值。</p>
+</section>
+
+<section id="session" data-search>
+<h2>5. 牌局生命周期：最终交互约定</h2>
+<table><thead><tr><th>触发</th><th>行为</th></tr></thead><tbody>
+<tr><td>终局“下一局”</td><td>按钮显示“下一局(9)”逐秒至“下一局(0)”，9 秒后自动确认；保留房间设置、玩家及座位，所有真人确认或处于托管时推进下一整场，无需房主再次按开始。等待其他真人时避免重复发起请求。</td></tr>
+<tr><td>终局“返回大厅”</td><td>离开当前牌桌回大厅。房主结束整桌；其他真人主动退出后电脑接替该座位，原离桌者放弃其回座凭据。</td></tr>
+<tr><td>牌桌退出按钮</td><td>中弹窗确认。房主提示退出会结束整桌；客人提示电脑接替。执行成功直接返回大厅；取消继续游戏。</td></tr>
+<tr><td>意外关闭 / 断线</td><td>不等同于主动退出；保存原连接地址、房间标识和座位凭据，允许原玩家重新连接回到原座位。无需用户输入恢复码。</td></tr>
+<tr><td>三个场入口 / “牌局”灯笼</td><td>统一先查询未结牌局。提示三行：“当前有未结的对局” / “（友人场-东1局 房间号xxxxx）” / “是否继续牌局？”。括号内容取真实场次、局数、房间号；“继续牌局”右黄色，“退出牌局”左深色。</td></tr>
+<tr><td>继续牌局</td><td>用原连接和座位身份恢复；成功后收回托管，并重播既有进入牌桌转场。查询本身不发送在线心跳，不能把大厅用户误判为已回桌。</td></tr>
+<tr><td>大厅主动退出未结牌局</td><td>执行离桌后进入创建 / 加入房间界面。删除旧“已有房间，请先在房间内结束牌桌”阻断弹窗。</td></tr>
+<tr><td>无进行中牌局</td><td>中弹窗：“当前无进行中的牌局”。房间失效 / 无法恢复远端连接时：“牌局已取消，期待下次相遇”。本机房主服务暂未就绪单独提示重试，避免误清本机练习记录。</td></tr>
+<tr><td>180 秒未操作</td><td>服务端按单次合法操作等待计时，达 180 秒开启 AI 托管。普通轮询不能自动关闭托管，也不能把连续多个短等待累计成一次超时。</td></tr>
+<tr><td>断线 / 前后台</td><td>心跳超过约 12 秒或应用主动报告离开前台后，原座位可托管；保留其返回资格。房主本机 Service 尽量后台继续运行。</td></tr>
+<tr><td>左下 AI托管</td><td>原工具列位置改为 AI托管，复用原 ON/OFF 菱形按钮和原版文字底托。可手动开启 / 关闭，关闭或成功回座后由真人操作。</td></tr>
+<tr><td>中途加入人机局</td><td>可替换真正的电脑位，继承该位当前手牌、分数、庄位与牌河，不重新发牌；不能抢占为断线真人保留的座位。</td></tr>
+</tbody></table>
+<p class="info">联机不要求房主开热点。同一允许设备互访的局域网即可：UDP <code>8766</code> 按房间号发现，HTTP <code>8765</code> 加入与状态交互。广播受隔离时可使用连接设置中的房主地址。只输入房间号不是互联网跨网房间服务。</p>
+<p>没有房主迁移机制；系统强制停止房主进程时，其他设备需要等待房主服务恢复。所有真人离线时在结算处等待，不应无人值守反复开整场。AI 的决策输入仍为目标座位自己的可见视图，不应暴露他人暗牌。</p>
+</section>
+
+<section id="latest" data-search>
+<h2>6. 本轮最新美术细化与黑线修复</h2>
+<ul>
+<li><strong>终局：</strong>背景遮罩加深；重新核对排名数字与“位”的大小 / 相对位置、铜币与 PT 两行位置、“自家”标识、底部双按钮。返回大厅左侧深色，下一局右侧黄色，保留 9→0 自动确认。</li>
+<li><strong>弹窗：</strong>正文统一字号；提示标题 / 正文不能一大一小。未结对局改为三行，括号内容独占中行并去掉多余逗号；文案“返回牌局”改为“继续牌局”。</li>
+<li><strong>按钮文字：</strong>按用户指出的具体弹窗将确认文字上移约 5px，不能扩散为所有按钮 / 所有字体的统一偏移。按钮距边框与文字距按钮的偏移分开处理。</li>
+<li><strong>双按钮：</strong>统一确认在右黄色、取消在左深色。牌桌退出中，退出牌局属于执行动作，放在右黄色；继续游戏属于取消离开，放在左深色。大厅回座中，继续牌局在右黄色，退出牌局在左深色。</li>
+<li><strong>原版按钮黑色竖线：</strong><code>NativeUiChrome</code> 按 Sprite 原始 border 绘制切片，并对齐物理像素边界，避免任意边距 / 非整数边界产生接缝。不要仅用覆盖色掩盖黑线。</li>
+<li><strong>AI托管底托：</strong>复用 <code>button_text_bottom_s</code>；按原图高度 16 和左右 15px 切片，保持端头及高度，允许中段扩宽，避免整图拉伸。</li>
+</ul>
+<p class="muted">本轮最终截图可能在这些基础上继续微调；最新源码、验证记录和发布审阅图优先于之前的 session-flow-review 截图。</p>
+</section>
+
+<section id="workspace" data-search>
+<h2>7. 源码工作区、发布 clone 与历史基线</h2>
+<table><thead><tr><th>位置 / 基线</th><th>用途与注意事项</th></tr></thead><tbody>
+<tr><td><code>D:/MyWorkSpace/YunJianRiichi_Codex</code></td><td>日常开发、Unity 运行、提取资源、测试与构建的源码工作区。历史分支 <code>codex/lobby-room-1013</code>，起始 HEAD <code>56a5f69</code>；其 Git HEAD 可能落后已发布 main，但未提交文件包含后续工作，不能 reset / clean。</td></tr>
+<tr><td><code>.publish/YunJianRiiChi</code></td><td>单独发布 clone，只同步明确选定的源码、资源、文档、审阅文件；在这里提交、推送 main。此前 HEAD 为 0.5.41 的 <code>a1dbffe</code>，本次最终 commit 见元信息。</td></tr>
+<tr><td><code>codex/backup-before-lobby-1013</code></td><td>0.5.39 基线 <code>face364ea2688d1944f64809b3a3021524987d07</code>。适合比较牌理、AI 算法与核心牌桌几何，不能把本次已授权生命周期改动都判为越界。</td></tr>
+<tr><td>APK 分发</td><td>Unity APK 沿现有方式放 GitHub Release，不进源码 Git / LFS。仓库记录源码、预览、验证记录、SHA256 和 Release 链接。</td></tr>
+</tbody></table>
+<p>不要镜像整个工作区覆盖发布 clone。排除 <code>.git</code>、<code>.publish</code>、<code>tools</code>、<code>build</code>、Unity 缓存和 Builds、node_modules、SDK、日志、私钥、运行状态及原始雀魂 APK；也不要删掉发布 clone 独有的历史文档 / 0.5.41 README 记录。</p>
+</section>
+
+<section id="files" data-search>
+<h2>8. 重要文件职责</h2>
+<p class="muted">下列路径均相对于源码根目录 D:/MyWorkSpace/YunJianRiichi_Codex。</p>
+<table><thead><tr><th>文件 / 目录</th><th>职责</th></tr></thead><tbody>
+<tr><td><code>unity/Assets/Scripts/LobbyController.cs</code></td><td>主大厅、友人场、建房 / 加入、准备房间、数字键盘、规则说明、中弹窗、原版素材绘制及页面动画。注意 GUI.enabled / GUI.color 对标题的影响。</td></tr>
+<tr><td><code>RiichiClient.cs</code>、<code>RiichiClient.Session.cs</code></td><td>实际客户端请求 / 状态驱动、界面切换；会话保存 / 查询 / 回座 / 离桌、前后台通知、AI托管 UI 与按钮。两者同目录。</td></tr>
+<tr><td><code>ResultPresentation.cs</code></td><td>和牌 / 流局 / 分数 / 终局的展示状态及终局倒计时、续局 / 返回大厅按钮。</td></tr>
+<tr><td><code>NativeUiChrome.cs</code></td><td>共享原版 UI 纹理、Sprite border 切片、物理像素对齐、深色 / 黄色按钮与文字底托；修复接缝不能在每处重复打补丁。</td></tr>
+<tr><td><code>RoomProtocol.cs</code>、<code>LanRoomDiscovery.cs</code></td><td>HTTP 房间协议数据与 UDP 局域网房号发现。</td></tr>
+<tr><td><code>MatchIntroduction.cs</code></td><td>原版进入牌桌转场；回座成功也复用。不能只恢复 State 而漏掉转场。</td></tr>
+<tr><td><code>app/src/main/assets/engine.js</code></td><td>权威房间状态、加入 / 退出 / 回座、心跳与托管、终局准备 / 续局推进和存档。不要改动不相关的牌理判断。</td></tr>
+<tr><td><code>app/src/main/assets/core.js</code>、<code>ai.js</code>、<code>table-layout.js</code></td><td>既有规则 / AI 算法 / 布局，保持原有逻辑；不可用 UI 修复为由顺带重写。</td></tr>
+<tr><td><code>app/src/main/java/com/yunjian/riichi/RoomService.java</code></td><td>Android 前台房主、HTTP / UDP 与持久化。Unity 插件 JAR 必须从当前 Java 源码重编，不能只改源文件不更新实际 APK。</td></tr>
+<tr><td><code>unity/Assets/Plugins/Android/riichi-host.androidlib/</code></td><td>Unity 内嵌离线引擎 / 资源与房主 JAR。Android 构建前同步；APK 内离线资源需逐字节校验。</td></tr>
+<tr><td><code>unity/Assets/Resources/Majsoul/Lobby/</code></td><td>原版大厅素材、字体、边距、素材来源以及页面 / 弹窗动画。<code>TableLook</code> 含既有暂无称号；<code>Settlement</code> 等目录含终局素材；<code>UI</code> 含托管底托。</td></tr>
+<tr><td><code>scripts/import-lobby-resources.py</code>、<code>import-reference-skin.py</code>、<code>import-session-chrome.py</code></td><td>从本地参考 APK 导出美术和配置；修改派生数据需同步 provenance。先定点提取缺少资源，避免全量覆盖已标定配置。</td></tr>
+<tr><td><code>unity/Assets/Editor/LobbyDesignPreview.cs</code>、<code>LobbyMotionPreview.cs</code></td><td>大厅静态效果 / 原版方向动画渲染，固定 UI 时钟输出真实 Unity 截图。</td></tr>
+<tr><td><code>SessionFlowPreview.cs</code>、<code>SessionFlowLiveReview.cs</code></td><td>前者固定演示状态输出生命周期效果图与视频；后者连接专用临时本地房主串联真实请求，避免写正式偏好 / 存档。</td></tr>
+<tr><td><code>LobbyReleaseValidation.cs</code>、<code>tests/session-flow.test.cjs</code>、<code>tests/*.test.cjs</code></td><td>Unity 大厅检查、会话生命周期及既有引擎 / AI / 布局回归。本版实际结果以最终日志为准。</td></tr>
+<tr><td><code>scripts/verify-unity.ps1</code>、<code>compile-unity-host.ps1</code>、<code>sign-unity-apk.ps1</code></td><td>Unity 检查 / Play / Android 构建、Java JAR 重编、兼容性签名。</td></tr>
+<tr><td><code>scripts/verify-unity-apk.py</code>、<code>verify-apk-signature.py</code>、<code>verify-lobby-resources.py</code></td><td>最终 APK 离线内容、双架构与 Unity 资源、签名 / 下载完整性 / 原证书 / 16KB 对齐、大厅资源 provenance 检查。</td></tr>
+</tbody></table>
+</section>
+
+<section id="references" data-search>
+<h2>9. 预览、文档、日志与工具路径</h2>
+<table><thead><tr><th>资料</th><th>路径与说明</th></tr></thead><tbody>
+<tr><td>当前会话流程审阅</td><td><a href="../dist/session-flow-review/index.html">dist/session-flow-review/index.html</a>。终局、回座、托管与中弹窗；具体本轮发布审阅图应从 README / 验证记录进入。</td></tr>
+<tr><td>大厅方向审阅</td><td><a href="../dist/lobby-direction-preview/index.html">dist/lobby-direction-preview/index.html</a>，包含原版并排、半速方向核对和正常速度流程。</td></tr>
+<tr><td>补回按钮审阅</td><td><a href="../dist/lobby-buttons-preview/index.html">dist/lobby-buttons-preview/index.html</a>。</td></tr>
+<tr><td>早期房间外观审阅</td><td><a href="../dist/lobby-room-detail-review/index.html">dist/lobby-room-detail-review/index.html</a>；<code>lobby-profile-review</code>、<code>lobby-garden-review</code> 等为历史迭代，不等于最终版本。</td></tr>
+<tr><td>过程说明</td><td><a href="session-flow-review.md">docs/session-flow-review.md</a>、<a href="lobby-motion-review-notes.md">lobby-motion-review-notes.md</a>、<a href="lobby-garden-buttons-review.md">lobby-garden-buttons-review.md</a>、<a href="lobby-ui-text-offsets.md">lobby-ui-text-offsets.md</a>。</td></tr>
+<tr><td>会话联调资料</td><td><code>build/session-flow-review/</code>：<code>workflow.json</code>、<code>timeout.json</code>、<code>run-flow.cjs</code>、<code>render/</code>、<code>live/</code>。该 build 目录只在本机，默认不发布。</td></tr>
+<tr><td>Unity 标准日志</td><td><code>build/unity-validate.log</code>、<code>build/unity-play.log</code>、<code>build/unity-android.log</code>；专项命令可另指定独立 logFile，以实际运行参数为准。</td></tr>
+<tr><td>旧版本已验证记录</td><td>0.5.41 为 8 项房间测试 / 246 项 Unity 大厅检查，未进入牌桌；这些统计只属于旧版本，不能代替本版测试结果。</td></tr>
+<tr><td>Unity</td><td><code>D:/Unity/Lib/6000.6.4f1/Editor/Unity.exe</code></td></tr>
+<tr><td>Python</td><td><code>C:/Users/Rtyu3221/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe</code>，设置 <code>PYTHONIOENCODING=utf-8</code>。</td></tr>
+<tr><td>参考 APK / 索引</td><td><code>dist/Majsoul_4.0.16_MC.apk</code>；<code>build/reference/catalog.jsonl</code>、<code>fast-catalog.jsonl</code>、<code>tile-study/cab-map.json</code>；不得将原始参考 APK 推送到仓库。</td></tr>
+<tr><td>视频 / 资源依赖</td><td><code>tools/video-inspector</code> 提供 PyAV，Pillow / NumPy 处理可视校验；<code>tools/asset-inspector</code> 提供 UnityPy，fallback Unity 版本 <code>2022.3.62f2c1</code>。这些工具目录不发布。</td></tr>
+</tbody></table>
+</section>
+
+<section id="workflow" data-search>
+<h2>10. 可复用命令及发布检查</h2>
+<p>在源码根目录运行。<code>$Python</code> 需先设为上表 Python 路径。Unity 为 GUI 程序，后台启动必须隐藏窗口、等待真实退出码，不同时运行多个实例；遇 PackageManager / IPC 沙箱错误使用所需升级权限。</p>
+<pre>node --test --test-isolation=none tests/*.test.cjs
+
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-unity.ps1 -Mode Validate -EditorPath D:/Unity/Lib/6000.6.4f1/Editor/Unity.exe
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-unity.ps1 -Mode Play -EditorPath D:/Unity/Lib/6000.6.4f1/Editor/Unity.exe
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-unity.ps1 -Mode Android -EditorPath D:/Unity/Lib/6000.6.4f1/Editor/Unity.exe
+
+&amp; $Python scripts/verify-unity-apk.py
+&amp; $Python scripts/verify-lobby-resources.py dist/yunjian-riichi-unity-0.5.42.apk
+&amp; $Python scripts/verify-apk-signature.py dist/yunjian-riichi-unity-0.5.42.apk</pre>
+<ul>
+<li>先确认版本同步到 ProjectSetup、ProjectSettings 及构建 / 验包脚本，再构建。Android 模式同步离线资源并重编 Java JAR。</li>
+<li>不要直接使用仍硬编码 0.5.39 / 旧回滚包的 <code>package-unity-release.py</code>；以本版实际发布脚本和明确文件清单为准。</li>
+<li>旧 <code>verify-lobby-boundary.py</code> 是“大厅不动牌桌”的历史边界，本轮对生命周期和 UI 的授权已扩大，不能为通过旧脚本删掉新功能。保留核心牌理 / AI 算法比较和适用范围说明。</li>
+<li>Unity 导入可能产生许多 .meta 末尾空白变更。只可恢复确认纯格式的差异，不能覆盖新资源、有效导入配置或用户修改。</li>
+</ul>
+<h3>Git HTTPS 与已有凭据</h3>
+<pre>$env:GIT_EXEC_PATH='C:/Users/Rtyu3221/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/git/mingw64/bin'
+git -c http.sslBackend=openssl ls-remote origin refs/heads/main</pre>
+<p>bundled Git 默认 exec-path 曾导致 <code>remote-https</code> 缺失，Schannel 曾报 <code>SEC_E_NO_CREDENTIALS</code>；上述设置已用于成功只读核验。GitHub Release 脚本通过已有 Git 凭据读取权限，可能需要升级权限访问系统凭据存储，不打印 token、不索要粘贴 token。</p>
+<h3>发布完成必须具备的证据</h3>
+<ol>
+<li>在发布 clone 审查暂存文件清单 / diff；凭据扫描无误，不含私钥、原 APK、缓存、运行存档。</li>
+<li>本轮规则 / 协议 / 生命周期测试和适用 Unity 检查通过；桌面联调与真机验证分开记录。</li>
+<li>最终分发 APK，以及若提供的 release ZIP 内副本，字节数和 SHA256 一致；ZIP 完整、包含 manifest / SF / signer。</li>
+<li><code>apksigner --min-sdk-version 23</code> 验证 v1 + v2，再用 <code>--min-sdk-version 23 --max-sdk-version 23</code> 独立验证 v1。minSdk 26 下默认验证会跳过 v1，不能只看默认输出。</li>
+<li>证书 SHA256 必须仍为 <code>d1d8e506c6d3b62e9610dce294c07008057318fa9bafae702fb8b01f35f0dc2f</code>，<code>zipalign -c -P 16 4</code> 通过。</li>
+<li>推送 main 后用 <code>git ls-remote</code> 核验远端 commit，并独立读取远端 README / 关键源码证明内容存在。</li>
+<li>新文件名完整下载 GitHub APK；遇部分下载显式 Range 续传，完成后再次检查长度、hash、ZIP、v1 / v2、独立 v1、证书及 16KB 对齐。不得把截断包描述为签名失效。</li>
+</ol>
+</section>
+
+<section id="next" data-search>
+<h2>11. 新对话应如何继续</h2>
+<ol>
+<li>先确认用户要继续的新目标，读取本 HTML、README 最新段落、本版验证记录；检查两个 checkout 的当前状态，不清理未知改动。</li>
+<li>如果继续视觉修正，先定位原版素材 / 节点 / 当前具体控件，再输出截图或动画给审阅；不要把之前失败的全局偏移重新加回来。</li>
+<li>若反馈 APK 安装失败，先取得用户下载文件大小 / hash 或安装日志，再与发布完整包比较；不能因为构建成功就否认用户问题。</li>
+<li>优先真机确认：同 LAN 房号发现及互通、房主后台服务、客人断线托管 / 回座、房主意外关闭恢复、终局下一局倒计时、多真人确认、防重复续局、手动 AI 收回操作。</li>
+<li>不要把电脑接替断线真人的状态永久转为开放电脑位；不要让大厅查询恢复心跳；不要在无人在线时自动无限续局。</li>
+</ol>
+</section>
+
+<section id="copy">
+<h2>12. 一键复制给新对话的交接摘要</h2>
+<p>复制后可直接作为新对话的第一条消息；完整细节仍以本文件和当前源码为准。</p>
+<button id="copyBottom" type="button">复制交接摘要</button>
+<textarea id="copySummary" readonly aria-label="可复制交接摘要">请先阅读 D:/MyWorkSpace/YunJianRiichi_Codex/docs/handoff-unity-0.5.42.html，再检查当前源码与 Git 状态。项目为云间日麻 Unity 6000.6.4f1，中文离线局域网 Android 游戏。
+
+开发源码：D:/MyWorkSpace/YunJianRiichi_Codex；发布 clone：其 .publish/YunJianRiiChi。开发分支历史 HEAD 56a5f69 可能落后远端，但本地文件包含后续修改，不能 reset / clean。发布只在独立 clone 的 main，Unity APK 通过 GitHub Release 分发，不进源码 Git / LFS。
+本版 0.5.42 / versionCode 43，包名 com.yunjian.riichi.unity。
+发布引用：unity-0.5.42；git rev-parse unity-0.5.42^{commit}
+APK：dist/yunjian-riichi-unity-0.5.42.apk
+字节数：83171647
+SHA256：b0c8ce59eea039a930d1d08764826c3d5f9410af9846973804cc82b419609bf8
+Unity 检查：1100 项大厅/房间断言（472+628）；完整牌桌回归另记通过
+Release：https://github.com/Rtyu3221cc/YunJianRiiChi/releases/tag/unity-0.5.42
+
+当前授权：用户最后明确要求修改后测试、构建 APK、提交 Git、生成交接 HTML，取代之前仅做预览的阶段性禁止。用户已明确授权终局、退出、回座、续局、AI 托管的生命周期与 UI 修改；核心牌理、算分、鸣牌和 AI 决策算法不顺带重构。原 0.5.39 基线 face364，旧 verify-lobby-boundary.py 的整段牌桌保护范围不能直接套用本次新增需求。
+
+已完成的大厅工作：原 APK 素材 / 字体、三场招牌和右下菜单放大约 15%、友人场创建 / 加入和限时免费、左上雀士 / 初心 / 原版暂无称号 / 玩家名、数字键盘、规则说明、准备房间卡片 / 姓名墨迹条 / 规则滚动栏。创建页遮罩铺满物理屏幕但控件仍遵循安全区。高级设置沿用真实默认规则，默认展开，长考无限制固定选中。
+动画方向：人物从右向左入场并回弹；三个招牌从左向右且各有斜向轨道 / 回弹；招牌退场先略放大，再围绕各自 pivot 缩小淡出。完整从创建页返回大厅应重播顶部 / 底部 / 人物入场；友人场子页返回只重播招牌。不能把方向再改反。
+
+生命周期：终局“下一局(9)”每秒减至 0 自动确认，保留设置 / 玩家 / 座位，满足真人确认或托管后服务端推进。返回大厅离桌；房主主动退出结束整桌，客人主动退出由电脑接替并放弃原凭据。意外断线保留回座身份。三个场及“牌局”灯笼共用原连接查询 / 回座，不再恢复码。成功回座播放既有入桌转场、收回托管；查询本身不算上线。无局提示“当前无进行中的牌局”；远端失效提示“牌局已取消，期待下次相遇”，本机服务暂未就绪单独重试。
+同可互通 LAN 可按房号联机，无需房主热点；UDP 8766 / HTTP 8765。中途加入只替换真正电脑位，不抢断线真人。单次合法操作 180 秒无响应或断线 / 离开前台可 AI 托管；普通轮询不能收回；左下 AI托管按钮或成功回座收回操作。没有房主迁移，系统强停房主服务需要等待恢复；所有真人离线在结算等候，不无限续局。
+
+美术规则：项目已有素材优先，缺失再从 dist/Majsoul_4.0.16_MC.apk 提取并记录 provenance。统一食断解释的 852.3×510 中弹窗与 ui_pop/ui_popout。双按钮：取消 / 放弃左深色，确认 / 继续右黄色；单按钮黄色。字体位置逐控件校准，不能添加全局偏移。当前本轮已细化终局排名 / 铜币PT / 自家 / 暗遮罩 / 双按钮；回座提示三行，按钮叫“继续牌局”。NativeUiChrome 使用原 Sprite border +物理像素对齐修复按钮黑线；AI底托原高16，左右15像素切片，不能整图拉伸。
+
+关键文件：LobbyController.cs、RiichiClient.cs / RiichiClient.Session.cs、ResultPresentation.cs、NativeUiChrome.cs、RoomProtocol.cs、LanRoomDiscovery.cs、MatchIntroduction.cs、app/src/main/assets/engine.js、RoomService.java。Android 插件离线引擎和 JAR 构建前同步 / 重编。
+本版审阅：dist/session-ui-0.5.42/index.html；历史审阅：dist/session-flow-review/index.html、dist/lobby-direction-preview/index.html、dist/lobby-buttons-preview/index.html。过程说明见 docs/session-flow-review.md、lobby-motion-review-notes.md、lobby-ui-text-offsets.md。预览分数 / 房号为演示数据，不是用户真实牌局。
+
+命令：node --test --test-isolation=none tests/*.test.cjs；scripts/verify-unity.ps1 的 Validate / Play / Android；scripts/verify-unity-apk.py；verify-lobby-resources.py；verify-apk-signature.py。Unity 位于 D:/Unity/Lib/6000.6.4f1/Editor/Unity.exe。编译和普通日志在 build/unity-*.log。
+签名发布必须检查最终本地包、如有 release ZIP 的副本和独立完整 GitHub 下载：大小 / SHA256、ZIP manifest / SF / signer、v1 / v2、强制 API23-only v1、原证书 d1d8e506c6d3b62e9610dce294c07008057318fa9bafae702fb8b01f35f0dc2f、16KB 对齐、远端 main SHA 与源码内容。Git HTTPS 如缺 helper：设 GIT_EXEC_PATH 为 bundled git 的 mingw64/bin，并用 git -c http.sslBackend=openssl；系统已保存凭据访问可能需升级权限，不输出 token。
+
+真机安装 / 触摸 / 音频 / Android 前后台服务 / 多手机局域网尚未验证。不要把桌面联调和签名核验写成已真机验证。后续以用户新指令为准继续。</textarea>
+</section>
+<footer>本页为自包含交接文档，不加载外部字体、CSS 或 JavaScript。源码与日志为最终证据；发布字段填写后应再次核验。</footer>
+</main>
+<script>
+(() => {
+  const status=document.getElementById('status');
+  async function copySummary(){
+    const area=document.getElementById('copySummary');
+    try{
+      if(navigator.clipboard && window.isSecureContext){await navigator.clipboard.writeText(area.value);}
+      else{const x=window.scrollX,y=window.scrollY;area.focus({preventScroll:true});area.select();if(!document.execCommand('copy'))throw new Error('copy');area.setSelectionRange(0,0);window.scrollTo(x,y);}
+      status.textContent='交接摘要已复制';
+    }catch(error){area.focus();area.select();status.textContent='请按 Ctrl+C 复制已选中的摘要';}
+  }
+  document.getElementById('copyTop').addEventListener('click',copySummary);
+  document.getElementById('copyBottom').addEventListener('click',copySummary);
+  document.getElementById('print').addEventListener('click',()=>window.print());
+  document.getElementById('search').addEventListener('input',event=>{
+    const query=event.target.value.trim().toLocaleLowerCase();let visible=0;
+    document.querySelectorAll('section[data-search]').forEach(section=>{section.hidden=!!query&&!section.textContent.toLocaleLowerCase().includes(query);if(!section.hidden)visible++;});
+    status.textContent=query?'显示 '+visible+' 个匹配章节':'';
+  });
+  const releaseText=document.getElementById('release').textContent;
+  document.getElementById('pendingNotice').hidden=!releaseText.includes('__');
+})();
+</script>
+</body>
+</html>

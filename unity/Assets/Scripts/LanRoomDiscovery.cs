@@ -18,9 +18,14 @@ namespace YunJian.Riichi
         volatile string published="";
         volatile bool stopped;
         UdpClient listener;
-        public void Publish(RoomView view) { published=view!=null&&view.host&&view.phase=="lobby"?view.pin??"":""; }
+        public void Publish(RoomView view) { published=view!=null&&view.host&&view.phase!="empty"&&view.phase!="join"?view.pin??"":""; }
         public void Start()
         {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            // The foreground RoomService answers even when Unity is paused.
+            // Only one listener owns UDP 8766 on each phone.
+            return;
+#else
             try {
                 listener=new UdpClient(new IPEndPoint(IPAddress.Any,Port));
                 listener.Client.ReceiveTimeout=400;
@@ -35,6 +40,7 @@ namespace YunJian.Riichi
                     }catch(SocketException){}catch(ObjectDisposedException){break;}
                 });
             }catch(SocketException){listener?.Close();listener=null;}
+#endif
         }
         public async Task<string> Find(string pin,CancellationToken cancel)
         {

@@ -1430,6 +1430,71 @@
       "bundle": "assets/Android/2_tsb4vk_ee829c5730999255d9fb.majset",
       "pathID": -9133225911007104718,
       "type": "TextAsset"
+    },
+    {
+      "output": "Sprites/Main/icon_act.png",
+      "sha256": "fb739898d11b2fc95869b4a967a22e44275ab9ca6e764ae50ce9c2b6bae1abbe",
+      "bundle": "assets/Android/$0qqs7$z0kyy0c5ag557mgb$$-flxddf9_6a929144cc5af6abc95f.majset",
+      "pathID": 7309148091988778298,
+      "type": "Sprite",
+      "border": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "output": "Sprites/Main/denglong.png",
+      "sha256": "e8b29118b36abd9eba16f39bcbf04be160ee824f9162631fca83a0fac886dfb2",
+      "bundle": "assets/Android/$0qqs7$z0kyy0c5ag557mgb$$-fsrsvvggi__f735b9e55255a596553d.majset",
+      "pathID": -1295096599649541464,
+      "type": "Sprite",
+      "border": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "output": "Sprites/Main/btn_help.png",
+      "sha256": "30028b650b348e7d0f90ea6982f4e552dcfd9cb8c1d59a3bdc077758fd415839",
+      "bundle": "assets/Android/$0qqs7$z0kyy0c5ag557mgb$$-fsrsvvggi__f735b9e55255a596553d.majset",
+      "pathID": -1971695365713321708,
+      "type": "Sprite",
+      "border": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "output": "Sprites/Main/btn6.png",
+      "sha256": "b8f3e5570c8c437528f10e96ba376fb85cb2b3ffaf22e3ff19583872c5a6ec46",
+      "bundle": "assets/Android/$0qqs7$z0kyy0c5ag557mgb$$-flxddf9_6a929144cc5af6abc95f.majset",
+      "pathID": 7352841615983340012,
+      "type": "Sprite",
+      "border": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "output": "Sprites/Necessary/button.png",
+      "sha256": "ed7945f392dc360fd089fb5aa4a57b24dd65f4d297e68275158db199ebdd94ed",
+      "bundle": "assets/Android/$0qqs9103ef2go224jd_88@cpopssddf9_76f51eb84463a63f1e0a.majset",
+      "pathID": 7027046112575313049,
+      "type": "Sprite",
+      "border": [
+        50.0,
+        0.0,
+        50.0,
+        0.0
+      ]
     }
   ],
   "reused": [
@@ -1448,7 +1513,22 @@
     {
       "output": "borders.json",
       "source": "Native Sprite.m_Border",
-      "sha256": "a20a28b451938263952025f81bf216e346440698827186aee9bd53f5cbeb1a5b"
+      "sha256": "aa9e84ad14d27d00f6e674ebb7375b60dd175da251bb77a52122016c7d9625ab"
+    },
+    {
+      "output": "garden-motion.json",
+      "source": "Native friend/title AnimationClip curves and UI_Lobby UIAnimSystem/anim_alpha; page0 timing measured from supplied reference videos",
+      "sha256": "e5f73443952ef0c47a2ac980d8b00ac55b3bf59440df920a04d362119d6e7ee1"
+    },
+    {
+      "output": "create-label-layout.json",
+      "source": "Per-sprite visible alpha bounds of the four APK create-room icon/text pairs",
+      "sha256": "994245361f1f9afa827771bde1d1fec7a3c8bbfa1b265229ae524b45711e6df5"
+    },
+    {
+      "output": "sign-entry-motion.json",
+      "source": "Frame-by-frame tracking of supplied 进入大厅2.mp4, including effective portrait onset at .15s; native UI_Lobby/page0 button pivots; shrink/fade observed in 点击友人场.mp4",
+      "sha256": "60cb726e262ca9fb10ebf28e29098f2dcf45f0a6bcb5054f8f3a3788447ff250"
     }
   ],
   "limitations": [

@@ -1,0 +1,59 @@
+{
+  "version": "0.5.42",
+  "versionCode": 43,
+  "date": "2026-10-16",
+  "packageName": "com.yunjian.riichi.unity",
+  "minSdk": 26,
+  "targetSdk": 32,
+  "abis": [
+    "arm64-v8a",
+    "armeabi-v7a"
+  ],
+  "nodeTests": 118,
+  "unityChecks": 1100,
+  "runtimePlayPassed": true,
+  "lobbyChecks": 472,
+  "waitingRoomChecks": 628,
+  "legacyConnectionLiveFlowPassed": true,
+  "coreAndTableGeometryUnchanged": true,
+  "apk": {
+    "file": "yunjian-riichi-unity-0.5.42.apk",
+    "bytes": 83171647,
+    "sha256": "b0c8ce59eea039a930d1d08764826c3d5f9410af9846973804cc82b419609bf8",
+    "v1": true,
+    "v2": true,
+    "independentV1": true,
+    "certificateSHA256": "d1d8e506c6d3b62e9610dce294c07008057318fa9bafae702fb8b01f35f0dc2f",
+    "alignment16KB": true
+  },
+  "ui": {
+    "media": [
+      {
+        "file": "modal-animation.mp4",
+        "fps": 60,
+        "frames": 84,
+        "seconds": 1.4
+      },
+      {
+        "file": "reentry.mp4",
+        "fps": 30,
+        "frames": 117,
+        "seconds": 3.9
+      },
+      {
+        "file": "countdown.mp4",
+        "fps": 30,
+        "frames": 300,
+        "seconds": 10.0
+      }
+    ],
+    "buttonSeam": {
+      "darkFillPixelsBefore": 13,
+      "darkFillPixelsAfter": 0,
+      "oldImage": "dist/session-flow-review/no-match-1280.png",
+      "newImage": "no-match-1280.png"
+    }
+  },
+  "physicalAndroidVerified": false,
+  "scope": "Current UI and session lifecycle; core rules, AI decision algorithm and approved table geometry retained."
+}

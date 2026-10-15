@@ -60,6 +60,19 @@ namespace YunJian.Riichi
             var client = GetComponent<RiichiClient>(); var table = GetComponent<TableRenderer>();
             client.BeginValidationPractice(File.ReadAllText(Path.Combine(folder, "host.txt")).Trim());
             float deadline = Time.realtimeSinceStartup + 35;
+            while(client.State==null&&Time.realtimeSinceStartup<deadline)yield return null;
+            Require(client.State!=null,"Disposable practice room creation failed");
+            // The dedicated-host setup intentionally probes an empty room (or
+            // closes its own previous test room). These expected replies now
+            // use the shared medium notice instead of an inline status label.
+            // Dismiss only those setup notices; never conceal a different error.
+            if(client.Lobby.OverlayActive){
+                var explanation=(string)typeof(LobbyController).GetField("advancedExplanation",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(client.Lobby);
+                Require(client.Lobby.Modal=="advanced-help"&&(explanation=="尚无房间"||explanation=="牌局已取消，期待下次相遇"),"Unexpected live-practice setup dialog: "+client.Lobby.Modal+" / "+explanation);
+                client.Lobby.CloseModal();
+                while(client.Lobby.OverlayActive&&Time.realtimeSinceStartup<deadline)yield return null;
+                Require(!client.Lobby.OverlayActive,"Expected setup notice failed to close");
+            }
             while ((client.State == null || client.State.phase != "play" || client.Busy || !client.State.options.Any(x => x.kind == "discard")) && Time.realtimeSinceStartup < deadline){
                 // Random opening draws can offer a legal pon/ron before our first
                 // discard. Resolve that test-player response rather than timing out.
@@ -67,14 +80,15 @@ namespace YunJian.Riichi
                 yield return null;
             }
             Require(client.State != null && client.State.phase == "play" && !client.Busy && client.State.options.Any(x => x.kind == "discard"), "Live practice failed to reach the human discard turn");
-            while(!client.OptionsReady)yield return null;
+            while(!client.OptionsReady&&Time.realtimeSinceStartup<deadline)yield return null;
+            Require(client.OptionsReady,"Live practice options never unlocked");
             var state = client.State; int before = state.players[state.you].river.Length;
             yield return null; Physics.SyncTransforms();
             var tile = FindObjectsByType<TileTarget>(FindObjectsSortMode.None).OrderBy(t => t.Index).First();
             Vector3 center = tile.GetComponentInChildren<Collider>().bounds.center;
             Vector3 screen = table.HandCamera.WorldToScreenPoint(center);
             Require(screen.z > 0 && screen.x >= 0 && screen.x <= Screen.width && screen.y >= 0 && screen.y <= Screen.height, "Hand outside camera");
-            Require(Physics.Raycast(table.HandCamera.ScreenPointToRay(screen), out var hit, 100) && hit.collider.GetComponentInParent<TileTarget>() == tile, "Tile cannot be picked by camera ray");
+            ValidateHandPick(table,tile,screen,"live practice");
             client.SelectTile(tile.Index, tile.Action);
             yield return new WaitForSecondsRealtime(1.15f);
             while (client.Busy) yield return null;
@@ -120,6 +134,11 @@ namespace YunJian.Riichi
                     SetGameResolution((int)resolution.x, (int)resolution.y);
                     for (int frame = 0; frame < 8; frame++) yield return null;
                     table.FitCamera(resolution.x / resolution.y); Physics.SyncTransforms();
+                    // A new drawn tile deliberately disables hand colliders for
+                    // 160 ms. Eight rendered frames are not a duration guarantee.
+                    // This loop checks stable picking; animation locks have their
+                    // own targeted tests below and must finish before this probe.
+                    var stable=StableHand(table,"n="+n+" pressure="+pressure+" resolution="+suffix);while(stable.MoveNext())yield return stable.Current;
                     foreach (var t in GameObject.Find("PublicTableState").GetComponentsInChildren<BoxCollider>())
                     {
                         if (t.name != "Standing concealed hand") continue;
@@ -144,7 +163,7 @@ namespace YunJian.Riichi
                             Require(v.z > 0 && v.x > 0 && v.x < 1 && v.y > 0 && v.y < 1, "Hand corner clipped at " + suffix + ": " + v);
                         }
                         var screenPoint = table.HandCamera.WorldToScreenPoint(item.GetComponentInChildren<Collider>().bounds.center);
-                        Require(Physics.Raycast(table.HandCamera.ScreenPointToRay(screenPoint), out var pick, 100) && pick.collider.GetComponentInParent<TileTarget>() == item, "Hand picking failed at " + suffix);
+                        ValidateHandPick(table,item,screenPoint,"n="+n+" pressure="+pressure+" resolution="+suffix);
                     }
                     Capture(table, Path.Combine(folder, prefix + "table-" + n + "-" + suffix + ".png"), (int)resolution.x, (int)resolution.y);
                     if (!pressure && resolution.x == 1280)
@@ -312,6 +331,7 @@ namespace YunJian.Riichi
             riichiFixture.options=new[]{new Choice{id="riichi:"+keep+"_",kind="riichi",tile=keep},new Choice{id="discard:"+keep+"_",kind="discard",tile=keep}};
             client.ShowValidationFixture(riichiFixture);yield return null;
             client.ValidationToggleRiichi(true);yield return null;
+            var riichiStable=StableHand(table,"final riichi dimming");while(riichiStable.MoveNext())yield return riichiStable.Current;
             int dimmed=0;
             for(int i=0;i<table.ValidationHandCount;i++)
             {
@@ -332,6 +352,50 @@ namespace YunJian.Riichi
             Require(fx.PlayedEvents==played+1,"Duplicate state replayed call effect");fx.Reset();fx.Accept(effectFixture);yield return null;
             Require(!fx.IsAnimating,"Reconnect replayed historical effect");
         }
+        static IEnumerator StableHand(TableRenderer table,string context)
+        {
+            var effects=table.GetComponent<TableEffects>();float began=Time.realtimeSinceStartup,deadline=began+10;
+            bool waiting=table.ArrangingHand||table.RevealingDraw||effects.HasPendingActions;
+            while((table.ArrangingHand||table.RevealingDraw||effects.HasPendingActions)&&Time.realtimeSinceStartup<deadline)yield return null;
+            Require(!table.ArrangingHand&&!table.RevealingDraw&&!effects.HasPendingActions,"Hand never reached a stable input state: "+context+" opening="+table.ArrangingHand+" reveal="+table.RevealingDraw+" effects="+effects.HasPendingActions);
+            yield return new WaitForEndOfFrame();Physics.SyncTransforms();
+            if(waiting)Debug.Log("RIICHI stable-hand wait: "+context+" seconds="+(Time.realtimeSinceStartup-began));
+        }
+        static string ObjectPath(Transform item)=>item==null?"<none>":item.parent==null?item.name:ObjectPath(item.parent)+"/"+item.name;
+        static string ColliderInfo(Collider collider)
+        {
+            if(collider==null)return "<none>";var tile=collider.GetComponentInParent<TileTarget>();
+            return ObjectPath(collider.transform)+" layer="+collider.gameObject.layer+" enabled="+collider.enabled+" active="+collider.gameObject.activeInHierarchy+" index="+(tile==null?"<none>":tile.Index.ToString())+" action="+(tile?.Action??"<none>")+" bounds="+collider.bounds;
+        }
+        static void ValidateHandPick(TableRenderer table,TileTarget expected,Vector3 screen,string context)
+        {
+            // Keep the same global query as production input. A layer-limited
+            // query is diagnostic only, so foreign colliders cannot be hidden.
+            var ray=table.HandCamera.ScreenPointToRay(screen);bool hit=Physics.Raycast(ray,out var picked,100);
+            if(hit&&picked.collider.GetComponentInParent<TileTarget>()==expected)return;
+            bool handHit=Physics.Raycast(ray,out var handPicked,100,1<<12);
+            var hits=Physics.RaycastAll(ray,100).OrderBy(h=>h.distance).Select(h=>"distance="+h.distance+" "+ColliderInfo(h.collider));
+            var box=expected.GetComponentInChildren<Collider>();
+            throw new Exception("Hand picking failed: "+context+" expectedIndex="+expected.Index+" expected="+ColliderInfo(box)+" actual="+(hit?ColliderInfo(picked.collider):"<no hit>")+" handLayerOnly="+(handHit?ColliderInfo(handPicked.collider):"<no hit>")+" screen="+screen+" ray="+ray+" opening="+table.ArrangingHand+" reveal="+table.RevealingDraw+" pending="+table.GetComponent<TableEffects>().HasPendingActions+" allHits=["+string.Join("; ",hits)+"]");
+        }
+        static Vector3 SurfaceNormal(Mesh mesh,int submesh,Vector3? facing=null)
+        {
+            var vertices=mesh.vertices;var triangles=mesh.GetTriangles(submesh);var normal=Vector3.zero;
+            for(int i=0;i<triangles.Length;i+=3){
+                var areaNormal=Vector3.Cross(vertices[triangles[i+1]]-vertices[triangles[i]],vertices[triangles[i+2]]-vertices[triangles[i]]);
+                if(facing.HasValue&&Vector3.Dot(areaNormal.normalized,facing.Value)<.999f)continue;
+                normal+=areaNormal;
+            }
+            Require(normal.sqrMagnitude>.000001f,"Tile surface submesh is missing or degenerate: "+submesh);
+            return normal.normalized;
+        }
+        static Bounds ModelWorldBounds(Transform model,Mesh mesh)
+        {
+            var vertices=mesh.vertices;Require(vertices.Length>0,"Tile mesh has no vertices");
+            var bounds=new Bounds(model.TransformPoint(vertices[0]),Vector3.zero);
+            foreach(var vertex in vertices)bounds.Encapsulate(model.TransformPoint(vertex));
+            return bounds;
+        }
         static void ValidatePresentation(TableRenderer table, RoomView view)
         {
             var publicRoot = GameObject.Find("PublicTableState").transform;
@@ -347,14 +411,35 @@ namespace YunJian.Riichi
                 foreach(Transform group in melds)foreach(Transform piece in group)Require(piece.localPosition.z <= -3.5f,"Melds are still inside concealed hand row");
                 if (i == view.you) continue;
                 var seat = publicRoot.Find("Seat " + i);
-                var tiles = seat.Cast<Transform>().Where(t => t.name == "Standing concealed hand").ToArray();
-                Require(tiles.Length == view.players[i].count, "Concealed hand count changed");
+                // Opponent clearance uses a translated row container since
+                // 0.5.39. Count its exact tile children, rather than requiring
+                // the old direct Seat -> tile hierarchy (which always reads 0).
+                var row=seat.Find("Standing hand seat "+i);
+                Require(row!=null&&row.gameObject.activeInHierarchy,"Missing active concealed hand row: seat "+i);
+                var tiles = row.Cast<Transform>().Where(t => t.name == "Standing concealed hand").ToArray();
+                Require(tiles.Length == view.players[i].count, "Concealed hand count changed: n="+view.n+" viewer="+view.you+" seat="+i+" actual="+tiles.Length+" expected="+view.players[i].count+" opening="+table.ArrangingHand);
                 foreach (var t in tiles)
                 {
+                    Require(t.gameObject.activeInHierarchy,"Concealed hand tile is hidden: seat "+i);
                     var box = t.GetComponent<BoxCollider>(); var model = t.Find("Original tile");
                     Require(box.size.y > box.size.x && box.size.y > box.size.z * 1.9f, "Opponent tile is lying flat");
-                    Vector3 inward = Vector3.ProjectOnPlane(-t.position, Vector3.up).normalized;
-                    Require(Vector3.Dot(model.TransformDirection(Vector3.down), inward) > .8f, "Concealed back faces away from table");
+                    // A row slides along its own X axis to clear exposed melds;
+                    // its tiles remain parallel, rather than fanning towards the
+                    // world origin. Derive face/back from the actual APK mesh's
+                    // triangle winding, not an assumed local up/down normal.
+                    var mesh=model.GetComponent<MeshFilter>().sharedMesh;
+                    Require(mesh.subMeshCount==2,"Original concealed tile face/body submeshes missing");
+                    var face=SurfaceNormal(mesh,1);var back=SurfaceNormal(mesh,0,-face);
+                    var normalMatrix=model.worldToLocalMatrix.transpose;
+                    var faceWorld=normalMatrix.MultiplyVector(face).normalized;var backWorld=normalMatrix.MultiplyVector(back).normalized;
+                    var inward=Vector3.ProjectOnPlane(seat.forward,Vector3.up).normalized;
+                    Require(Vector3.Dot(backWorld,inward)>.999f&&Vector3.Dot(faceWorld,-inward)>.999f,"Concealed mesh surfaces face the wrong side: seat "+i);
+                    Require(Mathf.Abs(Vector3.Dot(backWorld,Vector3.up))<.001f,"Concealed mesh face is not upright: seat "+i);
+                    var meshBounds=ModelWorldBounds(model,mesh);
+                    Require(meshBounds.size.y>Mathf.Max(meshBounds.size.x,meshBounds.size.z),"Concealed mesh is lying flat: seat "+i);
+                    Require(Mathf.Abs(meshBounds.min.y)<.001f,"Standing mesh floats or sinks into cloth: seat "+i);
+                    var material=model.GetComponent<MeshRenderer>().sharedMaterials[0];
+                    Require(material.shader.name=="YunJian/OriginalTileBody"&&material.mainTexture==Resources.Load<Texture2D>("Majsoul/OriginalTile/table-back"),"Concealed back no longer uses original back material");
                     Require(Mathf.Abs(box.bounds.min.y) < .001f, "Standing tile floats or sinks into cloth");
                 }
             }
@@ -423,18 +508,33 @@ namespace YunJian.Riichi
             var root=GameObject.Find("PublicTableState").transform;
             for(int seat=0;seat<view.n;seat++)
             {
-                var north=root.Find("Seat "+seat+"/Extracted North");
+                var axis=root.Find("Seat "+seat);var north=axis.Find("Extracted North");
+                Require(north!=null&&north.gameObject.activeInHierarchy,"North row is missing or hidden: seat "+seat);
                 Require(north.childCount==view.players[seat].nuki,"North tile count changed");
                 int physical=NativeReviewLayout.Physical(table.RelativeSeat(seat),view.n);
+                var anchor=NativeReviewLayout.NorthLocal(physical,0,table.SeatAngle(seat));
                 for(int index=0;index<north.childCount;index++)
                 {
-                    var tile=north.GetChild(index);
-                    var inward=Vector3.ProjectOnPlane(-tile.position,Vector3.up).normalized;
-                    Require(Vector3.Dot(tile.forward,inward)>.45f,"Extracted North glyph faces away from table");
-                    // 0.5.25 replaced the fixed -2.95 row with the scene_mj babei_n anchors,
-                    // one 0.0355-unit span apart, facing the owner like a discard.
-                    var expected=NativeReviewLayout.NorthLocal(physical,index,table.SeatAngle(seat));
-                    Require(Vector3.Distance(tile.localPosition,expected)<.001f && Mathf.Abs(Mathf.DeltaAngle(tile.localRotation.eulerAngles.y,0))<.01f,"North tiles are not on the APK seat anchor");
+                    var tile=north.GetChild(index);string context="n="+view.n+" viewer="+view.you+" seat="+seat+" index="+index;
+                    Require(tile.gameObject.activeInHierarchy,"North tile is hidden at rest: "+context);
+                    Require(Vector3.Dot(tile.forward,axis.forward)>.999f,"Extracted North glyph faces the wrong seat: "+context);
+                    // The first source babei anchor remains exact. 0.5.35 made
+                    // subsequent tiles adjacent; 0.5.37 fixed their world width
+                    // at .35. The old source span (.0355 * SourceUnits) would
+                    // introduce a .0464 gap and is no longer the row pitch.
+                    if(index==0)Require(Vector3.Distance(tile.localPosition,anchor)<.001f,"First North lost the original seat anchor: "+context);
+                    Require(Quaternion.Angle(tile.localRotation,Quaternion.identity)<.01f,"North tile gained a local rotation: "+context);
+                    float width=TableTileGeometry.WorldWidth(tile);
+                    Require(Mathf.Abs(width-TableTileGeometry.Width)<.0001f,"North tile world width changed: "+context);
+                    var model=tile.Find("Original tile");var mesh=model.GetComponent<MeshFilter>().sharedMesh;
+                    var face=model.worldToLocalMatrix.transpose.MultiplyVector(SurfaceNormal(mesh,1)).normalized;
+                    Require(Vector3.Dot(face,Vector3.up)>.999f,"North face is no longer flat and visible: "+context);
+                    if(index>0){
+                        var previous=north.GetChild(index-1);var delta=tile.position-previous.position;
+                        float previousWidth=TableTileGeometry.WorldWidth(previous),gap=delta.magnitude-(width+previousWidth)/2;
+                        Require(Mathf.Abs(gap-.001f)<.0001f,"North tiles lost their 1 mm contact gap: "+context+" gap="+gap);
+                        Require(Vector3.Dot(delta.normalized,-axis.right)>.999f,"North row no longer follows the player's left direction: "+context);
+                    }
                 }
             }
         }

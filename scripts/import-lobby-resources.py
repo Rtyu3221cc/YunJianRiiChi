@@ -43,11 +43,11 @@ def obj(path,typ=None):
  return next(o for o in f.objects.values()if (not typ or o.type.name==typ)and o.peek_name().lower()==Path(path).stem.lower())
 groups={'/ui/lobby/main/pic/':'Main','/ui/lobby/extend/friend_room/pic/':'Room','/ui/lobby/extend/create_room/pic/':'Create','/ui/lobby/extend/number_input/pic/':'Number','/ui/common/main/pic/':'Common','/ui/necessary/pic/':'Necessary','/ui/common/extend/rules_room/pic/':'Rules','/extendres/rules_room/chs/':'RulePages'}
 needed={
- 'Main':set('btn_yibanchang btn_dajiangsai btn_yourenchang bg_yourenchang bg_back0 bg_2 bg_6 selfinfo title_bg character_bg img_return1_bg img_return1 img_return2 frame_gold btn_set btn_priscreen btn_roleset btn_rule_desc room_rule_btn btn_yi btn_close tips ready num num_pressed d_time btn0 btn1 btn2 btn4'.split()),
+ 'Main':set('btn_yibanchang btn_dajiangsai btn_yourenchang bg_yourenchang bg_back0 bg_2 bg_6 selfinfo title_bg character_bg img_return1_bg img_return1 img_return2 frame_gold btn_set btn_priscreen btn_help icon_act denglong btn_roleset btn_rule_desc room_rule_btn btn_yi btn_close tips ready num num_pressed d_time btn0 btn1 btn2 btn4 btn6'.split()),
  'Room':set('roomowner room_player_card room_invite_btn room_info_line1 room_info_line2 room_info_bg room_info_advance_bg room_info_small_bg room_number_bg room_share_btn room_start_btn room_gray_btn room_start_btn_text room_prepare_btn room_prepare_text room_cancel_btn room_cancel_btn_text'.split()),
  'Create':set('room_create_match_text room_create_match_icon room_create_jushu_text room_create_jushu_icon room_create_time_text room_create_time_icon room_create_advance_text room_create_advance_icon room_rule_option_select room_rule_option_unselect room_rule_advance_line room_rule_advance_number_bg room_create_start_point_text room_create_point_text room_create_jifei_text room_create_hongbaopai_text room_create_guyi_text room_create_shiduan_text room_create_fanfu_text room_create_tip_text'.split()),
  'Common':set('bg_textinput pop_bound namebg what inputbox sanma_fish'.split()),
- 'Necessary':set('pop_bg btn_close match_scroll_bg match_scroll_btn button_light bg frame decorate_left decorate_right bbg star starbg'.split()),
+ 'Necessary':set('pop_bg btn_close match_scroll_bg match_scroll_btn button button_light bg frame decorate_left decorate_right bbg star starbg'.split()),
  'Number':{'back'},
  'Rules':set('room_rule_tab_small_select room_rule_tab_small_unselect room_rule_bg room_rule_bg_small room_rule_tab_select room_rule_tab_unselect'.split()),
  'RulePages':{'siren','sanren'}
@@ -155,6 +155,32 @@ for file in (OUT/'Evidence').glob('*.json'):
    tracks.append(dict(path=binding['path'],attribute=binding['attribute'],part=part,values=values));index+=1
  animations.append(dict(name=d['m_Name'].lower(),duration=duration,tracks=tracks))
 (OUT/'motion.json').write_text(json.dumps(dict(animations=animations),indent=2)+'\n',encoding='utf8')
+# The main page also uses prefab tweens: replay them only when the whole
+# lobby reopens, not while switching between its category subpages.
+tweens=[];portrait=None
+for go in subtree(obj('myassets/ui/lobby/main/prefab_output/ui_lobby.prefab','GameObject')):
+ for cp in go.read_typetree()['m_Component']:
+  component=resolve(go.assets_file,cp['component'])
+  if component.type.name!='MonoBehaviour':continue
+  data=component.read_typetree();script=resolve(component.assets_file,data['m_Script']);kind=script.read_typetree()['m_ClassName']
+  if kind=='UIAnimSystem':tweens.append(dict(node=go.peek_name(),anims=data['anims']))
+  if kind=='anim_alpha':portrait=data
+assert portrait is not None
+garden=dict(sampleRate=60,animations=[a for a in animations if a['name'].startswith(('friend_room','lobby_title'))],tweens=tweens,portrait=portrait,signs=dict(duration=.25,delay=.3,stagger=.13,fromX=300,source='Procedural page0 timing calibrated from the supplied original entrance/return videos'))
+(OUT/'garden-motion.json').write_text(json.dumps(garden,ensure_ascii=False,indent=2,default=str)+'\n',encoding='utf8')
+from PIL import Image
+label_layout=[]
+for key in ['match','jushu','time','advance']:
+ row=dict(key=key)
+ for part in ['icon','text']:
+  image=Image.open(OUT/f'Sprites/Create/room_create_{key}_{part}.png').convert('RGBA');alpha=image.getchannel('A').point(lambda value:255 if value>=32 else 0);box=alpha.getbbox();w,h=image.size
+  row.update({part+'Width':w,part+'Height':h,part+'CenterX':(box[0]+box[2])/2/w,part+'CenterY':(box[1]+box[3])/2/h})
+ label_layout.append(row)
+(OUT/'create-label-layout.json').write_text(json.dumps(dict(labels=label_layout),ensure_ascii=False,indent=2)+'\n',encoding='utf8')
 (OUT/'borders.json').write_text(json.dumps(dict(borders=[dict(key=r['output'][:-4],values=r['border'])for r in records if 'border'in r]),indent=2)+'\n',encoding='utf8')
 (OUT/'provenance.json').write_text(json.dumps(dict(apk='Majsoul_4.0.16_MC.apk',assets=records,reused=[dict(resource='Majsoul/Font/game',sha256=body_hash,source='Exact Font referenced by UI_FriendRoom/label_name')],derived=[dict(output='motion.json',source='Evidence AnimationClip streamed cubic coefficients',sha256=hashlib.sha256((OUT/'motion.json').read_bytes()).hexdigest()),dict(output='borders.json',source='Native Sprite.m_Border',sha256=hashlib.sha256((OUT/'borders.json').read_bytes()).hexdigest())],limitations=['Encrypted Lua is evidence, not recovered source. Native sprites, fonts, audio and AnimationClip data are extracted exactly. Offline flow is implemented by the project.']),ensure_ascii=False,indent=2)+'\n',encoding='utf8')
+provenance=json.loads((OUT/'provenance.json').read_text(encoding='utf8'))
+for name,source in [('garden-motion.json','Native friend/title curves and UI_Lobby UIAnimSystem/anim_alpha; page0 timing calibrated from supplied videos'),('create-label-layout.json','Per-sprite visible alpha bounds of APK create-room icon/text pairs')]:provenance['derived'].append(dict(output=name,source=source,sha256=hashlib.sha256((OUT/name).read_bytes()).hexdigest()))
+if (OUT/'sign-entry-motion.json').exists():provenance['derived'].append(dict(output='sign-entry-motion.json',source='Per-sign position and opacity tracks measured from supplied original entrance video; starts on left, rebounds past destination',sha256=hashlib.sha256((OUT/'sign-entry-motion.json').read_bytes()).hexdigest()))
+(OUT/'provenance.json').write_text(json.dumps(provenance,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
 print('PASS',len(records),'APK lobby resources')

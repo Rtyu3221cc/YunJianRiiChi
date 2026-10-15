@@ -7,7 +7,7 @@ from zipfile import ZipFile
 from importlib import import_module
 
 root = Path(__file__).resolve().parent.parent
-apk = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else root / 'unity/Builds/yunjian-riichi-unity-0.5.41.apk'
+apk = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else root / 'unity/Builds/yunjian-riichi-unity-0.5.42.apk'
 assets = root / 'app/src/main/assets'
 signature = import_module('verify-apk-signature').verify_signature(apk)
 with ZipFile(apk) as archive:
@@ -56,11 +56,19 @@ with ZipFile(apk) as archive:
     source=root/'unity/Assets/Resources/Majsoul/Indicators/source.json'
     guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text()).group(1)
     assert source.read_bytes() in archive.read('assets/bin/Data/'+guid), 'Stale native indicator source manifest'
-    for source in (root / 'unity/Assets/Resources/Majsoul/Settlement').iterdir():
+    for source in (root / 'unity/Assets/Resources/Majsoul/Settlement').rglob('*'):
         if source.suffix not in ['.png', '.ttf', '.json']: continue
         guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text()).group(1)
         assert 'assets/bin/Data/'+guid in names, 'Missing native settlement resource: '+source.name
         if source.suffix=='.json':assert source.read_bytes() in archive.read('assets/bin/Data/'+guid), 'Stale native settlement source manifest'
+    metadata=archive.read('assets/bin/Data/Managed/Metadata/global-metadata.dat')
+    for cls in [b'NativeUiChrome',b'LobbyController',b'LanRoomDiscovery',b'SavedSession']:
+        assert cls in metadata,'Missing session/UI runtime class: '+repr(cls)
+    for name in ['ob_ting_off_btn','ob_ting_on_btn','button_text_bottom_s']:
+        source=root/'unity/Assets/Resources/Majsoul/UI'/(name+'.png')
+        guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text()).group(1)
+        assert 'assets/bin/Data/'+guid in names,'Missing AI takeover HUD sprite: '+name
+    assert any(b'YUNJIAN-ROOM/1 ' in block for block in dex),'Phone-host room discovery protocol absent from DEX'
     for source in (root / 'unity/Assets/Resources/Majsoul/Audio').iterdir():
         if source.suffix not in ['.mp3','.wav','.json']:continue
         guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text()).group(1)
@@ -118,7 +126,7 @@ with ZipFile(apk) as archive:
 dist = root / 'dist'
 output = dist / apk.name
 output.write_bytes(apk.read_bytes())
-checksum = 'SHA256-unity-0.5.41.txt' if len(sys.argv) == 1 else 'SHA256-' + output.stem + '.txt'
+checksum = 'SHA256-unity-0.5.42.txt' if len(sys.argv) == 1 else 'SHA256-' + output.stem + '.txt'
 (dist / checksum).write_text(hashlib.sha256(output.read_bytes()).hexdigest().upper() + '  ' + output.name + '\n', encoding='utf8')
 print('PASS: APK ZIP integrity, current offline assets, phone host/JNI, ARM64 + ARMv7, original tile atlases, exact hand animation bytes, action textures, original turn-light assets and compiled shaders.')
 print(output.name, output.stat().st_size, hashlib.sha256(output.read_bytes()).hexdigest())

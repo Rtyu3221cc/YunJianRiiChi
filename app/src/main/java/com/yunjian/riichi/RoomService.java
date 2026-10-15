@@ -18,6 +18,7 @@ public class RoomService extends Service {
  public static volatile String error;
  private WebView engine;
  private ServerSocket server;
+ private DatagramSocket discovery;
  private final Handler main=new Handler(Looper.getMainLooper());
  private final ExecutorService workers=new ThreadPoolExecutor(2,8,30,TimeUnit.SECONDS,new ArrayBlockingQueue<Runnable>(32));
  private PowerManager.WakeLock wake;
@@ -45,7 +46,22 @@ public class RoomService extends Service {
   engine.setWebViewClient(new WebViewClient(){@Override public void onPageFinished(WebView v,String url){if(started)return;v.evaluateJavascript("window.engineReady===true",value->{if("true".equals(value)){started=true;startServer();main.postDelayed(aiTick,850);}else{error="规则引擎启动失败，请确认 Android System WebView 已更新。";}});}});
   engine.loadUrl("file:///android_asset/engine.html");
  }
- private void startServer(){new Thread(()->{try{server=new ServerSocket();server.setReuseAddress(true);server.bind(new InetSocketAddress("0.0.0.0",8765));ready=true;while(!server.isClosed()){Socket c=server.accept();try{workers.execute(()->serve(c));}catch(RejectedExecutionException e){c.close();}}}catch(Exception e){if(started)error=e.toString();ready=false;}},"riichi-http").start();}
+ private void startServer(){new Thread(()->{try{server=new ServerSocket();server.setReuseAddress(true);server.bind(new InetSocketAddress("0.0.0.0",8765));ready=true;startDiscovery();while(!server.isClosed()){Socket c=server.accept();try{workers.execute(()->serve(c));}catch(RejectedExecutionException e){c.close();}}}catch(Exception e){if(started)error=e.toString();ready=false;}},"riichi-http").start();}
+ private void startDiscovery(){new Thread(()->{
+  try{discovery=new DatagramSocket(8766);byte[] bytes=new byte[96];
+   while(started&&!discovery.isClosed()){
+    DatagramPacket packet=new DatagramPacket(bytes,bytes.length);discovery.receive(packet);
+    String query=new String(packet.getData(),packet.getOffset(),packet.getLength(),StandardCharsets.UTF_8);
+    if(!query.matches("YUNJIAN-ROOM/1 [0-9]{6}"))continue;
+    try{
+     // A PIN-only query reveals neither seat credentials nor private hands.
+     JSONObject reply=new JSONObject(dispatch(new JSONObject().put("op","discover").put("pin",query.substring(15)).toString()));
+     if(!reply.optBoolean("ok"))continue;
+     byte[] answer=(query+" OK").getBytes(StandardCharsets.UTF_8);discovery.send(new DatagramPacket(answer,answer.length,packet.getAddress(),packet.getPort()));
+    }catch(Exception ignored){}
+   }
+  }catch(IOException ignored){/* Manual LAN address remains available if UDP is unavailable. */}
+ },"riichi-discovery").start();}
  private byte[] read(InputStream in,int n)throws IOException{byte[] b=new byte[n];int p=0;while(p<n){int k=in.read(b,p,n-p);if(k<0)throw new EOFException();p+=k;}return b;}
  private String line(InputStream in)throws IOException{ByteArrayOutputStream b=new ByteArrayOutputStream();int c;while((c=in.read())!=-1){if(c==10)break;if(c!=13)b.write(c);if(b.size()>8192)throw new IOException("header too long");}return b.toString("UTF-8");}
  private byte[] asset(String p)throws IOException{try(InputStream in=getAssets().open(p)){ByteArrayOutputStream out=new ByteArrayOutputStream();byte[] b=new byte[8192];int n;while((n=in.read(b))>0)out.write(b,0,n);return out.toByteArray();}}
@@ -84,5 +100,5 @@ public class RoomService extends Service {
  }catch(Exception e){/* disconnected or malformed requests never stop the table */}}
  @Override public int onStartCommand(Intent intent,int flags,int id){return START_STICKY;}
  @Override public IBinder onBind(Intent i){return null;}
- @Override public void onDestroy(){started=false;ready=false;main.removeCallbacksAndMessages(null);try{if(server!=null)server.close();}catch(Exception ignored){}workers.shutdownNow();if(engine!=null)engine.destroy();if(wake!=null&&wake.isHeld())wake.release();super.onDestroy();}
+ @Override public void onDestroy(){started=false;ready=false;main.removeCallbacksAndMessages(null);try{if(server!=null)server.close();}catch(Exception ignored){}if(discovery!=null)discovery.close();workers.shutdownNow();if(engine!=null)engine.destroy();if(wake!=null&&wake.isHeld())wake.release();super.onDestroy();}
 }

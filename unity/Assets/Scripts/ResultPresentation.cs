@@ -17,6 +17,10 @@ namespace YunJian.Riichi
         string key; int winner; bool scores,drawStage,finalPage; float started, skipped;
         public bool ShowingFinal=>finalPage;
         GUIStyle text, number, roundText; Font font;
+        [Serializable] sealed class FinalItem {public string name;public float[] rect;public float fontSize;}
+        [Serializable] sealed class FinalCard {public float[] rect;public float scale;public FinalItem[] items;}
+        [Serializable] sealed class FinalLayout {public FinalCard[] cards;}
+        FinalLayout finalLayout;
         static readonly Color gold=new Color(1,.76f,.3f), white=new Color(.93f,.94f,.96f);
         public bool ShowingScores => scores;
         public bool ShowingDraw => drawStage;
@@ -28,7 +32,7 @@ namespace YunJian.Riichi
         public void Reset(){limitFire.Dispose();key=null;winner=0;scores=false;drawStage=false;finalPage=false;skipped=0;Freeze=false;}
         public void Observe(RoomView v)
         {
-            string next=v.audioRoom+":"+v.round+":"+v.honba+":"+v.result?.title+":"+string.Join(",",v.result?.delta??new int[0]);
+            string next=v.audioRoom+":"+v.matchSeq+":"+v.handSeq+":"+v.round+":"+v.honba+":"+v.result?.title+":"+string.Join(",",v.result?.delta??new int[0]);
             if(next==key)return;
             limitFire.Dispose();key=next;winner=0;drawStage=v.result!=null && v.result.draw && ((!v.result.abort && (v.result.drawDetails?.Length??0)>0) || v.result.title=="九种九牌");
             finalPage=false;scores=!drawStage && (v.result?.details==null || v.result.details.Length==0);started=Time.unscaledTime;skipped=0;
@@ -303,26 +307,55 @@ namespace YunJian.Riichi
             }
 
         }
+        static Rect FinalRect(FinalCard card,string name){var r=card.items.First(i=>i.name==name).rect;return new Rect(r[0],r[1],r[2],r[3]);}
+        void FinalValue(FinalCard card,string name,string value,Color color){
+            var item=card.items.First(i=>i.name==name);var r=FinalRect(card,name);
+            var style=new GUIStyle(number){fontSize=Mathf.RoundToInt(item.fontSize),alignment=TextAnchor.UpperLeft,normal={textColor=color},padding=new RectOffset()};
+            GUI.Label(r,value,style);
+        }
         void Final(RoomView v,TableRenderer table,TableEffects effects){
-            roundText.normal.textColor=white;GUI.Label(new Rect(485,28,310,58),"终局",roundText);
+            var heading=new GUIStyle(roundText){fontSize=36,normal={textColor=white},padding=new RectOffset()};
+            GUI.Label(new Rect(470.7f,23.333f,313.274f,69.333f),"终局",heading);
             var portrait=effects.Art("yiji-full");if(portrait!=null)GUI.DrawTexture(new Rect(-15,80,600,755),portrait,ScaleMode.ScaleToFit);
+            if(finalLayout==null)finalLayout=JsonUtility.FromJson<FinalLayout>(Resources.Load<TextAsset>("Majsoul/Settlement/Final/gameend-layout").text);
             var seats=Enumerable.Range(0,v.n).OrderBy(i=>Rank(v,i,false)).ToArray();
             for(int rank=0;rank<seats.Length;rank++){
                 int seat=seats[rank];float at=.4f+rank*.22f;float entrance=Mathf.Clamp01((Age-at)/.22f);if(entrance<=0)continue;
-                float x=445+rank*62+(1-entrance)*650,y=128+rank*(v.n==4?135:164),w=rank==0?720:625,h=rank==0?161:141;
-                // Native frame proportions, avatar viewport and placeholder rewards.
-                var bg=Art(rank==0?"bg_end0":"bg_end123");if(bg!=null)GUI.DrawTexture(new Rect(x,y,w,h),bg);
-                Image("s_"+(rank+1),new Rect(x+24,y+17,37,h*.67f),ScaleMode.ScaleToFit);Image("s_"+(rank+1)+"_"+(rank+1),new Rect(x+48,y+h*.62f,26,29),ScaleMode.ScaleToFit);
-                float headSize=h*.58f;var head=new Rect(x+91,y+15,headSize,headSize);Image("bg_head1",head);var face=table.Portrait(v.players[seat]);if(face!=null)GUI.DrawTexture(new Rect(head.x+3,head.y+3,head.width-6,head.height-6),face,ScaleMode.ScaleToFit);
-                float bodyX=head.xMax+18,rewardsX=x+w*.835f;
-                Label(new Rect(bodyX,y+9,rewardsX-bodyX-50,33),v.players[seat].name,rank==0?23:20,white,TextAnchor.MiddleLeft);
-                float pointHeight=h*.34f,pointWidth=Mathf.Min(w*.30f,rewardsX-bodyX-100);
-                Glyphs(new Rect(bodyX,y+h*.40f,pointWidth,pointHeight+6),Digits(v.players[seat].score,"ww_"),pointHeight,TextAnchor.MiddleLeft);
-                Label(new Rect(bodyX+pointWidth+7,y+h*.43f,90,38),"+0.0",rank==0?27:23,new Color(.28f,.76f,.45f),TextAnchor.MiddleLeft);
-                Image("gold0",new Rect(rewardsX,y+20,28,28),ScaleMode.ScaleToFit);Image("PT",new Rect(rewardsX+10,y+61,27,27),ScaleMode.ScaleToFit);
-                Label(new Rect(rewardsX+33,y+16,64,35),"+0",22,new Color(.28f,.76f,.45f),TextAnchor.MiddleLeft);Label(new Rect(rewardsX+43,y+57,54,35),"+0",22,new Color(.28f,.76f,.45f),TextAnchor.MiddleLeft);
-                if(seat==v.you)Image("myself",new Rect(rewardsX-66,y+9,53,27),ScaleMode.ScaleToFit);
+                // Keep every GameEnd child in the APK card's own coordinate space.
+                // The independent rank digit, 位, rewards and self tag are not
+                // inferred from the slanted frame's overall bounding box.
+                var card=finalLayout.cards[rank];var matrix=GUI.matrix;
+                GUI.matrix*=Matrix4x4.TRS(new Vector3(card.rect[0]+(1-entrance)*650,card.rect[1],0),Quaternion.identity,Vector3.one*card.scale);
+                Image(rank==0?"bg_end0":"bg_end123",new Rect(0,0,card.rect[2],card.rect[3]));
+                Image("bg_end",FinalRect(card,"rank"));
+                Image("Final/s_"+(rank+1),FinalRect(card,"rank/node"));
+                Image("Final/s_"+(rank+1)+"_"+(rank+1),FinalRect(card,"rank/ASPECIALTEXTNODE!@#1"));
+                var head=FinalRect(card,"head/node");var face=table.Portrait(v.players[seat]);
+                Image("bg_head1",FinalRect(card,"head/bg"));if(face!=null)GUI.DrawTexture(head,face,ScaleMode.ScaleToFit);
+                var name=FinalRect(card,"container_name/label_name");var self=FinalRect(card,"myself");
+                name.width=(seat==v.you?self.x:FinalRect(card,"img_g0").x)-name.x-12;
+                var nameItem=card.items.First(i=>i.name=="container_name/label_name");int nameSize=Mathf.RoundToInt(nameItem.fontSize);
+                var nameStyle=new GUIStyle(text){fontSize=nameSize,alignment=TextAnchor.MiddleLeft};
+                while(nameSize>24 && nameStyle.CalcSize(new GUIContent(v.players[seat].name)).x>name.width)nameStyle.fontSize=--nameSize;
+                Label(name,v.players[seat].name,nameSize,white,TextAnchor.MiddleLeft);
+                var points=FinalRect(card,"container_score");Glyphs(points,Digits(v.players[seat].score,"ww_"),points.height,TextAnchor.MiddleLeft);
+                var rewardColor=new Color(.28f,.76f,.45f);
+                FinalValue(card,"val","+0.0",rewardColor);
+                Image("gold0",FinalRect(card,"img_g0"));Image("PT",FinalRect(card,"img_g1"));
+                FinalValue(card,"img_g0/val","+0",rewardColor);FinalValue(card,"img_g1/val","+0",rewardColor);
+                if(seat==v.you)Image("myself",self);
+                GUI.matrix=matrix;
             }
+        }
+        public static Rect FinalHomeRect=>new Rect(886.2606f,630.8333f,175.4927f,58.3333f);
+        public static Rect FinalNextRect=>new Rect(1075.194f,630.8333f,175.4927f,58.3333f);
+        bool FinalButton(Rect r,string value,bool primary,Func<Rect,string,bool> button){
+            NativeUiChrome.Button(r,primary);
+            var style=new GUIStyle(roundText){fontSize=28,normal={textColor=primary?new Color(.42745f,.18039f,.22745f):gold},padding=new RectOffset()};
+            // UI_GameEnd btn_next/node: 240 x 62 at (-.4, 33.5),
+            // independently anchored inside its 263.239 x 87.5 button.
+            GUI.Label(new Rect(r.center.x-80.2667f,r.y+6.8333f,160,41.3333f),value,style);
+            return button(r,value);
         }
         bool NativeButton(Rect r,string value,Func<Rect,string,bool> button)
         {
@@ -340,10 +373,10 @@ namespace YunJian.Riichi
                 roundText=new GUIStyle(text){font=Resources.Load<Font>("Majsoul/Settlement/round-font-chs"),fontSize=31,alignment=TextAnchor.MiddleCenter};}
             if(finalPage){
                 Final(v,table,effects);
-                if(!v.players[v.you].ready && NativeButton(new Rect(1125,648,128,50),"确认",button))return Action.Ready;
-                if(v.players[v.you].ready)Waiting();
-                if(v.host && v.players.All(p=>p.ready) && NativeButton(new Rect(1125,648,128,50),"再来一场",button))return Action.Next;
-                if(NativeButton(new Rect(28,650,142,49),"返回大厅",button))return Action.Home;
+                int remaining=Mathf.Max(0,9-Mathf.FloorToInt(Age));
+                if(!v.players[v.you].ready){bool clicked=FinalButton(FinalNextRect,"下一局("+remaining+")",true,button);if(clicked||remaining==0&&GUI.enabled)return Action.Ready;}
+                if(v.players[v.you].ready)FinalButton(FinalNextRect,"等待牌友",true,(r,caption)=>false);
+                if(FinalButton(FinalHomeRect,"返回大厅",false,button))return Action.Home;
             }
             else if(drawStage){DrawRound(v,table);if(NativeButton(new Rect(1125,648,128,50),Age<.7f?"跳过":"确认",button))Advance(v);}
             else if(!scores){Details(v,table,effects);if(NativeButton(new Rect(1125,648,128,50),Age<RevealEnd(v.result.details[winner])?"跳过":"确认",button))Advance(v);}

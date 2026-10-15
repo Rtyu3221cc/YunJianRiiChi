@@ -10,13 +10,47 @@ function tiles(h){const a=[];for(const s of ['m','p','s','z'])for(let n=1;n<h._b
 function avatar(value){check(typeof value==='string'&&value.length<=12288&&(value===''||/^data:image\/jpeg;base64,\/9j\/[A-Za-z0-9+/]*={0,2}$/.test(value)),'头像格式或大小不正确');return value}
 function player(name,token){return {name,avatar:"",token:token||randomHex(18),recovery:randomHex(6),score:0,hand:'',river:[],riichi:0,ippatsu:false,nuki:0,temp:false,permanent:false,kans:0,ready:false,requests:[]}}
 class Room{
- constructor(host,save,snapshot){this.host=host;this.save=save||(()=>{});this.s=snapshot?JSON.parse(snapshot):null;this.seen={};this._aiNow=()=>Date.now();this._aiPlan=null;}
+ constructor(host,save,snapshot){this.host=host;this.save=save||(()=>{});this.s=snapshot?JSON.parse(snapshot):null;this.seen={};this._bootAt=Date.now();this._waiting={};this._aiNow=()=>Date.now();this._aiPlan=null;}
+ controlled(p){return !!(p.bot||p.auto)}
+ presence(now){
+  const s=this.s;let changed=false;
+  for(let i=0;i<s.players.length;i++){
+   const p=s.players[i];if(p.bot)continue;
+   if(!p.auto&&(p.away||now-(this.seen[p.token]||this._bootAt)>=12000)){p.auto=true;p.autoReason='offline';changed=true;}
+   const waiting=s.phase==='play'?s.turn===i:s.phase==='result'?!p.ready:s.pending.options[i]&&!s.pending.replies[i];
+   const key=s.phase==='play'?'play:'+s.handSeq+':'+s.audioSeq+':'+s.turn:s.phase+':'+s.handSeq+':'+s.audioSeq;
+   if(!waiting||p.auto){delete this._waiting[p.token];continue;}
+   const wait=this._waiting[p.token];if(!wait||wait.key!==key)this._waiting[p.token]={key,since:Math.max(now,s.matchOpeningUntil||0,s.roundOpeningUntil||0)};
+   else if(now-wait.since>=180000){p.auto=true;p.autoReason='timeout';changed=true;}
+  }
+  return changed;
+ }
+ advanceResult(){
+  const s=this.s;
+  if(s.result.matchOver){s.matchSeq=(s.matchSeq||0)+1;s.matchStartedAt=Date.now();s.matchOpeningUntil=s.matchStartedAt+6000;s.round=0;s.dealer=s.initialDealer;s.honba=0;s.sticks=0;s.players.forEach(p=>p.score=s.n===3?35000:25000);}
+  else {s.honba=s.result.draw||s.result.repeat?s.honba+1:0;if(!s.result.repeat){s.dealer=(s.dealer+1)%s.n;s.round++;}}
+  this.newHand();
+ }
+ advanceIfReady(){
+  const s=this.s;if(s?.phase!=='result')return false;
+  // A room with no connected humans pauses at settlement instead of spinning
+  // through unattended matches forever. A returning human can continue it.
+  if(!s.players.every(p=>p.ready||this.controlled(p))||!s.players.some(p=>!p.bot&&!p.away&&Date.now()-(this.seen[p.token]||0)<12000))return false;
+  this.advanceResult();return true;
+ }
  sound(kind,seat,tile,riichi,nuki,win,meld){const s=this.s;s.audioSeq=(s.audioSeq||0)+1;s.audioEvents=(s.audioEvents||[]).concat({id:s.audioSeq,kind,seat,tile:tile||null,riichi:!!riichi,...(kind==='discard'?{riverIndex:s.players[seat].river.length}:{}),...(nuki?{nuki}:{}),...(win?{from:win.from,winSource:win.kind}:{}),...(meld?{meld:meld.value,meldKind:meld.kind,meldIndex:meld.index,from:meld.from}:{}),at:Date.now()}).slice(-24);}
  addBot(){const s=this.s;check(s.players.length<s.n,'座位已满');let n=1;while(s.players.some(p=>p.name==='AI · '+n))n++;const p=player('AI · '+n);p.bot=true;s.players.push(p);}
  tick(){
-  const s=this.s;if(!s||!g.RiichiAI||!['play','reaction'].includes(s.phase)||Date.now()<Math.max(s.matchOpeningUntil||0,s.roundOpeningUntil||0))return {ok:true,idle:true};
-  const i=s.phase==='play'?s.turn:s.players.findIndex((p,j)=>p.bot&&this.options(j).length);
-  if(i<0||!s.players[i].bot)return {ok:true,idle:true};
+  const s=this.s;if(!s||!g.RiichiAI||!['play','reaction','result'].includes(s.phase))return {ok:true,idle:true};
+  const changed=this.presence(Date.now());
+  if(s.phase==='result'){
+   if(this.advanceIfReady()||changed){s.version++;this.save(JSON.stringify(s));}
+   return {ok:true,idle:true};
+  }
+  if(changed){s.version++;this.save(JSON.stringify(s));}
+  if(Date.now()<Math.max(s.matchOpeningUntil||0,s.roundOpeningUntil||0))return {ok:true,idle:true};
+  const i=s.phase==='play'?s.turn:s.players.findIndex((p,j)=>this.controlled(p)&&this.options(j).length);
+  if(i<0||!this.controlled(s.players[i]))return {ok:true,idle:true};
   const key=[s.audioRoom,s.version,s.phase,i,s.audioSeq].join(':'),now=this._aiNow();
   if(this._aiPlan?.key!==key)this._aiPlan={key,until:now+500+Math.floor(Math.random()*301)};
   if(now<this._aiPlan.until)return {ok:true,idle:true,waitMs:this._aiPlan.until-now};
@@ -227,23 +261,26 @@ class Room{
   if(i<0)return {phase:'join',n:s.n,count:s.players.length,started:s.phase!=='lobby'};
   const h=s.players[i].hand?this.h(i):null,options=this.options(i);
   const hints=['play','reaction'].includes(s.phase)?this.hints(i,h,options):{waitDetails:[],discardHints:[],furiten:false};
-  return {phase:s.phase,version:s.version,you:i,host:i===0,n:s.n,pin:s.pin,round:s.round,rounds:s.rounds,dealer:s.dealer,honba:s.honba,sticks:s.sticks,turn:s.turn,
+  return {phase:s.phase,version:s.version,you:i,host:i===0,n:s.n,pin:s.pin,round:s.round,rounds:s.rounds,dealer:s.dealer,honba:s.honba,sticks:s.sticks,turn:s.turn,lobby:{category:s.lobbyCategory||'friend',red:s.red!==false,managed:!!s.lobbyFlow},
    audioRoom:s.audioRoom||s.pin,audioSeq:s.audioSeq||0,audioEvents:s.audioEvents||[],remaining:s.wall?s.wall.length:0,indicators:s.indicators?s.indicators.slice(0,1+this.totalKans()):[],last:s.last,
-   players:s.players.map((p,j)=>({name:p.name,avatar:p.avatar||"",bot:!!p.bot,score:p.score,wind:this.wind(j),riichi:p.riichi,nuki:p.nuki,river:p.river,melds:p.hand?this.h(j)._fulou:[],count:p.hand?tiles(this.h(j)).length:0,ready:p.ready,online:p.bot||Date.now()-(this.seen[p.token]||0)<12000})),
+   players:s.players.map((p,j)=>({name:p.name,avatar:p.avatar||"",bot:!!p.bot,auto:!!p.auto,autoReason:p.autoReason||'',score:p.score,wind:this.wind(j),riichi:p.riichi,nuki:p.nuki,river:p.river,melds:p.hand?this.h(j)._fulou:[],count:p.hand?tiles(this.h(j)).length:0,ready:p.ready,online:p.bot||!p.away&&Date.now()-(this.seen[p.token]||0)<12000})),
    handSeq:s.handSeq||0,dealtAt:s.dealtAt||0,matchSeq:s.matchSeq||0,matchStartedAt:s.matchStartedAt||0,openingHand:(s.players[i].dealt||[]).slice(),
    hand:h?tiles(h):[],drawn:h&&h._zimo&&h._zimo.length===2?h._zimo:null,options,furiten:hints.furiten,waits:h?this.waits(h):[],waitDetails:hints.waitDetails,discardHints:hints.discardHints,
    recovery:s.players[i].recovery,log:s.log||[],result:s.result,pending:s.pending?{from:s.pending.from,tile:s.pending.tile,kind:s.pending.kind,riichi:!!s.pending.riichi,waiting:Object.keys(s.pending.options).filter(k=>!s.pending.replies[k]).map(Number)}:null,
    ...(s.phase==='lobby'?{lobby:{category:s.lobbyCategory||'friend',red:s.red!==false,managed:!!s.lobbyFlow},players:s.players.map((p,j)=>({name:p.name,avatar:p.avatar||'',bot:!!p.bot,score:p.score,wind:this.wind(j),riichi:p.riichi,nuki:p.nuki,river:p.river,melds:[],count:0,ready:p.bot||j===0||!!p.lobbyReady,online:p.bot||Date.now()-(this.seen[p.token]||0)<12000}))}:{})};
  }
  dispatch(req){
-  const before=this.s?JSON.stringify(this.s):null;
+  const before=this.s?JSON.stringify(this.s):null,waitingBefore={...this._waiting};
   try{
    check(req&&typeof req.op==='string','请求格式错误');let s=this.s;
    let i=s?s.players.findIndex(p=>!p.bot&&p.token===req.token):-1;
+   if(req.op==='discover')return {ok:!!s&&String(req.pin)===s.pin};
+   if(req.op==='hostSession'){check(req.host===this.host,'仅本机可查询');return s?{ok:true,token:s.players[0].token,state:this.view(0)}:{ok:true,state:{phase:'empty'}};}
+   if(req.op==='peek')return {ok:true,state:this.view(i)};
    if(req.op==='recoverHost'){check(req.host===this.host,'仅本机房主可恢复');check(s,'尚无房间');return {ok:true,token:s.players[0].token,state:this.view(0)}}
    if(req.op==='state'){if(i>=0)this.seen[req.token]=Date.now();return {ok:true,state:this.view(i)}}
    if(req.op==='create'){
-    check(req.host===this.host,'请在房主手机 App 内创建房间');check(!s,'已有房间，请先在房间内结束牌桌');check(req.n===3||req.n===4,'仅支持三人或四人');
+    check(req.host===this.host,'请在房主手机 App 内创建房间');if(s)return {ok:false,code:'ROOM_ACTIVE',error:'当前有未结束的房间',token:s.players[0].token,state:this.view(0)};check(req.n===3||req.n===4,'仅支持三人或四人');
     const p=player(String(req.name||'房主').slice(0,12));p.avatar=avatar(req.avatar===undefined?'':req.avatar);
     this.s={schema:1,audioRoom:randomHex(8),audioSeq:0,audioEvents:[],n:req.n,rounds:req.rounds===1?1:2,red:req.red!==false,pin:String(parseInt(randomHex(4),16)%900000+100000),players:[p],phase:'lobby',version:1,dealer:0,round:0,honba:0,sticks:0,
      lobbyFlow:req.lobbyFlow===true,lobbyCategory:['friend','ranked','competition'].includes(req.category)?req.category:'friend'};
@@ -253,14 +290,35 @@ class Room{
    check(s,'房主尚未创建房间');
    if(req.op==='join'){
     check(String(req.pin)===s.pin,'房间码不正确');
-    if(req.recovery){i=s.players.findIndex(p=>!p.bot&&p.recovery===String(req.recovery).trim().toLowerCase());check(i>=0,'恢复码不正确');}
-    else {check(s.phase==='lobby'&&s.players.length<s.n,'房间已满或已经开始');const name=String(req.name||'牌友').trim().slice(0,12);check(name,'请填写昵称');check(!s.players.some(p=>p.name===name),'昵称已有人使用');s.players.push(player(name));i=s.players.length-1;s.version++;}
+    if(i>=0){s.players[i].auto=false;s.players[i].autoReason='';s.players[i].away=false;delete this._waiting[req.token];s.version++;}
+    else if(req.recovery){i=s.players.findIndex(p=>!p.bot&&p.recovery===String(req.recovery).trim().toLowerCase());check(i>=0,'座位凭据失效');}
+    else {
+     const name=String(req.name||'牌友').trim().slice(0,12);check(name,'请填写昵称');check(!s.players.some(p=>!p.bot&&p.name===name),'昵称已有人使用');
+     if(s.phase==='lobby'){check(s.players.length<s.n,'房间已满');s.players.push(player(name));i=s.players.length-1;}
+     else {i=s.players.findIndex((p,j)=>j>0&&p.bot);check(i>=0,'当前没有可接替的电脑座位');Object.assign(s.players[i],{name,token:randomHex(18),recovery:randomHex(6),requests:[],avatar:'',bot:false,auto:false,autoReason:'',away:false,ready:false});}
+     s.version++;
+    }
     if(req.avatar!==undefined)s.players[i].avatar=avatar(req.avatar);this.save(JSON.stringify(s));this.seen[s.players[i].token]=Date.now();return {ok:true,token:s.players[i].token,state:this.view(i)};
    }
-   check(i>=0,'座位凭据失效，请使用恢复码重新加入');
+   check(i>=0,'座位凭据失效');
    this.seen[req.token]=Date.now();
    if(req.id&&s.players[i].requests.includes(req.id))return {ok:true,state:this.view(i)};
-   if(req.op!=='profile')check(Number.isInteger(req.version)&&req.version===s.version,'牌桌已更新，请重新选择');
+   // Session controls are version-independent: a moving bot must not make
+   // returning or leaving the table fail due to an unrelated version change.
+   if(['resume','presence','autoPlay','leaveMatch'].includes(req.op)){
+    const p=s.players[i];
+    if(req.op==='leaveMatch'){
+     if(i===0){this.s=null;this.save('');return {ok:true,state:{phase:'empty'}};}
+     if(s.phase==='lobby')s.players.splice(i,1);
+     else Object.assign(p,{bot:true,auto:false,autoReason:'',away:false,token:randomHex(18),recovery:'',ready:true});
+     s.version++;this.save(JSON.stringify(s));return {ok:true,state:{phase:'empty'}};
+    }
+    if(req.op==='resume'){check(!req.room||req.room===s.audioRoom,'牌局已取消');p.auto=false;p.autoReason='';p.away=false;if(s.phase==='result')p.ready=false;delete this._waiting[req.token];}
+    else if(req.op==='presence'){p.away=req.present===false;if(p.away){p.auto=true;p.autoReason='offline';}}
+    else {check(['play','reaction'].includes(s.phase),'当前不能切换托管');p.auto=req.enabled===true;p.autoReason=p.auto?'manual':'';p.away=false;delete this._waiting[req.token];}
+    s.version++;this.save(JSON.stringify(s));return {ok:true,state:this.view(i)};
+   }
+   if(req.op!=='profile'&&req.op!=='ready')check(Number.isInteger(req.version)&&req.version===s.version,'牌桌已更新，请重新选择');
    // Waiting-room operations terminate here. No action, scoring, deal or table
    // transition implementation below is changed by the new lobby workflow.
    if(['lobbyReady','kick','leaveLobby','closeLobby'].includes(req.op)){
@@ -283,19 +341,17 @@ class Room{
     const hostIndex=s.players.findIndex(p=>p.token===req.token);[s.players[0],s.players[hostIndex]]=[s.players[hostIndex],s.players[0]];
     s.matchSeq=(s.matchSeq||0)+1;s.matchStartedAt=Date.now();s.matchOpeningUntil=s.matchStartedAt+6000;
     s.dealer=parseInt(randomHex(2),16)%s.n;s.initialDealer=s.dealer;s.players.forEach(p=>p.score=s.n===3?35000:25000);this.newHand();
-   }else if(req.op==='action')this.act(i,req.action);
-   else if(req.op==='ready'){check(s.phase==='result','当前不在结算阶段');s.players[i].ready=true;}
+   }else if(req.op==='action'){this.act(i,req.action);s.players[i].auto=false;s.players[i].autoReason='';delete this._waiting[req.token];}
+   else if(req.op==='ready'){check(s.phase==='result','当前不在结算阶段');check(!req.handSeq||req.handSeq===s.handSeq,'结算已更新');s.players[i].ready=true;this.advanceIfReady();}
    else if(req.op==='next'){
     check(i===0&&s.phase==='result'&&s.players.every(p=>p.ready),'请等待所有玩家确认结算');
-    if(s.result.matchOver){s.matchSeq=(s.matchSeq||0)+1;s.matchStartedAt=Date.now();s.matchOpeningUntil=s.matchStartedAt+6000;s.round=0;s.dealer=s.initialDealer;s.honba=0;s.sticks=0;s.players.forEach(p=>p.score=s.n===3?35000:25000);}
-    else {s.honba=s.result.draw||s.result.repeat?s.honba+1:0;if(!s.result.repeat){s.dealer=(s.dealer+1)%s.n;s.round++;}}
-    this.newHand();
+    this.advanceResult();
    }else if(req.op==='close'){check(i===0,'仅房主可结束牌桌');this.s=null;this.save('');return {ok:true,state:{phase:'empty'}};}
    else throw Error('未知操作');
    i=s.players.findIndex(p=>p.token===req.token);
    if(req.id){s.players[i].requests.push(String(req.id).slice(0,80));s.players[i].requests=s.players[i].requests.slice(-32);}
    s.version++;this.save(JSON.stringify(s));return {ok:true,state:this.view(i)};
-  }catch(e){this.s=before?JSON.parse(before):null;return {ok:false,error:String(e.message||e)}}
+  }catch(e){this.s=before?JSON.parse(before):null;this._waiting=waitingBefore;return {ok:false,error:String(e.message||e)}}
  }
 }
 g.RiichiRoom=Room;if(typeof module!=='undefined')module.exports={Room,tiles,RULE,norm};

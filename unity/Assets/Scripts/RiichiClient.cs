@@ -9,7 +9,7 @@ using UnityEngine.Networking;
 
 namespace YunJian.Riichi
 {
-    public class RiichiClient : MonoBehaviour
+    public partial class RiichiClient : MonoBehaviour
     {
         public RoomView State { get; private set; }
         public string SelectedAction { get; private set; }
@@ -56,8 +56,8 @@ namespace YunJian.Riichi
 #if UNITY_EDITOR
         bool validationWaitInput;
 #endif
-        public bool OptionsReady => State!=null && !introduction.Active && !allLast.Active && !table.ArrangingHand && !table.RevealingDraw && !effects.HasPendingActions;
-        bool CanInspectWaits => active && State!=null && (State.phase=="play" || State.phase=="reaction") && !showRoom && page!="settings" && page!="confirm-close";
+        public bool OptionsReady => State!=null && !AutoPlaying && !lobby.OverlayActive && !introduction.Active && !allLast.Active && !table.ArrangingHand && !table.RevealingDraw && !effects.HasPendingActions;
+        bool CanInspectWaits => active && !AutoPlaying && State!=null && (State.phase=="play" || State.phase=="reaction") && !showRoom && page!="settings" && !lobby.OverlayActive;
         public bool WaitIndicatorVisible => CanInspectWaits && ((State.waitDetails?.Length??0)>0 || State.phase=="play"&&State.turn==State.you&&(State.discardHints??new DiscardHint[0]).Any(h=>(h.waits?.Length??0)>0));
         DiscardHint ActiveWaitHint => State?.discardHints?.FirstOrDefault(h=>h.id==SelectedAction);
         bool PreviewingDiscard => CanInspectWaits && State.phase=="play" && State.turn==State.you && SelectedAction!=null && State.options.Any(o=>o.id==SelectedAction && (o.kind=="discard" || o.kind=="riichi"));
@@ -76,6 +76,7 @@ namespace YunJian.Riichi
 
 #if UNITY_EDITOR
         public bool ValidationTableOnly;
+        public bool SessionPreviewOnly;
         public void BeginLobbyValidation(string hostSecret)
         {
             EnterHome();validationSession=true;secret=hostSecret;token="";endpoint="http://127.0.0.1:8765";nickname="大厅验证";lobby.Home();
@@ -125,6 +126,7 @@ namespace YunJian.Riichi
             volume = PlayerPrefs.GetFloat("riichi.volume", .8f);
             muted = PlayerPrefs.GetInt("riichi.muted", 0) != 0;
             token = PlayerPrefs.GetString("riichi.token:" + endpoint, "");
+            LoadSession();
             voice.Configure(!muted, volume);settlementAudio.Configure(!muted,volume);
             font = Resources.Load<Font>("Majsoul/Font/game") ?? Font.CreateDynamicFontFromOSFont(new[] { "Microsoft YaHei", "Noto Sans CJK SC", "sans-serif" }, 24);
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -172,7 +174,7 @@ namespace YunJian.Riichi
         }
         public void SelectTile(int index, string action)
         {
-            if(table.ArrangingHand || State==null || (State.phase!="play" && State.phase!="reaction"))return;
+            if(table.ArrangingHand || AutoPlaying || lobby.OverlayActive || State==null || (State.phase!="play" && State.phase!="reaction"))return;
             var hand=TableRenderer.DisplayHand(State);if(index<0 || index>=hand.Count)return;
             bool legal=action!=null && State.options.Any(o=>o.id==action && (o.kind=="discard" || o.kind=="riichi"));
             bool choosing=State.options.Any(o=>o.kind==(RiichiMode?"riichi":"discard"));
@@ -198,11 +200,15 @@ namespace YunJian.Riichi
                 yield return web.SendWebRequest();
                 Busy = false;
                 if (gen != generation) yield break;
-                if (web.result != UnityWebRequest.Result.Success) { message = "连接中断，正在重连：" + web.error; yield break; }
+                if (web.result != UnityWebRequest.Result.Success) { if(poll)resumingConnection=true;message = "连接中断，正在重连：" + web.error; yield break; }
                 RoomReply reply;
                 try { reply = JsonUtility.FromJson<RoomReply>(web.downloadHandler.text); }
                 catch (Exception e) { message = "房主响应无法解析：" + e.Message; yield break; }
-                if (reply == null || !reply.ok) { message = reply?.error ?? "无效响应"; yield break; }
+                if (reply == null || !reply.ok) {
+                    if(reply?.code=="ROOM_ACTIVE"&&reply.state!=null){CacheSession(reply.state,endpoint,reply.token);message="";lobby.ShowPendingSession();}
+                    else {message="";lobby.ShowMediumNotice("连接提示",reply?.error??"无效响应");}
+                    yield break;
+                }
                 message = "";
                 if (!string.IsNullOrEmpty(reply.token))
                 {
@@ -215,22 +221,11 @@ namespace YunJian.Riichi
                 }
                 if (reply.state != null)
                 {
-                    bool changed = State == null || State.version != reply.state.version || State.phase != reply.state.phase;
-                    State = reply.state;
-                    if(State.phase!="play" && State.phase!="reaction")ResetWaitPress();
-                    introduction.Observe(State,validationSession);voice.Observe(State);gameAudio.SetScene(State);
-                    allLast.Observe(State);
-                    if (State.phase == "empty" || State.phase == "join") { active = false; page = "home"; table.Clear(); }
-                    else
-                    {
-                        active = true;
-                        if (!State.options.Any(x => x.kind == "riichi")) RiichiMode = false;
-                        RebindSelection();
-                        if (changed) table.Render(State);
-                        effects.Accept(State);
-                        if(choosingKind!=null && !State.options.Any(x=>x.kind==choosingKind)) choosingKind=null;
-                    }
+                    bool gone=active&&(reply.state.phase=="empty"||reply.state.phase=="join");
+                    if(gone){ForgetSession();EnterHome();lobby.Home();lobby.ShowSessionCancelled();}
+                    else ApplyRoomState(reply.state,poll&&req.op=="resume");
                 }
+                if(req.op=="resume")resumingConnection=false;
                 success?.Invoke();
             }
         }
@@ -265,7 +260,12 @@ namespace YunJian.Riichi
             if(!validationWaitInput)
 #endif
             waitInputConsumed=UpdateWaitPointer(new Vector2(Input.mousePosition.x,Screen.height-Input.mousePosition.y),Input.GetMouseButtonDown(0),Input.GetMouseButton(0),Input.GetMouseButtonUp(0),Time.unscaledTime);
-            if (active && !Busy && Time.unscaledTime >= nextPoll) { nextPoll = Time.unscaledTime + .65f; StartCoroutine(Send(new RequestBody { op = "state" }, null, true)); }
+            if (active && !Busy && Time.unscaledTime >= nextPoll) { nextPoll = Time.unscaledTime + .65f;
+#if UNITY_EDITOR
+                if(!SessionPreviewOnly)
+#endif
+                StartCoroutine(Send(new RequestBody { op = resumingConnection?"resume":"state",room=State?.audioRoom }, null, true)); }
+            if(active&&State?.phase!="lobby"&&Input.GetKeyDown(KeyCode.Escape)){if(page=="settings")page="home";else if(lobby.OverlayActive)lobby.CloseModal();else lobby.ShowMatchExit();}
             if (active && !introduction.Active && Input.GetMouseButtonUp(0) && !waitInputConsumed && !InUI(Input.mousePosition))
             {
                 Ray ray = table.HandCamera.ScreenPointToRay(Input.mousePosition);
@@ -279,11 +279,11 @@ namespace YunJian.Riichi
         bool InUI(Vector3 mouse)
         {
             float x = mouse.x, y = Screen.height - mouse.y;
-            return showRoom || page == "settings" || page == "confirm-close" || uiButtons.Any(r => r.Contains(new Vector2(x, y)));
+            return showRoom || page == "settings" || lobby.OverlayActive || uiButtons.Any(r => r.Contains(new Vector2(x, y)));
         }
         void EnterHome()
         {
-            generation++; active = false; State = null; ClearSelection(); RiichiMode = false;
+            generation++; active = false; State = null; ClearSelection(); RiichiMode = false;showRoom=false;
             page = "home";introduction.Reset();allLast.Reset();ResetWaitPress();table.Clear(); voice.Reset();gameAudio.Reset();settlementAudio.Reset();effects.Reset();resultDisplay.Reset();choosingKind=null;
         }
         void StartRoom(bool practice)
@@ -309,20 +309,20 @@ namespace YunJian.Riichi
             string address = endpoint.Trim().TrimEnd('/');
             if (!address.StartsWith("http://")) address = "http://" + address;
             if (Uri.TryCreate(address, UriKind.Absolute, out var uri) && uri.IsDefaultPort) address += ":8765";
-            if (!ValidEndpoint(address)) { message = "请输入同一热点内的房主 IPv4 地址"; return; }
+            if (!ValidEndpoint(address)) { lobby.ShowMediumNotice("加入房间","请输入同一局域网内的房主 IPv4 地址"); return; }
             endpoint = address; generation++; token = PlayerPrefs.GetString("riichi.token:" + endpoint, "");
-            StartCoroutine(Send(new RequestBody { op = "join", name = nickname, pin = pin, recovery = recovery }));
+            StartCoroutine(Send(new RequestBody { op = "join", name = nickname, pin = pin },()=>{if(State!=null&&State.phase!="lobby")introduction.Reenter(State);}));
         }
         // Narrow lobby adapter. The existing action/selection/rendering path
         // remains owned by this client and is not called by the new screens.
         public LobbyController Lobby => lobby;
         public bool LobbyActive => active;
         public bool LobbyPlaying => active && State!=null && State.phase!="lobby";
-        public bool LobbyOverlayVisible => showRoom || page=="settings" || page=="confirm-close";
+        public bool LobbyOverlayVisible => showRoom || page=="settings";
         public bool LobbyCloseSettings(){if(page!="settings")return false;page="home";return true;}
         public string LobbyNickname { get=>nickname;set{nickname=value;PlayerPrefs.SetString("riichi.name",value);PlayerPrefs.Save();} }
         public string LobbyEndpoint => endpoint;
-        public string LobbyInviteText => "房间号："+(State?.pin??"")+"\n房主地址：\n"+(string.IsNullOrEmpty(addresses)?endpoint:addresses)+"\n连接同一热点后输入房间号加入。";
+        public string LobbyInviteText => "房间号："+(State?.pin??"")+"\n房主地址：\n"+(string.IsNullOrEmpty(addresses)?endpoint:addresses)+"\n连接同一局域网后输入房间号加入，也可接替电脑座位。";
         public void LobbyOpenSettings(){page="settings";}
         void UseLocalHost()
         {
@@ -353,7 +353,7 @@ namespace YunJian.Riichi
         {
             if(Busy||State?.phase!="lobby")return;string oldEndpoint=endpoint;
             StartCoroutine(Send(new RequestBody{op=State.host?"closeLobby":"leaveLobby"},()=>{
-                token="";if(!validationSession){PlayerPrefs.DeleteKey("riichi.token:"+oldEndpoint);PlayerPrefs.Save();}EnterHome();lobby.Home();
+                ForgetSession();EnterHome();lobby.Home();
             }));
         }
         void Styles()
@@ -426,6 +426,7 @@ namespace YunJian.Riichi
         {
             OriginalTiles.InGui = true;
             try { DrawGui(); } finally { OriginalTiles.InGui = false; }
+            if(active&&State?.phase!="lobby"&&!introduction.Active)lobby.DrawTableOverlay();
             tap.Render();
         }
         void DrawGui()
@@ -439,19 +440,13 @@ namespace YunJian.Riichi
             GUI.matrix = viewport.Matrix;
             if (State == null || !active) DrawHome();
             else if (State.phase == "lobby") DrawLobby();
-            else if (State.phase == "result" && !effects.ShowWinPresentation) DrawResult();
-            else DrawTableUI();
+            else if (State.phase == "result" && !effects.ShowWinPresentation) {bool enabled=GUI.enabled;GUI.enabled&=!lobby.OverlayActive;DrawResult();GUI.enabled=enabled;}
+            else {bool enabled=GUI.enabled;GUI.enabled&=!lobby.OverlayActive;DrawTableUI();GUI.enabled=enabled;}
             // Dialogs retain their own centered, uniformly scaled canvas.
             GUI.matrix = TableViewport.Fit(Screen.width, Screen.height, Screen.safeArea, false).Matrix;
             if (!string.IsNullOrEmpty(message)) { Panel(new Rect(190, 658, 900, 52)); GUI.Label(new Rect(205, 670, 870, 32), message, small); }
             if (showRoom) DrawRoom();
             if (page == "settings") DrawSettings();
-            if (page == "confirm-close")
-            {
-                Panel(new Rect(350, 200, 580, 250)); GUI.Label(new Rect(385, 235, 500, 70), "结束牌桌会清除当前对局。", label);
-                if (Button(new Rect(385, 340, 230, 55), "确认结束")) { page = "home"; StartCoroutine(Send(new RequestBody { op = "close" })); }
-                if (Button(new Rect(645, 340, 230, 55), "继续打牌")) page = "home";
-            }
             GUI.matrix = previous;
         }
         void HudNumber(int value, float x, float y, float scale)
@@ -474,9 +469,9 @@ namespace YunJian.Riichi
         void DrawTableUI(bool passive=false)
         {
             float w = viewport.Width, h = viewport.Height;
-            if (SkinButton(new Rect(w - 175, 20, 40, 40), "replay_collect", "房间信息")) showRoom = true;
+            if (SkinButton(new Rect(w - 175, 20, 40, 40), "replay_collect", "房间信息")) lobby.ShowMediumNotice("房间信息",LobbyInviteText);
             if (SkinButton(new Rect(w - 117, 20, 40, 40), "btn_settings", "声音设置")) page = "settings";
-            if (SkinButton(new Rect(w - 59, 20, 40, 40), "btn_leave", "返回大厅")) { EnterHome(); return; }
+            if (SkinButton(new Rect(w - 59, 20, 40, 40), "btn_leave", "退出牌局")) { lobby.ShowMatchExit(); return; }
             // Original UI_DesktopInfo top-left node coordinates, uniformly scaled.
             const float k = .55f, ox = 34, oy = .6f;
             GUI.DrawTexture(new Rect(ox + 11*k, oy + 28*k, 313*k, 158*k), Skin("left_top"), ScaleMode.ScaleToFit);
@@ -492,7 +487,8 @@ namespace YunJian.Riichi
             if(roomCaption==null){roomCaption=new GUIStyle(centered){font=Resources.Load<Font>("Majsoul/Settlement/round-font-chs"),fontSize=24,clipping=TextClipping.Overflow};namePlateText=new GUIStyle(centered){font=Resources.Load<Font>("Majsoul/TablePolish/name-font"),fontSize=11};}
             // container_lefttop/gamemode: bg_type band (23,186,290,51); lb_mode 309 wide, colour (.91,.686,.443).
             var band=new Rect(ox + 23*k, oy + 186*k, 290*k, 51*k);GUI.DrawTexture(band, Skin("bg_type"), ScaleMode.StretchToFill);
-            ShadowLabel(new Rect(band.center.x - 309*k/2, band.y, 309*k, band.height), "铜之间 · " + (State.n == 3 ? "三人" : "四人") + (State.rounds == 1 ? "东" : "南"), roomCaption, new Color(.91f, .686f, .443f));
+            string mode=State.lobby?.category=="ranked"?"段位场":State.lobby?.category=="competition"?"比赛场":"友人场";
+            ShadowLabel(new Rect(band.center.x - 309*k/2, band.y, 309*k, band.height), mode+" · " + (State.n == 3 ? "三人" : "四人") + (State.rounds == 1 ? "东" : "南"), roomCaption, new Color(.91f, .686f, .443f));
             foreach (var p in State.players.Select((v, i) => new { v, i }))
             {
                 int seat = table.RelativeSeat(p.i);
@@ -508,6 +504,7 @@ namespace YunJian.Riichi
                 GUI.DrawTexture(new Rect(cx-187*k/2,nameRect.yMax,187*k,36*k),Skin("notitle"),ScaleMode.ScaleToFit);
             }
             if(passive)return;
+            DrawAutoPlay(w,h);
             string status = State.phase == "result" ? State.result.title : State.phase == "reaction" ? (State.options.Length > 0 ? "请选择操作" : "等待其他玩家响应") : State.turn == State.you ? "轮到你出牌" : State.players[State.turn].name + " 的回合";
             // With choices the centred button row speaks for itself; it occupies this band.
             // No response-waiting overlay on the table.
@@ -534,7 +531,7 @@ namespace YunJian.Riichi
                 for(int i=0;i<candidates.Length;i++){float x=CurrentWaitPanel.x+(i/rows)*pw/columns,y=CurrentWaitPanel.y+36+(i%rows)*70;var choice=State.options.First(o=>o.id==candidates[i].id);GUI.Label(new Rect(x+8,y+17,30,24),"打",label);GUI.DrawTexture(new Rect(x+40,y+4,35,56),table.HandTexture(choice.tile),ScaleMode.ScaleToFit);TableIndicators.Waits(table,candidates[i].waits,new Rect(x+83,y+2,pw/columns-95,60),38);}
             }
             DrawResponseMarker();
-            DrawActionButtons(w,h);
+            if(!AutoPlaying)DrawActionButtons(w,h);
             effects.DrawCall(w,h,State.n);
             allLast.Draw(w,h);
         }
@@ -636,19 +633,22 @@ namespace YunJian.Riichi
 #if UNITY_EDITOR
             if(ValidationTableOnly)return;
 #endif
-            GUI.matrix=Matrix4x4.identity;GUI.color=new Color(0,0,0,State.result.draw ? .38f : .68f);GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=resultColor;GUI.matrix=resultMatrix;
+            GUI.matrix=Matrix4x4.identity;GUI.color=new Color(0,0,0,resultDisplay.ShowingFinal ? .72f : State.result.draw ? .38f : .68f);GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=resultColor;GUI.matrix=resultMatrix;
             var action=resultDisplay.Draw(State,table,effects,font,ResultButton);
-            if(action==ResultPresentation.Action.Ready)StartCoroutine(Send(new RequestBody{op="ready"}));
+#if UNITY_EDITOR
+            if(SessionPreviewOnly)return;
+#endif
+            if(action==ResultPresentation.Action.Ready)StartCoroutine(Send(new RequestBody{op="ready",handSeq=State.handSeq}));
             else if(action==ResultPresentation.Action.Next)StartCoroutine(Send(new RequestBody{op="next"}));
-            else if(action==ResultPresentation.Action.Home)EnterHome();
+            else if(action==ResultPresentation.Action.Home)EndCurrentMatch();
         }
         void DrawRoom()
         {
             Panel(new Rect(270, 120, 740, 450)); GUI.Label(new Rect(305, 145, 650, 50), "房间信息", title);
-            GUI.Label(new Rect(305, 210, 650, 60), "房间码：" + State?.pin + "\n个人恢复码：" + State?.recovery, label);
+            GUI.Label(new Rect(305, 210, 650, 60), "房间号：" + State?.pin + "\n可在同一局域网下通过房间号加入。", label);
             GUI.Label(new Rect(305, 295, 650, 100), string.IsNullOrEmpty(addresses) ? endpoint : addresses, label);
             if (Button(new Rect(305, 455, 210, 55), "关闭")) showRoom = false;
-            if (State != null && State.host && Button(new Rect(535, 455, 210, 55), "结束当前牌桌")) { showRoom = false; page = "confirm-close"; }
+            if (State != null && Button(new Rect(535, 455, 210, 55), "退出牌局")) { showRoom = false; lobby.ShowMatchExit(); }
         }
         void DrawSettings()
         {
@@ -676,7 +676,7 @@ namespace YunJian.Riichi
         {
             switch (kind) { case "ron": return "荣和"; case "tsumo": return "自摸"; case "pon": return "碰"; case "chi": return "吃"; case "kan": case "minkan": return "杠"; case "nuki": return "拔北"; case "abort9": return "九种九牌"; case "pass": return "过"; default: return kind; }
         }
-        void OnApplicationPause(bool pause) { if(pause){introduction.Reset();resultDisplay.ClearEffects();ResetWaitPress();tap.Clear();}voice.Suspend(pause);settlementAudio.Suspend(pause);gameAudio.Suspend(pause);if(pause)table.Opening.Cancel();effects.Reset(); }
+        void OnApplicationPause(bool pause) { if(pause){introduction.Reset();resultDisplay.ClearEffects();ResetWaitPress();tap.Clear();}voice.Suspend(pause);settlementAudio.Suspend(pause);gameAudio.Suspend(pause);if(pause)table.Opening.Cancel();effects.Reset();SessionPause(pause); }
         void OnDestroy() { introduction.Reset();resultDisplay.Reset();bridge?.Dispose(); }
     }
 }

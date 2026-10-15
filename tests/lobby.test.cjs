@@ -23,7 +23,7 @@ test('host must wait for a human readiness and all occupied seats',()=>{
  assert(command(room,token,'addBot').ok);assert(!command(room,token,'start').ok);assert.equal(room.s.phase,'lobby');
  assert(command(room,guest,'lobbyReady',{ready:true}).ok);assert(command(room,guest,'lobbyReady',{ready:false}).ok);assert(!command(room,token,'start').ok);
  assert(command(room,guest,'lobbyReady',{ready:true}).ok);assert(command(room,token,'start').ok);assert.equal(room.s.phase,'play');
- assert(room.s.players.every(p=>p.score===35000));assert(!('lobby'in room.view(0)));
+ assert(room.s.players.every(p=>p.score===35000));assert.deepEqual(room.view(0).lobby,{category:'friend',red:false,managed:true});
 });
 test('bot removal and guest leaving release seats without moving host ownership',()=>{
  const {room,token}=create();const a=join(room,'甲'),b=join(room,'乙');assert(command(room,token,'addBot').ok);
@@ -59,7 +59,7 @@ test('saved lobby preserves category and readiness; recover is explicit',()=>{
 test('new waiting-room commands cannot alter a started game',()=>{
  const {room,token}=create(3);command(room,token,'fillBots');assert(command(room,token,'start').ok);const before=JSON.stringify(room.s);
  for(const op of ['kick','leaveLobby','closeLobby','lobbyReady'])assert(!command(room,token,op,{seat:1,ready:true}).ok);
- assert.equal(JSON.stringify(room.s),before);assert(!('lobby'in room.view(0)));
+ assert.equal(JSON.stringify(room.s),before);assert.deepEqual(room.view(0).lobby,{category:'friend',red:false,managed:true});
 });
 test('legacy rooms keep existing startup behavior without requiring new readiness',()=>{
  const room=new Room(HOST);const host=room.dispatch({op:'create',host:HOST,n:3,name:'旧房主'});join(room,'旧客户端');command(room,host.token,'addBot');assert(command(room,host.token,'start').ok);

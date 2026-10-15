@@ -175,3 +175,8 @@ bg_nickname 的斜边和透明区域使完整图片矩形的中心不等于玩�
 # 0.5.30 新增来源
 
 `Review1012c` 中的 `cutinbg`、`cutin_line`、`rank_bg`、`sima_queshi`、`star`、`starbg` 来自所提供雀魂 APK 的原图。`cutin-layout`、`cutin-animation`、`intro-name-layout` 分别来自 `UI_CutIn`、其 AnimationClip 及 `UI_FightBegin` 的序列化数据。原 bundle、pathID 和导出文件 SHA-256 见 `Review1012c/source.json`；导入、校验脚本为 `scripts/import-review-1012c.py` 和 `scripts/verify-review-1012c.py`。一姬立绘及默认称号沿用已记录来源的现有资源，未使用生成图片。
+
+
+## Unity 0.5.42 终局与中弹窗
+
+终局 `UI_GameEnd` 预制体坐标、名次数字与“位”取自现有雀魂 APK，专用精灵恢复原透明画布，不改局间结算精灵。来源和 SHA-256 见 `Resources/Majsoul/Settlement/Final/source.json`。中弹窗深色 `button`、黄色 `button_light` 以及 AI 托管 `button_text_bottom_s` 使用 APK 原图，按原 Sprite border 拉伸中段并保留两端，来源分别见 Lobby/provenance.json 与 reference-skin.json。未使用生成式美术。
