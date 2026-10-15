@@ -12,6 +12,7 @@ namespace YunJian.Riichi
         public string[] openingHand = new string[0];
         public int version, you, n, rounds, round, dealer, honba, sticks, turn, remaining, audioSeq;
         public bool host, furiten;
+        public LobbyRoomView lobby;
         public PlayerView[] players = new PlayerView[0];
         public string[] hand = new string[0], indicators = new string[0], waits = new string[0], log = new string[0];
         public Choice[] options = new Choice[0];
@@ -22,6 +23,7 @@ namespace YunJian.Riichi
         public LastDiscard last;
         public ResultView result;
     }
+    [Serializable] public class LobbyRoomView { public string category; public bool red, managed; }
     [Serializable] public class PlayerView
     {
         public string name, avatar;
@@ -46,9 +48,9 @@ namespace YunJian.Riichi
     [Serializable] public class ScoreDetail { public int fu, fanshu, defen, damanguan;public int[] delta; }
     [Serializable] public class RequestBody
     {
-        public string op, token, host, name, pin, recovery, action, id;
+        public string op, token, host, name, pin, recovery, action, id, category;
         public int version, n, rounds, seat;
-        public bool red = true, bots, fillBots;
+        public bool red = true, bots, fillBots, lobbyFlow, ready;
     }
     [Serializable] public class HostConfig { public string host, error; public string[] addresses; public bool ready; }
 }

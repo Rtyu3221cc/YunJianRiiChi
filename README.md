@@ -1,5 +1,15 @@
 # 云间日麻
 
+## Unity 0.5.41：大厅与准备房间
+
+[下载 0.5.41 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.41/yunjian-riichi-unity-0.5.41.apk)，versionCode 42，沿用原证书。
+
+重构大厅、创建／加入房间和准备房间管理；按参考优化原版素材、字体、卡片、姓名组件、数字键盘、规则说明和弹窗。高级设置保留当前引擎的实际默认规则。牌桌打牌代码保持 0.5.39 基线。
+
+8 项房间管理测试、246 项 Unity 大厅检查及 APK 签名／完整性检查通过。本次未进入对局、未运行牌桌回归；真机安装、触摸和多手机热点未验证。[修改与验证记录](docs/0.5.41大厅与准备房间.md) · [11 张界面截图](dist/unity-0.5.41-lobby.html) · [校验和](dist/SHA256-unity-0.5.41.txt)。
+
+![0.5.41 三人准备房间](dist/previews/unity-0.5.41-room-three.png)
+
 ## Unity 0.5.39：其他玩家手牌避让副露
 
 [下载0.5.39 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.39/yunjian-riichi-unity-0.5.39.apk)，versionCode 40，沿用原证书。

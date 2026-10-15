@@ -232,7 +232,8 @@ class Room{
    players:s.players.map((p,j)=>({name:p.name,avatar:p.avatar||"",bot:!!p.bot,score:p.score,wind:this.wind(j),riichi:p.riichi,nuki:p.nuki,river:p.river,melds:p.hand?this.h(j)._fulou:[],count:p.hand?tiles(this.h(j)).length:0,ready:p.ready,online:p.bot||Date.now()-(this.seen[p.token]||0)<12000})),
    handSeq:s.handSeq||0,dealtAt:s.dealtAt||0,matchSeq:s.matchSeq||0,matchStartedAt:s.matchStartedAt||0,openingHand:(s.players[i].dealt||[]).slice(),
    hand:h?tiles(h):[],drawn:h&&h._zimo&&h._zimo.length===2?h._zimo:null,options,furiten:hints.furiten,waits:h?this.waits(h):[],waitDetails:hints.waitDetails,discardHints:hints.discardHints,
-   recovery:s.players[i].recovery,log:s.log||[],result:s.result,pending:s.pending?{from:s.pending.from,tile:s.pending.tile,kind:s.pending.kind,riichi:!!s.pending.riichi,waiting:Object.keys(s.pending.options).filter(k=>!s.pending.replies[k]).map(Number)}:null};
+   recovery:s.players[i].recovery,log:s.log||[],result:s.result,pending:s.pending?{from:s.pending.from,tile:s.pending.tile,kind:s.pending.kind,riichi:!!s.pending.riichi,waiting:Object.keys(s.pending.options).filter(k=>!s.pending.replies[k]).map(Number)}:null,
+   ...(s.phase==='lobby'?{lobby:{category:s.lobbyCategory||'friend',red:s.red!==false,managed:!!s.lobbyFlow},players:s.players.map((p,j)=>({name:p.name,avatar:p.avatar||'',bot:!!p.bot,score:p.score,wind:this.wind(j),riichi:p.riichi,nuki:p.nuki,river:p.river,melds:[],count:0,ready:p.bot||j===0||!!p.lobbyReady,online:p.bot||Date.now()-(this.seen[p.token]||0)<12000}))}:{})};
  }
  dispatch(req){
   const before=this.s?JSON.stringify(this.s):null;
@@ -244,7 +245,8 @@ class Room{
    if(req.op==='create'){
     check(req.host===this.host,'请在房主手机 App 内创建房间');check(!s,'已有房间，请先在房间内结束牌桌');check(req.n===3||req.n===4,'仅支持三人或四人');
     const p=player(String(req.name||'房主').slice(0,12));p.avatar=avatar(req.avatar===undefined?'':req.avatar);
-    this.s={schema:1,audioRoom:randomHex(8),audioSeq:0,audioEvents:[],n:req.n,rounds:req.rounds===1?1:2,red:req.red!==false,pin:String(parseInt(randomHex(4),16)%900000+100000),players:[p],phase:'lobby',version:1,dealer:0,round:0,honba:0,sticks:0};
+    this.s={schema:1,audioRoom:randomHex(8),audioSeq:0,audioEvents:[],n:req.n,rounds:req.rounds===1?1:2,red:req.red!==false,pin:String(parseInt(randomHex(4),16)%900000+100000),players:[p],phase:'lobby',version:1,dealer:0,round:0,honba:0,sticks:0,
+     lobbyFlow:req.lobbyFlow===true,lobbyCategory:['friend','ranked','competition'].includes(req.category)?req.category:'friend'};
     if(req.bots===true)while(this.s.players.length<this.s.n)this.addBot();
     this.save(JSON.stringify(this.s));this.seen[p.token]=Date.now();return {ok:true,token:p.token,state:this.view(0)};
    }
@@ -259,6 +261,20 @@ class Room{
    this.seen[req.token]=Date.now();
    if(req.id&&s.players[i].requests.includes(req.id))return {ok:true,state:this.view(i)};
    if(req.op!=='profile')check(Number.isInteger(req.version)&&req.version===s.version,'牌桌已更新，请重新选择');
+   // Waiting-room operations terminate here. No action, scoring, deal or table
+   // transition implementation below is changed by the new lobby workflow.
+   if(['lobbyReady','kick','leaveLobby','closeLobby'].includes(req.op)){
+    check(s.phase==='lobby','仅可在开局前管理房间');
+    if(req.op==='lobbyReady'){check(i!==0,'房主无需准备');s.players[i].lobbyReady=req.ready===true;}
+    else if(req.op==='kick'){
+     check(i===0,'仅房主可踢出玩家');check(Number.isInteger(req.seat)&&req.seat>0&&req.seat<s.players.length,'不能踢出房主或空座位');s.players.splice(req.seat,1);
+    }else if(req.op==='leaveLobby'){
+     check(i!==0,'房主请解散房间');s.players.splice(i,1);s.version++;this.save(JSON.stringify(s));return {ok:true,state:{phase:'empty'}};
+    }else{check(i===0,'仅房主可解散房间');this.s=null;this.save('');return {ok:true,state:{phase:'empty'}};}
+    if(req.id){s.players[i].requests.push(String(req.id).slice(0,80));s.players[i].requests=s.players[i].requests.slice(-32);}
+    s.version++;this.save(JSON.stringify(s));return {ok:true,state:this.view(i)};
+   }
+   if(req.op==='start'&&s.lobbyFlow)check(s.players.every((p,j)=>p.bot||j===0||p.lobbyReady),'请等待所有玩家准备');
    if(req.op==='profile'){s.players[i].avatar=avatar(req.avatar);}
    else if(req.op==='addBot'||req.op==='fillBots'){check(i===0&&s.phase==='lobby','仅房主可在开局前添加 AI');this.addBot();if(req.op==='fillBots')while(s.players.length<s.n)this.addBot();}
    else if(req.op==='removeBot'){check(i===0&&s.phase==='lobby','仅房主可在开局前移除 AI');check(Number.isInteger(req.seat)&&s.players[req.seat]?.bot,'该座位不是 AI');s.players.splice(req.seat,1);}

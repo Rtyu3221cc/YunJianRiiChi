@@ -29,6 +29,7 @@ namespace YunJian.Riichi
         float musicVolume=.35f, effectsVolume=.8f;
         TableEffects effects;
         ScreenTapEffect tap;
+        LobbyController lobby;
         public ScreenTapEffect Tap => tap;
         readonly ResultPresentation resultDisplay=new ResultPresentation();
         readonly MatchIntroduction introduction=new MatchIntroduction();
@@ -75,6 +76,10 @@ namespace YunJian.Riichi
 
 #if UNITY_EDITOR
         public bool ValidationTableOnly;
+        public void BeginLobbyValidation(string hostSecret)
+        {
+            EnterHome();validationSession=true;secret=hostSecret;token="";endpoint="http://127.0.0.1:8765";nickname="大厅验证";lobby.Home();
+        }
         public void BeginValidationPractice(string hostSecret)
         {
             validationSession = true; endpoint = "http://127.0.0.1:8765";
@@ -110,6 +115,7 @@ namespace YunJian.Riichi
             voice = gameObject.AddComponent<RoleVoice>();
             gameAudio = gameObject.AddComponent<GameAudio>();settlementAudio=gameObject.AddComponent<SettlementAudio>();
             tap = gameObject.AddComponent<ScreenTapEffect>();
+            lobby=gameObject.AddComponent<LobbyController>();lobby.Initialize(this);
             musicMuted=PlayerPrefs.GetInt("riichi.musicMuted",0)!=0;effectsMuted=PlayerPrefs.GetInt("riichi.effectsMuted",0)!=0;
             musicVolume=PlayerPrefs.GetFloat("riichi.musicVolume",.35f);effectsVolume=PlayerPrefs.GetFloat("riichi.effectsVolume",.8f);
             gameAudio.Configure(!musicMuted,musicVolume,!effectsMuted,effectsVolume);
@@ -307,6 +313,49 @@ namespace YunJian.Riichi
             endpoint = address; generation++; token = PlayerPrefs.GetString("riichi.token:" + endpoint, "");
             StartCoroutine(Send(new RequestBody { op = "join", name = nickname, pin = pin, recovery = recovery }));
         }
+        // Narrow lobby adapter. The existing action/selection/rendering path
+        // remains owned by this client and is not called by the new screens.
+        public LobbyController Lobby => lobby;
+        public bool LobbyActive => active;
+        public bool LobbyPlaying => active && State!=null && State.phase!="lobby";
+        public bool LobbyOverlayVisible => showRoom || page=="settings" || page=="confirm-close";
+        public bool LobbyCloseSettings(){if(page!="settings")return false;page="home";return true;}
+        public string LobbyNickname { get=>nickname;set{nickname=value;PlayerPrefs.SetString("riichi.name",value);PlayerPrefs.Save();} }
+        public string LobbyEndpoint => endpoint;
+        public string LobbyInviteText => "房间号："+(State?.pin??"")+"\n房主地址：\n"+(string.IsNullOrEmpty(addresses)?endpoint:addresses)+"\n连接同一热点后输入房间号加入。";
+        public void LobbyOpenSettings(){page="settings";}
+        void UseLocalHost()
+        {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            endpoint="http://127.0.0.1:8765";
+#endif
+            generation++;token=PlayerPrefs.GetString("riichi.token:"+endpoint,"");
+        }
+        public void LobbyCreate(int count,int length,bool useRed,string category)
+        {
+            if(Busy)return;
+            if(string.IsNullOrWhiteSpace(nickname)){message="请先在个人设置中填写昵称";return;}
+            UseLocalHost();players=count;rounds=length;red=useRed;
+            StartCoroutine(Send(new RequestBody{op="create",host=secret,name=nickname,n=count,rounds=length,red=useRed,category=category,lobbyFlow=true}));
+        }
+        public void LobbyRecover(){if(Busy)return;UseLocalHost();StartCoroutine(Send(new RequestBody{op="recoverHost",host=secret}));}
+        public void LobbyJoin(string address,string code,string restore)
+        {
+            if(Busy)return;endpoint=address;pin=code;recovery=restore;JoinRoom();
+        }
+        public void LobbyCommand(string operation,int seat=0)
+        {
+            if(Busy||State?.phase!="lobby")return;
+            StartCoroutine(Send(new RequestBody{op=operation,seat=seat}));
+        }
+        public void LobbyReady(bool ready){if(!Busy&&State?.phase=="lobby")StartCoroutine(Send(new RequestBody{op="lobbyReady",ready=ready}));}
+        public void LobbyLeave()
+        {
+            if(Busy||State?.phase!="lobby")return;string oldEndpoint=endpoint;
+            StartCoroutine(Send(new RequestBody{op=State.host?"closeLobby":"leaveLobby"},()=>{
+                token="";if(!validationSession){PlayerPrefs.DeleteKey("riichi.token:"+oldEndpoint);PlayerPrefs.Save();}EnterHome();lobby.Home();
+            }));
+        }
         void Styles()
         {
             if (label != null) return;
@@ -416,42 +465,11 @@ namespace YunJian.Riichi
         }
         void DrawHome()
         {
-            Panel(new Rect(345, 65, 590, 575)); GUI.Label(new Rect(380, 90, 520, 56), "云间日麻 · 三维牌桌", title);
-            GUI.Label(new Rect(380, 151, 500, 30), "三维牌桌 · 手机开房 · 离线局域网", small);
-            GUI.Label(new Rect(380, 199, 100, 35), "昵称", label); nickname = GUI.TextField(new Rect(490, 195, 400, 40), nickname, 12, field);
-            GUI.Label(new Rect(380, 248, 100, 35), "房主地址", small); endpoint = GUI.TextField(new Rect(490, 244, 400, 40), endpoint, field);
-#if UNITY_EDITOR || UNITY_STANDALONE
-            GUI.Label(new Rect(380, 294, 110, 35), "测试房主密钥", small); secret = GUI.TextField(new Rect(490, 290, 400, 40), secret, field);
-#endif
-            if (Button(new Rect(380, 342, 160, 42), players == 3 ? "三人麻将" : "四人麻将")) players = players == 3 ? 4 : 3;
-            if (Button(new Rect(550, 342, 160, 42), rounds == 1 ? "东风战" : "半庄战")) rounds = rounds == 1 ? 2 : 1;
-            if (Button(new Rect(720, 342, 170, 42), red ? "有赤宝牌" : "无赤宝牌")) red = !red;
-            if (Button(new Rect(380, 395, 245, 52), "单人练习")) StartRoom(true);
-            if (Button(new Rect(645, 395, 245, 52), "创建房间")) StartRoom(false);
-            GUI.Label(new Rect(380, 462, 100, 30), "房间码", small); pin = GUI.TextField(new Rect(480, 457, 150, 40), pin, 6, field);
-            recovery = GUI.TextField(new Rect(645, 457, 245, 40), recovery, 12, field);
-            GUI.Label(new Rect(645, 500, 245, 26), "恢复码（首次加入留空）", small);
-            if (Button(new Rect(380, 531, 245, 48), "加入房间")) JoinRoom();
-            if (Button(new Rect(645, 531, 245, 48), "继续上次牌桌")) StartCoroutine(Send(new RequestBody { op = "state" }));
-            if (Button(new Rect(1040, 24, 210, 44), "声音设置")) page = "settings";
+            lobby.Draw();
         }
         void DrawLobby()
         {
-            Panel(new Rect(170, 110, 940, 475)); GUI.Label(new Rect(205, 135, 800, 50), "好友入座 · 房间 " + State.pin, title);
-            for (int i = 0; i < State.n; i++)
-            {
-                Rect r = new Rect(205 + i * 220, 215, 200, 210); Panel(r);
-                if (i < State.players.Length)
-                {
-                    var p = State.players[i]; GUI.DrawTexture(new Rect(r.x + 53, r.y + 15, 94, 94), table.Portrait(p), ScaleMode.ScaleToFit);
-                    GUI.Label(new Rect(r.x + 15, r.y + 118, 175, 35), p.name, label);
-                    if (State.host && p.bot && Button(new Rect(r.x + 20, r.y + 160, 160, 38), "移除 AI")) StartCoroutine(Send(new RequestBody { op = "removeBot", seat = i }));
-                }
-                else if (State.host && Button(new Rect(r.x + 20, r.y + 70, 160, 50), "添加 AI")) StartCoroutine(Send(new RequestBody { op = "addBot" }));
-            }
-            if (State.host && Button(new Rect(730, 480, 320, 60), "补齐 AI 并开局")) StartCoroutine(Send(new RequestBody { op = "start", fillBots = true }));
-            if (Button(new Rect(205, 480, 180, 60), "房间信息")) showRoom = true;
-            if (Button(new Rect(410, 480, 180, 60), "返回大厅")) EnterHome();
+            lobby.Draw();
         }
         void DrawTableUI(bool passive=false)
         {
