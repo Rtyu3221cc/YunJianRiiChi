@@ -19,17 +19,17 @@ test('AI reactions never skip a pending human ron choice',()=>{const r=create();
 test('AI waits through fresh full-match introduction and deal',()=>{
  const clock=Date.now;let now=100000;Date.now=()=>now;
  try{const r=create();const first=r.dispatch({op:'start',token:r.s.players[0].token,version:r.s.version});assert(first.ok);r.s.players.forEach(p=>p.bot=true);const before=JSON.stringify(r.s);
-  assert(r.tick().idle);now+=5999;assert(r.tick().idle);assert.equal(JSON.stringify(r.s),before);now++;const waiting=r.tick();assert(waiting.waitMs>=500&&waiting.waitMs<=800);now+=waiting.waitMs;const step=r.tick();assert(step.ok&&step.action,step.error);checkTiles(r);
+  assert(r.tick().idle);now+=5999;assert(r.tick().idle);assert.equal(JSON.stringify(r.s),before);now++;const waiting=r.tick();assert(waiting.waitMs>=700&&waiting.waitMs<=1000);now+=waiting.waitMs;const step=r.tick();assert(step.ok&&step.action,step.error);checkTiles(r);
  }finally{Date.now=clock;}
 });
 
-test('every bot action family waits 500..800ms without publishing an early action',()=>{
+test('every bot action family waits 700..1000ms without publishing an early action',()=>{
  const choose=globalThis.RiichiAI.choose;
  try{for(const action of ['discard:p1','ron','tsumo','chi:m123-','pon:p111=','kan:s2222','nuki','pass']){
   const r=create();assert(op(r,'start').ok);r.s.players.forEach(p=>p.bot=true);let now=1000;r._aiNow=()=>now;globalThis.RiichiAI.choose=()=>action;let acted=[];r.act=(seat,id)=>acted.push(id);const before=JSON.stringify(r.s);
-  const first=r.tick();assert(first.waitMs>=500&&first.waitMs<=800);assert.equal(JSON.stringify(r.s),before);now+=first.waitMs-1;assert(r.tick().idle);assert.deepEqual(acted,[]);now++;assert.equal(r.tick().action,action);assert.deepEqual(acted,[action]);
+  const first=r.tick();assert(first.waitMs>=700&&first.waitMs<=1000);assert.equal(JSON.stringify(r.s),before);now+=first.waitMs-1;assert(r.tick().idle);assert.deepEqual(acted,[]);now++;assert.equal(r.tick().action,action);assert.deepEqual(acted,[action]);
  }}finally{globalThis.RiichiAI.choose=choose;}
 });
 test('changed room version restarts bot thinking and consecutive actions get independent waits',()=>{
- const r=create();assert(op(r,'start').ok);r.s.players.forEach(p=>p.bot=true);let now=1000;r._aiNow=()=>now;let first=r.tick();now+=first.waitMs;r.s.version++;const second=r.tick();assert(second.idle&&second.waitMs>=500&&second.waitMs<=800);now+=second.waitMs;assert(r.tick().action);const third=r.tick();if(third.waitMs)assert(third.waitMs>=500&&third.waitMs<=800);
+ const r=create();assert(op(r,'start').ok);r.s.players.forEach(p=>p.bot=true);let now=1000;r._aiNow=()=>now;let first=r.tick();now+=first.waitMs;r.s.version++;const second=r.tick();assert(second.idle&&second.waitMs>=700&&second.waitMs<=1000);now+=second.waitMs;assert(r.tick().action);const third=r.tick();if(third.waitMs)assert(third.waitMs>=700&&third.waitMs<=1000);
 });

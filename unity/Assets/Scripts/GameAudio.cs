@@ -48,6 +48,7 @@ namespace YunJian.Riichi
         void Update(){music.volume=Mathf.MoveTowards(music.volume,musicVolume,Time.unscaledDeltaTime*1.5f);}
         public void Suspend(bool pause){suspended=pause;if(pause)effects.Stop();RefreshMusic();}
         public void Reset(){inTable=false;room=null;drawKey=null;music.Stop();effects.Stop();music.volume=0;}
+        public void ClearHandEffects(){effects.Stop();drawKey=null;}
         void Play(AudioClip clip){if(clip!=null && effectsEnabled && !suspended)effects.PlayOneShot(clip);}
         public void Deal(){if(!inTable || suspended)return;DealSounds++;Play(deal);}
         public void Landing(string kind)

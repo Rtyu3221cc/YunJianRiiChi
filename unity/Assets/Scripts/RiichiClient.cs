@@ -253,7 +253,16 @@ namespace YunJian.Riichi
             introduction.Tick(gameAudio);
             // Every press, on the table or the HUD, gets Majsoul's sakura tap burst.
             if(Input.GetMouseButtonDown(0))tap.Play(Input.mousePosition);
-            if(State?.phase=="result" && (State.result.draw || !effects.ShowWinPresentation)){resultDisplay.Observe(State);settlementAudio.Tick(State,resultDisplay,true,gameAudio);}
+            if(State?.phase=="result" && (State.result.draw || !effects.ShowWinPresentation)){
+                resultDisplay.Observe(State);settlementAudio.Tick(State,resultDisplay,true,gameAudio);
+#if UNITY_EDITOR
+                bool livePresentation=!SessionPreviewOnly;
+#else
+                bool livePresentation=true;
+#endif
+                if(livePresentation&&active&&!Busy&&!introduction.Active&&!effects.HasPendingActions&&!lobby.OverlayActive&&page!="settings"&&resultDisplay.Tick(State,AutoPlaying)==ResultPresentation.Action.Ready)
+                    StartCoroutine(Send(new RequestBody{op="ready",handSeq=State.handSeq}));
+            }
             else if(State?.phase!="result")settlementAudio.Reset();
             bool waitInputConsumed=waitPressCaptured;
 #if UNITY_EDITOR

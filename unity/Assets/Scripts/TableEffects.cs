@@ -42,7 +42,7 @@ namespace YunJian.Riichi
         public WinCutIn CutIn=>winCutIn;
         public int SpawnedWinEffects { get; private set; }
         static bool IsWin(PublicSound e) => e!=null && (e.kind=="ron" || e.kind=="tsumo");
-        public bool ShowWinPresentation => IsWin(current) || IsWin(call) || handEvents.Any(IsWin) || callEvents.Any(IsWin) || winEffects.Count>0 || winCutIn.Active;
+        public bool ShowWinPresentation => IsWin(current) || IsWin(call) || cutInWin!=null || handEvents.Any(IsWin) || callEvents.Any(IsWin) || winEffects.Count>0 || winCutIn.Active;
         public bool WinActionStarted=>IsWin(current) || call?.kind=="ron";
         readonly List<NorthPetals> northEffects = new List<NorthPetals>();
         bool handedOff,impactQueued;
@@ -167,7 +167,7 @@ namespace YunJian.Riichi
         }
         int spokenEvent=-1;
         void StartQueued(){
-            if(current!=null || call!=null || winCutIn.Active || table.ArrangingHand)return;
+            if(current!=null || call!=null || cutInWin!=null || winCutIn.Active || winEffects.Count>0 || table.ArrangingHand)return;
             int hand=handEvents.Count>0?handEvents.Peek().id:int.MaxValue,shout=callEvents.Count>0?callEvents.Peek().id:int.MaxValue,id=Math.Min(hand,shout);
             if(id==int.MaxValue)return;
             if(hand==id && shout==id && handEvents.Peek().kind=="tsumo"){
@@ -204,12 +204,14 @@ namespace YunJian.Riichi
                         : string.IsNullOrEmpty(item.tile) ? null : table.CreateEffectTile(item.tile,item.kind=="tsumo"?table.WinningTarget(item):table.FindDiscard(item.seat,item.tile,item.riverIndex));
             if (animatedTile != null)
             {
-                foreach(var child in animatedTile.GetComponentsInChildren<Transform>())child.gameObject.layer=14;
+                // The carried self-draw tile shares table depth with its neighbours;
+                // only the arm uses the overlay camera that clears scene depth.
+                foreach(var child in animatedTile.GetComponentsInChildren<Transform>())child.gameObject.layer=item.kind=="tsumo"?0:14;
                 foreach(var collider in animatedTile.GetComponentsInChildren<Collider>())collider.enabled=false;
             }
             mesh.vertices=clip.vertices[0];mesh.normals=clip.normals[0];mesh.RecalculateBounds();
             if(animatedTile!=null){
-                animatedTile.position=motion.TransformPoint(TilePoint(0))-Vector3.up*.12f;
+                PositionCarriedTile(TilePoint(0));
                 animatedTile.rotation=item.kind=="nuki"?table.NorthTarget(item.seat,item.nuki).rotation:Quaternion.Euler(0,table.SeatAngle(item.seat)+(!stick&&item.riichi?90:0),0);
                 if(item.kind=="tsumo"){
                     var target=table.WinningTarget(item);if(target!=null)animatedTile.rotation=target.rotation;
@@ -253,6 +255,17 @@ namespace YunJian.Riichi
             int a=(int)frame,b=Mathf.Min(a+1,clip.data.frames-1); float t=frame-a;
             return Vector3.Lerp(new Vector3(clip.data.tilePoints[a*3],clip.data.tilePoints[a*3+1],clip.data.tilePoints[a*3+2]),new Vector3(clip.data.tilePoints[b*3],clip.data.tilePoints[b*3+1],clip.data.tilePoints[b*3+2]),t);
         }
+        void PositionCarriedTile(Vector3 point)
+        {
+            var position=motion.TransformPoint(point)-Vector3.up*.12f;
+            if(current.kind=="tsumo"){
+                // Zimo's original arm sweeps sideways. Let the tile rise and land
+                // over its reserved slot instead of sweeping across the exposed row.
+                var target=table.WinningTarget(current);
+                if(target!=null){motion.position+=new Vector3(target.position.x-position.x,0,target.position.z-position.z);position.x=target.position.x;position.z=target.position.z;position.y=Mathf.Max(target.position.y,position.y);}
+            }
+            animatedTile.position=position;
+        }
         void CompleteHandoff()
         {
             if (handedOff) return; handedOff=true;
@@ -283,7 +296,15 @@ namespace YunJian.Riichi
         void UpdateWinEffects()
         {
             float now=ValidationFreeze?ValidationTime:Time.unscaledTime;
-            for(int i=winEffects.Count-1;i>=0;i--){var e=winEffects[i];float age=e==null?WinTileEffect.Lifetime:now-e.StartedAt;if(age>=0 && e!=null && !e.SoundTriggered){e.SoundTriggered=true;GetComponent<GameAudio>()?.Cue("ron_huolongjuan");}if(age>=WinTileEffect.Lifetime){if(e!=null){e.gameObject.SetActive(false);Destroy(e.gameObject);}winEffects.RemoveAt(i);}else e.Sample(age);}
+            for(int i=winEffects.Count-1;i>=0;i--){
+                var e=winEffects[i];if(e==null){winEffects.RemoveAt(i);continue;}
+                float age=now-e.StartedAt;
+                if(age>=0&&!e.SoundTriggered){e.SoundTriggered=true;GetComponent<GameAudio>()?.Cue("ron_huolongjuan");}
+                e.Sample(age);
+                // Continuous emitters have a particle tail beyond the old 1.8 s
+                // cutoff. Keep the table visible until that tail really ends.
+                if(age>=e.PlaybackDuration&&e.ParticleCount==0){e.gameObject.SetActive(false);Destroy(e.gameObject);winEffects.RemoveAt(i);}
+            }
         }
         void EndNorthEffects()
         {
@@ -359,7 +380,11 @@ namespace YunJian.Riichi
             float elapsed=ValidationFreeze?ValidationTime:Time.unscaledTime-started;
             if (current!=null && elapsed >= PlayLength) { CompleteHandoff(); Finish(); }
             if(cutInWin!=null && (ValidationFreeze?ValidationTime:Time.unscaledTime-callStarted)>=1.05f){
-                winCutIn.Play();GetComponent<GameAudio>()?.Cue("cutin");if(cutInWin.kind=="ron")SpawnWin(cutInWin,(ValidationFreeze?0:Time.unscaledTime)+WinCutIn.Duration+.18f);cutInWin=null;
+                winCutIn.Play();GetComponent<GameAudio>()?.Cue("cutin");
+                // Double ron shares one discarded tile. Show both winners first,
+                // then play that tile's complete burst after the final cut-in.
+                if(cutInWin.kind=="ron"&&!callEvents.Any(e=>e.kind=="ron"))SpawnWin(cutInWin,(ValidationFreeze?0:Time.unscaledTime)+WinCutIn.Duration+.18f);
+                cutInWin=null;
             }
             if (call!=null && (ValidationFreeze?ValidationTime:Time.unscaledTime-callStarted) >= 1.05f) FinishCall();
             if (current==null || motion==null || clip==null) return;
@@ -377,7 +402,7 @@ namespace YunJian.Riichi
             {
                 Vector3 p=TilePoint(current.kind=="tsumo"?Mathf.Min(elapsed,SourceHandoff):elapsed);
                 if(current.kind=="tsumo"){motion.GetComponentInChildren<MeshRenderer>().enabled=elapsed<clip.data.duration;}
-                animatedTile.position=motion.TransformPoint(p)-Vector3.up*.12f;
+                PositionCarriedTile(p);
                 // A declared riichi tile lies sideways in the river, matching CreateTable.
                 bool stick=current.kind=="riichi-stick";
                 animatedTile.rotation=current.kind=="discard"&&targetTile!=null?targetTile.rotation:current.kind=="nuki" && table.NorthTarget(current.seat,current.nuki)!=null

@@ -121,7 +121,7 @@ for(const n of [3,4]){
   const seat=room.s.turn,token=room.s.players[seat].token,handSeq=room.s.handSeq;
   ok(send(room,token,'autoPlay',{enabled:true,version:-100}));
   heartbeat(room,humans);assert.equal(room.s.players[seat].autoReason,'manual');
-  const first=room.tick();assert(first.waitMs>=500&&first.waitMs<=800);
+  const first=room.tick();assert(first.waitMs>=700&&first.waitMs<=1000);
   time.advance(first.waitMs);const result=room.tick();assert(result.ok&&result.action,result.error);physicalTiles(room);
   heartbeat(room,humans);assert(room.s.players[seat].auto);
   const reply=ok(send(room,token,'resume',{room:room.s.audioRoom}));assert.equal(reply.state.you,seat);assert(!reply.state.players[seat].auto);
@@ -188,3 +188,20 @@ test('cancelled rooms and revoked credentials are distinguishable from an active
  ok(send(room,host,'leaveMatch'));assert.equal(room.dispatch({op:'peek',token:host}).state.phase,'empty');
  assert(!room.dispatch({op:'discover',pin}).ok);assert(!send(room,host,'resume').ok);
 });
+
+for(const n of [3,4])for(const final of [false,true]){
+ test(`${n} players: online auto-play seats wait for presentation acknowledgements (${final?'final':'ordinary'})`,()=>clock(time=>{
+  const {room,humans}=game(n,2);
+  for(const token of humans)ok(send(room,token,'autoPlay',{enabled:true}));
+  room.sound('tsumo',1,'s8',false,0,{from:1,kind:'draw'});
+  if(final)terminalFixture(room);else room.finish({title:'托管结算确认回归',delta:room.s.players.map(()=>0),details:[],repeat:false,draw:false});
+  const hand=room.s.handSeq,match=room.s.matchSeq,seq=room.s.audioSeq;
+  for(let i=0;i<15;i++){time.advance(1000);heartbeat(room,humans);room.tick();assert.equal(room.s.phase,'result');assert.equal(room.s.handSeq,hand);}
+  ok(send(room,humans[0],'ready',{handSeq:hand}));
+  for(let i=0;i<3;i++){time.advance(1000);heartbeat(room,humans);room.tick();assert.equal(room.s.phase,'result');}
+  ok(send(room,humans[1],'ready',{handSeq:hand}));
+  assert.equal(room.s.phase,'play');assert.equal(room.s.handSeq,hand+1);assert.equal(room.s.matchSeq,match+(final?1:0));
+  assert.equal(room.s.audioEvents.length,0);assert(room.s.audioSeq>=seq);physicalTiles(room);
+  const snapshot=JSON.stringify(room.s);assert(!send(room,humans[0],'ready',{handSeq:hand}).ok);assert.equal(JSON.stringify(room.s),snapshot);
+ }));
+}

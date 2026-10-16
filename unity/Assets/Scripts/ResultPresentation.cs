@@ -48,6 +48,22 @@ namespace YunJian.Riichi
             if(++winner>=v.result.details.Length){scores=true;winner=v.result.details.Length-1;}
             started=Time.unscaledTime;skipped=0;FrozenAge=0;
         }
+        // Auto-play uses the same pages and timing as a human. Run once per
+        // Update, after table effects and settlement audio, never per GUI pass.
+        public int ScoreConfirmRemaining(RoomView v)=>Mathf.Max(0,3-Mathf.FloorToInt(Age-ScoreEnd(v.n)));
+        public Action TickAuto(RoomView v)=>Tick(v,true);
+        public Action Tick(RoomView v,bool autoPlay)
+        {
+            Observe(v);
+            if(v.players[v.you].ready)return Action.None;
+            if(finalPage)return Age>=9?Action.Ready:Action.None;
+            if(!autoPlay&&!scores)return Action.None;
+            if(drawStage){if(Age>=1.7f)Advance(v);return Action.None;}
+            if(!scores){if(Age>=RevealEnd(v.result.details[winner])+1)Advance(v);return Action.None;}
+            if(ScoreConfirmRemaining(v)>0)return Action.None;
+            if(v.result.matchOver){Advance(v);return Action.None;}
+            return Action.Ready;
+        }
         Texture2D Art(string name)
         {
             if(!art.TryGetValue(name,out var t))art[name]=t=Resources.Load<Texture2D>("Majsoul/Settlement/"+name)??Resources.Load<Texture2D>("Majsoul/Results/"+name)??Resources.Load<Texture2D>("Majsoul/NativeReview/Sprites/"+name)??Resources.Load<Texture2D>("Majsoul/TablePolish/"+name);
@@ -362,7 +378,8 @@ namespace YunJian.Riichi
             Image("Btn_common",r);
             // UI_Win / UI_ScoreChange use Btn_common + CText in this font.
             // The unrelated "confirm" sprite carries a second frame of its own.
-            roundText.normal.textColor=gold;GUI.Label(r,value=="确认结算"?"确认":value,roundText);
+            var style=new GUIStyle(roundText){fontSize=31,normal={textColor=gold}};
+            GUI.Label(r,value=="确认结算"?"确认":value,style);
             return button(r,value);
         }
         public Rect WaitingRect=>new Rect(765,648,342,50);
@@ -374,7 +391,7 @@ namespace YunJian.Riichi
             if(finalPage){
                 Final(v,table,effects);
                 int remaining=Mathf.Max(0,9-Mathf.FloorToInt(Age));
-                if(!v.players[v.you].ready){bool clicked=FinalButton(FinalNextRect,"下一局("+remaining+")",true,button);if(clicked||remaining==0&&GUI.enabled)return Action.Ready;}
+                if(!v.players[v.you].ready && FinalButton(FinalNextRect,"下一局("+remaining+")",true,button))return Action.Ready;
                 if(v.players[v.you].ready)FinalButton(FinalNextRect,"等待牌友",true,(r,caption)=>false);
                 if(FinalButton(FinalHomeRect,"返回大厅",false,button))return Action.Home;
             }
@@ -382,7 +399,7 @@ namespace YunJian.Riichi
             else if(!scores){Details(v,table,effects);if(NativeButton(new Rect(1125,648,128,50),Age<RevealEnd(v.result.details[winner])?"跳过":"确认",button))Advance(v);}
             else {
                 Scores(v,table);
-                if(!v.players[v.you].ready && NativeButton(new Rect(1125,648,128,50),Age<ScoreEnd(v.n)?"跳过":v.result.matchOver?"终局":"确认结算",button)){bool finished=Age>=ScoreEnd(v.n);Advance(v);if(finished&&!v.result.matchOver)return Action.Ready;}
+                if(!v.players[v.you].ready && NativeButton(new Rect(1125,648,128,50),Age<ScoreEnd(v.n)?"跳过":"确认("+ScoreConfirmRemaining(v)+")",button)){bool finished=Age>=ScoreEnd(v.n);Advance(v);if(finished&&!v.result.matchOver)return Action.Ready;}
                 if(v.players[v.you].ready)Waiting();
                 if(v.host && v.players.All(p=>p.ready) && NativeButton(new Rect(1125,648,128,50),v.result.matchOver?"再来一场":"下一局",button))return Action.Next;
                 if(NativeButton(new Rect(28,650,142,49),"返回大厅",button))return Action.Home;

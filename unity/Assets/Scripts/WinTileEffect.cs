@@ -24,6 +24,7 @@ namespace YunJian.Riichi
         }
         [Serializable] public class Config { public Node[] nodes;public Layer[] layers; }
         public const float Lifetime=1.8f;
+        public float PlaybackDuration {get;private set;}=Lifetime;
         readonly List<ParticleSystem> systems=new List<ParticleSystem>();
         readonly List<Material> materials=new List<Material>();
         readonly List<Mesh> meshes=new List<Mesh>();
@@ -65,6 +66,8 @@ namespace YunJian.Riichi
                 nodes[i].localPosition=V(n.position);nodes[i].localRotation=new Quaternion(n.rotation[0],n.rotation[1],n.rotation[2],n.rotation[3]);nodes[i].localScale=V(n.scale);
             }
             foreach(var l in config.layers){
+                float lastEmission=Mathf.Max(l.rate>0?l.duration:0,l.bursts.Select(b=>b.time).DefaultIfEmpty(0).Max());
+                PlaybackDuration=Mathf.Max(PlaybackDuration,l.delay+lastEmission+l.lifeMax);
                 var p=nodes[l.node].gameObject.AddComponent<ParticleSystem>();p.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);p.useAutoRandomSeed=false;p.randomSeed=seed+(uint)systems.Count+1;
                 var m=p.main;m.playOnAwake=false;m.loop=false;m.duration=l.duration;m.startDelay=l.delay;m.simulationSpace=ParticleSystemSimulationSpace.Local;m.scalingMode=ParticleSystemScalingMode.Hierarchy;
                 m.startLifetime=new ParticleSystem.MinMaxCurve(l.lifeMin,l.lifeMax);m.startSpeed=new ParticleSystem.MinMaxCurve(l.speedMin,l.speedMax);m.startSize=new ParticleSystem.MinMaxCurve(l.sizeMin,l.sizeMax);

@@ -1,5 +1,16 @@
 # 云间日麻
 
+## Unity 0.5.43 · 自摸牌与确认倒计时（2026-10-16）
+
+修复自摸演出期间的临时牌位重叠：牌和手部动作对齐预留落点，沿原位垂直起落，保留模型尺寸与静止布局。点数转移与排名演出完成后，暗色按钮显示“确认(3)”并在 3 秒后自动确认，可提前点击；“确认”与“返回大厅”统一为 31 号字；终局“下一局”仍倒计时 9 秒。
+
+包含全员托管等待本机完整结算、双响与粒子完整播放、换局清理及 AI 随机 700–1000ms 等待的修复。
+
+[下载 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.43/yunjian-riichi-unity-0.5.43.apk) · [发布页](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/tag/unity-0.5.43) · [实际 Unity 录制](dist/ai-settlement-review-0.5.43/index.html) · [修改说明](docs/自摸与结算倒计时-0.5.43.md)
+
+验证：122 项规则／房间测试，984 项 Unity 自摸与倒计时专项断言；完整回归及 APK 校验见发布记录。没有连接 Android 真机，安装、触摸、音频及多人热点未实测。
+
+
 ## Unity 0.5.42：终局、回座与 AI 托管
 
 [下载 0.5.42 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.42/yunjian-riichi-unity-0.5.42.apk)，versionCode 43，包名 com.yunjian.riichi.unity，沿用原证书。

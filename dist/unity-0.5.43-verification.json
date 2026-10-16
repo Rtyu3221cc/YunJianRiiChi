@@ -1,0 +1,163 @@
+{
+  "version": "0.5.43",
+  "versionCode": 44,
+  "date": "2026-10-16",
+  "packageName": "com.yunjian.riichi.unity",
+  "minSdk": 26,
+  "targetSdk": 32,
+  "abis": [
+    "arm64-v8a",
+    "armeabi-v7a"
+  ],
+  "nodeTests": 122,
+  "unityChecks": 2084,
+  "winSettlementChecks": 984,
+  "lobbyChecks": 472,
+  "waitingRoomChecks": 628,
+  "runtimePlayPassed": true,
+  "apk": {
+    "file": "yunjian-riichi-unity-0.5.43.apk",
+    "bytes": 83179839,
+    "sha256": "7b83777ccdd9a45889820626244ad529d369b318cdb2af34730e9b650e90ade1",
+    "v1": true,
+    "v2": true,
+    "independentV1": true,
+    "certificateSHA256": "d1d8e506c6d3b62e9610dce294c07008057318fa9bafae702fb8b01f35f0dc2f",
+    "alignment16KB": true
+  },
+  "presentationTimeline": [
+    {
+      "scenario": "four-double-ron",
+      "title": "四人 · 一炮双响",
+      "duration": 33.33,
+      "decodedFrames": 800,
+      "stages": [
+        {
+          "stage": "playing",
+          "at": 0.01
+        },
+        {
+          "stage": "win",
+          "at": 5.9
+        },
+        {
+          "stage": "details-0",
+          "at": 12.78
+        },
+        {
+          "stage": "details-1",
+          "at": 16.24
+        },
+        {
+          "stage": "scores",
+          "at": 19.66
+        },
+        {
+          "stage": "next-hand",
+          "at": 27.03
+        }
+      ],
+      "lastVisibleParticleAt": 12.564596176147461,
+      "detailsAt": 12.784391403198242,
+      "nextHandAt": 27.034273147583008,
+      "newHandContainsOldWin": false
+    },
+    {
+      "scenario": "sanma-tsumo",
+      "title": "三人 · 自摸",
+      "duration": 27.54,
+      "decodedFrames": 661,
+      "stages": [
+        {
+          "stage": "playing",
+          "at": 0.01
+        },
+        {
+          "stage": "win",
+          "at": 4.38
+        },
+        {
+          "stage": "details-0",
+          "at": 9.9
+        },
+        {
+          "stage": "scores",
+          "at": 14.06
+        },
+        {
+          "stage": "next-hand",
+          "at": 21.13
+        }
+      ],
+      "lastVisibleParticleAt": 9.681922912597656,
+      "detailsAt": 9.896276473999023,
+      "nextHandAt": 21.133113861083984,
+      "newHandContainsOldWin": false
+    },
+    {
+      "scenario": "final-four-tsumo",
+      "title": "四人 · 终局倒计时",
+      "duration": 38.46,
+      "decodedFrames": 923,
+      "stages": [
+        {
+          "stage": "playing",
+          "at": 0.01
+        },
+        {
+          "stage": "win",
+          "at": 5.08
+        },
+        {
+          "stage": "details-0",
+          "at": 10.77
+        },
+        {
+          "stage": "scores",
+          "at": 15.53
+        },
+        {
+          "stage": "final",
+          "at": 22.93
+        },
+        {
+          "stage": "next-hand",
+          "at": 32.09
+        }
+      ],
+      "lastVisibleParticleAt": 10.370513916015625,
+      "detailsAt": 10.772216796875,
+      "nextHandAt": 32.09362030029297,
+      "newHandContainsOldWin": false
+    },
+    {
+      "scenario": "four-draw",
+      "title": "四人 · 流局",
+      "duration": 19.21,
+      "decodedFrames": 461,
+      "stages": [
+        {
+          "stage": "playing",
+          "at": 0.01
+        },
+        {
+          "stage": "draw",
+          "at": 3.54
+        },
+        {
+          "stage": "scores",
+          "at": 5.37
+        },
+        {
+          "stage": "next-hand",
+          "at": 12.86
+        }
+      ],
+      "lastVisibleParticleAt": null,
+      "detailsAt": null,
+      "nextHandAt": 12.858299255371094,
+      "newHandContainsOldWin": false
+    }
+  ],
+  "androidDeviceTested": false
+}

@@ -54,7 +54,10 @@ namespace YunJian.Riichi
         }
         void ApplyRoomState(RoomView view,bool returning=false)
         {
-            bool changed=State==null||State.version!=view.version||State.phase!=view.phase;
+            bool handChanged=State!=null&&(State.audioRoom!=view.audioRoom||State.matchSeq!=view.matchSeq||State.handSeq!=view.handSeq);
+            // Release references to the old table before Render replaces its tiles.
+            if(handChanged){effects.Reset();voice.Reset();settlementAudio.Reset();gameAudio.ClearHandEffects();resultDisplay.Reset();ClearSelection();RiichiMode=false;choosingKind=null;}
+            bool changed=handChanged||State==null||State.version!=view.version||State.phase!=view.phase;
             State=view;if(State.phase!="play"&&State.phase!="reaction")ResetWaitPress();
             introduction.Observe(State,validationSession);voice.Observe(State);gameAudio.SetScene(State);allLast.Observe(State);
             if(State.phase=="empty"||State.phase=="join"){active=false;page="home";table.Clear();return;}

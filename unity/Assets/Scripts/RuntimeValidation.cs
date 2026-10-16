@@ -747,7 +747,7 @@ namespace YunJian.Riichi
             fx.ValidationTime=.2f;fx.Accept(multi);multi.audioEvents=calls;multi.audioSeq=lastId;fx.Accept(multi);yield return null;
             int shared=fx.SpawnedWinEffects;Require(fx.ValidationCallKind=="ron","First double ron cut-in missing");
             fx.ValidationTime=1.06f;yield return null;fx.CutIn.Freeze=true;fx.CutIn.FrozenAge=WinCutIn.Duration+.01f;fx.ValidationTime=.2f;yield return null;
-            Require(fx.ValidationCallKind=="ron" && fx.SpawnedWinEffects==shared+1,"Second winner missing or shared discard flashes twice");
+            Require(fx.ValidationCallKind=="ron" && fx.SpawnedWinEffects==shared,"Second winner missing or shared discard flashes before the last cut-in");
             fx.ValidationTime=1.06f;yield return null;Require(fx.SpawnedWinEffects==shared+1,"Double ron duplicates the shared tile burst");
             fx.Reset();
             // Robbing a kan/nuki must use the public robbed tile, not an older discard.

@@ -35,7 +35,10 @@ class Room{
   const s=this.s;if(s?.phase!=='result')return false;
   // A room with no connected humans pauses at settlement instead of spinning
   // through unattended matches forever. A returning human can continue it.
-  if(!s.players.every(p=>p.ready||this.controlled(p))||!s.players.some(p=>!p.bot&&!p.away&&Date.now()-(this.seen[p.token]||0)<12000))return false;
+  const now=Date.now(),online=p=>!p.bot&&!p.away&&now-(this.seen[p.token]||0)<12000;
+  // Online viewers, including auto-play seats, acknowledge only after their
+  // local win/draw and score presentation. Offline seats cannot block them.
+  if(!s.players.some(online)||!s.players.every(p=>p.bot||p.ready||this.controlled(p)&&!online(p)))return false;
   this.advanceResult();return true;
  }
  sound(kind,seat,tile,riichi,nuki,win,meld){const s=this.s;s.audioSeq=(s.audioSeq||0)+1;s.audioEvents=(s.audioEvents||[]).concat({id:s.audioSeq,kind,seat,tile:tile||null,riichi:!!riichi,...(kind==='discard'?{riverIndex:s.players[seat].river.length}:{}),...(nuki?{nuki}:{}),...(win?{from:win.from,winSource:win.kind}:{}),...(meld?{meld:meld.value,meldKind:meld.kind,meldIndex:meld.index,from:meld.from}:{}),at:Date.now()}).slice(-24);}
@@ -52,7 +55,7 @@ class Room{
   const i=s.phase==='play'?s.turn:s.players.findIndex((p,j)=>this.controlled(p)&&this.options(j).length);
   if(i<0||!this.controlled(s.players[i]))return {ok:true,idle:true};
   const key=[s.audioRoom,s.version,s.phase,i,s.audioSeq].join(':'),now=this._aiNow();
-  if(this._aiPlan?.key!==key)this._aiPlan={key,until:now+500+Math.floor(Math.random()*301)};
+  if(this._aiPlan?.key!==key)this._aiPlan={key,until:now+700+Math.floor(Math.random()*301)};
   if(now<this._aiPlan.until)return {ok:true,idle:true,waitMs:this._aiPlan.until-now};
   const before=JSON.stringify(s);
   try{const action=g.RiichiAI.choose(this.view(i));if(!action)return {ok:true,idle:true};this.act(i,action);s.version++;this.save(JSON.stringify(s));return {ok:true,action};}
@@ -151,6 +154,8 @@ class Room{
   shuffle(wall);s.rinshan=wall.splice(0,4);s.indicators=wall.splice(0,5);s.ura=wall.splice(0,5);s.deadFill=[];s.wall=wall;
   s.handSeq=(s.handSeq||0)+1;s.dealtAt=Date.now();s.roundOpeningUntil=s.dealtAt+1800;
   s.interrupted=false;s.phase='play';s.pending=null;s.result=null;s.log=[];s.last=null;s.turn=s.dealer;s.drawKind='normal';
+  // Keep the event cursor monotonic, but never replay the previous hand's calls.
+  s.audioEvents=[];this._aiPlan=null;
   for(let i=0;i<s.n;i++){let p=s.players[i],dealt=wall.splice(0,13);Object.assign(p,{dealt,hand:new M.Shoupai(dealt).toString(),river:[],riichi:0,ippatsu:false,nuki:0,temp:false,permanent:false,kans:0,ready:false});}
   this.draw(s.dealer);s.players[s.dealer].dealt.push(this.h(s.dealer)._zimo);this.log('开局');
  }
