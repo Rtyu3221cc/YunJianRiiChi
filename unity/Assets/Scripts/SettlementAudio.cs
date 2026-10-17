@@ -17,7 +17,7 @@ namespace YunJian.Riichi
         static readonly Dictionary<WinDetail,Plan> plans=new Dictionary<WinDetail,Plan>();
         AudioSource output;
         bool enabledVoice=true,suspended;
-        string key;float previous=-1;int winner=-1,skipSerial;bool wasScores;
+        string key;float previous=-1;int winner=-1,skipSerial;bool wasScores,wasFinal;
         public int VoicesPlayed {get;private set;}
         public readonly List<string> PlayedKeys=new List<string>();
         public bool HasResources=>Data.clips.All(c=>Clip(c.key)!=null);
@@ -51,7 +51,7 @@ namespace YunJian.Riichi
         void Awake(){output=gameObject.AddComponent<AudioSource>();output.playOnAwake=false;output.spatialBlend=0;}
         public void Configure(bool enabled,float volume){enabledVoice=enabled;output.volume=Mathf.Clamp01(volume);if(!enabled)output.Stop();}
         public void Suspend(bool flag){suspended=flag;if(flag)output.Stop();}
-        public void Reset(){output.Stop();key=null;previous=-1;winner=-1;wasScores=false;}
+        public void Reset(){output.Stop();key=null;previous=-1;winner=-1;wasScores=false;wasFinal=false;}
         void Voice(string name){if(string.IsNullOrEmpty(name))return;PlayedKeys.Add(name);if(enabledVoice && !suspended && Clip(name)!=null){output.clip=Clip(name);output.Play();VoicesPlayed++;}}
         // Called once per frame from the client, never from repeated GUI passes.
         public void Tick(RoomView view,ResultPresentation display,bool visible,GameAudio audio,bool validation=false){
@@ -60,7 +60,7 @@ namespace YunJian.Riichi
             if(key!=next){Reset();key=next;}
             if(!visible || suspended)return;
             float age=display.ElapsedAge;
-            if(winner!=display.WinnerIndex || wasScores!=display.ShowingScores){output.Stop();previous=-1;winner=display.WinnerIndex;wasScores=display.ShowingScores;}
+            if(winner!=display.WinnerIndex || wasScores!=display.ShowingScores || wasFinal!=display.ShowingFinal){output.Stop();if(display.ShowingFinal)audio.ClearHandEffects();previous=-1;winner=display.WinnerIndex;wasScores=display.ShowingScores;wasFinal=display.ShowingFinal;}
             if(display.Freeze && !validation){previous=age;return;}
             bool crossed(float at)=>previous<at && age>=at;
             // A skipped/frozen page jumps to the final display without bursting every old sound.
@@ -69,13 +69,20 @@ namespace YunJian.Riichi
             if(!jump){
                 if(display.ShowingDraw){
                     if(crossed(0)){string abort=view.result.title=="九种九牌"?"gameend_jiuzhongjiupai":view.result.title=="四风连打"?"gameend_sifenglianda":view.result.title=="四家立直"?"gameend_sijializhi":view.result.title=="四杠散了"?"gameend_sigangliuju":null;Voice(abort);}
-                }else if(display.ShowingScores){if(crossed(.8f))audio.Cue("winlose");}
+                }else if(display.ShowingFinal){}
+                else if(display.ShowingScores){
+                    const float step=.15f;
+                    int beat=Mathf.FloorToInt((age-ResultPresentation.ScoreCountStart)/step),priorBeat=Mathf.FloorToInt((previous-ResultPresentation.ScoreCountStart)/step);
+                    if(age>=ResultPresentation.ScoreCountStart&&age<ResultPresentation.ScoreCountEnd&&beat>priorBeat&&view.result.delta?.Any(d=>d!=0)==true)audio.Cue("score_change");
+                }
                 else if(view.result.details!=null && winner<view.result.details.Length){
                     var plan=Sequence(view.result.details[winner]);foreach(var row in plan.rows)if(crossed(row.at)){Voice(row.voice);audio.Cue("hule_fan_out",row.voice==null?1:.5f);}
                     if(crossed(plan.fuAt))audio.Cue("fu_appear");if(crossed(plan.pointsAt))audio.Cue("score_appear");
                     if(plan.titleVoice!=null){if(crossed(plan.titleAt+(plan.drum=="yakuman"?.15f:.3f)))audio.Cue(plan.drum);if(crossed(plan.titleAt+.5f))Voice(plan.titleVoice);}
                 }
             }
+            // Rank arrival is still audible when the player skips its entrance.
+            if(display.ShowingScores&&!display.ShowingFinal&&crossed(ResultPresentation.RankAt(view.n,1)))audio.Cue("rank1");
             previous=age;
         }
     }

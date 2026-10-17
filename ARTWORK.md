@@ -180,3 +180,11 @@ bg_nickname 的斜边和透明区域使完整图片矩形的中心不等于玩�
 ## Unity 0.5.42 终局与中弹窗
 
 终局 `UI_GameEnd` 预制体坐标、名次数字与“位”取自现有雀魂 APK，专用精灵恢复原透明画布，不改局间结算精灵。来源和 SHA-256 见 `Resources/Majsoul/Settlement/Final/source.json`。中弹窗深色 `button`、黄色 `button_light` 以及 AI 托管 `button_text_bottom_s` 使用 APK 原图，按原 Sprite border 拉伸中段并保留两端，来源分别见 Lobby/provenance.json 与 reference-skin.json。未使用生成式美术。
+
+## Unity 0.5.45 役满、接管与大厅音乐
+
+役满机会／确定字图、粒子数据与材质参数来自用户提供的雀魂 APK，见 `Resources/Majsoul/NativeReview/yakuman-provenance.json`、对应 `Evidence` 与源 JSON。保留原粒子参数，修复 Unity 版本迁移所需的序列化字段及透明／加法合成。APK Lua 为加密字节，没有可读原逻辑；本项目用自家手牌评分驱动提示。
+
+博士帽、头像暗遮罩、闪电为 APK 原图，来源与布局见 `Resources/Majsoul/Review1017d/provenance.json` 和 `layout.json`。红点、指示器边框及创建转场沿用原版资源。新增音效 `effect_yakumanready`、`rank1`、`score_change` 来自原音频包，记录见 `Resources/Majsoul/Audio/provenance.json` 与各导入脚本。
+
+大厅《金秋送爽》使用雀魂官方固定版本资源 `audio/music/lobby_autumn.mp3`，由用户试听确认；来源 URL、长度与哈希见 `Resources/Majsoul/Lobby/Audio/autumn-source.json`。二维码由 ZXing 生成，白／暖白／紧留白／透明金色是同一公开邀请数据的颜色及留白比较，不使用生成式美术。

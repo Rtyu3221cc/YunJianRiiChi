@@ -1,5 +1,13 @@
 # 云间日麻
 
+## Unity 0.5.45 · 二维码、役满与 AI 接管（2026-10-17）
+
+加入相机／相册扫码、放大的邀请二维码及反色识别；原版役满机会／确定、拔剑音效和秋季《金秋送爽》；整庄模式、听牌点击开关、两分接管、离线遮罩、全 AI 保持终局。修正对家立直牌深度、响应提示时序、右侧四按钮间距及结算声音：数字变化滴声，第一位当一次，终局无音效。
+
+[下载 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.5.45/yunjian-riichi-unity-0.5.45.apk) · [发布页](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/tag/unity-0.5.45) · [新对话交接 Markdown](docs/handoff-unity-0.5.45.md) · [预览](dist/previews/unity-0.5.45/index.html) · [验证记录](dist/验证记录-unity-0.5.45.md)
+
+源码包含完整 Unity、Android 服务、离线引擎、资源和测试；APK 通过 Release 分发。Node 129 项、Unity 单元 62 项及完整 Play／大厅／房间回归通过。versionCode 46，原证书，双架构；签名及完整性通过。Android 真机安装、触摸、相机／相册扫码、声音及多手机局域网尚未实测。
+
 ## Unity 0.5.43 · 自摸牌与确认倒计时（2026-10-16）
 
 修复自摸演出期间的临时牌位重叠：牌和手部动作对齐预留落点，沿原位垂直起落，保留模型尺寸与静止布局。点数转移与排名演出完成后，暗色按钮显示“确认(3)”并在 3 秒后自动确认，可提前点击；“确认”与“返回大厅”统一为 31 号字；终局“下一局”仍倒计时 9 秒。

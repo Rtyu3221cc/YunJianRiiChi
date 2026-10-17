@@ -8,9 +8,9 @@ function send(room,token,op,extra={}){
  return room.dispatch({op,token,version:room.s?.version,id:randomUUID(),...extra});
 }
 function ok(reply){assert(reply.ok,reply.error);return reply;}
-function game(n,humanCount=n){
+function game(n,humanCount=n,settings={}){
  const room=new Room('session-test-host');
- const host=ok(room.dispatch({op:'create',host:'session-test-host',name:'房主',n,rounds:2,red:false,lobbyFlow:true,category:'competition'})).token;
+ const host=ok(room.dispatch({op:'create',host:'session-test-host',name:'房主',n,rounds:2,red:false,lobbyFlow:true,category:'competition',...settings})).token;
  const humans=[host];
  for(let i=1;i<humanCount;i++){
   const token=ok(room.dispatch({op:'join',pin:room.s.pin,name:'牌友'+i})).token;
@@ -103,17 +103,17 @@ for(const n of [3,4]){
   assert.equal(restored.s.players[seat].score,original.score);assert.equal(restored.s.pin,room.s.pin);physicalTiles(restored);
  }));
 
- test(`${n} players: 180 second action timeout respects threshold and heartbeat never takes control back`,()=>clock(time=>{
+ test(`${n} players: 120 second idle timeout respects threshold and heartbeat never takes control back`,()=>clock(time=>{
   const {room,humans}=game(n);time.advance(6000);heartbeat(room,humans);room.tick();
   const seat=room.s.turn,token=room.s.players[seat].token,start=time.now;
-  for(let i=0;i<17;i++){time.advance(10000);heartbeat(room,humans);room.tick();assert(!room.s.players[seat].auto);}
-  time.advance(9999);heartbeat(room,humans);room.tick();assert.equal(time.now-start,179999);assert(!room.s.players[seat].auto);
+  for(let i=0;i<11;i++){time.advance(10000);heartbeat(room,humans);room.tick();assert(!room.s.players[seat].auto);}
+  time.advance(9999);heartbeat(room,humans);room.tick();assert.equal(time.now-start,119999);assert(!room.s.players[seat].auto);
   time.advance(1);heartbeat(room,humans);const step=room.tick();assert(step.idle);assert.equal(room.s.players[seat].autoReason,'timeout');
   assert(!room.s.players[seat].bot);assert(room.s.players[seat].auto);heartbeat(room,humans);assert(room.s.players[seat].auto);
   ok(send(room,token,'presence',{present:true}));assert(room.s.players[seat].auto,'foreground heartbeat preserves AI until explicit return');
   ok(send(room,token,'autoPlay',{enabled:false,version:-100}));assert(!room.s.players[seat].auto);
   const action=room.options(seat).find(a=>a.kind==='discard');assert(action);ok(send(room,token,'action',{action:action.id}));
-  assert(room.s.players.every(p=>!p.auto));physicalTiles(room);
+  assert(!room.s.players[seat].auto);assert(room.s.players.filter((p,i)=>i!==seat).every(p=>p.autoReason==='timeout'));physicalTiles(room);
  }));
 
  test(`${n} players: manual AI takes a legal action, polling preserves it, explicit resume restores manual control`,()=>clock(time=>{
@@ -143,13 +143,14 @@ for(const n of [3,4]){
  });
 }
 
-test('unattended settlement stays paused until a connected human explicitly resumes and readies',()=>clock(time=>{
+test('unattended terminal stays paused after resume and ready until host explicitly starts another match',()=>clock(time=>{
  const {room,host}=game(3,1);terminalFixture(room);ok(send(room,host,'presence',{present:false}));
  const handSeq=room.s.handSeq,matchSeq=room.s.matchSeq;
  for(let i=0;i<10;i++){time.advance(200000);room.tick();assert.equal(room.s.phase,'result');assert.equal(room.s.matchSeq,matchSeq);}
  ok(room.dispatch({op:'peek',token:host}));room.tick();assert.equal(room.s.phase,'result');
  ok(send(room,host,'resume',{room:room.s.audioRoom}));room.tick();assert.equal(room.s.phase,'result');
- ok(send(room,host,'ready',{handSeq}));assert.equal(room.s.phase,'play');assert.equal(room.s.matchSeq,matchSeq+1);physicalTiles(room);
+ ok(send(room,host,'ready',{handSeq}));assert.equal(room.s.phase,'result');assert.equal(room.s.matchSeq,matchSeq);
+ ok(send(room,host,'next'));assert.equal(room.s.phase,'play');assert.equal(room.s.matchSeq,matchSeq+1);physicalTiles(room);
 }));
 
 test('failed session persistence rolls back AI mode, guest departure and host closure',()=>{
@@ -159,10 +160,10 @@ test('failed session persistence rolls back AI mode, guest departure and host cl
  }
 });
 
-test('a rejected illegal action does not extend the 180 second inactivity deadline',()=>clock(time=>{
+test('a rejected illegal action does not extend the 120 second inactivity deadline',()=>clock(time=>{
  const {room,humans}=game(4);time.advance(6000);heartbeat(room,humans);room.tick();
  const seat=room.s.turn,token=room.s.players[seat].token;
- for(let i=0;i<17;i++){time.advance(10000);heartbeat(room,humans);room.tick();}
+ for(let i=0;i<11;i++){time.advance(10000);heartbeat(room,humans);room.tick();}
  time.advance(999);heartbeat(room,humans);const before=JSON.stringify(room.s);
  assert(!send(room,token,'action',{action:'discard:invalid-tile'}).ok);assert.equal(JSON.stringify(room.s),before);
  time.advance(9001);heartbeat(room,humans);room.tick();assert.equal(room.s.players[seat].autoReason,'timeout');
@@ -172,7 +173,7 @@ test('a failed session save or action save preserves the original inactivity dea
  for(const op of ['autoPlay','resume','action'])clock(time=>{
   const {room,humans}=game(3);time.advance(6000);heartbeat(room,humans);room.tick();
   const seat=room.s.turn,token=room.s.players[seat].token;
-  for(let i=0;i<17;i++){time.advance(10000);heartbeat(room,humans);room.tick();}
+  for(let i=0;i<11;i++){time.advance(10000);heartbeat(room,humans);room.tick();}
   const before=JSON.stringify(room.s);room.save=()=>{throw Error('disk full');};
   const extra=op==='autoPlay'?{enabled:true}:op==='resume'?{room:room.s.audioRoom}:{action:room.options(seat).find(a=>a.kind==='discard').id};
   assert(!send(room,token,op,extra).ok);assert.equal(JSON.stringify(room.s),before);room.save=()=>{};
@@ -189,6 +190,62 @@ test('cancelled rooms and revoked credentials are distinguishable from an active
  assert(!room.dispatch({op:'discover',pin}).ok);assert(!send(room,host,'resume').ok);
 });
 
+test('unlimited mode never starts idle takeover while connected, but still replaces a disconnected player',()=>clock(time=>{
+ const {room,humans}=game(4,4,{idleSeconds:0});time.advance(6000);
+ for(let i=0;i<61;i++){heartbeat(room,humans);room.tick();assert(room.s.players.every(p=>!p.auto));time.advance(10000);}
+ assert.equal(room.view(0).idleSeconds,0);
+ const seat=room.s.players.findIndex(p=>p.token===humans[1]);
+ ok(send(room,humans[1],'presence',{present:false}));assert.equal(room.s.players[seat].autoReason,'offline');assert(room.view(0).players[seat].takeoverMask);
+}));
+
+test('real input on another seat restarts its own idle clock, polling alone does not',()=>clock(time=>{
+ const {room,humans}=game(4);time.advance(6000);const start=time.now,seat=(room.s.turn+1)%4,token=room.s.players[seat].token;
+ for(let i=0;i<10;i++){time.advance(10000);heartbeat(room,humans);room.tick();}
+ ok(room.dispatch({op:'state',token,userActive:true}));
+ time.advance(20000);heartbeat(room,humans);room.tick();assert.equal(time.now-start,120000);
+ assert(!room.s.players[seat].auto);assert(room.s.players.filter((p,i)=>i!==seat).every(p=>p.autoReason==='timeout'));
+ for(let i=0;i<9;i++){time.advance(10000);heartbeat(room,humans);room.tick();assert(!room.s.players[seat].auto);}
+ time.advance(10000);heartbeat(room,humans);room.presence(time.now);assert.equal(room.s.players[seat].autoReason,'timeout');
+ assert(room.view(0).players[seat].takeoverMask);
+ ok(room.dispatch({op:'state',token,userActive:true}));assert(!room.s.players[seat].auto);assert(!room.view(0).players[seat].takeoverMask);
+}));
+
+test('manual takeover is unmasked, disconnect masks it, and resume restores the same seat',()=>clock(time=>{
+ const {room,humans}=game(3),token=humans[1],seat=room.s.players.findIndex(p=>p.token===token);
+ ok(send(room,token,'autoPlay',{enabled:true}));assert(!room.view(0).players[seat].takeoverMask);
+ time.advance(12000);heartbeat(room,humans.filter(t=>t!==token));room.presence(time.now);
+ assert.equal(room.s.players[seat].autoReason,'offline');assert(room.view(0).players[seat].takeoverMask);
+ const hand=room.s.players[seat].hand;ok(send(room,token,'resume',{room:room.s.audioRoom}));
+ assert(!room.view(0).players[seat].takeoverMask);assert(!room.s.players[seat].auto);assert.equal(room.s.players[seat].hand,hand);
+}));
+
+test('guest departure shows the takeover mask until a new human inherits that bot seat',()=>{
+ const {room,humans}=game(3),token=humans[1],seat=room.s.players.findIndex(p=>p.token===token);
+ ok(send(room,token,'leaveMatch'));assert(room.view(0).players[seat].takeoverMask);
+ const reply=ok(room.dispatch({op:'join',pin:room.s.pin,name:'接座玩家'}));assert.equal(reply.state.you,seat);
+ assert(!reply.state.players[seat].takeoverMask);assert(!reply.state.players[seat].bot);physicalTiles(room);
+});
+
+test('whole-match and unlimited options survive a saved-room restart',()=>{
+ const {room}=game(4,4,{rounds:4,idleSeconds:0});assert.equal(room.s.rounds,4);
+ const restored=new Room('session-test-host',undefined,JSON.stringify(room.s));
+ assert.equal(restored.view(0).rounds,4);assert.equal(restored.view(0).idleSeconds,0);physicalTiles(restored);
+});
+
+test('unattended ordinary settlement advances after its grace period, including older saved results',()=>clock(time=>{
+ const {room,host}=game(3,1);ok(send(room,host,'presence',{present:false}));room.abort('九种九牌');
+ const hand=room.s.handSeq;delete room.s.resultFinishedAt;room.tick();assert.equal(room.s.phase,'result');
+ time.advance(11999);room.tick();assert.equal(room.s.phase,'result');
+ time.advance(1);room.tick();assert.equal(room.s.phase,'play');assert.equal(room.s.handSeq,hand+1);physicalTiles(room);
+}));
+
+test('failed real-input persistence restores the previous idle clock and takeover mask',()=>clock(time=>{
+ const {room,humans}=game(3);time.advance(126000);heartbeat(room,humans);room.presence(time.now);
+ const token=humans[0],before=JSON.stringify(room.s);room.save=()=>{throw Error('disk full');};
+ assert(!room.dispatch({op:'state',token,userActive:true}).ok);assert.equal(JSON.stringify(room.s),before);
+ assert(room.view(0).players[0].takeoverMask);
+}));
+
 for(const n of [3,4])for(const final of [false,true]){
  test(`${n} players: online auto-play seats wait for presentation acknowledgements (${final?'final':'ordinary'})`,()=>clock(time=>{
   const {room,humans}=game(n,2);
@@ -200,6 +257,7 @@ for(const n of [3,4])for(const final of [false,true]){
   ok(send(room,humans[0],'ready',{handSeq:hand}));
   for(let i=0;i<3;i++){time.advance(1000);heartbeat(room,humans);room.tick();assert.equal(room.s.phase,'result');}
   ok(send(room,humans[1],'ready',{handSeq:hand}));
+  if(final){assert.equal(room.s.phase,'result');assert.equal(room.s.handSeq,hand);assert.equal(room.s.matchSeq,match);ok(send(room,humans[0],'next'));}
   assert.equal(room.s.phase,'play');assert.equal(room.s.handSeq,hand+1);assert.equal(room.s.matchSeq,match+(final?1:0));
   assert.equal(room.s.audioEvents.length,0);assert(room.s.audioSeq>=seq);physicalTiles(room);
   const snapshot=JSON.stringify(room.s);assert(!send(room,humans[0],'ready',{handSeq:hand}).ok);assert.equal(JSON.stringify(room.s),snapshot);

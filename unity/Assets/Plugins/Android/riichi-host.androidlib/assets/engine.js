@@ -16,12 +16,9 @@ class Room{
   const s=this.s;let changed=false;
   for(let i=0;i<s.players.length;i++){
    const p=s.players[i];if(p.bot)continue;
-   if(!p.auto&&(p.away||now-(this.seen[p.token]||this._bootAt)>=12000)){p.auto=true;p.autoReason='offline';changed=true;}
-   const waiting=s.phase==='play'?s.turn===i:s.phase==='result'?!p.ready:s.pending.options[i]&&!s.pending.replies[i];
-   const key=s.phase==='play'?'play:'+s.handSeq+':'+s.audioSeq+':'+s.turn:s.phase+':'+s.handSeq+':'+s.audioSeq;
-   if(!waiting||p.auto){delete this._waiting[p.token];continue;}
-   const wait=this._waiting[p.token];if(!wait||wait.key!==key)this._waiting[p.token]={key,since:Math.max(now,s.matchOpeningUntil||0,s.roundOpeningUntil||0)};
-   else if(now-wait.since>=180000){p.auto=true;p.autoReason='timeout';changed=true;}
+   if((p.away||now-(this.seen[p.token]||this._bootAt)>=12000)&&(!p.auto||p.autoReason!=='offline')){p.auto=true;p.autoReason='offline';changed=true;}
+   const activeSince=Math.max(p.lastInputAt||s.matchStartedAt||this._bootAt,s.matchOpeningUntil||0);
+   if(!p.auto&&s.idleSeconds!==0&&now-activeSince>=120000){p.auto=true;p.autoReason='timeout';changed=true;}
   }
   return changed;
  }
@@ -33,12 +30,15 @@ class Room{
  }
  advanceIfReady(){
   const s=this.s;if(s?.phase!=='result')return false;
-  // A room with no connected humans pauses at settlement instead of spinning
-  // through unattended matches forever. A returning human can continue it.
+  if(!Number.isFinite(s.resultFinishedAt))s.resultFinishedAt=Date.now();
+  // Let an unattended AI match finish, then retain its terminal result.
+  if(s.result.matchOver&&(s.result.autoTerminal||s.players.every(p=>this.controlled(p)))){s.result.autoTerminal=true;return false;}
   const now=Date.now(),online=p=>!p.bot&&!p.away&&now-(this.seen[p.token]||0)<12000;
   // Online viewers, including auto-play seats, acknowledge only after their
   // local win/draw and score presentation. Offline seats cannot block them.
-  if(!s.players.some(online)||!s.players.every(p=>p.bot||p.ready||this.controlled(p)&&!online(p)))return false;
+  if(!s.players.some(online)){
+   if(!s.players.every(p=>this.controlled(p))||now-(s.resultFinishedAt||now)<12000)return false;
+  }else if(!s.players.every(p=>p.bot||p.ready||this.controlled(p)&&!online(p)))return false;
   this.advanceResult();return true;
  }
  sound(kind,seat,tile,riichi,nuki,win,meld){const s=this.s;s.audioSeq=(s.audioSeq||0)+1;s.audioEvents=(s.audioEvents||[]).concat({id:s.audioSeq,kind,seat,tile:tile||null,riichi:!!riichi,...(kind==='discard'?{riverIndex:s.players[seat].river.length}:{}),...(nuki?{nuki}:{}),...(win?{from:win.from,winSource:win.kind}:{}),...(meld?{meld:meld.value,meldKind:meld.kind,meldIndex:meld.index,from:meld.from}:{}),at:Date.now()}).slice(-24);}
@@ -94,12 +94,12 @@ class Room{
    const ron=M.Util.hule(h,tile+this.dir(i,(i+1)%s.n),param);
    const tsumoParam={...param,hupai:{...param.hupai,haidi:this.remain()===0?1:0}};
    const tsumo=M.Util.hule(h.clone().zimo(tile),null,tsumoParam);
-   return {tile,ron:!!(ron&&ron.hupai),tsumo:!!(tsumo&&tsumo.hupai),remaining:this.unseen(i,tile)};
+   return {tile,ron:!!(ron&&ron.hupai),tsumo:!!(tsumo&&tsumo.hupai),yakumanRon:ron&&ron.damanguan||0,yakumanTsumo:tsumo&&tsumo.damanguan||0,remaining:this.unseen(i,tile)};
   });
   return {furiten,waits:details};
  }
  hints(i,h,options){
-  if(!h)return {waitDetails:[],discardHints:[],furiten:false};
+  if(!h)return {waitDetails:[],discardHints:[],furiten:false,yakumanIndicator:0};
   const base=h._zimo&&h._zimo.length===2?h.clone().dapai(h._zimo+'_'):h;
   const info=this.waitInfo(i,base),discardHints=[];
   if(!this.s.players[i].bot)for(const a of options.filter(a=>a.kind==='discard'||a.kind==='riichi')){
@@ -107,7 +107,11 @@ class Room{
    const candidate=this.waitInfo(i,after,a.tile,a.kind==='riichi');
    if(candidate.waits.length)discardHints.push({id:a.id,...candidate});
   }
-  return {waitDetails:info.waits,discardHints,furiten:info.furiten};
+  // Only this viewer's hand is evaluated. A possible discard is a chance;
+  // a committed non-furiten wait is certain only when every ron/tsumo is yakuman.
+  const level=hint=>hint.waits.some(w=>w.yakumanRon||w.yakumanTsumo)?(!hint.furiten&&hint.waits.every(w=>w.yakumanRon&&w.yakumanTsumo)?2:1):0;
+  const yakumanIndicator=discardHints.some(candidate=>level(candidate)>0)?1:level(info);
+  return {waitDetails:info.waits,discardHints,furiten:info.furiten,yakumanIndicator};
  }
  score(i,from=null,tile=null,kind='discard',sticks=0){
   const s=this.s,p=s.players[i],h=this.h(i),ron=from!==null;
@@ -237,11 +241,11 @@ class Room{
   this.finish({title,delta,details:[],drawDetails,tenpai,revealed:s.players.map((p,i)=>tenpai[i]?p.hand:null),nagashi,repeat:tenpai[s.dealer],draw:true});
  }
  finish(result){
-  const s=this.s;result.delta.forEach((v,i)=>s.players[i].score+=v);s.phase='result';s.result=result;s.pending=null;s.players.forEach(p=>p.ready=!!p.bot);this.log(result.title);
+  const s=this.s;result.delta.forEach((v,i)=>s.players[i].score+=v);s.phase='result';s.result=result;s.resultFinishedAt=Date.now();s.pending=null;s.players.forEach(p=>p.ready=!!p.bot);this.log(result.title);
   const last=s.round>=s.rounds*s.n-1,target=s.n===3?40000:30000,top=Math.max(...s.players.map(p=>p.score));
   result.matchOver=s.players.some(p=>p.score<0)||(!result.abort&&last&&((!result.repeat&&top>=target)||(result.repeat&&s.players[s.dealer].score>=target&&s.players[s.dealer].score===top)));
-  // Fixed maximum extension of one extra wind. No endless west/north extensions.
-  if(s.round>=(s.rounds+1)*s.n-1&&!result.repeat)result.matchOver=true;
+  // At most one extra wind, with North as the final wind for a full match.
+  if(s.round>=Math.min(s.rounds+1,4)*s.n-1&&!result.repeat)result.matchOver=true;
   if(result.matchOver&&s.sticks){const leader=s.players.findIndex(p=>p.score===top);s.players[leader].score+=s.sticks*1000;result.delta[leader]+=s.sticks*1000;s.sticks=0;}
  }
  act(i,id){
@@ -266,11 +270,11 @@ class Room{
   if(i<0)return {phase:'join',n:s.n,count:s.players.length,started:s.phase!=='lobby'};
   const h=s.players[i].hand?this.h(i):null,options=this.options(i);
   const hints=['play','reaction'].includes(s.phase)?this.hints(i,h,options):{waitDetails:[],discardHints:[],furiten:false};
-  return {phase:s.phase,version:s.version,you:i,host:i===0,n:s.n,pin:s.pin,round:s.round,rounds:s.rounds,dealer:s.dealer,honba:s.honba,sticks:s.sticks,turn:s.turn,lobby:{category:s.lobbyCategory||'friend',red:s.red!==false,managed:!!s.lobbyFlow},
+  return {phase:s.phase,version:s.version,you:i,host:i===0,n:s.n,pin:s.pin,round:s.round,rounds:s.rounds,idleSeconds:s.idleSeconds===0?0:120,dealer:s.dealer,honba:s.honba,sticks:s.sticks,turn:s.turn,lobby:{category:s.lobbyCategory||'friend',red:s.red!==false,managed:!!s.lobbyFlow},
    audioRoom:s.audioRoom||s.pin,audioSeq:s.audioSeq||0,audioEvents:s.audioEvents||[],remaining:s.wall?s.wall.length:0,indicators:s.indicators?s.indicators.slice(0,1+this.totalKans()):[],last:s.last,
-   players:s.players.map((p,j)=>({name:p.name,avatar:p.avatar||"",bot:!!p.bot,auto:!!p.auto,autoReason:p.autoReason||'',score:p.score,wind:this.wind(j),riichi:p.riichi,nuki:p.nuki,river:p.river,melds:p.hand?this.h(j)._fulou:[],count:p.hand?tiles(this.h(j)).length:0,ready:p.ready,online:p.bot||!p.away&&Date.now()-(this.seen[p.token]||0)<12000})),
+   players:s.players.map((p,j)=>({name:p.name,avatar:p.avatar||"",bot:!!p.bot,auto:!!p.auto,autoReason:p.autoReason||'',takeoverMask:!!p.departed||!!p.auto&&['offline','timeout'].includes(p.autoReason),score:p.score,wind:this.wind(j),riichi:p.riichi,nuki:p.nuki,river:p.river,melds:p.hand?this.h(j)._fulou:[],count:p.hand?tiles(this.h(j)).length:0,ready:p.ready,online:p.bot||!p.away&&Date.now()-(this.seen[p.token]||0)<12000})),
    handSeq:s.handSeq||0,dealtAt:s.dealtAt||0,matchSeq:s.matchSeq||0,matchStartedAt:s.matchStartedAt||0,openingHand:(s.players[i].dealt||[]).slice(),
-   hand:h?tiles(h):[],drawn:h&&h._zimo&&h._zimo.length===2?h._zimo:null,options,furiten:hints.furiten,waits:h?this.waits(h):[],waitDetails:hints.waitDetails,discardHints:hints.discardHints,
+   hand:h?tiles(h):[],drawn:h&&h._zimo&&h._zimo.length===2?h._zimo:null,options,furiten:hints.furiten,waits:h?this.waits(h):[],waitDetails:hints.waitDetails,discardHints:hints.discardHints,yakumanIndicator:hints.yakumanIndicator||0,
    recovery:s.players[i].recovery,log:s.log||[],result:s.result,pending:s.pending?{from:s.pending.from,tile:s.pending.tile,kind:s.pending.kind,riichi:!!s.pending.riichi,waiting:Object.keys(s.pending.options).filter(k=>!s.pending.replies[k]).map(Number)}:null,
    ...(s.phase==='lobby'?{lobby:{category:s.lobbyCategory||'friend',red:s.red!==false,managed:!!s.lobbyFlow},players:s.players.map((p,j)=>({name:p.name,avatar:p.avatar||'',bot:!!p.bot,score:p.score,wind:this.wind(j),riichi:p.riichi,nuki:p.nuki,river:p.river,melds:[],count:0,ready:p.bot||j===0||!!p.lobbyReady,online:p.bot||Date.now()-(this.seen[p.token]||0)<12000}))}:{})};
  }
@@ -279,6 +283,7 @@ class Room{
   try{
    check(req&&typeof req.op==='string','请求格式错误');let s=this.s;
    let i=s?s.players.findIndex(p=>!p.bot&&p.token===req.token):-1;
+   if(i>=0&&req.userActive===true){const p=s.players[i];p.lastInputAt=Date.now();if(p.autoReason==='timeout'){p.auto=false;p.autoReason='';s.version++;}this.save(JSON.stringify(s));}
    if(req.op==='discover')return {ok:!!s&&String(req.pin)===s.pin};
    if(req.op==='hostSession'){check(req.host===this.host,'仅本机可查询');return s?{ok:true,token:s.players[0].token,state:this.view(0)}:{ok:true,state:{phase:'empty'}};}
    if(req.op==='peek')return {ok:true,state:this.view(i)};
@@ -287,7 +292,7 @@ class Room{
    if(req.op==='create'){
     check(req.host===this.host,'请在房主手机 App 内创建房间');if(s)return {ok:false,code:'ROOM_ACTIVE',error:'当前有未结束的房间',token:s.players[0].token,state:this.view(0)};check(req.n===3||req.n===4,'仅支持三人或四人');
     const p=player(String(req.name||'房主').slice(0,12));p.avatar=avatar(req.avatar===undefined?'':req.avatar);
-    this.s={schema:1,audioRoom:randomHex(8),audioSeq:0,audioEvents:[],n:req.n,rounds:req.rounds===1?1:2,red:req.red!==false,pin:String(parseInt(randomHex(4),16)%900000+100000),players:[p],phase:'lobby',version:1,dealer:0,round:0,honba:0,sticks:0,
+    this.s={schema:1,audioRoom:randomHex(8),audioSeq:0,audioEvents:[],n:req.n,rounds:req.rounds===1?1:req.rounds===4?4:2,idleSeconds:req.idleSeconds===0?0:120,red:req.red!==false,pin:String(parseInt(randomHex(4),16)%900000+100000),players:[p],phase:'lobby',version:1,dealer:0,round:0,honba:0,sticks:0,
      lobbyFlow:req.lobbyFlow===true,lobbyCategory:['friend','ranked','competition'].includes(req.category)?req.category:'friend'};
     if(req.bots===true)while(this.s.players.length<this.s.n)this.addBot();
     this.save(JSON.stringify(this.s));this.seen[p.token]=Date.now();return {ok:true,token:p.token,state:this.view(0)};
@@ -295,32 +300,33 @@ class Room{
    check(s,'房主尚未创建房间');
    if(req.op==='join'){
     check(String(req.pin)===s.pin,'房间码不正确');
-    if(i>=0){s.players[i].auto=false;s.players[i].autoReason='';s.players[i].away=false;delete this._waiting[req.token];s.version++;}
+    if(i>=0){s.players[i].auto=false;s.players[i].autoReason='';s.players[i].away=false;s.players[i].departed=false;delete this._waiting[req.token];s.version++;}
     else if(req.recovery){i=s.players.findIndex(p=>!p.bot&&p.recovery===String(req.recovery).trim().toLowerCase());check(i>=0,'座位凭据失效');}
     else {
      const name=String(req.name||'牌友').trim().slice(0,12);check(name,'请填写昵称');check(!s.players.some(p=>!p.bot&&p.name===name),'昵称已有人使用');
      if(s.phase==='lobby'){check(s.players.length<s.n,'房间已满');s.players.push(player(name));i=s.players.length-1;}
-     else {i=s.players.findIndex((p,j)=>j>0&&p.bot);check(i>=0,'当前没有可接替的电脑座位');Object.assign(s.players[i],{name,token:randomHex(18),recovery:randomHex(6),requests:[],avatar:'',bot:false,auto:false,autoReason:'',away:false,ready:false});}
+     else {i=s.players.findIndex((p,j)=>j>0&&p.bot);check(i>=0,'当前没有可接替的电脑座位');Object.assign(s.players[i],{name,token:randomHex(18),recovery:randomHex(6),requests:[],avatar:'',bot:false,auto:false,autoReason:'',away:false,departed:false,ready:false});}
      s.version++;
     }
-    if(req.avatar!==undefined)s.players[i].avatar=avatar(req.avatar);this.save(JSON.stringify(s));this.seen[s.players[i].token]=Date.now();return {ok:true,token:s.players[i].token,state:this.view(i)};
+    Object.assign(s.players[i],{auto:false,autoReason:'',away:false,departed:false,lastInputAt:Date.now()});if(req.avatar!==undefined)s.players[i].avatar=avatar(req.avatar);this.save(JSON.stringify(s));this.seen[s.players[i].token]=Date.now();return {ok:true,token:s.players[i].token,state:this.view(i)};
    }
    check(i>=0,'座位凭据失效');
    this.seen[req.token]=Date.now();
    if(req.id&&s.players[i].requests.includes(req.id))return {ok:true,state:this.view(i)};
    // Session controls are version-independent: a moving bot must not make
    // returning or leaving the table fail due to an unrelated version change.
-   if(['resume','presence','autoPlay','leaveMatch'].includes(req.op)){
+   if(['resume','presence','autoPlay','leaveMatch','activity'].includes(req.op)){
     const p=s.players[i];
     if(req.op==='leaveMatch'){
      if(i===0){this.s=null;this.save('');return {ok:true,state:{phase:'empty'}};}
      if(s.phase==='lobby')s.players.splice(i,1);
-     else Object.assign(p,{bot:true,auto:false,autoReason:'',away:false,token:randomHex(18),recovery:'',ready:true});
+     else Object.assign(p,{bot:true,auto:false,autoReason:'',away:false,departed:true,token:randomHex(18),recovery:'',ready:true});
      s.version++;this.save(JSON.stringify(s));return {ok:true,state:{phase:'empty'}};
     }
-    if(req.op==='resume'){check(!req.room||req.room===s.audioRoom,'牌局已取消');p.auto=false;p.autoReason='';p.away=false;if(s.phase==='result')p.ready=false;delete this._waiting[req.token];}
+    if(req.op==='resume'){check(!req.room||req.room===s.audioRoom,'牌局已取消');p.auto=false;p.autoReason='';p.away=false;p.departed=false;p.lastInputAt=Date.now();if(s.phase==='result')p.ready=false;delete this._waiting[req.token];}
     else if(req.op==='presence'){p.away=req.present===false;if(p.away){p.auto=true;p.autoReason='offline';}}
-    else {check(['play','reaction'].includes(s.phase),'当前不能切换托管');p.auto=req.enabled===true;p.autoReason=p.auto?'manual':'';p.away=false;delete this._waiting[req.token];}
+    else if(req.op==='activity'){p.lastInputAt=Date.now();if(p.autoReason==='timeout'){p.auto=false;p.autoReason='';}}
+    else {check(['play','reaction'].includes(s.phase),'当前不能切换接管');p.auto=req.enabled===true;p.autoReason=p.auto?'manual':'';p.away=false;p.lastInputAt=Date.now();delete this._waiting[req.token];}
     s.version++;this.save(JSON.stringify(s));return {ok:true,state:this.view(i)};
    }
    if(req.op!=='profile'&&req.op!=='ready')check(Number.isInteger(req.version)&&req.version===s.version,'牌桌已更新，请重新选择');
@@ -344,9 +350,9 @@ class Room{
    else if(req.op==='start'){check(i===0&&s.phase==='lobby','仅房主可开局');if(req.fillBots===true)while(s.players.length<s.n)this.addBot();check(s.players.length===s.n,'还有空位，可添加 AI 后开局');s.players=shuffle(s.players); // Keep host identity separate from seat ordering.
     // Host remains player 0; randomize dealer instead, so management rights never move.
     const hostIndex=s.players.findIndex(p=>p.token===req.token);[s.players[0],s.players[hostIndex]]=[s.players[hostIndex],s.players[0]];
-    s.matchSeq=(s.matchSeq||0)+1;s.matchStartedAt=Date.now();s.matchOpeningUntil=s.matchStartedAt+6000;
+    s.matchSeq=(s.matchSeq||0)+1;s.matchStartedAt=Date.now();s.matchOpeningUntil=s.matchStartedAt+6000;s.players.forEach(p=>p.lastInputAt=s.matchOpeningUntil);
     s.dealer=parseInt(randomHex(2),16)%s.n;s.initialDealer=s.dealer;s.players.forEach(p=>p.score=s.n===3?35000:25000);this.newHand();
-   }else if(req.op==='action'){this.act(i,req.action);s.players[i].auto=false;s.players[i].autoReason='';delete this._waiting[req.token];}
+   }else if(req.op==='action'){this.act(i,req.action);s.players[i].auto=false;s.players[i].autoReason='';s.players[i].lastInputAt=Date.now();s.players[i].away=false;delete this._waiting[req.token];}
    else if(req.op==='ready'){check(s.phase==='result','当前不在结算阶段');check(!req.handSeq||req.handSeq===s.handSeq,'结算已更新');s.players[i].ready=true;this.advanceIfReady();}
    else if(req.op==='next'){
     check(i===0&&s.phase==='result'&&s.players.every(p=>p.ready),'请等待所有玩家确认结算');

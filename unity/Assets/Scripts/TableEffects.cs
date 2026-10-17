@@ -53,6 +53,7 @@ namespace YunJian.Riichi
         public int PlayedEvents { get; private set; }
         public bool IsAnimating => current != null || call != null;
         public bool HasPendingActions => IsAnimating || handEvents.Count>0 || callEvents.Count>0;
+        public bool AwaitingDiscard(int seat,int index)=>current?.kind=="discard"&&current.seat==seat&&current.riverIndex==index&&!handedOff||handEvents.Any(e=>e.kind=="discard"&&e.seat==seat&&e.riverIndex==index);
         public bool ValidationFreeze;
         public float ValidationTime;
         public int ActiveSeat => current == null ? -1 : current.seat;
@@ -206,7 +207,7 @@ namespace YunJian.Riichi
             {
                 // The carried self-draw tile shares table depth with its neighbours;
                 // only the arm uses the overlay camera that clears scene depth.
-                foreach(var child in animatedTile.GetComponentsInChildren<Transform>())child.gameObject.layer=item.kind=="tsumo"?0:14;
+                foreach(var child in animatedTile.GetComponentsInChildren<Transform>())child.gameObject.layer=item.kind=="tsumo"||item.kind=="discard"?0:14;
                 foreach(var collider in animatedTile.GetComponentsInChildren<Collider>())collider.enabled=false;
             }
             mesh.vertices=clip.vertices[0];mesh.normals=clip.normals[0];mesh.RecalculateBounds();
@@ -434,10 +435,10 @@ namespace YunJian.Riichi
             GUI.color=old;
         }
 #if UNITY_EDITOR
-        public void ValidationPlay(int seat,string kind,string tile=null,bool riichi=false)
+        public void ValidationPlay(int seat,string kind,string tile=null,bool riichi=false,int riverIndex=0)
         {
             Finish();FinishCall();winCutIn.Reset();cutInWin=null;EndNorthEffects();EndWinEffects();winningBursts.Clear();ClearQueuedHands();callEvents.Clear();ValidationFreeze=true;ValidationTime=.28f;
-            Begin(new PublicSound {seat=seat,kind=kind,tile=tile,riichi=riichi});
+            Begin(new PublicSound {seat=seat,kind=kind,tile=tile,riichi=riichi,riverIndex=riverIndex});
             if (CallArt(kind)!=null) BeginCall(new PublicSound {seat=seat,kind=kind,tile=tile,riichi=riichi});
         }
         public bool ValidationRiichiDiscard => current != null && current.kind=="discard" && current.riichi;

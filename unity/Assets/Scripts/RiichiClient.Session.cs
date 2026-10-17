@@ -16,6 +16,7 @@ namespace YunJian.Riichi
             public bool host;
         }
         SavedSession savedSession;
+        public bool HasOngoingSession=>savedSession!=null&&new[]{"play","reaction","result"}.Contains(savedSession.phase);
         const string SessionKey="riichi.currentSession";
         string savedSessionJson="";
         bool resumingConnection;
@@ -58,7 +59,7 @@ namespace YunJian.Riichi
             // Release references to the old table before Render replaces its tiles.
             if(handChanged){effects.Reset();voice.Reset();settlementAudio.Reset();gameAudio.ClearHandEffects();resultDisplay.Reset();ClearSelection();RiichiMode=false;choosingKind=null;}
             bool changed=handChanged||State==null||State.version!=view.version||State.phase!=view.phase;
-            State=view;if(State.phase!="play"&&State.phase!="reaction")ResetWaitPress();
+            State=view;ObserveWaitState();yakuman.Observe(State);
             introduction.Observe(State,validationSession);voice.Observe(State);gameAudio.SetScene(State);allLast.Observe(State);
             if(State.phase=="empty"||State.phase=="join"){active=false;page="home";table.Clear();return;}
             active=true;if(returning)page="home";
@@ -154,10 +155,10 @@ namespace YunJian.Riichi
             var bounds=new Rect(23,height-79,64,64);
             var icon=new Rect(bounds.x+6,bounds.y,52,48);GUI.DrawTexture(icon,Skin(AutoPlaying?"ob_ting_on_btn":"ob_ting_off_btn"),ScaleMode.ScaleToFit);
             NativeUiChrome.CaptionBar(new Rect(bounds.x,bounds.y+44,64,16));
-            var caption=new GUIStyle(centered){font=Resources.Load<Font>("Majsoul/Lobby/Fonts/advanced"),fontSize=13,fontStyle=FontStyle.Normal};caption.normal.textColor=new Color(.69804f,.73333f,.80784f);GUI.Label(new Rect(bounds.x,bounds.y+41,64,22),"AI托管",caption);
+            var caption=new GUIStyle(centered){font=Resources.Load<Font>("Majsoul/Lobby/Fonts/advanced"),fontSize=13,fontStyle=FontStyle.Normal};caption.normal.textColor=new Color(.69804f,.73333f,.80784f);GUI.Label(new Rect(bounds.x,bounds.y+41,64,22),"AI接管",caption);
             var a=GUI.matrix.MultiplyPoint3x4(bounds.position);var b=GUI.matrix.MultiplyPoint3x4(new Vector3(bounds.xMax,bounds.yMax,0));uiButtons.Add(Rect.MinMaxRect(a.x,a.y,b.x,b.y));
             bool enabled=GUI.enabled;GUI.enabled&=!Busy;
-            if(GUI.Button(bounds,new GUIContent("",AutoPlaying?"点击收回操作":"点击启用电脑托管"),GUIStyle.none)){ClearSelection();RiichiMode=false;StartCoroutine(Send(new RequestBody{op="autoPlay",enabled=!AutoPlaying}));}
+            if(GUI.Button(bounds,new GUIContent("",AutoPlaying?"点击收回操作":"点击启用AI接管"),GUIStyle.none)){ClearSelection();RiichiMode=false;StartCoroutine(Send(new RequestBody{op="autoPlay",enabled=!AutoPlaying}));}
             GUI.enabled=enabled;
         }
 #if UNITY_EDITOR

@@ -49,6 +49,7 @@ namespace YunJian.Riichi.Editor
             var view = JsonUtility.FromJson<RoomReply>("{\"ok\":true,\"state\":{\"phase\":\"play\",\"you\":0,\"n\":3,\"version\":2,\"players\":[{\"name\":\"Host\",\"score\":35000,\"riichi\":1}],\"options\":[{\"id\":\"discard:p1_\",\"kind\":\"discard\",\"tile\":\"p1\"}],\"hand\":[\"p1\"]}}");
             Require(view.ok && view.state.players[0].score == 35000 && view.state.options[0].id == "discard:p1_", "Room protocol JSON mismatch");
             Require(File.Exists("Assets/Plugins/Android/riichi-host.androidlib/libs/riichi-host.jar"), "Missing compiled phone host");
+            Release0545Validation.Run();
             ProjectSetup.CreateScene();
             Debug.Log("RIICHI UNITY VALIDATION PASS: imported textures, font, single-character audio, protocol, host plug-in and scene.");
         }

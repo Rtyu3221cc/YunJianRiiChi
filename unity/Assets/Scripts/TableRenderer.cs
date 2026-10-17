@@ -48,6 +48,7 @@ namespace YunJian.Riichi
         Font font;
         Transform cameraHand;
         Transform responseTarget;
+        Transform responseGlow;int responseSeat,responseIndex;
         readonly List<Tuple<Transform,string>> exposedTiles=new List<Tuple<Transform,string>>();
         string selectedTile;
         public bool IsMatchingTile(string tile) => selectedTile!=null && TileKind(tile)==selectedTile;
@@ -184,7 +185,7 @@ namespace YunJian.Riichi
                 }
                 catch { /* Keep default avatar for malformed saved data. */ }
             }
-            return Resources.Load<Texture2D>("Majsoul/Portraits/" + (p.bot ? "yiji" : "erjietang"));
+            return Resources.Load<Texture2D>("Majsoul/Portraits/" + (p.bot&&!p.takeoverMask ? "yiji" : "erjietang"));
         }
         public void Clear(bool resetOpening=true,bool keepHand=false)
         {
@@ -254,7 +255,7 @@ namespace YunJian.Riichi
             if(riverIndex==0 && riverTiles.TryGetValue(seat,out var tiles))target=tiles.LastOrDefault(t=>t!=null && t.name.EndsWith(" "+tile,StringComparison.Ordinal));
             return target!=null?target.position:Quaternion.Euler(0,Angle(seat),0)*new Vector3(-.895f,0,-1.48f);
         }
-        public Transform ResponseTarget => responseTarget;
+        public Transform ResponseTarget => responseTarget!=null&&responseTarget.gameObject.activeInHierarchy&&!GetComponent<TableEffects>().AwaitingDiscard(responseSeat,responseIndex)?responseTarget:null;
 #if UNITY_EDITOR
         public bool ValidationLegacyMeldFit;
         public bool ValidationPreviousMeldPosition;
@@ -314,7 +315,7 @@ namespace YunJian.Riichi
             var local = i == state.you ? new Vector3(-3.8f, .15f, -2.8f) : new Vector3(-2.9f, .15f, -3.7f);
             return Quaternion.Euler(0, angle, 0) * local;
         }
-        void LateUpdate() { opening.Apply(handTiles,handBase,GetComponent<GameAudio>());UpdateDrawReveal();ApplyDeferredDraw();RefreshHandChoices();FitCamera(Screen.width / (float)Screen.height);RefreshDoraPreviews(); }
+        void LateUpdate() { opening.Apply(handTiles,handBase,GetComponent<GameAudio>());UpdateDrawReveal();ApplyDeferredDraw();RefreshHandChoices();FitCamera(Screen.width / (float)Screen.height);RefreshDoraPreviews();if(responseGlow!=null)responseGlow.gameObject.SetActive(ResponseTarget!=null); }
         public bool DrawDeferred {get;private set;}
         public bool RevealingDraw {get;private set;}
         string ownDrawKey;float ownDrawAt=-1;
@@ -718,7 +719,8 @@ namespace YunJian.Riichi
                     if(SelfCanCall && state.phase=="reaction" && state.pending!=null && state.pending.kind=="discard" && state.pending.from==seatIndex && start+j==visible.Length-1)
                     {
                         responseTarget=tile;
-                        original.CreateResponseGlow(tile, TableTileGeometry.Width);
+                        responseSeat=seatIndex;responseIndex=raw+1;
+                        responseGlow=original.CreateResponseGlow(tile, TableTileGeometry.Width);responseGlow.gameObject.SetActive(false);
                     }
                     cursor += width;
                 }

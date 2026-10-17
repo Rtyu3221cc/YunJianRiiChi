@@ -42,11 +42,16 @@ namespace YunJian.Riichi
             foreach(var sprite in source.sprites)if(sprite.name==name && sprite.border.sqrMagnitude>0){b=sprite.border;break;}
             float scale=Mathf.Min(.40f,Mathf.Min(r.width/(b.x+b.z+1),r.height/(b.y+b.w+1)));
             float[] dx={r.x,r.x+b.x*scale,r.xMax-b.z*scale,r.xMax},dy={r.y,r.y+b.w*scale,r.yMax-b.y*scale,r.yMax};
+            var matrix=GUI.matrix;
+            for(int i=0;i<4;i++){
+                dx[i]=(Mathf.Round(dx[i]*matrix.m00+matrix.m03)-matrix.m03)/matrix.m00;
+                dy[i]=(Mathf.Round(dy[i]*matrix.m11+matrix.m13)-matrix.m13)/matrix.m11;
+            }
             float[] sx={0,b.x,t.width-b.z,t.width},sy={0,b.w,t.height-b.y,t.height};
             foreach(var layer in name=="pop_bound"?new[]{Art("pop_bg"),Art("pop_frame")}:new[]{t}){
                 if(layer==null)continue;
                 for(int y=0;y<3;y++)for(int x=0;x<3;x++)
-                    if(dx[x+1]>dx[x] && dy[y+1]>dy[y])GUI.DrawTextureWithTexCoords(Rect.MinMaxRect(dx[x],dy[y],dx[x+1],dy[y+1]),layer,new Rect(sx[x]/t.width,1-sy[y+1]/t.height,(sx[x+1]-sx[x])/t.width,(sy[y+1]-sy[y])/t.height));
+                    if(dx[x+1]>dx[x] && dy[y+1]>dy[y])GUI.DrawTextureWithTexCoords(Rect.MinMaxRect(dx[x],dy[y],dx[x+1],dy[y+1]),layer,new Rect((sx[x]+.5f)/t.width,1-(sy[y+1]-.5f)/t.height,(sx[x+1]-sx[x]-1)/t.width,(sy[y+1]-sy[y]-1)/t.height));
             }
         }
         public static Rect WaitRect(int count,Vector2 center,float bottom,float maxWidth,float tileHeight=76,bool badges=true)
@@ -61,7 +66,7 @@ namespace YunJian.Riichi
             int row=index/cols,rowCount=Mathf.Min(cols,count-row*cols),rows=(count+cols-1)/cols;
             float rowHeight=tileHeight+(badges?26:8),top=r.center.y-rows*rowHeight/2+(badges?0:4);
             float x=r.center.x-rowCount*cell/2+(index%cols)*cell+(cell-tileHeight*.62f)/2;
-            return new Rect(x,top+row*rowHeight,tileHeight*.62f,tileHeight);
+            return new Rect(x,top+row*rowHeight+(badges?5:0),tileHeight*.62f,tileHeight);
         }
         public static Rect WaitBadgeRect(Rect tile)=>new Rect(tile.x-2,tile.yMax+4,tile.width+4,18);
         public static void Waits(TableRenderer table,WaitDetail[] waits,Rect r,float tileHeight=76,bool badges=true,bool flowers=true)

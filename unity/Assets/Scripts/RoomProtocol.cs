@@ -10,7 +10,7 @@ namespace YunJian.Riichi
         public int handSeq,matchSeq; public long dealtAt,matchStartedAt;
         // Only this viewer's initial deal order; never part of PlayerView.
         public string[] openingHand = new string[0];
-        public int version, you, n, rounds, round, dealer, honba, sticks, turn, remaining, audioSeq;
+        public int version, you, n, rounds, round, dealer, honba, sticks, turn, remaining, audioSeq, yakumanIndicator, idleSeconds;
         public bool host, furiten;
         public LobbyRoomView lobby;
         public PlayerView[] players = new PlayerView[0];
@@ -27,7 +27,7 @@ namespace YunJian.Riichi
     [Serializable] public class PlayerView
     {
         public string name, avatar, autoReason;
-        public bool bot, auto, ready, online;
+        public bool bot, auto, ready, online, takeoverMask;
         public int score, wind, riichi, nuki, count;
         public string[] melds = new string[0];
         public RiverTile[] river = new RiverTile[0];
@@ -35,7 +35,7 @@ namespace YunJian.Riichi
     [Serializable] public class RiverTile { public string tile; public bool riichi, called, tsumogiri; }
     [Serializable] public class LastDiscard { public int from; public string tile; }
     [Serializable] public class PendingView { public int from; public string tile, kind; public bool riichi; public int[] waiting; }
-    [Serializable] public class WaitDetail { public string tile; public bool ron, tsumo; public int remaining; }
+    [Serializable] public class WaitDetail { public string tile; public bool ron, tsumo; public int remaining, yakumanRon, yakumanTsumo; }
     [Serializable] public class DiscardHint { public string id; public bool furiten; public WaitDetail[] waits = new WaitDetail[0]; }
     [Serializable] public class DrawDetail { public int seat; public bool tenpai; public string[] tiles = new string[0], waits = new string[0]; }
     [Serializable] public class Choice { public string id, kind, tile, meld; }
@@ -50,7 +50,8 @@ namespace YunJian.Riichi
     {
         public string op, token, host, name, pin, recovery, action, id, category, room;
         public int version, n, rounds, seat, handSeq;
-        public bool red = true, bots, fillBots, lobbyFlow, ready, enabled, present=true;
+        public int idleSeconds=120;
+        public bool red = true, bots, fillBots, lobbyFlow, ready, enabled, userActive, present=true;
     }
     [Serializable] public class HostConfig { public string host, error; public string[] addresses; public bool ready; }
 }

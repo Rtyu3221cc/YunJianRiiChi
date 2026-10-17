@@ -4,11 +4,11 @@ android {
     namespace 'com.yunjian.riichi.host'
     // Uses a platform bundled with the validated Unity 6000.6.4f1 Android module.
     compileSdkVersion 36
-    defaultConfig { minSdkVersion 26 }
+    defaultConfig { minSdkVersion 26; consumerProguardFiles 'consumer-rules.pro' }
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = []
+            java.srcDirs = ['src']
             assets.srcDirs = ['assets']
         }
     }

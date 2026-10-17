@@ -7,7 +7,7 @@ from zipfile import ZipFile
 from importlib import import_module
 
 root = Path(__file__).resolve().parent.parent
-apk = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else root / 'unity/Builds/yunjian-riichi-unity-0.5.43.apk'
+apk = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else root / 'unity/Builds/yunjian-riichi-unity-0.5.45.apk'
 assets = root / 'app/src/main/assets'
 signature = import_module('verify-apk-signature').verify_signature(apk)
 with ZipFile(apk) as archive:
@@ -21,7 +21,7 @@ with ZipFile(apk) as archive:
             entry = 'assets/' + file.relative_to(assets).as_posix()
             assert archive.read(entry) == file.read_bytes(), 'Missing/stale offline asset: ' + entry
     dex = [archive.read(n) for n in names if n.endswith('.dex')]
-    for cls in [b'Lcom/yunjian/riichi/RoomService;', b'Lcom/yunjian/riichi/UnityHostBridge;']:
+    for cls in [b'Lcom/yunjian/riichi/RoomService;', b'Lcom/yunjian/riichi/UnityHostBridge;', b'Lcom/yunjian/riichi/QrImagePickerActivity;']:
         assert any(cls in block for block in dex), 'Phone host class missing: ' + repr(cls)
     for abi in ['arm64-v8a','armeabi-v7a']:
         libs = [n for n in names if n.startswith('lib/' + abi + '/') and n.endswith('.so')]
@@ -62,7 +62,7 @@ with ZipFile(apk) as archive:
         assert 'assets/bin/Data/'+guid in names, 'Missing native settlement resource: '+source.name
         if source.suffix=='.json':assert source.read_bytes() in archive.read('assets/bin/Data/'+guid), 'Stale native settlement source manifest'
     metadata=archive.read('assets/bin/Data/Managed/Metadata/global-metadata.dat')
-    for cls in [b'NativeUiChrome',b'LobbyController',b'LanRoomDiscovery',b'SavedSession']:
+    for cls in [b'NativeUiChrome',b'LobbyController',b'LanRoomDiscovery',b'SavedSession',b'RoomQr',b'RoomQrScanner',b'OnImagePicked',b'BarcodeReaderGeneric',b'YakumanAnnouncement',b'NativeTakeoverBadge']:
         assert cls in metadata,'Missing session/UI runtime class: '+repr(cls)
     for name in ['ob_ting_off_btn','ob_ting_on_btn','button_text_bottom_s']:
         source=root/'unity/Assets/Resources/Majsoul/UI'/(name+'.png')
@@ -78,7 +78,7 @@ with ZipFile(apk) as archive:
         else:
             assert source.stem.encode() in archive.read(entry), 'Wrong packaged clip: '+source.name
             assert entry+'.resource' in names and archive.getinfo(entry+'.resource').file_size>0, 'Missing audio data: '+source.name
-    for folder in ['SettlementVoice']:
+    for folder in ['SettlementVoice','Lobby/Audio']:
         for source in (root/'unity/Assets/Resources/Majsoul'/folder).iterdir():
             if source.suffix not in ['.mp3','.json']:continue
             guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text()).group(1)
@@ -109,6 +109,11 @@ with ZipFile(apk) as archive:
         guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text()).group(1);entry='assets/bin/Data/'+guid
         assert entry in names,'Missing cut-in/FightBegin review resource: '+source.name
         if source.suffix=='.json':assert source.read_bytes() in archive.read(entry),'Stale cut-in animation/layout/provenance: '+source.name
+    for source in (root/'unity/Assets/Resources/Majsoul/Review1017d').rglob('*'):
+        if source.suffix not in ['.png','.json']:continue
+        guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text()).group(1);entry='assets/bin/Data/'+guid
+        assert entry in names,'Missing academy/takeover resource: '+source.name
+        if source.suffix=='.json':assert source.read_bytes() in archive.read(entry),'Stale academy/takeover provenance: '+source.name
     shader_data = b''.join(archive.read(n) for n in names if 'globalgamemanagers.assets' in n)
     assert b'UI/Default' in archive.read('assets/bin/Data/Resources/unity_builtin_extra'), 'Missing default UI shader for cut-in masking/composition'
     for source in (root/'unity/Assets/Resources/Majsoul/NativeReview').rglob('*'):
@@ -126,7 +131,7 @@ with ZipFile(apk) as archive:
 dist = root / 'dist'
 output = dist / apk.name
 output.write_bytes(apk.read_bytes())
-checksum = 'SHA256-unity-0.5.43.txt' if len(sys.argv) == 1 else 'SHA256-' + output.stem + '.txt'
+checksum = 'SHA256-unity-0.5.45.txt' if len(sys.argv) == 1 else 'SHA256-' + output.stem + '.txt'
 (dist / checksum).write_text(hashlib.sha256(output.read_bytes()).hexdigest().upper() + '  ' + output.name + '\n', encoding='utf8')
 print('PASS: APK ZIP integrity, current offline assets, phone host/JNI, ARM64 + ARMv7, original tile atlases, exact hand animation bytes, action textures, original turn-light assets and compiled shaders.')
 print(output.name, output.stat().st_size, hashlib.sha256(output.read_bytes()).hexdigest())

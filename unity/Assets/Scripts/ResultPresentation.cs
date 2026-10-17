@@ -44,22 +44,22 @@ namespace YunJian.Riichi
             if(drawStage){drawStage=false;scores=true;started=Time.unscaledTime;skipped=0;FrozenAge=0;return;}
             if(scores){if(Age<ScoreEnd(v.n)){if(Freeze)FrozenAge=ScoreEnd(v.n)+.1f;else skipped+=ScoreEnd(v.n)+.1f-Age;SkipSerial++;}else if(v.result.matchOver){finalPage=true;started=Time.unscaledTime;skipped=0;FrozenAge=0;}return;}
             var d=v.result.details[winner];
-            if(Age<RevealEnd(d)){skipped=RevealEnd(d);SkipSerial++;return;}
+            if(Age<RevealEnd(d)){if(Freeze)FrozenAge=RevealEnd(d);else skipped+=RevealEnd(d)-Age;SkipSerial++;return;}
             if(++winner>=v.result.details.Length){scores=true;winner=v.result.details.Length-1;}
             started=Time.unscaledTime;skipped=0;FrozenAge=0;
         }
         // Auto-play uses the same pages and timing as a human. Run once per
         // Update, after table effects and settlement audio, never per GUI pass.
         public int ScoreConfirmRemaining(RoomView v)=>Mathf.Max(0,3-Mathf.FloorToInt(Age-ScoreEnd(v.n)));
+        public int YakuConfirmRemaining(RoomView v)=>Mathf.Max(0,3-Mathf.FloorToInt(Age-RevealEnd(v.result.details[winner])));
         public Action TickAuto(RoomView v)=>Tick(v,true);
         public Action Tick(RoomView v,bool autoPlay)
         {
             Observe(v);
             if(v.players[v.you].ready)return Action.None;
             if(finalPage)return Age>=9?Action.Ready:Action.None;
-            if(!autoPlay&&!scores)return Action.None;
-            if(drawStage){if(Age>=1.7f)Advance(v);return Action.None;}
-            if(!scores){if(Age>=RevealEnd(v.result.details[winner])+1)Advance(v);return Action.None;}
+            if(drawStage){if(autoPlay&&Age>=1.7f)Advance(v);return Action.None;}
+            if(!scores){if(YakuConfirmRemaining(v)==0)Advance(v);return Action.None;}
             if(ScoreConfirmRemaining(v)>0)return Action.None;
             if(v.result.matchOver){Advance(v);return Action.None;}
             return Action.Ready;
@@ -260,7 +260,8 @@ namespace YunJian.Riichi
             int a=before?Before(v,i):v.players[i].score,b=before?Before(v,seat):v.players[seat].score;
             return a>b || (a==b && i<seat);
         });
-        public int DisplayScore(RoomView v,int seat) => Mathf.RoundToInt(Mathf.Lerp(Before(v,seat),v.players[seat].score,Mathf.SmoothStep(0,1,(Age-.8f)/1.65f))/100)*100;
+        public const float ScoreCountStart=.8f,ScoreCountEnd=2.45f;
+        public int DisplayScore(RoomView v,int seat) => Mathf.RoundToInt(Mathf.Lerp(Before(v,seat),v.players[seat].score,Mathf.SmoothStep(0,1,(Age-ScoreCountStart)/(ScoreCountEnd-ScoreCountStart)))/100)*100;
         public static float RankAt(int players,int rank)=>2.7f+(players-rank)*.36f;
         public static float ScoreEnd(int players)=>RankAt(players,1)+.6f;
         public bool RankVisible(RoomView v,int seat)=>Age<2.45f || Age>=RankAt(v.n,Rank(v,seat,false));
@@ -392,11 +393,14 @@ namespace YunJian.Riichi
                 Final(v,table,effects);
                 int remaining=Mathf.Max(0,9-Mathf.FloorToInt(Age));
                 if(!v.players[v.you].ready && FinalButton(FinalNextRect,"下一局("+remaining+")",true,button))return Action.Ready;
-                if(v.players[v.you].ready)FinalButton(FinalNextRect,"等待牌友",true,(r,caption)=>false);
+                if(v.players[v.you].ready){
+                    bool restart=v.host&&v.players.All(p=>p.ready);
+                    if(FinalButton(FinalNextRect,restart?"再来一场":"等待牌友",true,restart?button:(r,caption)=>false)&&restart)return Action.Next;
+                }
                 if(FinalButton(FinalHomeRect,"返回大厅",false,button))return Action.Home;
             }
             else if(drawStage){DrawRound(v,table);if(NativeButton(new Rect(1125,648,128,50),Age<.7f?"跳过":"确认",button))Advance(v);}
-            else if(!scores){Details(v,table,effects);if(NativeButton(new Rect(1125,648,128,50),Age<RevealEnd(v.result.details[winner])?"跳过":"确认",button))Advance(v);}
+            else if(!scores){Details(v,table,effects);if(NativeButton(new Rect(1125,648,128,50),Age<RevealEnd(v.result.details[winner])?"跳过":"确认("+YakuConfirmRemaining(v)+")",button))Advance(v);}
             else {
                 Scores(v,table);
                 if(!v.players[v.you].ready && NativeButton(new Rect(1125,648,128,50),Age<ScoreEnd(v.n)?"跳过":"确认("+ScoreConfirmRemaining(v)+")",button)){bool finished=Age>=ScoreEnd(v.n);Advance(v);if(finished&&!v.result.matchOver)return Action.Ready;}

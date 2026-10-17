@@ -1,0 +1,159 @@
+{
+  "version": "0.5.45",
+  "versionCode": 46,
+  "date": "2026-10-17",
+  "packageName": "com.yunjian.riichi.unity",
+  "minSdk": 26,
+  "targetSdk": 32,
+  "abis": [
+    "arm64-v8a",
+    "armeabi-v7a"
+  ],
+  "nodeTests": 129,
+  "unityUnitChecks": 62,
+  "javaChecks": 19,
+  "unityChecks": 2146,
+  "winSettlementChecks": 984,
+  "lobbyChecks": 472,
+  "waitingRoomChecks": 628,
+  "runtimePlayPassed": true,
+  "apk": {
+    "file": "yunjian-riichi-unity-0.5.45.apk",
+    "bytes": 86490002,
+    "sha256": "7fb3c9c85a1877631d8bb9ecd738c95de7737832a720eaaad93207dd5ae14bd0",
+    "v1": true,
+    "v2": true,
+    "independentV1": true,
+    "certificateSHA256": "d1d8e506c6d3b62e9610dce294c07008057318fa9bafae702fb8b01f35f0dc2f",
+    "alignment16KB": true
+  },
+  "settlementAudioRehearsal": {
+    "score_change": 11,
+    "rank1": 1,
+    "winlose": 0,
+    "final": 0
+  },
+  "fullAiMatches": [
+    {
+      "players": 3,
+      "offline": true,
+      "actions": 655,
+      "hands": 6,
+      "terminal": true,
+      "heldAfterReady": true,
+      "history": [
+        {
+          "hand": 1,
+          "round": 0,
+          "honba": 0,
+          "title": "荣和",
+          "matchOver": false
+        },
+        {
+          "hand": 2,
+          "round": 0,
+          "honba": 1,
+          "title": "自摸",
+          "matchOver": false
+        },
+        {
+          "hand": 3,
+          "round": 0,
+          "honba": 2,
+          "title": "自摸",
+          "matchOver": false
+        },
+        {
+          "hand": 4,
+          "round": 1,
+          "honba": 0,
+          "title": "荒牌流局",
+          "matchOver": false
+        },
+        {
+          "hand": 5,
+          "round": 1,
+          "honba": 1,
+          "title": "荣和",
+          "matchOver": false
+        },
+        {
+          "hand": 6,
+          "round": 2,
+          "honba": 0,
+          "title": "荣和",
+          "matchOver": true
+        }
+      ]
+    },
+    {
+      "players": 4,
+      "offline": false,
+      "actions": 1000,
+      "hands": 8,
+      "terminal": true,
+      "heldAfterReady": true,
+      "history": [
+        {
+          "hand": 1,
+          "round": 0,
+          "honba": 0,
+          "title": "荒牌流局",
+          "matchOver": false
+        },
+        {
+          "hand": 2,
+          "round": 1,
+          "honba": 1,
+          "title": "荣和",
+          "matchOver": false
+        },
+        {
+          "hand": 3,
+          "round": 2,
+          "honba": 0,
+          "title": "自摸",
+          "matchOver": false
+        },
+        {
+          "hand": 4,
+          "round": 2,
+          "honba": 1,
+          "title": "荣和",
+          "matchOver": false
+        },
+        {
+          "hand": 5,
+          "round": 3,
+          "honba": 0,
+          "title": "荣和",
+          "matchOver": false
+        },
+        {
+          "hand": 6,
+          "round": 4,
+          "honba": 0,
+          "title": "自摸",
+          "matchOver": false
+        },
+        {
+          "hand": 7,
+          "round": 4,
+          "honba": 1,
+          "title": "荣和",
+          "matchOver": false
+        },
+        {
+          "hand": 8,
+          "round": 5,
+          "honba": 0,
+          "title": "自摸",
+          "matchOver": true
+        }
+      ]
+    }
+  ],
+  "previewFramesReused": true,
+  "androidDeviceTested": false,
+  "remoteArtifactsRedownloaded": false
+}

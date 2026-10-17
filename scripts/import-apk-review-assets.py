@@ -30,7 +30,14 @@ def editor_json(type_name,data):
    if 'm_PathID'in value:return {'instanceID':0}
    result=dict(default)if isinstance(default,dict)else {}
    for k,v in value.items():result[k]=merge(result.get(k),v)
+   if 'countCurve'in result and 'time'in result:result.setdefault('serializedVersion',2)
+   elif 'scalar'in result and 'minMaxState'in result:result.setdefault('serializedVersion',3)
+   elif 'm_Curve'in result:result.setdefault('serializedVersion',2)
+   elif 'time'in result and 'inSlope'in result:result.setdefault('serializedVersion',3)
    return result
+  if isinstance(value,list):
+   template=default[0]if isinstance(default,list)and default else None
+   return [merge(default[i]if isinstance(default,list)and i<len(default)else template,item)for i,item in enumerate(value)]
   return list(value)if isinstance(value,bytes)else value
  return {type_name:merge(schema,data)}
 def find(path):

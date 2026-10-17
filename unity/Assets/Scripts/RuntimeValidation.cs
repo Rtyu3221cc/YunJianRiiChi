@@ -596,7 +596,7 @@ namespace YunJian.Riichi
                 SetGameResolution((int)size.x,(int)size.y);
                 var hint=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"hint-open.json")));
                 client.ShowValidationFixture(hint);yield return null;yield return null;
-                Require(client.CurrentWaitDetails.Length==0 && client.CurrentWaitPanel.width==0,"Unselected hand shows persistent waits");
+                Require(client.CurrentWaitDetails.Length==hint.waitDetails.Length && client.CurrentWaitPanel.width>0,"Current waits did not open automatically on a new discard decision");
                 var tile=FindObjectsByType<TileTarget>().First(t=>t.Action.StartsWith("discard:p9"));client.SelectTile(tile.Index,tile.Action);yield return null;yield return null;
                 Require(client.CurrentWaitDetails.Length==2 && client.CurrentWaitDetails.All(w=>!w.ron&&!w.tsumo),"Open no-yaku waits not connected to selected tile");
                 Require(client.CurrentWaitPanel.width>100 && client.CurrentWaitPanel.y>=0 && client.CurrentWaitPanel.xMax<=1280,"Wait panel clips at display size");
@@ -612,33 +612,29 @@ namespace YunJian.Riichi
             foreach(Vector2 size in new[]{new Vector2(1688,780),new Vector2(844,390)}){
                 SetGameResolution((int)size.x,(int)size.y);
                 var view=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"hint-thirteen.json")));client.ShowValidationFixture(view);yield return null;yield return null;
-                Require(client.CurrentWaitDetails.Length==0 && client.CurrentWaitPanel.width==0,"Already tenpai waits should require holding the button");
-                ScreenCapture.CaptureScreenshot(Path.Combine(folder,"indicator-wait-idle-"+(int)size.x+".png"));yield return new WaitForSecondsRealtime(.08f);
+                Require(client.WaitIndicatorVisible && client.CurrentWaitPanel.width==0,"Other-turn wait button missing or stale popup remained after discard");
                 Vector2 press=client.CurrentWaitButton.center,off=press+new Vector2(-220,-90);
                 client.ValidationWaitPointer(press,true,true,false,100);client.ValidationWaitPointer(press,false,true,false,100.2f);yield return null;yield return null;
-                Require(client.CurrentWaitPanel.width==0,"Short press displays waits before the hold threshold");
+                Require(client.CurrentWaitPanel.width==0,"Wait toggle fired before release");
                 client.ValidationWaitPointer(press,false,false,true,100.21f);yield return null;yield return null;
-                Require(client.CurrentWaitDetails.Length==0 && client.CurrentWaitPanel.width==0,"Short tap latched the wait panel on");
-                client.ValidationWaitPointer(press,true,true,false,101);client.ValidationWaitPointer(press,false,true,false,101.4f);yield return null;yield return null;
-                Require(client.CurrentWaitDetails.Length==13 && client.CurrentWaitPanel.height>250,"Held thirteen waits clipped or dropped");
+                Require(client.CurrentWaitDetails.Length==13 && client.CurrentWaitPanel.height>250,"Click did not open all thirteen waits");
                 ScreenCapture.CaptureScreenshot(Path.Combine(folder,"indicator-thirteen-"+(int)size.x+".png"));yield return new WaitForSecondsRealtime(.08f);
-                Require(client.ValidationWaitPointer(off,false,false,true,101.5f),"Release outside the inspection button was not consumed");yield return null;yield return null;
-                Require(client.CurrentWaitDetails.Length==0 && client.CurrentWaitPanel.width==0,"Released hold kept waits visible");
-                client.ValidationWaitPointer(press,true,true,false,102);client.ValidationWaitPointer(press,false,true,false,102.4f);yield return null;yield return null;
-                Require(client.CurrentWaitDetails.Length==13,"Fresh hold does not show waits");
-                client.ValidationWaitPointer(off,false,true,false,102.5f);yield return null;yield return null;
-                Require(client.CurrentWaitPanel.width==0,"Dragging off the button kept waits visible");
-                client.ValidationWaitPointer(press,false,true,false,102.6f);yield return null;yield return null;
-                Require(client.CurrentWaitPanel.width==0,"Cancelled press resumed on re-entering the button");
-                client.ValidationWaitPointer(press,false,false,true,102.7f);
-                client.ValidationWaitPointer(press,true,true,false,103);client.ValidationWaitPointer(press,false,true,false,103.4f);yield return null;yield return null;
+                client.ValidationWaitPointer(press,true,true,false,101);
+                Require(client.ValidationWaitPointer(off,false,false,true,101.1f),"Release outside the inspection button was not consumed");yield return null;yield return null;
+                Require(client.CurrentWaitDetails.Length==13,"Cancelled click changed the wait toggle");
+                client.ValidationWaitPointer(press,true,true,false,102);client.ValidationWaitPointer(press,false,false,true,102.1f);yield return null;yield return null;
+                Require(client.CurrentWaitPanel.width==0,"Second click did not close waits");
+                client.ValidationWaitPointer(press,true,true,false,103);client.ValidationWaitPointer(off,false,true,false,103.1f);client.ValidationWaitPointer(press,false,false,true,103.2f);yield return null;yield return null;
+                Require(client.CurrentWaitPanel.width==0,"Cancelled drag reopened waits");
+                client.ValidationWaitPointer(press,true,true,false,104);client.ValidationWaitPointer(press,false,false,true,104.1f);yield return null;yield return null;
+                Require(client.CurrentWaitDetails.Length==13,"Fresh click did not reopen waits");
                 client.SendMessage("OnApplicationFocus",false);yield return null;yield return null;
-                Require(client.CurrentWaitPanel.width==0,"Lost focus kept held waits visible");client.ValidationEndWaitPointer();
+                Require(client.CurrentWaitPanel.width==0,"Lost focus kept waits visible");client.ValidationEndWaitPointer();
                 view=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"effects.json")));client.ShowValidationFixture(view);yield return null;yield return null;
                 Require(client.ValidationChoosingKind==null && view.options.Count(o=>o.kind=="chi")==2,"Chi preview requires an extra selection");
                 ScreenCapture.CaptureScreenshot(Path.Combine(folder,"indicator-chi-"+(int)size.x+".png"));yield return new WaitForSecondsRealtime(.08f);
             }
-            Debug.Log("RIICHI WAIT INPUT PASS: selected legal tenpai discard preview; idle/non-tenpai hidden; short tap ignored; held current waits; release/drag-off/focus cancel; captured release and scaled button hit tests.");
+            Debug.Log("RIICHI WAIT INPUT PASS: automatic current waits and selected-discard waits; original popup style; click toggle; discard/focus cleanup; cancelled drags and scaled hit tests.");
             SetGameResolution(1688,780);
             var closed=JsonUtility.FromJson<RoomView>(File.ReadAllText(Path.Combine(folder,"hint-closed.json")));client.ShowValidationFixture(closed);client.ValidationToggleRiichi(true);yield return null;
             var riichiTile=FindObjectsByType<TileTarget>().First(t=>t.Action.StartsWith("riichi:p9"));client.SelectTile(riichiTile.Index,riichiTile.Action);yield return null;yield return null;
@@ -763,10 +759,10 @@ namespace YunJian.Riichi
             // Real result GUI at four display sizes: rows, full hand, point transfer and both ron winners.
             foreach(Vector2 size in new[]{new Vector2(1280,720),new Vector2(1688,780),new Vector2(2760,1256),new Vector2(844,390)}){
                 SetGameResolution((int)size.x,(int)size.y);client.ShowValidationFixture(multi);
-                var display=client.ValidationResult;display.Observe(multi);display.Freeze=true;display.FrozenAge=9;
+                var display=client.ValidationResult;display.Observe(multi);display.Freeze=true;display.FrozenAge=SettlementAudio.Sequence(multi.result.details[0]).end;
                 yield return null;yield return null;
                 ScreenCapture.CaptureScreenshot(Path.Combine(folder,"result-hand-"+(int)size.x+".png"));yield return new WaitForSecondsRealtime(.08f);
-                display.Advance(multi);display.FrozenAge=9;yield return null;
+                display.Advance(multi);display.FrozenAge=SettlementAudio.Sequence(multi.result.details[display.WinnerIndex]).end;yield return null;
                 if(multi.result.details.Length>1){Require(display.WinnerIndex==1 && !display.ShowingScores,"Double ron second settlement missing");display.Advance(multi);}
                 Require(display.ShowingScores,"Settlement does not advance to score transfer");
                 display.FrozenAge=0;for(int i=0;i<multi.n;i++)Require(display.DisplayScore(multi,i)==ResultPresentation.Before(multi,i),"Score transfer starts at wrong total");
@@ -784,12 +780,12 @@ namespace YunJian.Riichi
             referenceDetail.yaku=new[]{new YakuDetail{name="清一色",han=5},new YakuDetail{name="拔北宝牌",han=1}};
             referenceDetail.limit="跳满";referenceDetail.score=new ScoreDetail{fanshu=6,fu=40,defen=12000};reference.indicators=new[]{"z5","s1"};
             SetGameResolution(934,430);client.ShowValidationFixture(reference);
-            var referenceDisplay=client.ValidationResult;referenceDisplay.Observe(reference);referenceDisplay.Freeze=true;referenceDisplay.FrozenAge=9;
+            var referenceDisplay=client.ValidationResult;referenceDisplay.Observe(reference);referenceDisplay.Freeze=true;referenceDisplay.FrozenAge=SettlementAudio.Sequence(reference.result.details[0]).end;
             yield return null;yield return null;ScreenCapture.CaptureScreenshot(Path.Combine(folder,"result-reference-934.png"));yield return new WaitForSecondsRealtime(.08f);
             reference.audioRoom="result-reference-yakuman";referenceDetail.tiles=new[]{"z2","z2","z3","z3","z3","z4","z4"};referenceDetail.melds=new[]{"z111+","z777-"};referenceDetail.tile="z4";
             referenceDetail.yaku=new[]{new YakuDetail{name="字一色",yakuman=1},new YakuDetail{name="小四喜",yakuman=1}};
             referenceDetail.limit="2倍役满";referenceDetail.score=new ScoreDetail{damanguan=2,defen=96000};reference.indicators=new[]{"s1"};
-            SetGameResolution(774,438);client.ShowValidationFixture(reference);referenceDisplay.Observe(reference);referenceDisplay.Freeze=true;referenceDisplay.FrozenAge=9;
+            SetGameResolution(774,438);client.ShowValidationFixture(reference);referenceDisplay.Observe(reference);referenceDisplay.Freeze=true;referenceDisplay.FrozenAge=SettlementAudio.Sequence(reference.result.details[0]).end;
             yield return null;yield return null;ScreenCapture.CaptureScreenshot(Path.Combine(folder,"result-reference-774.png"));yield return new WaitForSecondsRealtime(.08f);
             Debug.Log("RIICHI HAND RESULT LAYOUT PASS: native hand height, safe public melds, APK win anchors and name slope, consecutive two-meld section with only two breaks, exact 934x430 / 774x438 reference aspects.");
             // Compare the result texture to an actual gameplay hand mesh render.
@@ -822,7 +818,7 @@ namespace YunJian.Riichi
             backView.indicators=new[]{"p1","p2","p3","p4","p5"};backView.result.details[0].ura=new[]{"s1","s2","s3","s4","s5"};
             foreach(Vector2 size in new[]{new Vector2(1688,780),new Vector2(844,390)}){
                 SetGameResolution((int)size.x,(int)size.y);client.ShowValidationFixture(backView);
-                var backDisplay=client.ValidationResult;backDisplay.Observe(backView);backDisplay.Freeze=true;backDisplay.FrozenAge=9;
+                var backDisplay=client.ValidationResult;backDisplay.Observe(backView);backDisplay.Freeze=true;backDisplay.FrozenAge=SettlementAudio.Sequence(backView.result.details[0]).end;
                 yield return null;yield return null;ScreenCapture.CaptureScreenshot(Path.Combine(folder,"result-kan-"+(int)size.x+".png"));yield return new WaitForSecondsRealtime(.08f);
             }
             Debug.Log("RIICHI RESULT TILE PASS: 0.62 silhouette, actual gameplay mesh/result pixel parity, colored face, selected hand back and table dora back, concealed kan and five indicators at two sizes.");
@@ -834,7 +830,7 @@ namespace YunJian.Riichi
             for(int i=0;i<limits.Length;i++){
                 glyphView.audioRoom="native-glyphs-"+i;var detail=glyphView.result.details[0];detail.limit=limits[i];
                 detail.score=new ScoreDetail{fanshu=13,fu=110,defen=624000,damanguan=i>=5?i-4:0};
-                client.ShowValidationFixture(glyphView);var glyphDisplay=client.ValidationResult;glyphDisplay.Observe(glyphView);glyphDisplay.Freeze=true;glyphDisplay.FrozenAge=9;
+                client.ShowValidationFixture(glyphView);var glyphDisplay=client.ValidationResult;glyphDisplay.Observe(glyphView);glyphDisplay.Freeze=true;glyphDisplay.FrozenAge=SettlementAudio.Sequence(glyphView.result.details[0]).end;
                 yield return null;yield return null;ScreenCapture.CaptureScreenshot(Path.Combine(folder,"result-native-limit-"+i+".png"));yield return new WaitForSecondsRealtime(.08f);
             }
             // Compare an actual red/green pixel before and after dimming using the production shader.
