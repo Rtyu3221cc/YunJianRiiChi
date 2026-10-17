@@ -10,7 +10,7 @@ namespace YunJian.Riichi {
         RoomQrScanner qrScanner;
         Texture2D invitationCode;
         string invitationPayload="",invitationHeading="邀请牌友",qrNotice="",qrStatus="将二维码放入取景框";
-        bool invitationThemed,invitationGold,invitationTightPreview;
+        bool invitationThemed,invitationGold=true,invitationTightPreview;
         Rect InvitationRect=>new Rect((width-1065.375f)/2,127.5f,1065.375f,825);
         Rect ScannerRect=>new Rect((width-1000)/2,100,1000,880);
         void EnsureScanner(){
