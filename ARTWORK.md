@@ -188,3 +188,6 @@ bg_nickname 的斜边和透明区域使完整图片矩形的中心不等于玩�
 博士帽、头像暗遮罩、闪电为 APK 原图，来源与布局见 `Resources/Majsoul/Review1017d/provenance.json` 和 `layout.json`。红点、指示器边框及创建转场沿用原版资源。新增音效 `effect_yakumanready`、`rank1`、`score_change` 来自原音频包，记录见 `Resources/Majsoul/Audio/provenance.json` 与各导入脚本。
 
 大厅《金秋送爽》使用雀魂官方固定版本资源 `audio/music/lobby_autumn.mp3`，由用户试听确认；来源 URL、长度与哈希见 `Resources/Majsoul/Lobby/Audio/autumn-source.json`。二维码由 ZXing 生成，白／暖白／紧留白／透明金色是同一公开邀请数据的颜色及留白比较，不使用生成式美术。
+## 2026-10-18：四方向提示器与完整字图
+
+`Majsoul/Callouts1018` 的布局、背景、遮罩与五张文字均从用户提供的 `Majsoul_4.0.16_MC.apk` 提取；`source.json` 保存 bundle、pathID 与输出 SHA-256。文字使用原始 187×143 Sprite 完整画布，保留透明留白；`word-sprites.json` 记录原图坐标、紧边偏移和可见字形边界。显示时按可见字高等比缩放，双字自然增加宽度。角色图沿用已有 APK 导出资源，未使用生成图片代替实际运行效果。

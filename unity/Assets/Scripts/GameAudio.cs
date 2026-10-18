@@ -41,6 +41,7 @@ namespace YunJian.Riichi
         }
         void RefreshMusic()
         {
+            if(PlaylistAudio.Active!=null){music.Stop();return;}
             if(!inTable){music.Stop();return;}
             if(suspended || !musicEnabled){music.Pause();return;}
             if(!music.isPlaying){music.UnPause();if(!music.isPlaying && music.clip!=null)music.Play();}

@@ -846,6 +846,28 @@ namespace YunJian.Riichi
             Debug.Log("RIICHI WIN EFFECT PASS: ron/tsumo in all three/four-seat directions and rotated viewers; original cut-ins, Zimo mesh pixels, exact landing, nine original fire-tornado layers, original spiral and rubble sheet and visible pixels; delayed result, polling/reconnect cleanup, double ron and robbed tile targets.");
         }
 
+        IEnumerator ValidatePlaylistPolling(GameAudio audio,RoomView view)
+        {
+            var playlist=GetComponent<PlaylistAudio>();Require(playlist!=null,"Current playlist player missing");
+            var channels=(AudioSource[])typeof(PlaylistAudio).GetField("channels",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(playlist);
+            var oldVolume=(float[])AppPreferences.Volume.Clone();var oldMute=(bool[])AppPreferences.Muted.Clone();
+            try{
+                // Test-only memory defaults; do not overwrite the user's PlayerPrefs.
+                AppPreferences.Volume[0]=1;AppPreferences.Volume[1]=.35f;AppPreferences.Muted[0]=AppPreferences.Muted[1]=false;
+                playlist.DesignPreviewDefaults();playlist.ApplyPlaylist();float deadline=Time.realtimeSinceStartup+6;
+                while((playlist.Fading||!channels.Any(s=>s.isPlaying))&&Time.realtimeSinceStartup<deadline)yield return null;
+                Require(channels.Any(s=>s.isPlaying)&&!playlist.Fading,"Playlist BGM did not become ready");
+                var playing=channels.First(s=>s.isPlaying);float at=playing.time;int track=playlist.CurrentId;
+                for(int i=0;i<10;i++)audio.SetScene(view);
+                yield return new WaitForSecondsRealtime(.25f);
+                Require(playing.isPlaying&&playing.time>at+.1f&&playlist.CurrentId==track,"Polling restarts/stops playlist BGM");
+                AppPreferences.Muted[1]=true;yield return null;
+                Require(channels.All(s=>s.volume<.001f),"Playlist BGM mute failed");
+                float mutedAt=playing.time;AppPreferences.Muted[1]=false;yield return new WaitForSecondsRealtime(.1f);
+                Require(playing.isPlaying&&playing.time>=mutedAt&&channels.Any(s=>s.volume>.1f),"Playlist BGM unmute restarts track");
+                audio.Configure(true,.35f,false,.8f);audio.PreviewDiscard();yield return null;Require(!audio.EffectsPlaying,"SFX mute failed");
+            }finally{Array.Copy(oldVolume,AppPreferences.Volume,oldVolume.Length);Array.Copy(oldMute,AppPreferences.Muted,oldMute.Length);}
+        }
         IEnumerator ValidateOpeningAudio(RiichiClient client)
         {
             var table=GetComponent<TableRenderer>();var audio=GetComponent<GameAudio>();var fx=GetComponent<TableEffects>();
@@ -877,11 +899,7 @@ namespace YunJian.Riichi
             Require(audio.DealSounds==sounds+4 && !table.ArrangingHand,"Deal sound groups repeat or animation never completes");
             table.Render(view);yield return null;Require(table.Opening.Started==starts+1 && audio.DealSounds==sounds+4,"Polling restarts deal");
             table.Opening.Freeze=false;
-            float musicAt=audio.MusicTime;for(int i=0;i<10;i++)audio.SetScene(view);
-            yield return new WaitForSecondsRealtime(.25f);Require(audio.MusicPlaying && audio.MusicTime>musicAt+.1f,"Polling restarts/stops BGM");
-            audio.Configure(false,.35f,true,.8f);yield return null;Require(!audio.MusicPlaying,"BGM mute failed");
-            float pausedAt=audio.MusicTime;audio.Configure(true,.35f,false,.8f);yield return new WaitForSecondsRealtime(.1f);
-            Require(audio.MusicPlaying && audio.MusicTime>=pausedAt,"BGM resume restarts track");audio.PreviewDiscard();yield return null;Require(!audio.EffectsPlaying,"SFX mute failed");
+            yield return ValidatePlaylistPolling(audio,view);
             audio.Configure(true,.35f,true,.8f);
             view.players[1].river=new[]{new RiverTile{tile="p3"}};client.ShowValidationFixture(view);yield return null;
             int landings=audio.LandingSounds;fx.ValidationPlay(1,"discard","p3",false);fx.ValidationTime=.39f;yield return null;
@@ -889,8 +907,10 @@ namespace YunJian.Riichi
             fx.ValidationTime=.41f;yield return null;Require(audio.LandingSounds==landings+1 && audio.EffectsPlaying,"Discard landing is silent");
             yield return null;table.Render(view);fx.Accept(view);yield return null;Require(audio.LandingSounds==landings+1,"Discard sound duplicated by sampling/polling");
             fx.Reset();fx.ValidationFreeze=false;
-            audio.Suspend(true);yield return null;Require(!audio.MusicPlaying && !audio.EffectsPlaying,"Background suspension leaves audio running");
-            audio.Suspend(false);yield return null;Require(audio.MusicPlaying,"BGM does not resume after background");
+            var playlist=GetComponent<PlaylistAudio>();var musicChannels=(AudioSource[])typeof(PlaylistAudio).GetField("channels",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(playlist);
+            var pause=typeof(PlaylistAudio).GetMethod("OnApplicationPause",BindingFlags.Instance|BindingFlags.NonPublic);
+            audio.Suspend(true);pause.Invoke(playlist,new object[]{true});yield return null;Require(!musicChannels.Any(s=>s.isPlaying) && !audio.EffectsPlaying,"Background suspension leaves audio running");
+            audio.Suspend(false);pause.Invoke(playlist,new object[]{false});yield return null;Require(musicChannels.Any(s=>s.isPlaying),"Playlist BGM does not resume after background");
             view.handSeq=2;view.dealtAt=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()-30000;view.players[1].river=new RiverTile[0];
             client.ShowValidationFixture(view);yield return null;Require(!table.ArrangingHand && table.Opening.Started==starts+1,"Late reconnect replays opening");
             view.handSeq=3;view.dealtAt=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();table.Opening.Freeze=true;table.Opening.FrozenAge=.1f;

@@ -7,8 +7,8 @@ namespace YunJian.Riichi {
             if(bolt==null)bolt=Resources.Load<Texture2D>("Majsoul/Review1017d/disconnect-bolt");
             var old=GUI.color;GUI.color=new Color(old.r,old.g,old.b,old.a*.7f);if(mask!=null)GUI.DrawTexture(portrait,mask);
             GUI.color=new Color(old.r,old.g,old.b,old.a*.8f);
-            // UI_DesktopInfo disconnect/node: original 153/202 scale and offset.
-            if(bolt!=null)GUI.DrawTexture(new Rect(portrait.x+portrait.width*24.1f/202,portrait.y+portrait.height*36/202,portrait.width*153/202,portrait.height*153/202),bolt);
+            // Keep the native size; lift only the bolt by the reviewed 5 design pixels.
+            if(bolt!=null)GUI.DrawTexture(new Rect(portrait.x+portrait.width*24.1f/202,portrait.y+portrait.height*36/202-5,portrait.width*153/202,portrait.height*153/202),bolt);
             GUI.color=old;
         }
     }

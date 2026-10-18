@@ -18,7 +18,7 @@ namespace YunJian.Riichi
         [Serializable] public class Layer {
             public ColorKey[] colors;public float[] box;public bool nativeShape;public float randomDirection;
             public string name,texture;public int node,blendDst,maxParticles,renderMode,shape,cycles;
-            public float[] colorMin,colorMax,tint,tiles,size3d,size3dMin,velocityMin,velocityMax;
+            public float[] colorMin,colorMax,tint,tiles,size3d,size3dMin,velocityMin,velocityMax,rotation3d,rotation3dMin;
             public float angularSpeed;public float duration,delay,lifeMin,lifeMax,sizeMin,sizeMax,speedMin,speedMax,rotationMin,rotationMax,gravity,rate,stretch,radius,coneAngle;
             public bool randomFrame;public Key[] alpha,size,sizeX,sizeY,sizeZ,frames;public Burst[] bursts;public MeshData mesh;
         }
@@ -56,6 +56,11 @@ namespace YunJian.Riichi
             Build("Majsoul/Actions/fire-effect","Majsoul/Actions/",seed);
         }
         public void InitializeUi(string path,float scale,float now,uint seed){StartedAt=now;transform.localScale=Vector3.one*scale;Build(path,"Majsoul/UiEffects/",seed);}
+        public void InitializeTable(string path,Vector3 point,Quaternion rotation,float now,uint seed) {
+            StartedAt=now;PlaybackDuration=0;transform.position=point;transform.rotation=rotation;
+            transform.localScale=Vector3.one*TableTileGeometry.SourceUnits;
+            Build(path,"Majsoul/Actions/",seed);
+        }
         void Build(string path,string textures,uint seed)
         {
             var plane=new Mesh{name="Native horizontal billboard",vertices=new[]{new Vector3(-.5f,0,-.5f),new Vector3(-.5f,0,.5f),new Vector3(.5f,0,.5f),new Vector3(.5f,0,-.5f)},uv=new[]{Vector2.zero,Vector2.up,Vector2.one,Vector2.right},triangles=new[]{0,1,2,0,2,3}};
@@ -73,6 +78,10 @@ namespace YunJian.Riichi
                 m.startLifetime=new ParticleSystem.MinMaxCurve(l.lifeMin,l.lifeMax);m.startSpeed=new ParticleSystem.MinMaxCurve(l.speedMin,l.speedMax);m.startSize=new ParticleSystem.MinMaxCurve(l.sizeMin,l.sizeMax);
                 // Source rotations are degrees; keep the full height of vertical flames.
                 m.startRotation=new ParticleSystem.MinMaxCurve(l.rotationMin*Mathf.Deg2Rad,l.rotationMax*Mathf.Deg2Rad);m.startColor=new ParticleSystem.MinMaxGradient(C(l.colorMin),C(l.colorMax));
+                if(l.rotation3d!=null&&l.rotation3d.Length==3){
+                    var r=l.rotation3dMin!=null&&l.rotation3dMin.Length==3?l.rotation3dMin:l.rotation3d;m.startRotation3D=true;
+                    m.startRotationX=new ParticleSystem.MinMaxCurve(r[0]*Mathf.Deg2Rad,l.rotation3d[0]*Mathf.Deg2Rad);m.startRotationY=new ParticleSystem.MinMaxCurve(r[1]*Mathf.Deg2Rad,l.rotation3d[1]*Mathf.Deg2Rad);m.startRotationZ=new ParticleSystem.MinMaxCurve(r[2]*Mathf.Deg2Rad,l.rotation3d[2]*Mathf.Deg2Rad);
+                }
                 if(l.size3d.Length==3){m.startSize3D=true;var a=l.size3dMin.Length==3?l.size3dMin:l.size3d;m.startSizeX=new ParticleSystem.MinMaxCurve(Mathf.Min(a[0],l.size3d[0]),Mathf.Max(a[0],l.size3d[0]));m.startSizeY=new ParticleSystem.MinMaxCurve(Mathf.Min(a[1],l.size3d[1]),Mathf.Max(a[1],l.size3d[1]));m.startSizeZ=new ParticleSystem.MinMaxCurve(Mathf.Min(a[2],l.size3d[2]),Mathf.Max(a[2],l.size3d[2]));}
                 m.gravityModifier=l.gravity;m.maxParticles=l.maxParticles;var emission=p.emission;emission.rateOverTime=l.rate;emission.SetBursts(l.bursts.Select(b=>new ParticleSystem.Burst(b.time,(short)b.max)).ToArray());
                 var shape=p.shape;shape.enabled=l.shape>=0;

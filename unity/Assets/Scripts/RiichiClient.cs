@@ -25,6 +25,9 @@ namespace YunJian.Riichi
         RoleVoice voice;
         GameAudio gameAudio;
         SettlementAudio settlementAudio;
+        PlaylistAudio playlistAudio;
+        NativeSettingsUi nativeSettings;
+        int audioSettingsRevision = -1;
         bool musicMuted, effectsMuted;
         float musicVolume=.35f, effectsVolume=.8f;
         TableEffects effects;
@@ -109,13 +112,15 @@ namespace YunJian.Riichi
 
         void Awake()
         {
-            Application.targetFrameRate = 60;
+            AppPreferences.Load();
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
             Screen.orientation = ScreenOrientation.LandscapeLeft;
             table = gameObject.AddComponent<TableRenderer>(); table.Client = this;
             effects = gameObject.AddComponent<TableEffects>();
             voice = gameObject.AddComponent<RoleVoice>();
             gameAudio = gameObject.AddComponent<GameAudio>();settlementAudio=gameObject.AddComponent<SettlementAudio>();
+            playlistAudio = gameObject.AddComponent<PlaylistAudio>(); playlistAudio.Initialize(this);
+            nativeSettings = new NativeSettingsUi(playlistAudio);
             tap = gameObject.AddComponent<ScreenTapEffect>();
             lobby=gameObject.AddComponent<LobbyController>();lobby.Initialize(this);
             musicMuted=PlayerPrefs.GetInt("riichi.musicMuted",0)!=0;effectsMuted=PlayerPrefs.GetInt("riichi.effectsMuted",0)!=0;
@@ -129,6 +134,7 @@ namespace YunJian.Riichi
             token = PlayerPrefs.GetString("riichi.token:" + endpoint, "");
             LoadSession();
             voice.Configure(!muted, volume);settlementAudio.Configure(!muted,volume);
+            ApplyAudioSettings();
             font = Resources.Load<Font>("Majsoul/Font/game") ?? Font.CreateDynamicFontFromOSFont(new[] { "Microsoft YaHei", "Noto Sans CJK SC", "sans-serif" }, 24);
 #if UNITY_ANDROID && !UNITY_EDITOR
             try
@@ -262,6 +268,7 @@ namespace YunJian.Riichi
         void OnDisable(){ResetWaitPress();}
         void Update()
         {
+            ApplyAudioSettings();
             introduction.Tick(gameAudio);
             if(active&&(Input.anyKeyDown||Input.GetMouseButton(0)||Input.mouseScrollDelta.sqrMagnitude>0))pendingUserActivity=true;
             yakuman.Tick(active&&State!=null&&(State.phase=="play"||State.phase=="reaction")&&!introduction.Active&&!lobby.OverlayActive&&!showRoom&&page!="settings"&&!AutoPlaying,gameAudio);
@@ -288,7 +295,7 @@ namespace YunJian.Riichi
                 if(!SessionPreviewOnly)
 #endif
                 StartCoroutine(Send(new RequestBody { op = resumingConnection?"resume":"state",room=State?.audioRoom }, null, true)); }
-            if(active&&State?.phase!="lobby"&&Input.GetKeyDown(KeyCode.Escape)){if(page=="settings")page="home";else if(lobby.OverlayActive)lobby.CloseModal();else lobby.ShowMatchExit();}
+            if(active&&State?.phase!="lobby"&&Input.GetKeyDown(KeyCode.Escape)){if(page=="settings")LobbyCloseSettings();else if(lobby.OverlayActive)lobby.CloseModal();else lobby.ShowMatchExit();}
             if (active && !introduction.Active && Input.GetMouseButtonUp(0) && !waitInputConsumed && !InUI(Input.mousePosition))
             {
                 Ray ray = table.HandCamera.ScreenPointToRay(Input.mousePosition);
@@ -342,7 +349,7 @@ namespace YunJian.Riichi
         public bool LobbyActive => active;
         public bool LobbyPlaying => active && State!=null && State.phase!="lobby";
         public bool LobbyOverlayVisible => showRoom || page=="settings";
-        public bool LobbyCloseSettings(){if(page!="settings")return false;page="home";return true;}
+        public bool LobbyCloseSettings(){if(page!="settings")return false;if(nativeSettings.Back())page="home";return true;}
         public string LobbyNickname { get=>nickname;set{nickname=value;PlayerPrefs.SetString("riichi.name",value);PlayerPrefs.Save();} }
         public string LobbyEndpoint => endpoint;
         public string InvitationPayload {
@@ -353,7 +360,7 @@ namespace YunJian.Riichi
             }
         }
         public string LobbyInviteText => "房间号："+(State?.pin??"")+"\n房主地址：\n"+(string.IsNullOrEmpty(addresses)?endpoint:addresses)+"\n连接同一局域网后输入房间号加入，也可接替电脑座位。";
-        public void LobbyOpenSettings(){page="settings";}
+        public void LobbyOpenSettings(){nativeSettings.Open();page="settings";}
         void UseLocalHost()
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -468,10 +475,12 @@ namespace YunJian.Riichi
             bool playing = active && State != null && (State.phase == "play" || State.phase == "reaction" || (State.phase == "result" && effects.ShowWinPresentation));
             viewport = TableViewport.Fit(Screen.width, Screen.height, Screen.safeArea, playing);
             GUI.matrix = viewport.Matrix;
+            bool beforeSettings = GUI.enabled; GUI.enabled &= page != "settings";
             if (State == null || !active) DrawHome();
             else if (State.phase == "lobby") DrawLobby();
             else if (State.phase == "result" && !effects.ShowWinPresentation) {bool enabled=GUI.enabled;GUI.enabled&=!lobby.OverlayActive;DrawResult();GUI.enabled=enabled;}
             else {bool enabled=GUI.enabled;GUI.enabled&=!lobby.OverlayActive;DrawTableUI();GUI.enabled=enabled;}
+            GUI.enabled = beforeSettings;
             // Dialogs retain their own centered, uniformly scaled canvas.
             GUI.matrix = TableViewport.Fit(Screen.width, Screen.height, Screen.safeArea, false).Matrix;
             if (!string.IsNullOrEmpty(message)) { Panel(new Rect(190, 658, 900, 52)); GUI.Label(new Rect(205, 670, 870, 32), message, small); }
@@ -500,7 +509,7 @@ namespace YunJian.Riichi
         {
             float w = viewport.Width, h = viewport.Height;
             if (SkinButton(new Rect(w - 175, 20, 40, 40), "replay_collect", "邀请好友")) lobby.OpenInvitation(true);
-            if (SkinButton(new Rect(w - 117, 20, 40, 40), "btn_settings", "声音设置")) page = "settings";
+            if (SkinButton(new Rect(w - 117, 20, 40, 40), "btn_settings", "设置")) LobbyOpenSettings();
             if (SkinButton(new Rect(w - 59, 20, 40, 40), "btn_leave", "退出牌局")) { lobby.ShowMatchExit(); return; }
             // Original UI_DesktopInfo top-left node coordinates, uniformly scaled.
             const float k = .55f, ox = 34, oy = .6f;
@@ -681,19 +690,14 @@ namespace YunJian.Riichi
         }
         void DrawSettings()
         {
-            Panel(new Rect(350,100,580,510));GUI.Label(new Rect(385,120,490,48),"声音设置",title);
-            if(Button(new Rect(385,185,200,44),muted?"角色语音：关闭":"角色语音：开启")){muted=!muted;SaveSound();}
-            volume=GUI.HorizontalSlider(new Rect(615,201,260,25),volume,0,1);
-            if(Button(new Rect(385,260,200,44),musicMuted?"背景音乐：关闭":"背景音乐：开启")){musicMuted=!musicMuted;SaveSound();}
-            musicVolume=GUI.HorizontalSlider(new Rect(615,276,260,25),musicVolume,0,1);
-            if(Button(new Rect(385,335,200,44),effectsMuted?"桌面音效：关闭":"桌面音效：开启")){effectsMuted=!effectsMuted;SaveSound();}
-            effectsVolume=GUI.HorizontalSlider(new Rect(615,351,260,25),effectsVolume,0,1);
-            voice.Configure(!muted,volume);settlementAudio.Configure(!muted,volume);gameAudio.Configure(!musicMuted,musicVolume,!effectsMuted,effectsVolume);
-            if(Button(new Rect(385,420,230,48),"试听荣和"))voice.Preview();
-            if(Button(new Rect(645,420,230,48),"试听落牌"))gameAudio.PreviewDiscard();
-            if(Button(new Rect(385,510,490,55),"保存并关闭")){SaveSound();page="home";}
+            nativeSettings.Draw(()=>page="home");
         }
-        void SaveSound() { PlayerPrefs.SetInt("riichi.muted", muted ? 1 : 0); PlayerPrefs.SetFloat("riichi.volume", volume); PlayerPrefs.SetInt("riichi.musicMuted",musicMuted?1:0);PlayerPrefs.SetInt("riichi.effectsMuted",effectsMuted?1:0);PlayerPrefs.SetFloat("riichi.musicVolume",musicVolume);PlayerPrefs.SetFloat("riichi.effectsVolume",effectsVolume);PlayerPrefs.Save(); voice.Configure(!muted, volume);settlementAudio.Configure(!muted,volume);gameAudio.Configure(!musicMuted,musicVolume,!effectsMuted,effectsVolume); }
+        void ApplyAudioSettings() {
+            if(audioSettingsRevision==AppPreferences.Revision)return;audioSettingsRevision=AppPreferences.Revision;
+            float speech=AppPreferences.Gain(4),sfx=AppPreferences.Gain(2);
+            voice.Configure(speech>0,speech);settlementAudio.Configure(speech>0,speech);
+            gameAudio.Configure(false,0,sfx>0,sfx);
+        }
         public static string TileName(string p)
         {
             if (string.IsNullOrEmpty(p) || p.Length < 2) return "";

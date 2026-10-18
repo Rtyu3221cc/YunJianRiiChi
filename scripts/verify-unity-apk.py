@@ -7,13 +7,22 @@ from zipfile import ZipFile
 from importlib import import_module
 
 root = Path(__file__).resolve().parent.parent
-apk = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else root / 'unity/Builds/yunjian-riichi-unity-0.5.46.apk'
+apk = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else root / 'unity/Builds/yunjian-riichi-unity-0.6.3.apk'
 assets = root / 'app/src/main/assets'
 signature = import_module('verify-apk-signature').verify_signature(apk)
 with ZipFile(apk) as archive:
     assert archive.testzip() is None
     names = archive.namelist()
+    metadata=archive.read('assets/bin/Data/Managed/Metadata/global-metadata.dat')
+    for runtime_class in (b'NativeSettingsUi',b'NativeYakuUi',b'PlaylistAudio',b'AppPreferences',b'RiichiDiscardVisual',b'NativeCallouts',b'WordRect'):
+        assert runtime_class in metadata,'Missing compiled 0.6.3 code: '+repr(runtime_class)
     assert 'META-INF/MANIFEST.MF' in names, 'Missing v1/JAR signature manifest; run scripts/sign-unity-apk.ps1'
+    for source in (root/'unity/Assets/Resources/Majsoul/Actions').glob('riichi-fire-*'):
+        if source.suffix not in ('.png','.json'):continue
+        guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text(encoding='utf8')).group(1)
+        entry='assets/bin/Data/'+guid
+        assert entry in names,'Missing original riichi fire resource: '+source.name
+        if source.suffix=='.json':assert source.read_bytes() in archive.read(entry),'Stale riichi fire data: '+source.name
     signature_files = [name for name in names if re.fullmatch(r'META-INF/[^/]+\.SF', name)]
     assert any(any(name[:-3] + suffix in names for suffix in ['.RSA', '.DSA', '.EC']) for name in signature_files), 'Missing v1 signature file or certificate'
     for file in assets.rglob('*'):
@@ -114,7 +123,30 @@ with ZipFile(apk) as archive:
         guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text()).group(1);entry='assets/bin/Data/'+guid
         assert entry in names,'Missing academy/takeover resource: '+source.name
         if source.suffix=='.json':assert source.read_bytes() in archive.read(entry),'Stale academy/takeover provenance: '+source.name
+    sys.path.insert(0,str(root/'tools/asset-inspector'))
+    import UnityPy
+    word_texture_sizes={}
+    for source in (root/'unity/Assets/Resources/Majsoul/Callouts1018').glob('*'):
+        if source.suffix not in ('.png','.json'):continue
+        guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text(encoding='utf8')).group(1)
+        entry='assets/bin/Data/'+guid
+        assert entry in names,'Missing four-direction callout asset: '+source.name
+        if source.suffix=='.json':assert source.read_bytes() in archive.read(entry),'Stale callout layout or character bounds: '+source.name
+        if source.stem in ['shout_chi','shout_peng','shout_gang','shout_lizhi','shout_babei']:
+            env=UnityPy.load(archive.read(entry));texture=next(o.read()for o in env.objects if o.type.name=='Texture2D')
+            word_texture_sizes[source.stem]=[texture.m_Width,texture.m_Height]
+            assert word_texture_sizes[source.stem]==[187,143],'Android import altered the full word canvas: '+source.name
+    assert len(word_texture_sizes)==5
+    print('PASS: all five APK callout word textures preserve 187x143 original canvases.')
     shader_data = b''.join(archive.read(n) for n in names if 'globalgamemanagers.assets' in n)
+    assert b'YunJian/NativeCallout' in shader_data,'Missing compiled four-direction callout shader'
+    for source in (root/'unity/Assets/Resources/Majsoul/Settings').rglob('*'):
+        if source.suffix not in ('.png','.json','.ttf','.mp3'):continue
+        guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text(encoding='utf8')).group(1)
+        entry='assets/bin/Data/'+guid
+        assert entry in names,'Missing 0.6.3 settings/yaku/music resource: '+source.name
+        if source.suffix=='.json':assert source.read_bytes() in archive.read(entry),'Stale 0.6.3 settings data: '+source.name
+        if source.suffix=='.mp3':assert entry+'.resource' in names and archive.getinfo(entry+'.resource').file_size>0,'Missing 0.6.3 music data: '+source.name
     assert b'UI/Default' in archive.read('assets/bin/Data/Resources/unity_builtin_extra'), 'Missing default UI shader for cut-in masking/composition'
     for source in (root/'unity/Assets/Resources/Majsoul/NativeReview').rglob('*'):
         if source.suffix not in ['.png','.json','.bytes']:continue
@@ -131,7 +163,7 @@ with ZipFile(apk) as archive:
 dist = root / 'dist'
 output = dist / apk.name
 output.write_bytes(apk.read_bytes())
-checksum = 'SHA256-unity-0.5.46.txt' if len(sys.argv) == 1 else 'SHA256-' + output.stem + '.txt'
+checksum = 'SHA256-unity-0.6.3.txt' if len(sys.argv) == 1 else 'SHA256-' + output.stem + '.txt'
 (dist / checksum).write_text(hashlib.sha256(output.read_bytes()).hexdigest().upper() + '  ' + output.name + '\n', encoding='utf8')
 print('PASS: APK ZIP integrity, current offline assets, phone host/JNI, ARM64 + ARMv7, original tile atlases, exact hand animation bytes, action textures, original turn-light assets and compiled shaders.')
 print(output.name, output.stat().st_size, hashlib.sha256(output.read_bytes()).hexdigest())

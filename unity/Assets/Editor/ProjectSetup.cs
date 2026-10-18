@@ -29,8 +29,8 @@ namespace YunJian.Riichi.Editor
             PlayerSettings.companyName = "YunJian";
             PlayerSettings.productName = "云间日麻 3D";
             PlayerSettings.SetApplicationIdentifier(UnityEditor.Build.NamedBuildTarget.Android, "com.yunjian.riichi.unity");
-            PlayerSettings.bundleVersion = "0.5.46";
-            PlayerSettings.Android.bundleVersionCode = 47;
+            PlayerSettings.bundleVersion = "0.6.3";
+            PlayerSettings.Android.bundleVersionCode = 51;
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel26;
             // Local, offline distribution: matches the existing phone-hosted service.
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel32;
@@ -47,7 +47,7 @@ namespace YunJian.Riichi.Editor
             var graphics = new SerializedObject(graphicsAssets[0]);
             var shaders = graphics.FindProperty("m_AlwaysIncludedShaders");
             if (shaders == null) throw new System.Exception("无法读取 Always Included Shaders，请检查编辑器版本。");
-            foreach (var name in new[] { "Standard", "Unlit/Texture", "Unlit/Transparent", "Unlit/Color", "UI/Default", "YunJian/OriginalHand", "YunJian/OriginalTileFace", "YunJian/OriginalTileBody", "YunJian/OriginalTileOutline", "YunJian/ResponseGlow", "YunJian/TurnLight", "YunJian/NorthPetal", "YunJian/WinParticle", "YunJian/TableCloth", "YunJian/TileShadow" })
+            foreach (var name in new[] { "Standard", "Unlit/Texture", "Unlit/Transparent", "Unlit/Color", "UI/Default", "YunJian/OriginalHand", "YunJian/OriginalTileFace", "YunJian/OriginalTileBody", "YunJian/OriginalTileOutline", "YunJian/ResponseGlow", "YunJian/TurnLight", "YunJian/NorthPetal", "YunJian/WinParticle", "YunJian/TableCloth", "YunJian/TileShadow", "YunJian/NativeCallout" })
             {
                 var shader = Shader.Find(name); if (shader == null) continue;
                 bool found = false; for (int i = 0; i < shaders.arraySize; i++) if (shaders.GetArrayElementAtIndex(i).objectReferenceValue == shader) found = true;
@@ -62,7 +62,7 @@ namespace YunJian.Riichi.Editor
             if (!File.Exists("Assets/Scenes/Table.unity")) CreateScene();
             Configure();
             Directory.CreateDirectory("Builds");
-            var report = BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, "Builds/yunjian-riichi-unity-0.5.46.apk", BuildTarget.Android, BuildOptions.None);
+            var report = BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, "Builds/yunjian-riichi-unity-0.6.3.apk", BuildTarget.Android, BuildOptions.None);
             if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded) throw new System.Exception("Android build failed");
         }
     }
@@ -70,6 +70,11 @@ namespace YunJian.Riichi.Editor
     {
         void OnPreprocessAudio()
         {
+            if(assetPath.StartsWith("Assets/Resources/Majsoul/Settings/Audio/")) {
+                var musicImporter=(AudioImporter)assetImporter;var musicSettings=musicImporter.defaultSampleSettings;
+                musicSettings.loadType=AudioClipLoadType.Streaming;musicSettings.preloadAudioData=false;musicSettings.compressionFormat=AudioCompressionFormat.Vorbis;
+                musicImporter.defaultSampleSettings=musicSettings;return;
+            }
             if(!assetPath.StartsWith("Assets/Resources/Majsoul/Audio/"))return;
             var importer=(AudioImporter)assetImporter;var settings=importer.defaultSampleSettings;
             settings.loadType=assetPath.EndsWith("/game.mp3")?AudioClipLoadType.Streaming:AudioClipLoadType.DecompressOnLoad;
@@ -83,6 +88,12 @@ namespace YunJian.Riichi.Editor
             t.textureCompression = TextureImporterCompression.Uncompressed;
             t.maxTextureSize = 2048;
             t.alphaIsTransparency = true;
+            if(assetPath.StartsWith("Assets/Resources/Majsoul/Actions/riichi-fire-")) {
+                t.mipmapEnabled=false;t.npotScale=TextureImporterNPOTScale.None;t.wrapMode=TextureWrapMode.Clamp;
+            }
+            if(assetPath.StartsWith("Assets/Resources/Majsoul/Settings/")) {
+                t.mipmapEnabled=false;t.npotScale=TextureImporterNPOTScale.None;t.wrapMode=TextureWrapMode.Clamp;
+            }
             if (assetPath == "Assets/Resources/Majsoul/Hud/turn-light.png")
             {
                 t.mipmapEnabled = false; t.npotScale = TextureImporterNPOTScale.None;

@@ -76,11 +76,14 @@ namespace YunJian.Riichi
             }
             else
             {
-                // Table face is the 50 x 70 interior of the existing 52 x 72 crop.
-                // The original mesh's face submesh supplies the UV mapping.
-                m = new Material(Shader.Find("YunJian/OriginalTileFace")) { mainTexture = Resources.Load<Texture2D>("Majsoul/TableTiles/" + tile) };
+                // The APK atlas uses 52x72 cells, with the face starting at (3,3).
+                // The old per-tile crop sampled (1,1), pushing every suit right/down.
+                // Sample the atlas directly: the 50x70 face extends past that old crop.
+                int number=tile[1]-'0',index=tile[0]=='m'?number:tile[0]=='p'?10+number:tile[0]=='s'?20+number:29+number;
+                m = new Material(Shader.Find("YunJian/OriginalTileFace")) { mainTexture = Texture("table-face") };
                 if(m.mainTexture!=null){m.mainTexture.anisoLevel=16;m.mainTexture.filterMode=FilterMode.Trilinear;m.mainTexture.mipMapBias=-.35f;}
-                m.mainTextureScale = new Vector2(50f / 52, 70f / 72); m.mainTextureOffset = new Vector2(1f / 52, 1f / 72);
+                m.mainTextureScale = new Vector2(50f/512,70f/512);
+                m.mainTextureOffset = new Vector2((3+index%7*52)/512f,1-(3+index/7*72+70)/512f);
                 TableLook.Apply(m, TableLook.Face);
             }
             materials[key] = m; return m;

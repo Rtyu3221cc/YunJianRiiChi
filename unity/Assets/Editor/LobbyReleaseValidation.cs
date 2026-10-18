@@ -130,7 +130,11 @@ namespace YunJian.Riichi.Editor
                 Check(!task.IsFaulted&&RiichiClient.ValidEndpoint(task.Result),"Loopback discovery failed");
             }
             yield return Press("rules");Check(lobby.Modal=="rules","Waiting-room rules route failed");yield return Shot("room-rules");yield return Press("closeModal");
-            yield return Press("yaku");Check(lobby.Modal=="yaku","Yaku button missing");yield return Press("yaku-confirm");
+            yield return Press("yaku");Check(lobby.Modal=="yaku","Yaku button missing");yield return Shot("room-yaku-native");
+            // The native yaku panel replaced the old confirmation popup. Exercise
+            // its current controller back route, including the closing transition.
+            lobby.Back();yield return Until(()=>lobby.Modal=="","Native yaku panel did not close through Back");
+            Check(lobby.Page==LobbyController.ScreenPage.Room&&client.State.phase=="lobby","Closing yaku left the waiting room");
             yield return Press("bot1");yield return Idle();Check(client.State.players.Length==2,"Bot was not added");yield return Press("kick1");yield return Idle();Check(client.State.players.Length==1&&lobby.Modal=="","Bot removal must act directly");
             yield return Api(new RequestBody{op="join",name="大厅专项牌友",pin=client.State.pin});string guest=reply.token;var guestView=reply.state;
             yield return Until(()=>client.State.players.Length==2,"Host did not see guest join");Check(!client.State.players[1].ready,"Guest incorrectly auto-ready");
