@@ -10,7 +10,7 @@ namespace YunJian.Riichi {
         [Serializable] sealed class Skin {public int id,direction;public string source;public Placement[] placements;public float[] full,head;public bool noReverse,lockReverse;}
         [Serializable] sealed class Bank {public float[] referenceFull,referenceHead;public Skin[] skins;}
         static Bank bank;
-        static Skin Get(int id){if(bank==null)bank=JsonUtility.FromJson<Bank>(Resources.Load<TextAsset>("Majsoul/Characters/framing").text);return bank.skins.First(s=>s.id==id);}
+        static Skin Get(int id){if(bank==null)bank=JsonUtility.FromJson<Bank>(Resources.Load<TextAsset>("Majsoul/Characters/framing").text);return bank.skins.FirstOrDefault(s=>s.id==id)??bank.skins.First(s=>s.id==400101);}
         public static Rect NativeLocal(int id,string scene,int index,Rect reference,out bool flip){
             var skin=Get(id);var pose=skin.placements.FirstOrDefault(p=>p.scene==scene&&p.index==index);
             if(pose!=null){var p=pose.rect;flip=pose.flip;return new Rect(p[0],p[1],p[2],p[3]);}

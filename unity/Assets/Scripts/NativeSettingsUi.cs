@@ -42,10 +42,10 @@ namespace YunJian.Riichi
             Label("设置", rx + 842, 170, 51, new Color(.8784f, .6667f, .4314f), 1, TextAnchor.MiddleCenter);
             Image("native-pop2_close", new Rect(rx + 1376, 148, 44, 44));
             if (Hit(new Rect(rx + 1358, 130, 80, 80))) { audio.StopAudition(); close(); }
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < 3; i++) {
                 float x = rx + 2, y = 186 + i * 104; bool active = Tab == i;
                 Image("official-config-common_popup_tab_btn" + (active ? "_selected" : ""), new Rect(x, y, active ? 248 : 207, 108));
-                Label(i == 0 ? "声音" : "画面", x + 123, y + 55, 40, Gold, 1, TextAnchor.MiddleCenter);
+                Label(i == 0 ? "声音" : i==1?"画面":"资源", x + 123, y + 55, 40, Gold, 1, TextAnchor.MiddleCenter);
                 if (Hit(new Rect(x, y, 207, 108))) { Tab = i; dropdown = false; scroll.Offset = 0; }
             }
             Label("当前版本  Unity " + Application.version, rx + 1419, 901, 30, new Color(.608f, .631f, .698f), 0, TextAnchor.MiddleRight);
@@ -54,7 +54,7 @@ namespace YunJian.Riichi
                 scroll.Input(view, 875); GUI.BeginGroup(view);
                 DrawSound(-scroll.Offset);
                 GUI.EndGroup(); Scrollbar(vx + 1155, vy, 630, scroll.Offset, 875);
-            } else { GUI.BeginGroup(view); DrawGraphics(); GUI.EndGroup(); }
+            } else { GUI.BeginGroup(view);if(Tab==1)DrawGraphics();else CharacterResourceUi.Current.DrawSettings(view); GUI.EndGroup(); }
             GUI.enabled = enabled; GUI.matrix = baseMatrix; GUI.color = Color.white;
             if (MusicGroup != null) DrawMusic(width);
             GUI.matrix = matrix; GUI.color = color;

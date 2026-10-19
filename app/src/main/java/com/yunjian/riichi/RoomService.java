@@ -77,9 +77,9 @@ public class RoomService extends Service {
   String origin=headers.get("origin"),host=headers.get("host");
   if(origin!=null&&!origin.equals("http://"+host)){status=403;data="Origin denied".getBytes(StandardCharsets.UTF_8);}
   else if("POST".equals(method)&&"/api".equals(path)){
-   int len=Integer.parseInt(headers.getOrDefault("content-length","0"));if(len<2||len>16384)throw new IOException("invalid request size");
+   int len=Integer.parseInt(headers.getOrDefault("content-length","0"));if(len<2||len>65536)throw new IOException("invalid request size");
    if(!headers.getOrDefault("content-type","").startsWith("application/json")){status=415;data="JSON required".getBytes(StandardCharsets.UTF_8);}
-   else {type="application/json; charset=utf-8";data=dispatch(new String(read(in,len),StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8);}
+   else {type="application/json; charset=utf-8";JSONObject command=new JSONObject(new String(read(in,len),StandardCharsets.UTF_8));command.put("peerAddress",socket.getInetAddress().getHostAddress());data=dispatch(command.toString()).getBytes(StandardCharsets.UTF_8);}
   }else if("GET".equals(method)&&"/info".equals(path)){type="application/json; charset=utf-8";data=new JSONObject().put("addresses",new JSONArray(addresses())).toString().getBytes(StandardCharsets.UTF_8);}
   else if("GET".equals(method)&&(path.equals("/")||path.equals("/index.html")))data=asset("index.html");
   else if("GET".equals(method)&&path.equals("/style.css")){type="text/css; charset=utf-8";data=asset("style.css");}

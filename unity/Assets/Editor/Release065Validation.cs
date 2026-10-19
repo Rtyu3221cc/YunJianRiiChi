@@ -13,13 +13,13 @@ namespace YunJian.Riichi.Editor {
         public static void Run(){
             checks.Clear();CharacterRoster.BeginPreview();
             try{
-                Check(PlayerSettings.bundleVersion=="0.6.5"&&PlayerSettings.Android.bundleVersionCode==53,"Release metadata is 0.6.5 / 53");
+                Check(PlayerSettings.bundleVersion=="0.6.6"&&PlayerSettings.Android.bundleVersionCode==54,"Release metadata is 0.6.6 / 54");
                 CharacterRoster.Use("weilai",406903);CharacterRoster.TogglePool("weilai",406901);CharacterRoster.TogglePool("weilai",406903);CharacterRoster.TogglePool("siqiqiansuili",403301);CharacterRoster.TogglePool("yiji",400107);string candidates=Pool();
                 Check(!CharacterRoster.Random&&CharacterRoster.Pool.Length==4,"Candidates can be retained while random mode is disabled");
                 foreach(bool enabled in new[]{true,false,true}){CharacterRoster.Random=enabled;Check(Pool()==candidates,"Switching mode preserves candidate outfits: "+enabled);var request=new RequestBody();CharacterRoster.FillRequest(request);Check(request.randomCharacters==enabled&&request.characterPool.Length==4,"Public request follows the mode switch without losing candidates: "+enabled);}
                 CharacterRoster.Star("weilai");CharacterRoster.Star("siqiqiansuili");CharacterRoster.Reorder(new[]{"yiji","erjietang","siqiqiansuili","weilai"});
                 for(int i=0;i<3;i++){
-                    var all=CharacterRoster.Ordered();var starred=CharacterRoster.Ordered(true);
+                    var all=CharacterRoster.Ordered().Where(c=>new[]{"yiji","erjietang","weilai","siqiqiansuili"}.Contains(c.key)).ToArray();var starred=CharacterRoster.Ordered(true);
                     Check(all.Length==4&&starred.Length==2,"Star filtering returns only the two starred characters");
                     Check(starred.All(r=>CharacterRoster.Favorite(r.key))&&!starred.Any(r=>r.key=="yiji"),"Unstarred candidate is excluded only from the filtered roster");
                     Check(Pool()==candidates&&CharacterRoster.InPool("yiji",400107),"Star filtering keeps unstarred candidates in the selected pool");

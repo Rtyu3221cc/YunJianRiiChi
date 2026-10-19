@@ -55,6 +55,9 @@ namespace YunJian.Riichi
         }
         void ApplyRoomState(RoomView view,bool returning=false)
         {
+            // JsonUtility can materialize JSON null classes as empty objects.
+            if(view.resourceSetup!=null&&(view.resourceSetup.revision<=0||view.resourceSetup.choices==null||view.resourceSetup.players==null))view.resourceSetup=null;
+            view.resourcePeers=view.resourcePeers??new ResourcePeer[0];foreach(var peer in view.resourcePeers)peer.hashes=peer.hashes??new string[0];
             bool handChanged=State!=null&&(State.audioRoom!=view.audioRoom||State.matchSeq!=view.matchSeq||State.handSeq!=view.handSeq);
             // Release references to the old table before Render replaces its tiles.
             if(handChanged){effects.Reset();voice.Reset();settlementAudio.Reset();gameAudio.ClearHandEffects();resultDisplay.Reset();ClearSelection();RiichiMode=false;choosingKind=null;}

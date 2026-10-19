@@ -13,10 +13,10 @@ namespace YunJian.Riichi.Editor {
             checks.Clear();CharacterRoster.BeginPreview();
             try{
                 Check(PlayerSettings.Android.bundleVersionCode>=52,"Character-system update preserves compatible versionCode >=52");
-                Check(CharacterRoster.All.Length==4,"Four reference characters are available offline");
-                Check(CharacterRoster.All.Sum(c=>c.skins.Length)==21,"All 21 APK skins are catalogued");
-                Check(CharacterRoster.All.Sum(c=>c.emojis.Length)==71,"All 71 chat expressions are unlocked");
-                foreach(var role in CharacterRoster.All){
+                var reference=CharacterRoster.All.Where(c=>new[]{"yiji","erjietang","weilai","siqiqiansuili"}.Contains(c.key)).ToArray();Check(reference.Length==4,"Four reference character definitions remain available");
+                Check(reference.Sum(c=>c.skins.Length)==21,"All 21 APK skins are catalogued");
+                Check(reference.Sum(c=>c.emojis.Length)==71,"All 71 chat expressions are unlocked");
+                foreach(var role in reference){
                     Check(role.skins[0].id==role.defaultSkin&&role.skins[1].id==role.bondSkin,role.key+" keeps initial and bond outfits first");
                     foreach(var skin in role.skins){
                         Check(CharacterRoster.Texture("Skins/"+skin.id+"/full")!=null&&CharacterRoster.Texture("Skins/"+skin.id+"/bighead")!=null,skin.id+" full illustration and portrait are bundled");
@@ -25,7 +25,7 @@ namespace YunJian.Riichi.Editor {
                             var rect=CharacterFraming.NativeLocal(skin.id,scene,seat,new Rect(-381,193,858,1291),out _);
                             Check(!float.IsNaN(rect.x)&&!float.IsInfinity(rect.y)&&rect.width>0&&rect.height>0,skin.id+" has valid "+scene+" framing for "+seat);
                         }
-                        if(skin.dynamic){foreach(string part in skin.parts)Check(Resources.Load<TextAsset>("Majsoul/Characters/"+part+"/skeleton")!=null&&Resources.Load<TextAsset>("Majsoul/Characters/"+part+"/atlas")!=null,skin.id+" original skeleton and atlas are bundled");}
+                        if(skin.dynamic){foreach(string part in skin.parts)Check(CharacterPackService.Asset<TextAsset>(part+"/skeleton")!=null&&CharacterPackService.Asset<TextAsset>(part+"/atlas")!=null,skin.id+" original skeleton and atlas are bundled");}
                     }
                     foreach(string emoji in role.emojis)Check(CharacterRoster.Texture(emoji)!=null,role.key+" expression "+Path.GetFileName(emoji));
                     foreach(string action in new[]{"riichi","double-riichi","ron","tsumo","chi","pon","kan","nuki","fan_pinghu","lobby/lobby_normal1"}){

@@ -7,7 +7,7 @@ from zipfile import ZipFile
 from importlib import import_module
 
 root = Path(__file__).resolve().parent.parent
-apk = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else root / 'unity/Builds/yunjian-riichi-unity-0.6.5.apk'
+apk = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else root / 'unity/Builds/yunjian-riichi-unity-0.6.6.apk'
 assets = root / 'app/src/main/assets'
 signature = import_module('verify-apk-signature').verify_signature(apk)
 with ZipFile(apk) as archive:
@@ -150,10 +150,25 @@ with ZipFile(apk) as archive:
         character_counts[source.suffix]+=1
         if source.suffix in ['.json','.bytes','.txt']:assert source.read_bytes() in archive.read(entry),'Stale character metadata or skeleton: '+source.name
         if source.suffix=='.mp3':assert entry+'.resource' in names and archive.getinfo(entry+'.resource').file_size>0,'Missing original character audio data: '+source.name
-    assert character_counts['.mp3']==626,'Incomplete four-character voice pack'
-    for shader in [b'YunJian/CharacterSpine',b'YunJian/CharacterStraightAlpha',b'YunJian/CharacterIntro']:
+    assert character_counts['.mp3']==327,'Incomplete protected base voice pack'
+    for shader in [b'YunJian/CharacterSpine',b'YunJian/CharacterStraightAlpha',b'YunJian/CharacterIntro',b'YunJian/CharacterOver']:
         assert shader in shader_data,'Missing character shader in player build: '+repr(shader)
-    print('PASS: complete four-character offline resources, 626 original voice clips, native skeleton bytes and player shaders.',character_counts)
+    for cls in [b'CharacterPackService',b'CharacterResourceUi',b'CharacterPackShareServer',b'ResourceRoomCoordinator']:
+        assert cls in metadata,'Missing resource runtime: '+repr(cls)
+    directory=root/'unity/Assets/Resources/Majsoul/CharacterDirectory'
+    for source in directory.rglob('*'):
+        if source.suffix not in ['.png','.json']:continue
+        guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text()).group(1);entry='assets/bin/Data/'+guid
+        assert entry in names,'Missing downloadable character directory: '+source.name
+        if source.suffix=='.json':assert source.read_bytes() in archive.read(entry),'Stale downloadable catalog: '+source.name
+    packs=json.loads((directory/'packs-android.json').read_text('utf8'))
+    assert sum(p['available']and p['recommended']for p in packs['packs'])==11
+    assert sum(p['builtin']for p in packs['packs'])==2
+    for source in (root/'unity/Assets/CharacterPacks/Source').rglob('*'):
+        if source.suffix not in ['.png','.mp3','.bytes','.txt']:continue
+        guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text()).group(1)
+        assert 'assets/bin/Data/'+guid not in names,'Optional heavy asset leaked into APK: '+source.as_posix()
+    print('PASS: two protected base roles, 327 voices, thirteen published roles in the trusted directory; optional heavy assets excluded.',character_counts)
     for source in (root/'unity/Assets/Resources/Majsoul/Settings').rglob('*'):
         if source.suffix not in ('.png','.json','.ttf','.mp3'):continue
         guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text(encoding='utf8')).group(1)
@@ -177,7 +192,7 @@ with ZipFile(apk) as archive:
 dist = root / 'dist'
 output = dist / apk.name
 output.write_bytes(apk.read_bytes())
-checksum = 'SHA256-unity-0.6.5.txt' if len(sys.argv) == 1 else 'SHA256-' + output.stem + '.txt'
+checksum = 'SHA256-unity-0.6.6.txt' if len(sys.argv) == 1 else 'SHA256-' + output.stem + '.txt'
 (dist / checksum).write_text(hashlib.sha256(output.read_bytes()).hexdigest().upper() + '  ' + output.name + '\n', encoding='utf8')
 print('PASS: APK ZIP integrity, current offline assets, phone host/JNI, ARM64 + ARMv7, original tile atlases, exact hand animation bytes, action textures, original turn-light assets and compiled shaders.')
 print(output.name, output.stat().st_size, hashlib.sha256(output.read_bytes()).hexdigest())

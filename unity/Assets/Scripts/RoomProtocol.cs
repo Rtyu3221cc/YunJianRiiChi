@@ -13,6 +13,7 @@ namespace YunJian.Riichi
         public int version, you, n, rounds, round, dealer, honba, sticks, turn, remaining, audioSeq, yakumanIndicator, idleSeconds;
         public bool host, furiten;
         public LobbyRoomView lobby;
+        public int resourceProtocol;public ResourceSetupView resourceSetup;public ResourcePeer[] resourcePeers=new ResourcePeer[0];
         public PlayerView[] players = new PlayerView[0];
         public string[] hand = new string[0], indicators = new string[0], waits = new string[0], log = new string[0];
         public Choice[] options = new Choice[0];
@@ -51,9 +52,14 @@ namespace YunJian.Riichi
     {
         public string op, token, host, name, pin, recovery, action, id, category, room;
         public string character; public int skin;public bool randomCharacters;public CharacterChoice[] characterPool;
+        public int resourceProtocol=1,setupRevision;public string resourceStatus;public string[] fallbackCharacters;public ResourceShareRequest resourceShare;
         public int version, n, rounds, seat, handSeq;
         public int idleSeconds=120;
         public bool red = true, bots, fillBots, lobbyFlow, ready, enabled, userActive, present=true;
     }
     [Serializable] public class HostConfig { public string host, error; public string[] addresses; public bool ready; }
+    [Serializable] public class ResourcePeer {public string name,address,ticket;public int port,seat;public string[] hashes=new string[0];}
+    [Serializable] public class ResourcePeerState {public int seat;public string state;}
+    [Serializable] public class ResourceSetupView {public int revision;public long createdAt;public bool ready;public CharacterChoice[] choices;public ResourcePeerState[] players;}
+    [Serializable] public class ResourceShareRequest {public int port;public string ticket;public string[] hashes;}
 }

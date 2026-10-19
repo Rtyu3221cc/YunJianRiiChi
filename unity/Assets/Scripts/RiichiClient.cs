@@ -27,6 +27,7 @@ namespace YunJian.Riichi
         SettlementAudio settlementAudio;
         PlaylistAudio playlistAudio;
         NativeSettingsUi nativeSettings;
+        bool resourceStartupOffered,resourceSelectionDirty;int resourceSelectionRevision=-1;
         int audioSettingsRevision = -1;
         bool musicMuted, effectsMuted;
         float musicVolume=.35f, effectsVolume=.8f;
@@ -121,6 +122,8 @@ namespace YunJian.Riichi
             gameAudio = gameObject.AddComponent<GameAudio>();settlementAudio=gameObject.AddComponent<SettlementAudio>();
             playlistAudio = gameObject.AddComponent<PlaylistAudio>(); playlistAudio.Initialize(this);
             nativeSettings = new NativeSettingsUi(playlistAudio);
+            gameObject.AddComponent<CharacterPackService>();CharacterResourceUi.Current=new CharacterResourceUi();
+            gameObject.AddComponent<ResourceRoomCoordinator>();
             tap = gameObject.AddComponent<ScreenTapEffect>();
             lobby=gameObject.AddComponent<LobbyController>();lobby.Initialize(this);
             musicMuted=PlayerPrefs.GetInt("riichi.musicMuted",0)!=0;effectsMuted=PlayerPrefs.GetInt("riichi.effectsMuted",0)!=0;
@@ -194,6 +197,7 @@ namespace YunJian.Riichi
         IEnumerator Send(RequestBody req, Action success = null, bool poll = false)
         {
             if (Busy) yield break;
+            if(req.op=="start"&&State?.resourceProtocol==1&&State.resourceSetup==null)req.op="prepareResources";
             if(req.op=="create"||req.op=="join"||req.op=="character")CharacterRoster.FillRequest(req);
             if (!ValidEndpoint(endpoint)) { message = "请输入局域网 IPv4 地址，端口固定为 8765"; yield break; }
             if(active&&pendingUserActivity){req.userActive=true;pendingUserActivity=false;}
@@ -240,6 +244,7 @@ namespace YunJian.Riichi
             }
         }
         public void PublishCharacterSelection(){if(active&&State?.phase=="lobby"&&!Busy)StartCoroutine(Send(new RequestBody{op="character"}));}
+        public bool SendResourceRequest(RequestBody request,Action done=null){if(Busy||!active)return false;StartCoroutine(Send(request,done));return true;}
         void ResetWaitPress()
         {waitPressCaptured=false;waitPressCancelled=false;waitHoldVisible=false;}
         void ObserveWaitState()
@@ -270,6 +275,8 @@ namespace YunJian.Riichi
         void OnDisable(){ResetWaitPress();}
         void Update()
         {
+            if(resourceSelectionRevision!=CharacterPackService.Revision){resourceSelectionRevision=CharacterPackService.Revision;resourceSelectionDirty=true;}if(resourceSelectionDirty&&active&&State?.phase=="lobby"&&State.resourceSetup==null&&!Busy){resourceSelectionDirty=false;PublishCharacterSelection();}
+            if(!resourceStartupOffered&&!validationSession&&!CharacterRoster.PreviewOnly&&!active&&Time.timeSinceLevelLoad>3&&lobby.Page==LobbyController.ScreenPage.Home){resourceStartupOffered=true;CharacterResourceUi.Current.OfferStartup();}
             ApplyAudioSettings();
             introduction.Tick(gameAudio);
             if(active&&(Input.anyKeyDown||Input.GetMouseButton(0)||Input.mouseScrollDelta.sqrMagnitude>0))pendingUserActivity=true;
@@ -350,7 +357,7 @@ namespace YunJian.Riichi
         public LobbyController Lobby => lobby;
         public bool LobbyActive => active;
         public bool LobbyPlaying => active && State!=null && State.phase!="lobby";
-        public bool LobbyOverlayVisible => showRoom || page=="settings";
+        public bool LobbyOverlayVisible => showRoom || page=="settings" || CharacterResourceUi.Current?.ModalOpen==true || State?.resourceSetup!=null;
         public bool LobbyCloseSettings(){if(page!="settings")return false;if(nativeSettings.Back())page="home";return true;}
         public string LobbyNickname { get=>nickname;set{nickname=value;PlayerPrefs.SetString("riichi.name",value);PlayerPrefs.Save();} }
         public string LobbyEndpoint => endpoint;
@@ -463,6 +470,7 @@ namespace YunJian.Riichi
         }
         void OnGUI()
         {
+            GUI.depth=0;
             OriginalTiles.InGui = true;
             try { DrawGui(); } finally { OriginalTiles.InGui = false; }
             if(active&&State?.phase!="lobby"&&!introduction.Active)lobby.DrawTableOverlay();
@@ -477,7 +485,7 @@ namespace YunJian.Riichi
             bool playing = active && State != null && (State.phase == "play" || State.phase == "reaction" || (State.phase == "result" && effects.ShowWinPresentation));
             viewport = TableViewport.Fit(Screen.width, Screen.height, Screen.safeArea, playing);
             GUI.matrix = viewport.Matrix;
-            bool beforeSettings = GUI.enabled; GUI.enabled &= page != "settings";
+            bool beforeSettings = GUI.enabled; GUI.enabled &= page != "settings" && CharacterResourceUi.Current?.ModalOpen!=true && State?.resourceSetup==null;
             if (State == null || !active) DrawHome();
             else if (State.phase == "lobby") DrawLobby();
             else if (State.phase == "result" && !effects.ShowWinPresentation) {bool enabled=GUI.enabled;GUI.enabled&=!lobby.OverlayActive;DrawResult();GUI.enabled=enabled;}
@@ -692,7 +700,7 @@ namespace YunJian.Riichi
         }
         void DrawSettings()
         {
-            nativeSettings.Draw(()=>page="home");
+            bool enabled=GUI.enabled;GUI.enabled&=CharacterResourceUi.Current?.ModalOpen!=true&&State?.resourceSetup==null;nativeSettings.Draw(()=>page="home");GUI.enabled=enabled;
         }
         void ApplyAudioSettings() {
             if(audioSettingsRevision==AppPreferences.Revision)return;audioSettingsRevision=AppPreferences.Revision;

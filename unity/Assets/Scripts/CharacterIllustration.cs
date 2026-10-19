@@ -25,8 +25,8 @@ namespace YunJian.Riichi {
             readonly CommandBuffer commands=new CommandBuffer{name="Original character skeleton"};readonly Material unpremultiply;
             RenderTexture pma,result;Rect bounds;float time=-1;int frame=-1;public string[] Animations;
             public Part(string folder,CharacterSkin skin){
-                var atlas=new Atlas(new StringReader(Resources.Load<TextAsset>("Majsoul/Characters/"+folder+"/atlas").text),"",new Pages(folder));atlas.FlipV();
-                var binary=new SkeletonBinary(new AtlasAttachmentLoader(atlas));var bytes=Resources.Load<TextAsset>("Majsoul/Characters/"+folder+"/skeleton").bytes;
+                var atlas=new Atlas(new StringReader(CharacterPackService.Asset<TextAsset>(folder+"/atlas").text),"",new Pages(folder));atlas.FlipV();
+                var binary=new SkeletonBinary(new AtlasAttachmentLoader(atlas));var bytes=CharacterPackService.Asset<TextAsset>(folder+"/skeleton").bytes;
                 var data=binary.ReadSkeletonData(new MemoryStream(bytes));skeleton=new Skeleton(data);state=new AnimationState(new AnimationStateData(data){DefaultMix=.18f});
                 Animations=data.Animations.Select(a=>a.Name).ToArray();string idle=Animations.FirstOrDefault(a=>a=="idle")??Animations.FirstOrDefault(a=>a.IndexOf("idle",StringComparison.OrdinalIgnoreCase)>=0)??Animations.FirstOrDefault();
                 if(idle!=null)state.SetAnimation(0,idle,true);state.Apply(skeleton);skeleton.UpdateWorldTransform(Skeleton.Physics.Update);
@@ -87,14 +87,17 @@ namespace YunJian.Riichi {
             public void Dispose(){foreach(var m in materials.Values)UnityEngine.Object.Destroy(m);UnityEngine.Object.Destroy(mesh);UnityEngine.Object.Destroy(unpremultiply);commands.Dispose();pma.Release();result.Release();UnityEngine.Object.Destroy(pma);UnityEngine.Object.Destroy(result);}
         }
         readonly Dictionary<int,Part[]> dynamics=new Dictionary<int,Part[]>();
-        public bool Animate=true;
+        sealed class Composite:IDisposable {public RenderTexture pma,result;public Material over,straight;public Composite(int w,int h){pma=new RenderTexture(w,h,0,RenderTextureFormat.ARGB32);result=new RenderTexture(w,h,0,RenderTextureFormat.ARGB32);pma.Create();result.Create();over=new Material(Shader.Find("YunJian/CharacterOver"));straight=new Material(Shader.Find("YunJian/CharacterStraightAlpha"));}public void Dispose(){pma.Release();result.Release();UnityEngine.Object.Destroy(pma);UnityEngine.Object.Destroy(result);UnityEngine.Object.Destroy(over);UnityEngine.Object.Destroy(straight);}}
+        readonly Dictionary<int,Composite> composites=new Dictionary<int,Composite>();
+        public bool Animate=true;int packRevision=-1;
         public Texture Art(CharacterSkin skin,float now){
+            if(packRevision!=CharacterPackService.Revision){Dispose();packRevision=CharacterPackService.Revision;}
             if(!skin.dynamic||!Animate)return CharacterRoster.Texture("Skins/"+skin.id+"/full");
             if(!dynamics.TryGetValue(skin.id,out var parts)){parts=skin.parts.Select(p=>new Part(p,skin)).ToArray();dynamics[skin.id]=parts;}
-            return parts.Length==0?CharacterRoster.Texture("Skins/"+skin.id+"/full"):parts[0].Draw(now);
+            if(parts.Length==0)return CharacterRoster.Texture("Skins/"+skin.id+"/full");if(parts.Length==1)return parts[0].Draw(now);var first=parts[0].Draw(now);if(!composites.TryGetValue(skin.id,out var composite))composites[skin.id]=composite=new Composite(first.width,first.height);var previous=RenderTexture.active;RenderTexture.active=composite.pma;GL.Clear(true,true,Color.clear);foreach(var part in parts)Graphics.Blit(part.Draw(now),composite.pma,composite.over);Graphics.Blit(composite.pma,composite.result,composite.straight);RenderTexture.active=previous;return composite.result;
         }
         public void Play(CharacterSkin skin,string name){if(dynamics.TryGetValue(skin.id,out var parts))foreach(var p in parts)p.Play(name);}
         public void Draw(Rect rect,CharacterSkin skin,float now){if(Event.current.type!=EventType.Repaint)return;var t=Art(skin,now);if(t!=null)GUI.DrawTexture(rect,t,ScaleMode.ScaleToFit,true);}
-        public void Dispose(){foreach(var parts in dynamics.Values)foreach(var p in parts)p.Dispose();dynamics.Clear();}
+        public void Dispose(){foreach(var parts in dynamics.Values)foreach(var p in parts)p.Dispose();dynamics.Clear();foreach(var c in composites.Values)c.Dispose();composites.Clear();}
     }
 }

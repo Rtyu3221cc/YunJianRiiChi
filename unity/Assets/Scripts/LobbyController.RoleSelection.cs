@@ -74,7 +74,7 @@ namespace YunJian.Riichi {
             RolePane(RoleRect(669.52f,172.65f,933.15f,805.51f),"宿舍",RoleRect(707.87f,181.51f,521,61.91f),RoleRect(700.2f,243.43f,880.54f,5.03f));RoleFilter(RoleRect(1440.49f,185.46f,139,59),"role-favorites");DrawRoleRoster();
         }
         void DrawRoleRoster(){
-            var roles=CharacterRoster.Ordered(roleStars);var view=RoleRosterView;int columns=randomTab?4:5;var extent=new Vector2(view.width,Mathf.Max(view.height,Mathf.CeilToInt(roles.Length/(float)columns)*185+40));
+            var roles=CharacterRoster.Ordered(roleStars,true);var view=RoleRosterView;int columns=randomTab?4:5;var extent=new Vector2(view.width,Mathf.Max(view.height,Mathf.CeilToInt(roles.Length/(float)columns)*185+40));
             bool was=GUI.enabled;GUI.enabled&=!(skinExpanded&&RolePopupRect().Contains(Event.current.mousePosition));DragCharacterPane(roleRosterDrag,view,extent,ref roleRosterScroll,false);
             GUI.BeginGroup(view);var offset=targetOffset;targetOffset+=view.position;
             for(int i=0;i<roles.Length;i++){var role=roles[i];var r=RoleRosterCell(i);r.position-=view.position;int skin=role.key==CharacterRoster.Active.character?CharacterRoster.Active.skin:CharacterRoster.Outfit(role.key);int count=CharacterRoster.Pool.Count(p=>p.character==role.key);RoleHead(r,role,skin,skinExpanded&&rolePreview==role.key&&!rolePopupFromPool,true,randomTab?count:0,!randomTab&&role.key==CharacterRoster.Active.character);
@@ -101,10 +101,10 @@ namespace YunJian.Riichi {
         }
         Rect RolePopupAnchor(){
             if(randomTab&&rolePopupFromPool){var groups=RolePoolGroups();int i=Array.FindIndex(groups,p=>p.character==rolePreview);return i>=0?RolePoolCell(i):RoleRect(360,340,124,124);}
-            var roles=CharacterRoster.Ordered(roleStars);int index=Array.FindIndex(roles,r=>r.key==rolePreview);return index>=0?RoleRosterCell(index):RoleRect(360,395,210,210);
+            var roles=CharacterRoster.Ordered(roleStars,true);int index=Array.FindIndex(roles,r=>r.key==rolePreview);return index>=0?RoleRosterCell(index):RoleRect(360,395,210,210);
         }
         Rect RolePopupRect(){var role=CharacterRoster.Find(rolePreview)??CharacterRoster.Find(CharacterRoster.Active.character);var anchor=RolePopupAnchor();float w=Mathf.Min(480,Mathf.Max(226,role.skins.Length*124+28));return new Rect(Mathf.Clamp(anchor.center.x-w/2,RoleOrigin+275,RoleOrigin+1610-w),Mathf.Min(anchor.yMax+18,800),w,154);}
-        bool RoleAvatarAt(Vector2 p){if(!randomTab&&RoleRect(349,384,230,230).Contains(p))return true;var roles=CharacterRoster.Ordered(roleStars);for(int i=0;i<roles.Length;i++)if(RoleRosterCell(i).Contains(p))return true;if(randomTab){var groups=RolePoolGroups();for(int i=0;i<groups.Length;i++)if(RolePoolCell(i).Contains(p))return true;}return false;}
+        bool RoleAvatarAt(Vector2 p){if(!randomTab&&RoleRect(349,384,230,230).Contains(p))return true;var roles=CharacterRoster.Ordered(roleStars,true);for(int i=0;i<roles.Length;i++)if(RoleRosterCell(i).Contains(p))return true;if(randomTab){var groups=RolePoolGroups();for(int i=0;i<groups.Length;i++)if(RolePoolCell(i).Contains(p))return true;}return false;}
         void DrawRoleSkinPopover(){
             var role=CharacterRoster.Find(rolePreview);if(role==null){skinExpanded=false;return;}var r=RolePopupRect();var anchor=RolePopupAnchor();RoleSlice(r,"Role/unfold_base");CImage(new Rect(Mathf.Clamp(anchor.center.x-15,r.x+24,r.xMax-54),r.y-2,30,15),"Role/select_arrow",ScaleMode.ScaleToFit);var view=new Rect(r.x+12,r.y+10,r.width-24,126);var extent=new Vector2(Mathf.Max(view.width,role.skins.Length*124+12),126);DragCharacterPane(roleSkinsDrag,view,extent,ref roleSkinsScroll,true);GUI.BeginGroup(view);var offset=targetOffset;targetOffset+=view.position;
             for(int i=0;i<role.skins.Length;i++){var skin=role.skins[i];var card=new Rect((role.skins.Length==1?(view.width-110)/2:8+i*124-roleSkinsScroll.x),8,110,110);bool chosen=randomTab?CharacterRoster.InPool(role.key,skin.id):CharacterRoster.Active.character==role.key&&CharacterRoster.Active.skin==skin.id;RoleHead(card,role,skin.id,chosen,false);CImage(new Rect(card.x+4,card.yMax-41,40.48f,40.48f),"Role/flag_skin",ScaleMode.ScaleToFit);if(skin.dynamic)CImage(new Rect(card.x+4,card.y+3,41.95f,20.41f),"Role/spine_tip",ScaleMode.ScaleToFit);

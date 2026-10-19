@@ -8,11 +8,11 @@ function randomHex(n){const b=new Uint8Array(n);g.crypto.getRandomValues(b);retu
 function shuffle(a){for(let i=a.length-1;i>0;i--){const b=new Uint32Array(1);let max=Math.floor(4294967296/(i+1))*(i+1);do{g.crypto.getRandomValues(b)}while(b[0]>=max);const j=b[0]%(i+1);[a[i],a[j]]=[a[j],a[i]];}return a}
 function tiles(h){const a=[];for(const s of ['m','p','s','z'])for(let n=1;n<h._bingpai[s].length;n++)for(let k=0;k<h._bingpai[s][n];k++)a.push(s+(n===5&&k<h._bingpai[s][0]?0:n));return a}
 function avatar(value){check(typeof value==='string'&&value.length<=12288&&(value===''||/^data:image\/jpeg;base64,\/9j\/[A-Za-z0-9+/]*={0,2}$/.test(value)),'头像格式或大小不正确');return value}
-const CHARACTER_SKINS={yiji:[400101,400102,400103,400104,400105,400106,400107],erjietang:[400201,400202,400203,400206,400207,400208],siqiqiansuili:[403301,403302,403303,403304],weilai:[406901,406902,406903,406904]};
+const CHARACTER_SKINS={"yiji":[400101,400102,400103,400104,400105,400106,400107],"erjietang":[400201,400202,400203,400206,400207,400208],"jianai":[400301,400302,400303,400304,400305,400306],"qianzhi":[400401,400402,400403,400404,400405,400406,400407],"xiangyuanwu":[400501,400502,400503,400504,400505,400506,400507,400508],"fuzi":[400601,400602,400603,400604,400605,400606],"bamuwei":[400701,400702,400703,400704,400705,400706,400707,400708,400709],"jiutiao":[400801,400802,400803,400804,400805,400806,400807],"zeniya":[400901,400902,400903,400904,400905,400906,400907,400908],"kawei":[401001,401002,401003,401004],"sigongxiasheng":[401101,401102,401103,401104,401105],"wangcilang":[401201,401202,401203,401204,401205],"yizhilaikong":[401301,401302,401303,401304,401305,401306],"mingzhiyingshu":[401401,401402,401403,401404,401405,401406],"qingkuniang":[401501,401502,401503],"shala":[401601,401602,401603,401604,401605,401606,401607],"erzhigonghua":[401701,401702,401706,401707,401708,401709],"baishinainai":[401801,401802,401803,401804,401805],"xiaoniaoyouchutian":[401901,401902,401903,401904,401905,401906,401907],"wushilanyangcai":[402001,402002,402003,402004,402005,402006],"lianggongxingshu":[402101,402102,402103,402104,402105,402106],"yuesefu":[402201,402202,402203],"zhaitengzhi":[402301,402302,402303,402304],"beijianshahezi":[402401,402402,402403,402404,402405,402406,402407],"aiyin":[402501,402502,402503,402504,402505],"chutao":[402601,402602,402603,402604,402605,402606],"yuejianshan":[402701,402702,402703,402704,402705],"tengbenqiluo":[402801,402802,402803,402804,402805,402806],"huiyeji":[402901,402902,402903,402904,402905,402906,402907],"ruyuelian":[403001,403002,403003,403004],"shiyuanduihai":[403101,403102,403103,403104],"ailisha":[403201,403202,403203,403204,403205,403206,403207],"siqiqiansuili":[403301,403302,403303,403304,403305],"gongyongxiao":[403401,403402,403403,403404],"yuancunhe":[403501,403502,403503,403504],"tianjiangyi":[403601,403602,403603,403604],"gongyongzhao":[403701,403702,403703,403704],"fuji":[403801,403802,403803,403804,403805,403806,403807],"qixi":[403901,403902,403903,403904,403905],"shecan":[404001,404002,404003],"zaoyinv":[404101,404102,404103],"shengzhimo":[404201,404202,404203],"taocan":[404301,404302,404303],"qihailinai":[404401,404402,404403,404404,404405],"a37":[404501,404502,404503,404504,404505],"jichuanxiang":[404601,404602,404603,404604],"laien":[404701,404702,404703,404704],"senchuanlingzi":[404801,404802,404803,404804,404805,404806],"longchuanxiayan":[404901,404902,404903,404904,404905],"akagi":[405001,405002,405003],"washizu":[405101,405102,405103],"xiyuansiyiyu":[405201,405202],"xiaoyesiqiyu":[405301,405302,405303,405304],"xiamier":[405401,405402,405403,405404,405405],"sigonghuiye":[405501,405502,405503],"baiyinyuxing":[405601,405602,405603],"zaobanai":[405701,405702,405703],"baiyingui":[405801,405802,405803],"you":[405901,405902,405903,405904,405905,405906],"zekesi":[406001,406002,406003,406004],"beiyuanlili":[406101,406102],"zhujingjiu":[406201,406202,406203],"fulumeisuizi":[406301,406302,406303],"xinzichong":[406401,406402,406403],"yuanchengsilian":[406501,406502,406503],"sigongdongshi":[406601,406602,406603,406604,406605],"qingluan":[406701,406702,406703,406704],"ruyuecaiyin":[406801,406802,406803,406804],"weilai":[406901,406902,406903,406904],"luluxiu":[407001,407002,407003],"cc":[407101,407102,407103],"zhuque":[407201,407202,407203],"kalian":[407301,407302,407303],"lanxing":[407401,407402,407403,407404],"ling":[407501,407502,407503,407504],"dongchengxuanyin":[407601,407602],"hanna":[407701,407702,407703],"musa":[407801,407802],"yiliya":[407901,407902,407903],"meiyou":[408001,408002,408003],"xiaohei":[408101,408102,408103],"jier":[408201,408202,408203],"yifu":[408301,408302,408303,408304],"jiushi":[409001,409002,409003],"linlang":[408401,408402,408403,408404],"yuanfeng":[408501,408502,408503],"shalangbaizi":[408601,408602,408603],"xiaoniaoyouxingye":[408701,408702,408703],"lubamoailu":[408801,408802,408803],"qianhuangmuyue":[408901,408902,408903],"laiya":[409301,409302,409303],"xinxiya":[409401,409402,409403],"nanfenghua":[409501,409502],"xili":[409101,409102,409103],"ju":[409201,409202,409203],"qiancangtou":[40010001,40010002,40010003],"tongkouyuanxiang":[40010101,40010102,40010103],"fuwanxiaosi":[40010201,40010202,40010203],"shichuanchucai":[40010301,40010302,40010303],"feiming":[409601,409602],"yuanxiao":[40010701,40010702,40010703],"huayubai":[409901,409902,409903],"huayuqing":[409801,409802,409803],"jiantongying":[40010801,40010802,40010803],"yuanbanlin":[40010901,40010902,40010903],"saber":[40011001,40011002,40011003],"archer":[40011101,40011102,40011103],"jian":[40010601,40010602],"sataen":[409701,409702,409703],"liyang":[40011201,40011202,40011203],"bantianyinshi":[40011301,40011302,40011303],"guixiaotailang":[40011401,40011402,40011403],"gaoshanjinzhu":[40011501,40011502,40011503],"banbenchenma":[40011601,40011602,40011603],"mila":[40011701,40011702],"beiluo":[40011801,40011802],"miya":[40011901,40011902],"jinwu":[40012001,40012002],"tongren":[40012201,40012202,40012203],"yasina":[40012301,40012302,40012303],"lifa":[40012401,40012402,40012403],"shinai":[40012501,40012502,40012503]};
 function characterChoice(c){check(c&&typeof c.character==='string'&&Object.prototype.hasOwnProperty.call(CHARACTER_SKINS,c.character)&&Number.isInteger(c.skin)&&CHARACTER_SKINS[c.character].includes(c.skin),'雀士或服饰无效');return {character:c.character,skin:c.skin}}
 function characterSelection(req){
  const active=req.character?characterChoice(req):{character:'yiji',skin:400101},pool=req.characterPool||[];
- check(Array.isArray(pool)&&pool.length<=21,'随机雀士列表无效');const choices=pool.map(characterChoice),unique=[...new Map(choices.map(c=>[c.character+':'+c.skin,c])).values()];
+ check(Array.isArray(pool)&&pool.length<=1024,'随机雀士列表无效');const choices=pool.map(characterChoice),unique=[...new Map(choices.map(c=>[c.character+':'+c.skin,c])).values()];
  check(req.randomCharacters!==true||unique.length>0,'请先选择随机雀士');return {...active,characterPool:unique,randomCharacters:req.randomCharacters===true};
 }
 function freezeCharacter(p){
@@ -20,13 +20,16 @@ function freezeCharacter(p){
  if(p.randomCharacters&&p.characterPool?.length){const key=shuffle([...new Set(p.characterPool.map(c=>c.character))])[0];c=shuffle(p.characterPool.filter(c=>c.character===key).slice())[0];}
  p.matchCharacter=c.character;p.matchSkin=c.skin;
 }
-function publicCharacter(p,phase){return {character:phase==='lobby'?(p.character||'yiji'):(p.matchCharacter||p.character||'yiji'),skin:phase==='lobby'?(p.skin||400101):(p.matchSkin||p.skin||400101)}}
+function publicCharacter(p,phase,prepared=false){return {character:phase==='lobby'&&!prepared?(p.character||'yiji'):(p.matchCharacter||p.character||'yiji'),skin:phase==='lobby'&&!prepared?(p.skin||400101):(p.matchSkin||p.skin||400101)}}
 function player(name,token){return {name,avatar:"",token:token||randomHex(18),recovery:randomHex(6),score:0,hand:'',river:[],riichi:0,ippatsu:false,nuki:0,temp:false,permanent:false,kans:0,ready:false,requests:[]}}
 class Room{
- constructor(host,save,snapshot){this.host=host;this.save=save||(()=>{});this.s=snapshot?JSON.parse(snapshot):null;this.seen={};this._bootAt=Date.now();this._waiting={};this._aiNow=()=>Date.now();this._aiPlan=null;}
+ constructor(host,save,snapshot){this.host=host;this.save=save||(()=>{});this.s=snapshot?JSON.parse(snapshot):null;this.seen={};this._bootAt=Date.now();this._waiting={};this._aiNow=()=>Date.now();this._aiPlan=null;if(this.s?.resourceSetup){this.s.resourceSetup.revision=++this.s.resourceRevision;this.s.resourceSetup.confirmations={};}}
  controlled(p){return !!(p.bot||p.auto)}
+ resourcesReady(){const s=this.s;if(!s?.resourceSetup)return false;return s.players.every(p=>p.bot||p.resourceProtocol!==1||['ready','fallback'].includes(s.resourceSetup.confirmations[p.token]?.state));}
+ resourceView(){const s=this.s;if(!s?.resourceSetup)return null;const x=s.resourceSetup;return {revision:x.revision,createdAt:x.createdAt,ready:this.resourcesReady(),choices:x.choices,players:s.players.map((p,seat)=>({seat,state:p.bot||p.resourceProtocol!==1?'ready':x.confirmations[p.token]?.state||'pending'}))};}
+
  presence(now){
-  const s=this.s;let changed=false;
+  const s=this.s;let changed=false;if(s.phase==='lobby'&&s.resourceSetup&&now-s.resourceSetup.createdAt>180000){delete s.resourceSetup;changed=true;}
   for(let i=0;i<s.players.length;i++){
    const p=s.players[i];if(p.bot)continue;
    if((p.away||now-(this.seen[p.token]||this._bootAt)>=12000)&&(!p.auto||p.autoReason!=='offline')){p.auto=true;p.autoReason='offline';changed=true;}
@@ -57,7 +60,7 @@ class Room{
  sound(kind,seat,tile,riichi,nuki,win,meld){const s=this.s;s.audioSeq=(s.audioSeq||0)+1;s.audioEvents=(s.audioEvents||[]).concat({id:s.audioSeq,kind,seat,tile:tile||null,riichi:!!riichi,...(kind==='discard'?{riverIndex:s.players[seat].river.length}:{}),...(nuki?{nuki}:{}),...(win?{from:win.from,winSource:win.kind}:{}),...(meld?{meld:meld.value,meldKind:meld.kind,meldIndex:meld.index,from:meld.from}:{}),at:Date.now()}).slice(-24);}
  addBot(){const s=this.s;check(s.players.length<s.n,'座位已满');let n=1;while(s.players.some(p=>p.name==='AI · '+n))n++;const p=player('AI · '+n);p.bot=true;s.players.push(p);}
  tick(){
-  const s=this.s;if(!s||!g.RiichiAI||!['play','reaction','result'].includes(s.phase))return {ok:true,idle:true};
+  const s=this.s;if(s?.phase==='lobby'){if(s.resourceSetup&&Date.now()-s.resourceSetup.createdAt>180000){delete s.resourceSetup;s.version++;this.save(JSON.stringify(s));}return {ok:true,idle:true};}if(!s||!g.RiichiAI||!['play','reaction','result'].includes(s.phase))return {ok:true,idle:true};
   const changed=this.presence(Date.now());
   if(s.phase==='result'){
    if(this.advanceIfReady()||changed){s.version++;this.save(JSON.stringify(s));}
@@ -283,13 +286,13 @@ class Room{
   if(i<0)return {phase:'join',n:s.n,count:s.players.length,started:s.phase!=='lobby'};
   const h=s.players[i].hand?this.h(i):null,options=this.options(i);
   const hints=['play','reaction'].includes(s.phase)?this.hints(i,h,options):{waitDetails:[],discardHints:[],furiten:false};
-  return {phase:s.phase,version:s.version,you:i,host:i===0,n:s.n,pin:s.pin,round:s.round,rounds:s.rounds,idleSeconds:s.idleSeconds===0?0:120,dealer:s.dealer,honba:s.honba,sticks:s.sticks,turn:s.turn,lobby:{category:s.lobbyCategory||'friend',red:s.red!==false,managed:!!s.lobbyFlow},
+  return {resourceProtocol:s.resourceProtocol||0,resourceSetup:this.resourceView(),resourcePeers:s.players.filter(p=>!p.bot&&p.resourceShare).map(p=>({...p.resourceShare,name:p.name,seat:s.players.indexOf(p)})),phase:s.phase,version:s.version,you:i,host:i===0,n:s.n,pin:s.pin,round:s.round,rounds:s.rounds,idleSeconds:s.idleSeconds===0?0:120,dealer:s.dealer,honba:s.honba,sticks:s.sticks,turn:s.turn,lobby:{category:s.lobbyCategory||'friend',red:s.red!==false,managed:!!s.lobbyFlow},
    audioRoom:s.audioRoom||s.pin,audioSeq:s.audioSeq||0,audioEvents:s.audioEvents||[],remaining:s.wall?s.wall.length:0,indicators:s.indicators?s.indicators.slice(0,1+this.totalKans()):[],last:s.last,
-   players:s.players.map((p,j)=>({...publicCharacter(p,s.phase),name:p.name,avatar:p.avatar||"",bot:!!p.bot,auto:!!p.auto,autoReason:p.autoReason||'',takeoverMask:!!p.departed||!!p.auto&&['offline','timeout'].includes(p.autoReason),score:p.score,wind:this.wind(j),riichi:p.riichi,nuki:p.nuki,river:p.river,melds:p.hand?this.h(j)._fulou:[],count:p.hand?tiles(this.h(j)).length:0,ready:p.ready,online:p.bot||!p.away&&Date.now()-(this.seen[p.token]||0)<12000})),
+   players:s.players.map((p,j)=>({...publicCharacter(p,s.phase,!!s.resourceSetup),name:p.name,avatar:p.avatar||"",bot:!!p.bot,auto:!!p.auto,autoReason:p.autoReason||'',takeoverMask:!!p.departed||!!p.auto&&['offline','timeout'].includes(p.autoReason),score:p.score,wind:this.wind(j),riichi:p.riichi,nuki:p.nuki,river:p.river,melds:p.hand?this.h(j)._fulou:[],count:p.hand?tiles(this.h(j)).length:0,ready:p.ready,online:p.bot||!p.away&&Date.now()-(this.seen[p.token]||0)<12000})),
    handSeq:s.handSeq||0,dealtAt:s.dealtAt||0,matchSeq:s.matchSeq||0,matchStartedAt:s.matchStartedAt||0,openingHand:(s.players[i].dealt||[]).slice(),
    hand:h?tiles(h):[],drawn:h&&h._zimo&&h._zimo.length===2?h._zimo:null,options,furiten:hints.furiten,waits:h?this.waits(h):[],waitDetails:hints.waitDetails,discardHints:hints.discardHints,yakumanIndicator:hints.yakumanIndicator||0,
    recovery:s.players[i].recovery,log:s.log||[],result:s.result,pending:s.pending?{from:s.pending.from,tile:s.pending.tile,kind:s.pending.kind,riichi:!!s.pending.riichi,waiting:Object.keys(s.pending.options).filter(k=>!s.pending.replies[k]).map(Number)}:null,
-   ...(s.phase==='lobby'?{lobby:{category:s.lobbyCategory||'friend',red:s.red!==false,managed:!!s.lobbyFlow},players:s.players.map((p,j)=>({...publicCharacter(p,s.phase),name:p.name,avatar:p.avatar||'',bot:!!p.bot,score:p.score,wind:this.wind(j),riichi:p.riichi,nuki:p.nuki,river:p.river,melds:[],count:0,ready:p.bot||j===0||!!p.lobbyReady,online:p.bot||Date.now()-(this.seen[p.token]||0)<12000}))}:{})};
+   ...(s.phase==='lobby'?{lobby:{category:s.lobbyCategory||'friend',red:s.red!==false,managed:!!s.lobbyFlow},players:s.players.map((p,j)=>({...publicCharacter(p,s.phase,!!s.resourceSetup),name:p.name,avatar:p.avatar||'',bot:!!p.bot,score:p.score,wind:this.wind(j),riichi:p.riichi,nuki:p.nuki,river:p.river,melds:[],count:0,ready:p.bot||j===0||!!p.lobbyReady,online:p.bot||Date.now()-(this.seen[p.token]||0)<12000}))}:{})};
  }
  dispatch(req){
   const before=this.s?JSON.stringify(this.s):null,waitingBefore={...this._waiting};
@@ -304,9 +307,9 @@ class Room{
    if(req.op==='state'){if(i>=0)this.seen[req.token]=Date.now();return {ok:true,state:this.view(i)}}
    if(req.op==='create'){
     check(req.host===this.host,'请在房主手机 App 内创建房间');if(s)return {ok:false,code:'ROOM_ACTIVE',error:'当前有未结束的房间',token:s.players[0].token,state:this.view(0)};check(req.n===3||req.n===4,'仅支持三人或四人');
-    const p=player(String(req.name||'房主').slice(0,12));p.avatar=avatar(req.avatar===undefined?'':req.avatar);Object.assign(p,characterSelection(req));
+    const p=player(String(req.name||'房主').slice(0,12));p.resourceProtocol=req.resourceProtocol===1?1:0;p.avatar=avatar(req.avatar===undefined?'':req.avatar);Object.assign(p,characterSelection(req));
     this.s={schema:1,audioRoom:randomHex(8),audioSeq:0,audioEvents:[],n:req.n,rounds:req.rounds===1?1:req.rounds===4?4:2,idleSeconds:req.idleSeconds===0?0:120,red:req.red!==false,pin:String(parseInt(randomHex(4),16)%900000+100000),players:[p],phase:'lobby',version:1,dealer:0,round:0,honba:0,sticks:0,
-     lobbyFlow:req.lobbyFlow===true,lobbyCategory:['friend','ranked','competition'].includes(req.category)?req.category:'friend'};
+     resourceProtocol:req.resourceProtocol===1?1:0,resourceRevision:0,lobbyFlow:req.lobbyFlow===true,lobbyCategory:['friend','ranked','competition'].includes(req.category)?req.category:'friend'};
     if(req.bots===true)while(this.s.players.length<this.s.n)this.addBot();
     this.save(JSON.stringify(this.s));this.seen[p.token]=Date.now();return {ok:true,token:p.token,state:this.view(0)};
    }
@@ -325,7 +328,7 @@ class Room{
     }
     Object.assign(s.players[i],{auto:false,autoReason:'',away:false,departed:false,lastInputAt:Date.now()});if(req.avatar!==undefined)s.players[i].avatar=avatar(req.avatar);
     if(req.character&&(s.phase==='lobby'||characterNewSeat)){Object.assign(s.players[i],characterSelection(req));if(s.phase!=='lobby')freezeCharacter(s.players[i]);}
-    this.save(JSON.stringify(s));this.seen[s.players[i].token]=Date.now();return {ok:true,token:s.players[i].token,state:this.view(i)};
+    s.players[i].resourceProtocol=req.resourceProtocol===1?1:0;if(characterNewSeat)delete s.resourceSetup;this.save(JSON.stringify(s));this.seen[s.players[i].token]=Date.now();return {ok:true,token:s.players[i].token,state:this.view(i)};
    }
    check(i>=0,'座位凭据失效');
    this.seen[req.token]=Date.now();
@@ -336,7 +339,7 @@ class Room{
     const p=s.players[i];
     if(req.op==='leaveMatch'){
      if(i===0){this.s=null;this.save('');return {ok:true,state:{phase:'empty'}};}
-     if(s.phase==='lobby')s.players.splice(i,1);
+     if(s.phase==='lobby'){s.players.splice(i,1);delete s.resourceSetup;}
      else Object.assign(p,{bot:true,auto:false,autoReason:'',away:false,departed:true,token:randomHex(18),recovery:'',ready:true});
      s.version++;this.save(JSON.stringify(s));return {ok:true,state:{phase:'empty'}};
     }
@@ -346,30 +349,44 @@ class Room{
     else {check(['play','reaction'].includes(s.phase),'当前不能切换接管');p.auto=req.enabled===true;p.autoReason=p.auto?'manual':'';p.away=false;p.lastInputAt=Date.now();delete this._waiting[req.token];}
     s.version++;this.save(JSON.stringify(s));return {ok:true,state:this.view(i)};
    }
-   if(req.op!=='profile'&&req.op!=='ready'&&req.op!=='character')check(Number.isInteger(req.version)&&req.version===s.version,'牌桌已更新，请重新选择');
+   if(!['resourceAck','resourceOffer','cancelResourceSetup','profile','ready','character'].includes(req.op))check(Number.isInteger(req.version)&&req.version===s.version,'牌桌已更新，请重新选择');
+   // Resource reports are public cosmetics only, independent of turn versions.
+   if(req.op==='resourceOffer'){
+    const offer=req.resourceShare||{};check(Number.isInteger(offer.port)&&offer.port>=1024&&offer.port<=65535&&/^[a-f0-9]{32}$/.test(offer.ticket),'资源分享信息无效');check(Array.isArray(offer.hashes)&&offer.hashes.length<=200&&offer.hashes.every(h=>/^[a-f0-9]{64}$/.test(h)),'资源清单无效');
+    const address=String(req.peerAddress||'127.0.0.1').replace(/^::ffff:/,'');check(/^(127\.|10\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[01])\.)/.test(address),'资源分享地址无效');s.players[i].resourceShare={address,port:offer.port,ticket:offer.ticket,hashes:[...new Set(offer.hashes)]};this.save(JSON.stringify(s));return {ok:true,state:this.view(i)};
+   }
+   if(req.op==='resourceAck'){
+    check(s.phase==='lobby'&&s.resourceSetup&&req.setupRevision===s.resourceSetup.revision,'资源准备已更新');check(['pending','downloading','ready','fallback'].includes(req.resourceStatus),'资源确认状态无效');const keys=req.fallbackCharacters||[];check(Array.isArray(keys)&&keys.every(k=>s.resourceSetup.choices.some(c=>c.character===k)),'替代角色无效');s.resourceSetup.confirmations[req.token]={state:req.resourceStatus,fallback:keys};this.save(JSON.stringify(s));return {ok:true,state:this.view(i)};
+   }
+   if(req.op==='cancelResourceSetup'){check(i===0&&s.phase==='lobby','仅房主可取消开局准备');delete s.resourceSetup;this.save(JSON.stringify(s));return {ok:true,state:this.view(i)};}
+   if(req.op==='prepareResources'){
+    check(i===0&&s.phase==='lobby','仅房主可准备开局');if(req.fillBots===true)while(s.players.length<s.n)this.addBot();check(s.players.length===s.n,'还有空座位');check(!s.lobbyFlow||s.players.every((p,j)=>p.bot||j===0||p.lobbyReady),'请等待所有玩家准备');
+    if(!s.resourceSetup){s.players.forEach(freezeCharacter);s.resourceRevision=(s.resourceRevision||0)+1;s.resourceSetup={revision:s.resourceRevision,createdAt:Date.now(),choices:s.players.map(p=>({character:p.matchCharacter,skin:p.matchSkin})),confirmations:{}};}
+    this.save(JSON.stringify(s));return {ok:true,state:this.view(i)};
+   }
    // Waiting-room operations terminate here. No action, scoring, deal or table
    // transition implementation below is changed by the new lobby workflow.
    if(['lobbyReady','kick','leaveLobby','closeLobby'].includes(req.op)){
     check(s.phase==='lobby','仅可在开局前管理房间');
-    if(req.op==='lobbyReady'){check(i!==0,'房主无需准备');s.players[i].lobbyReady=req.ready===true;}
-    else if(req.op==='kick'){
+    if(req.op==='lobbyReady'){if(req.ready!==true)delete s.resourceSetup;check(i!==0,'房主无需准备');s.players[i].lobbyReady=req.ready===true;}
+    else if(req.op==='kick'){delete s.resourceSetup;
      check(i===0,'仅房主可踢出玩家');check(Number.isInteger(req.seat)&&req.seat>0&&req.seat<s.players.length,'不能踢出房主或空座位');s.players.splice(req.seat,1);
-    }else if(req.op==='leaveLobby'){
+    }else if(req.op==='leaveLobby'){delete s.resourceSetup;
      check(i!==0,'房主请解散房间');s.players.splice(i,1);s.version++;this.save(JSON.stringify(s));return {ok:true,state:{phase:'empty'}};
     }else{check(i===0,'仅房主可解散房间');this.s=null;this.save('');return {ok:true,state:{phase:'empty'}};}
     if(req.id){s.players[i].requests.push(String(req.id).slice(0,80));s.players[i].requests=s.players[i].requests.slice(-32);}
     s.version++;this.save(JSON.stringify(s));return {ok:true,state:this.view(i)};
    }
    if(req.op==='start'&&s.lobbyFlow)check(s.players.every((p,j)=>p.bot||j===0||p.lobbyReady),'请等待所有玩家准备');
-   if(req.op==='character'){check(s.phase==='lobby','出战雀士在本局结束前固定');Object.assign(s.players[i],characterSelection(req));}
+   if(req.op==='character'){check(!s.resourceSetup,'请先取消开局准备再切换雀士');check(s.phase==='lobby','出战雀士在本局结束前固定');Object.assign(s.players[i],characterSelection(req));}
    else if(req.op==='profile'){s.players[i].avatar=avatar(req.avatar);}
-   else if(req.op==='addBot'||req.op==='fillBots'){check(i===0&&s.phase==='lobby','仅房主可在开局前添加 AI');this.addBot();if(req.op==='fillBots')while(s.players.length<s.n)this.addBot();}
-   else if(req.op==='removeBot'){check(i===0&&s.phase==='lobby','仅房主可在开局前移除 AI');check(Number.isInteger(req.seat)&&s.players[req.seat]?.bot,'该座位不是 AI');s.players.splice(req.seat,1);}
-   else if(req.op==='start'){check(i===0&&s.phase==='lobby','仅房主可开局');if(req.fillBots===true)while(s.players.length<s.n)this.addBot();check(s.players.length===s.n,'还有空位，可添加 AI 后开局');s.players=shuffle(s.players); // Keep host identity separate from seat ordering.
+   else if(req.op==='addBot'||req.op==='fillBots'){delete s.resourceSetup;check(i===0&&s.phase==='lobby','仅房主可在开局前添加 AI');this.addBot();if(req.op==='fillBots')while(s.players.length<s.n)this.addBot();}
+   else if(req.op==='removeBot'){delete s.resourceSetup;check(i===0&&s.phase==='lobby','仅房主可在开局前移除 AI');check(Number.isInteger(req.seat)&&s.players[req.seat]?.bot,'该座位不是 AI');s.players.splice(req.seat,1);}
+   else if(req.op==='start'){check(i===0&&s.phase==='lobby','仅房主可开局');const prepared=s.resourceSetup;if(s.resourceProtocol===1){check(prepared&&req.setupRevision===prepared.revision,'请先完成资源准备');check(this.resourcesReady(),'请等待资源下载或选择一姬替代');}if(req.fillBots===true)while(s.players.length<s.n)this.addBot();check(s.players.length===s.n,'还有空位，可添加 AI 后开局');s.players=shuffle(s.players); // Keep host identity separate from seat ordering.
     // Host remains player 0; randomize dealer instead, so management rights never move.
     const hostIndex=s.players.findIndex(p=>p.token===req.token);[s.players[0],s.players[hostIndex]]=[s.players[hostIndex],s.players[0]];
-    s.matchSeq=(s.matchSeq||0)+1;s.matchStartedAt=Date.now();s.matchOpeningUntil=s.matchStartedAt+6000;s.players.forEach(p=>{p.lastInputAt=s.matchOpeningUntil;freezeCharacter(p);});
-    s.dealer=parseInt(randomHex(2),16)%s.n;s.initialDealer=s.dealer;s.players.forEach(p=>p.score=s.n===3?35000:25000);this.newHand();
+    s.matchSeq=(s.matchSeq||0)+1;s.matchStartedAt=Date.now();s.matchOpeningUntil=s.matchStartedAt+6000;s.players.forEach(p=>{p.lastInputAt=s.matchOpeningUntil;if(!prepared)freezeCharacter(p);});
+    delete s.resourceSetup;s.dealer=parseInt(randomHex(2),16)%s.n;s.initialDealer=s.dealer;s.players.forEach(p=>p.score=s.n===3?35000:25000);this.newHand();
    }else if(req.op==='action'){this.act(i,req.action);s.players[i].auto=false;s.players[i].autoReason='';s.players[i].lastInputAt=Date.now();s.players[i].away=false;delete this._waiting[req.token];}
    else if(req.op==='ready'){check(s.phase==='result','当前不在结算阶段');check(!req.handSeq||req.handSeq===s.handSeq,'结算已更新');s.players[i].ready=true;this.advanceIfReady();}
    else if(req.op==='next'){

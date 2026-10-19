@@ -1,5 +1,15 @@
 # 云间日麻
 
+## Unity 0.6.6 · 角色资源按需下载（2026-10-20）
+
+女性TOP10＋汪次郎，共11名角色、71套服饰（17套动态），现已提供完整角色资源包；另保留未来与寺崎千穗理，共13名可用角色、79套服饰。一姬、二阶堂美树仍内置且不可删除，其余可从宿舍或设定的“资源”页下载、管理和删除。首次进入可选全部／推荐／暂不下载，推荐集合额外资源约231 MB。未知角色仅显示轻量头像和遮罩，不会误加入出战、星标或随机池。
+
+房间支持GitHub下载、局域网接收／房主中转，或在本机以一姬替代；冻结随机结果并等待所有真人确认资源后开局。下载支持校验、取消和续传，删除会同步清理角色偏好。
+
+[下载 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.6.6/yunjian-riichi-unity-0.6.6.apk) · [程序发布页](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/tag/unity-0.6.6) · [角色资源](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/tag/character-resources-v1) · [交接文档](docs/handoff-unity-0.6.6.md) · [实际效果图](dist/previews/2026-10-20-character-resources/index.html)
+
+versionCode54，保留原包名、证书与双架构。146项Node单元、561项既有Unity断言、2561项完整角色资源断言和26个双平台bundle内容检查通过；详细验证以同版verification.json为准。Android真机安装、触摸、声音、多手机热点和后台下载尚未实测。
+
 ## Unity 0.6.5 · 雀士界面与随机配置修正（2026-10-19）
 
 重做切换雀士与指定/随机配置，修正页签间距、展开框连接和底部留白、九宫格拼接缝、滑块留边及数字位置。随机模式开关独立于候选，支持星标过滤并保留已选服饰。同步修正拜访滚动、宿舍竖排姓名、动态/静态立绘尺寸、服饰介绍滚动与大厅立绘的还原、保存和隐藏控件。
