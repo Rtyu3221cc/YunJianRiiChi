@@ -7,14 +7,14 @@ from zipfile import ZipFile
 from importlib import import_module
 
 root = Path(__file__).resolve().parent.parent
-apk = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else root / 'unity/Builds/yunjian-riichi-unity-0.6.4.apk'
+apk = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else root / 'unity/Builds/yunjian-riichi-unity-0.6.5.apk'
 assets = root / 'app/src/main/assets'
 signature = import_module('verify-apk-signature').verify_signature(apk)
 with ZipFile(apk) as archive:
     assert archive.testzip() is None
     names = archive.namelist()
     metadata=archive.read('assets/bin/Data/Managed/Metadata/global-metadata.dat')
-    for runtime_class in (b'NativeSettingsUi',b'NativeYakuUi',b'PlaylistAudio',b'AppPreferences',b'RiichiDiscardVisual',b'NativeCallouts',b'WordRect',b'CharacterRoster',b'CharacterIllustration',b'CharacterFraming',b'CharacterVoices',b'LobbyIllustrationSettings',b'LobbySakura'):
+    for runtime_class in (b'NativeSettingsUi',b'NativeYakuUi',b'PlaylistAudio',b'AppPreferences',b'RiichiDiscardVisual',b'NativeCallouts',b'WordRect',b'CharacterRoster',b'CharacterIllustration',b'CharacterFraming',b'CharacterVoices',b'LobbyIllustrationSettings',b'LobbySakura',b'RoleRandomKnob',b'DrawRoleSkinPopover'):
         assert runtime_class in metadata,'Missing compiled release code: '+repr(runtime_class)
     assert 'META-INF/MANIFEST.MF' in names, 'Missing v1/JAR signature manifest; run scripts/sign-unity-apk.ps1'
     for source in (root/'unity/Assets/Resources/Majsoul/Actions').glob('riichi-fire-*'):
@@ -177,7 +177,7 @@ with ZipFile(apk) as archive:
 dist = root / 'dist'
 output = dist / apk.name
 output.write_bytes(apk.read_bytes())
-checksum = 'SHA256-unity-0.6.4.txt' if len(sys.argv) == 1 else 'SHA256-' + output.stem + '.txt'
+checksum = 'SHA256-unity-0.6.5.txt' if len(sys.argv) == 1 else 'SHA256-' + output.stem + '.txt'
 (dist / checksum).write_text(hashlib.sha256(output.read_bytes()).hexdigest().upper() + '  ' + output.name + '\n', encoding='utf8')
 print('PASS: APK ZIP integrity, current offline assets, phone host/JNI, ARM64 + ARMv7, original tile atlases, exact hand animation bytes, action textures, original turn-light assets and compiled shaders.')
 print(output.name, output.stat().st_size, hashlib.sha256(output.read_bytes()).hexdigest())

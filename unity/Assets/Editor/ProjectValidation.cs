@@ -52,6 +52,7 @@ namespace YunJian.Riichi.Editor
             Release0545Validation.Run();
             Release063Validation.Run();
             Release064Validation.Run();
+            Release065Validation.Run();
             ProjectSetup.CreateScene();
             Debug.Log("RIICHI UNITY VALIDATION PASS: imported textures, character roster/voices/framing, protocol, host plug-in and scene.");
         }

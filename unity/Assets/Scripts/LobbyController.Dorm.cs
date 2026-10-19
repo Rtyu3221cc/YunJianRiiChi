@@ -14,8 +14,14 @@ namespace YunJian.Riichi {
         CharacterSkin previousIllustration;
         float previousSkinBegan=-10;
         Vector2 skinDescriptionScroll;
+        readonly CharacterPaneDrag skinDescriptionDrag=new CharacterPaneDrag();
         MotionBank dormNativeMotion;
         bool homeIllustrationEditing;
+        bool homeControlsHidden,homeRevealPointer;
+        string homePressedControl;
+        bool infoPointerPending,infoPointerDragging,infoRailDragging;
+        Vector2 infoPointerStart;
+        float infoScrollStart,infoRailOffset;
         LobbyIllustrationPose homeDraft;
         readonly LobbySakura sakura=new LobbySakura();
         [Serializable] class NativeCharacterFont {public string key,resource;public int size;}
@@ -25,6 +31,11 @@ namespace YunJian.Riichi {
         GUIStyle NText(string key,int size,TextAnchor align=TextAnchor.MiddleCenter,bool wrap=false){
             if(nativeCharacterFonts==null)nativeCharacterFonts=JsonUtility.FromJson<NativeCharacterFonts>(Resources.Load<TextAsset>("Majsoul/Characters/native-fonts").text);
             var entry=nativeCharacterFonts.fonts.First(f=>f.key==key);string resource=entry.resource.EndsWith("/fengyucumaokai")?"Majsoul/Lobby/Fonts/brush":entry.resource;if(!nativeCharacterFontCache.TryGetValue(resource,out var font))nativeCharacterFontCache[resource]=font=Resources.Load<Font>(resource);return new GUIStyle(text){font=font,fontSize=size,alignment=align,wordWrap=wrap};
+        }
+        void VerticalCharacterLabel(Rect r,string value,int size,float pitch,Color color){
+            var style=CText(size,TextAnchor.MiddleCenter,true);style.wordWrap=false;style.clipping=TextClipping.Overflow;
+            float step=Mathf.Min(pitch,r.height/Mathf.Max(1,value.Length)),cell=size*2;
+            for(int i=0;i<value.Length;i++)Label(new Rect(r.x,r.center.y+(i-(value.Length-1)*.5f)*step-cell/2,r.width,cell),value[i].ToString(),style,color);
         }
         float PageDuration=>.33333334f;
         void CharacterHeader(string title){ReturnHeader(title);}
@@ -45,9 +56,9 @@ namespace YunJian.Riichi {
         public void OpenDorm(){
             dormOpen=true;dormLeaving=false;homeIllustrationEditing=false;roleOpen=roleClosing=false;dormView=outgoingDorm=DormView.Select;sortOpen=sortClosing=false;infoScroll=Vector2.zero;dormOpened=pageBegan=Now;pageMoving=true;characterTransition=Now-.2f;expression=0;Cue("normalflyin");
         }
-        public void OpenRoleSelection(){dormOpen=false;roleOpen=true;roleClosing=false;rolePreview=CharacterRoster.Active.character;skinExpanded=false;randomTab=false;roleStarted=Now;Cue("btn_appear");}
+        public void OpenRoleSelection(){dormOpen=false;roleOpen=true;roleClosing=false;rolePreview=CharacterRoster.Active.character;skinExpanded=false;randomTab=false;ResetRolePanes();roleStarted=Now;Cue("btn_appear");}
         void CloseRoleSelection(){roleClosing=true;roleOpen=false;roleClosed=Now;Cue("btn_cancel");}
-        void SetDormPage(DormView page){if(page==dormView)return;if(dormView==DormView.Skins&&page!=DormView.Skins&&BrowsingSkin.id!=CurrentOutfit.id){previousIllustration=BrowsingSkin;previousSkinBegan=Now;}outgoingDorm=dormView;dormView=page;pageBegan=Now;pageMoving=true;appreciationDragging=zoomDragging=skinDragging=false;skinWasDragged=false;skinPressedCard=-1;Cue("btn_appear");}
+        void SetDormPage(DormView page){if(page==dormView)return;if(dormView==DormView.Skins&&page!=DormView.Skins&&BrowsingSkin.id!=CurrentOutfit.id){previousIllustration=BrowsingSkin;previousSkinBegan=Now;}outgoingDorm=dormView;dormView=page;pageBegan=Now;pageMoving=true;appreciationDragging=zoomDragging=skinDragging=false;infoPointerPending=infoPointerDragging=infoRailDragging=false;skinWasDragged=false;skinPressedCard=-1;Cue("btn_appear");}
         bool CharacterBack(){
             if(homeIllustrationEditing){CloseLobbyIllustrationEditor(false);return true;}
             if(sortOpen){CloseCharacterSort(false);return true;}
@@ -116,7 +127,7 @@ namespace YunJian.Riichi {
         float IllustrationAspect(CharacterSkin skin){var t=CharacterRoster.Texture("Skins/"+skin.id+"/full");return t==null?.7f:(float)t.width/t.height;}
         void DrawDormCards(){
             float x=width-1016;var panel=new Rect(x,146.8f,766,892);Tint(new Rect(x+17.5f,164.3f,731,857),new Color(.008f,.006f,.02f,.72f));CSlice(panel,"bg_bound");
-            CImage(new Rect(x+437,66.8f,284,84),"tab_gray3");CImage(new Rect(x+191.53f,66.766f,284,84),"tab_bright2");Label(new Rect(x+256.03f,89.676f,180,63.98f),"角色",CText(42,TextAnchor.MiddleCenter,true),new Color(.2f,.1f,.04f));Label(new Rect(x+501.5f,89.676f,180,63.98f),"装扮",CText(42,TextAnchor.MiddleCenter,true),CharacterGold);
+            CImage(new Rect(x+437,66.8f,284,84),"tab_gray3");CImage(new Rect(x+191.53f,66.766f,284,84),"tab_bright2");Label(new Rect(x+256.03f,86.676f,180,63.98f),"角色",CText(42,TextAnchor.MiddleCenter,true),new Color(.2f,.1f,.04f));Label(new Rect(x+501.5f,86.676f,180,63.98f),"装扮",CText(42,TextAnchor.MiddleCenter,true),CharacterGold);
             var roles=CharacterRoster.Ordered(dormStars);for(int i=0;i<roles.Length;i++){
                 var r=new Rect(x+46.05f+i%3*220,208.3f+i/3*198,204,192);var role=roles[i];bool selected=role.key==CurrentCharacter.key;DrawCharacterCard(r,role,CharacterRoster.Outfit(role.key),selected,true);
                 var star=new Rect(r.x+.15f,r.y+147,40,40);if((selected||CharacterRoster.Favorite(role.key))&&Hit(star,"dorm-star-"+role.key)){CharacterRoster.Star(role.key);continue;}if(Hit(r,"dorm-character-"+role.key))SelectDorm(role);
@@ -125,7 +136,7 @@ namespace YunJian.Riichi {
             CImage(new Rect(x+472,934.3f,74,74),"btn_sort");if(Hit(new Rect(x+465,928,88,88),"character-sort"))OpenCharacterSort();DrawStarFilter(new Rect(x+551,943.8f,150,60),dormStars,"dorm-favorites",()=>dormStars=!dormStars);
         }
         void DrawCharacterCard(Rect r,CharacterDefinition role,int skin,bool selected,bool contract,bool star=true){
-            if(contract){float u=r.width/204;CImage(new Rect(r.x+19.45f*u,r.y+8.5f*u,174*u,174*u),"sushe_favor_bg");var head=CharacterRoster.Texture("Skins/"+skin+"/bighead");if(head!=null)GUI.DrawTexture(new Rect(r.x+19.45f*u,r.y+8.5f*u,174*u,174*u),head,ScaleMode.ScaleToFit,true);CImage(r,"sushe_card_favor_outline");Label(new Rect(r.x+2.45f*u,r.y+19.5f*u,35*u,128*u),string.Join("\n",role.name.ToCharArray()),CText(role.name.Length>5?21:22,TextAnchor.MiddleCenter,true),CharacterGold);
+            if(contract){float u=r.width/204;CImage(new Rect(r.x+19.45f*u,r.y+8.5f*u,174*u,174*u),"sushe_favor_bg");var head=CharacterRoster.Texture("Skins/"+skin+"/bighead");if(head!=null)GUI.DrawTexture(new Rect(r.x+19.45f*u,r.y+8.5f*u,174*u,174*u),head,ScaleMode.ScaleToFit,true);CImage(r,"sushe_card_favor_outline");VerticalCharacterLabel(new Rect(r.x+2.45f*u,r.y+19.5f*u,35*u,128*u),role.name,Mathf.RoundToInt((role.name.Length>5?21:22)*u),24*u,CharacterGold);
                 if(selected){var color=GUI.color;GUI.color=new Color(color.r,color.g,color.b,color.a*(.88f+.12f*Mathf.Sin(Now*4)));CImage(new Rect(r.x-16*u,r.y-10*u,228*u,214*u),"dorm-contour-glow");GUI.color=color;}
                 if(star&&(selected||CharacterRoster.Favorite(role.key)))CImage(new Rect(r.x+.15f*u,r.y+147*u,40*u,40*u),CharacterRoster.Favorite(role.key)?"sushe_card_favor_star_light":"sushe_card_favor_star_dark");return;
             }
@@ -135,10 +146,11 @@ namespace YunJian.Riichi {
         void DrawCharacterInfo(){
             float x=width-1080;var frame=new Rect(x,146.5f,840,914);var backing=new Rect(x+50,150.5f,740,888);CImage(backing,"gift_bbg");CSlice(frame,"bg_frame");
             CImage(new Rect(x-.4f,159.5f,11,514),"bf_lampline");
-            foreach(int i in new[]{0,1}){var lamp=new Rect(x-55.9f,183.5f+i*140,121,164);CImage(lamp,i==0?"bf_chosen":"bf_unchooesd");Label(new Rect(lamp.x+32,191.7f+i*140,55,147.6f),i==0?"档\n案":"语\n音",CText(42,TextAnchor.MiddleCenter,true),new Color(.12f,.09f,.08f));if(i==0)Hit(lamp,"profile-lantern");}
+            foreach(int i in new[]{0,1}){var lamp=new Rect(x-55.9f,183.5f+i*140,121,164);CImage(lamp,i==0?"bf_chosen":"bf_unchooesd");VerticalCharacterLabel(new Rect(lamp.x+32,lamp.y+8.2f,55,147.6f),i==0?"档案":"语音",42,44,new Color(.12f,.09f,.08f));if(i==0)Hit(lamp,"profile-lantern");}
             CSlice(new Rect(x+63,173.4f,715,151),"gift_heart_bg");CImage(new Rect(x+99,230.9f,94,36),"heart_deco");FlipImage(new Rect(x+645.4f,230.9f,94,36),"heart_deco",true,false);
             CImage(new Rect(x+198.8f,197.5f,440,108),"heart_normal");for(int i=0;i<5;i++){var heart=new Rect(x+219+i*80.5f,219,77,67);CImage(heart,"bf_heart_bg");CImage(heart,"bf_heart");}
             var c=CurrentCharacter;var viewport=new Rect(x+84,381,644,626);float introHeight=NText("profile-body",26,TextAnchor.UpperLeft,true).CalcHeight(new GUIContent(c.description),578);float emojiTop=325+introHeight+35,contentHeight=emojiTop+85+Mathf.CeilToInt(c.emojis.Length/4f)*170;
+            ProfileScrollPointer(viewport,contentHeight);
             infoScroll=GUI.BeginScrollView(viewport,infoScroll,new Rect(0,0,625,contentHeight),false,false,GUIStyle.none,GUIStyle.none);
             CImage(new Rect(0,0,294,51),"bf_title_bg");Label(new Rect(19.1f,-.4f,240,48),"人物介绍",NText("profile-heading",34,TextAnchor.MiddleLeft),CharacterGold);
             string[] keys={"身高：","生日：","年龄：","血型：","声优：","爱好："},values={c.height,c.birth,c.age,c.blood,c.cv,c.hobby};
@@ -150,12 +162,36 @@ namespace YunJian.Riichi {
             GUI.EndScrollView();DrawInfoScrollbar(viewport,contentHeight);
         }
         void DrawInfoScrollbar(Rect r,float total){var rail=new Rect(r.xMax+19,383.5f,6.4f,622);CImage(rail,"ss_slidebar");float p=total<=r.height?0:Mathf.Clamp01(infoScroll.y/(total-r.height));CImage(new Rect(rail.center.x-17,rail.y+p*(rail.height-34),34,34),"ss_slidebtn");}
+        bool CharacterPointer(out EventType type,out Vector2 point,out Vector2 delta){
+            type=Event.current.type;point=Event.current.mousePosition;delta=Event.current.delta;
+#if UNITY_EDITOR
+            if(type==EventType.Repaint&&reviewGuiPointer.Count>0){var queued=reviewGuiPointer.Dequeue();type=queued.type;point=GUI.matrix.inverse.MultiplyPoint3x4(new Vector3(queued.point.x,queued.point.y,0));delta=queued.delta/Mathf.Max(.001f,GUI.matrix.m00);return true;}
+#endif
+            return false;
+        }
+        void ProfileScrollPointer(Rect view,float total){
+            if(!GUI.enabled)return;bool injected=CharacterPointer(out var type,out var point,out var delta);int control=GUIUtility.GetControlID("character-profile-scroll".GetHashCode(),FocusType.Passive);
+            bool consumed=ProfilePointer(type,point,delta,view,total);
+            if(!injected&&consumed){GUIUtility.hotControl=type==EventType.MouseUp?0:control;Event.current.Use();}
+        }
+        bool ProfilePointer(EventType type,Vector2 point,Vector2 delta,Rect view,float total){
+            float max=Mathf.Max(0,total-view.height);var rail=new Rect(view.xMax-2,383.5f,48,622);bool consumed=false;
+            if(type==EventType.MouseDown){
+                if(rail.Contains(point)){infoRailDragging=true;float y=rail.y+(rail.height-34)*(max>0?infoScroll.y/max:0);infoRailOffset=Mathf.Abs(point.y-(y+17))<25?point.y-y:17;consumed=true;}
+                else if(view.Contains(point)){infoPointerPending=true;infoPointerDragging=false;infoPointerStart=point;infoScrollStart=infoScroll.y;}
+            }
+            if(infoRailDragging&&(type==EventType.MouseDown||type==EventType.MouseDrag)){infoScroll.y=max*Mathf.Clamp01((point.y-rail.y-infoRailOffset)/(rail.height-34));consumed=true;}
+            if(type==EventType.MouseDrag&&infoPointerPending&&(infoPointerDragging||Mathf.Abs(point.y-infoPointerStart.y)>10)){infoPointerDragging=true;infoScroll.y=Mathf.Clamp(infoScrollStart+infoPointerStart.y-point.y,0,max);consumed=true;}
+            if(type==EventType.MouseUp){consumed=infoPointerDragging||infoRailDragging;infoPointerPending=infoPointerDragging=infoRailDragging=false;}
+            if(type==EventType.ScrollWheel&&view.Contains(point)){infoScroll.y=Mathf.Clamp(infoScroll.y+delta.y*32,0,max);consumed=true;}
+            infoScroll.y=Mathf.Clamp(infoScroll.y,0,max);return consumed;
+        }
         void SetSkinIndex(int next){next=Mathf.Clamp(next,0,CurrentCharacter.skins.Length-1);if(next==skinIndex)return;previousIllustration=BrowsingSkin;previousSkinBegan=Now;skinFrom=SkinPosition();skinIndex=next;skinMotionBegan=Now;skinDescriptionScroll=Vector2.zero;Cue("btn_click");}
         float SkinPosition(){if(skinDragging)return skinPosition;return Mathf.Lerp(skinFrom,skinIndex,Mathf.SmoothStep(0,1,(Now-skinMotionBegan)/.25f));}
         Rect SkinCardRect(int index,float position){float d=index-position,f=Mathf.Max(.60f,1-Mathf.Abs(d)*.12f);return new Rect(width-780+d*130,128+(1-f)*160,228*f,476*f);}
         bool SkinCarouselPointer(EventType type,Vector2 point){
-            var region=new Rect(width-1040,100,830,530);bool arrow=skinIndex>0&&new Rect(width-1025,324.5f,70,72).Contains(point)||skinIndex<CurrentCharacter.skins.Length-1&&new Rect(width-345,325,70,72).Contains(point);
-            if(type==EventType.MouseDown&&region.Contains(point)&&!arrow){skinPosition=SkinPosition();skinPressPosition=skinPosition;skinPressX=point.x;skinDragging=true;skinWasDragged=false;skinPressedCard=-1;foreach(int i in Enumerable.Range(0,CurrentCharacter.skins.Length).OrderByDescending(i=>Mathf.Abs(i-skinPosition)))if(SkinCardRect(i,skinPosition).Contains(point))skinPressedCard=i;return true;}
+            var region=new Rect(width-1040,100,830,530);
+            if(type==EventType.MouseDown&&region.Contains(point)){skinPosition=SkinPosition();skinPressPosition=skinPosition;skinPressX=point.x;skinDragging=true;skinWasDragged=false;skinPressedCard=-1;foreach(int i in Enumerable.Range(0,CurrentCharacter.skins.Length).OrderByDescending(i=>Mathf.Abs(i-skinPosition)))if(SkinCardRect(i,skinPosition).Contains(point))skinPressedCard=i;return true;}
             if(type==EventType.MouseDrag&&skinDragging){skinWasDragged|=Mathf.Abs(point.x-skinPressX)>10;skinPosition=Mathf.Clamp(skinPressPosition-(point.x-skinPressX)/160,0,CurrentCharacter.skins.Length-1);return skinWasDragged;}
             if(type==EventType.MouseUp&&skinDragging){bool moved=skinWasDragged;float value=skinPosition;skinDragging=false;if(moved){SetSkinIndex(Mathf.RoundToInt(value));skinFrom=value;skinMotionBegan=Now;}else if(skinPressedCard>=0&&region.Contains(point))SetSkinIndex(skinPressedCard);skinPressedCard=-1;return true;}return false;
         }
@@ -172,21 +208,19 @@ namespace YunJian.Riichi {
                 Hit(r,"skin-card-"+i,false);
             }
             targetOffset=targetBefore;GUI.EndGroup();
-            if(skinIndex>0){var r=new Rect(width-1010,339.5f,38.4f,42);FlipImage(r,"btn_next",true,false);if(Hit(new Rect(r.x-15,r.y-15,70,72),"skin-previous"))SetSkinIndex(skinIndex-1);}
-            if(skinIndex<c.skins.Length-1){var r=new Rect(width-330,340,38.4f,42);CImage(r,"btn_next");if(Hit(new Rect(r.x-15,r.y-15,70,72),"skin-next"))SetSkinIndex(skinIndex+1);}
             float x=width-920;Label(new Rect(x,640,329,60),BrowsingSkin.name,NText("skin-title",46,TextAnchor.MiddleLeft),CharacterGold);Label(new Rect(x+329.5f,655.5f,245,45),c.name,CText(30,TextAnchor.MiddleRight,true),new Color(.84f,.78f,.64f));CImage(new Rect(x+6,702,566,22),"dividing_line");
-            var style=NText("skin-body",30,TextAnchor.UpperLeft,true);float h=style.CalcHeight(new GUIContent(BrowsingSkin.description),575);skinDescriptionScroll=GUI.BeginScrollView(new Rect(x,735.5f,600,181),skinDescriptionScroll,new Rect(0,0,575,Mathf.Max(181,h)),false,false,GUIStyle.none,GUIStyle.none);Label(new Rect(0,0,575,h),BrowsingSkin.description,style,new Color(.88f,.87f,.89f));GUI.EndScrollView();
+            var style=NText("skin-body",30,TextAnchor.UpperLeft,true);float h=style.CalcHeight(new GUIContent(BrowsingSkin.description),575);var descriptionView=new Rect(x,735.5f,600,181);DragCharacterPane(skinDescriptionDrag,descriptionView,new Vector2(575,Mathf.Max(181,h)),ref skinDescriptionScroll,false);skinDescriptionScroll=GUI.BeginScrollView(descriptionView,skinDescriptionScroll,new Rect(0,0,575,Mathf.Max(181,h)),false,false,GUIStyle.none,GUIStyle.none);Label(new Rect(0,0,575,h),BrowsingSkin.description,style,new Color(.88f,.87f,.89f));GUI.EndScrollView();
             var button=new Rect(width-787.6f,931.3f,313,93);bool equipped=BrowsingSkin.id==CurrentOutfit.id;NativeUiChrome.CharacterButton(button,equipped);Label(new Rect(button.x+35,button.y+15,243,63),"选择服饰",NText("skin-title",42),equipped?new Color(.62f,.61f,.61f):CharacterGold);if(Hit(button,"equip-skin",!equipped)){CharacterRoster.Equip(c.key,BrowsingSkin.id);Cue("btn_click");}
         }
         void DrawSkinPageMask(){var r=new Rect(width-1080,0,864,1080);CImage(r,"skin_page_black_bg");var t=CharacterRoster.Texture("UI/skin_page_black_bg");if(t!=null)GUI.DrawTextureWithTexCoords(new Rect(r.xMax,0,Mathf.Max(0,width+bleedLeft-r.xMax+30),1080),t,new Rect(863f/864,0,1f/864,1));}
         void FlipImage(Rect r,string key,bool x,bool y){var t=CharacterRoster.Texture("UI/"+key);if(t!=null)GUI.DrawTextureWithTexCoords(r,t,new Rect(x?1:0,y?1:0,x?-1:1,y?-1:1));}
         void CharacterCorners(Rect r){CImage(new Rect(r.x-15,r.y-15,44,44),"select_corner");FlipImage(new Rect(r.xMax-29,r.y-15,44,44),"select_corner",true,false);FlipImage(new Rect(r.x-15,r.yMax-29,44,44),"select_corner",false,true);FlipImage(new Rect(r.xMax-29,r.yMax-29,44,44),"select_corner",true,true);}
         bool ZoomPointer(EventType type,Vector2 point,ref float value){var rail=new Rect(width-344,199.99f,88,581.643f);if(type==EventType.MouseDown&&rail.Contains(point))zoomDragging=true;if(zoomDragging&&(type==EventType.MouseDown||type==EventType.MouseDrag)){value=Mathf.Lerp(2.3f,.35f,Mathf.Clamp01((point.y-rail.y)/rail.height));return true;}if(type==EventType.MouseUp&&zoomDragging){zoomDragging=false;return true;}return false;}
-        void DrawNativeZoomControls(ref float zoom){
-            var ev=Event.current;if(ZoomPointer(ev.type,ev.mousePosition,ref zoom))ev.Use();float x=width-341.23f;CSlice(new Rect(x,199.99f,64,581.643f),"bg");CImage(new Rect(x-12,158.49f,88,50),"MAX");CImage(new Rect(x-12,773.134f,88,50),"MIN");float y=Mathf.Lerp(199.99f,781.633f,Mathf.InverseLerp(2.3f,.35f,zoom));CImage(new Rect(x, y-32,64,64),"handle");
+        void DrawNativeZoomControls(ref float zoom,bool photo=false){
+            var ev=Event.current;if(ZoomPointer(ev.type,ev.mousePosition,ref zoom))ev.Use();float x=width-341.23f;CSlice(new Rect(x,199.99f,64,581.643f),photo?"Photo/slide_scale_bottom":"bg");CImage(new Rect(x-12,158.49f,88,50),photo?"Photo/MAX":"MAX");CImage(new Rect(x-12,773.134f,88,50),photo?"Photo/MIN":"MIN");float y=Mathf.Lerp(199.99f,781.633f,Mathf.InverseLerp(2.3f,.35f,zoom));CImage(new Rect(x, y-32,64,64),photo?"Photo/slide_scale_handle":"handle");
         }
         void MoveIllustration(ref Vector2 pan,ref float zoom){
-            var ev=Event.current;var area=new Rect(0,130,width-390,900);if(ev.type==EventType.MouseDown&&area.Contains(ev.mousePosition)&&Input.touchCount<2){appreciationDragging=true;pointerStart=ev.mousePosition;panStart=pan;ev.Use();}
+            var ev=Event.current;var area=new Rect(0,130,width-390,homeIllustrationEditing?780:900);if(ev.type==EventType.MouseDown&&area.Contains(ev.mousePosition)&&Input.touchCount<2){appreciationDragging=true;pointerStart=ev.mousePosition;panStart=pan;ev.Use();}
             if(ev.type==EventType.MouseDrag&&appreciationDragging&&Input.touchCount<2){pan=panStart+ev.mousePosition-pointerStart;ev.Use();}if(ev.type==EventType.MouseUp)appreciationDragging=false;
             if(ev.type==EventType.ScrollWheel&&area.Contains(ev.mousePosition)){zoom=Mathf.Clamp(zoom-ev.delta.y*.08f,.35f,2.3f);ev.Use();}
             if(Input.touchCount==2){appreciationDragging=false;float d=Vector2.Distance(Input.GetTouch(0).position,Input.GetTouch(1).position);if(pinchStart>0)zoom=Mathf.Clamp(zoom*d/pinchStart,.35f,2.3f);pinchStart=d;}else pinchStart=0;
@@ -209,10 +243,44 @@ namespace YunJian.Riichi {
             var button=new Rect(width/2-207.5f,892.4f,415,93);NativeUiChrome.Button(button,true);Label(new Rect(button.x+35,button.y+15,345,63),"确认",CText(42,TextAnchor.MiddleCenter,true),new Color(.16f,.08f,.04f));if(Hit(button,"sort-save"))CloseCharacterSort(true);
             CImage(new Rect(width-127,101,69.7f,71.4f),"bf_close");if(Hit(new Rect(width-155,66,130,130),"sort-cancel"))CloseCharacterSort(false);Label(new Rect(width/2-800,1019,1600,45),"长按拖动头像以更换显示顺序、星标状态",NText("sort-help",26),new Color(.75f,.75f,.8f));GUI.color=color;GUI.enabled=enabled;
         }
-        void OpenLobbyIllustrationEditor(){homeIllustrationEditing=true;var active=CharacterRoster.Active;homeDraft=LobbyIllustrationSettings.Get(active.skin);appreciationDragging=zoomDragging=false;Cue("btn_appear");}
-        void CloseLobbyIllustrationEditor(bool save){if(save)LobbyIllustrationSettings.Save(CharacterRoster.Active.skin,homeDraft);homeIllustrationEditing=false;appreciationDragging=zoomDragging=false;Cue("btn_cancel");}
-        void DrawLobbyIllustrationEditor(){Vector2 pan=new Vector2(homeDraft.x,homeDraft.y);MoveIllustration(ref pan,ref homeDraft.scale);homeDraft.x=pan.x;homeDraft.y=pan.y;DrawNativeZoomControls(ref homeDraft.scale);CImage(new Rect(width-292,31,61.5f,63),"bf_close");if(Hit(new Rect(width-305,15,100,100),"lobby-illustration-cancel"))CloseLobbyIllustrationEditor(false);if(CButton(new Rect(width/2-340,940,300,85),"重置","lobby-illustration-reset"))homeDraft=LobbyIllustrationPose.Default;if(CButton(new Rect(width/2+40,940,300,85),"保存","lobby-illustration-save",false))CloseLobbyIllustrationEditor(true);}
+        Rect PhotoReset=>new Rect(width/2-340,930,300,117.26f);
+        Rect PhotoSave=>new Rect(width/2+40,930,300,117.26f);
+        Rect PhotoHide=>new Rect(width-228,448.3f,107,85);
+        Rect PhotoClose=>new Rect(width-305,15,100,100);
+        string PhotoControl(Vector2 point)=>PhotoReset.Contains(point)?"reset":PhotoSave.Contains(point)?"save":PhotoHide.Contains(point)?"hide":PhotoClose.Contains(point)?"close":null;
+        void PhotoAction(string control){
+            if(control=="reset"){homeDraft=LobbyIllustrationPose.Default;appreciationDragging=zoomDragging=false;Cue("btn_click");}
+            else if(control=="save")CloseLobbyIllustrationEditor(true);
+            else if(control=="close")CloseLobbyIllustrationEditor(false);
+            else if(control=="hide"){homeControlsHidden=true;appreciationDragging=zoomDragging=false;Cue("btn_click");}
+        }
+        bool PhotoPointer(EventType type,Vector2 point,Vector2 delta){
+            if(homeControlsHidden){if(type==EventType.MouseDown){homeRevealPointer=true;return true;}if(type==EventType.MouseUp&&homeRevealPointer){homeControlsHidden=homeRevealPointer=false;return true;}return type==EventType.MouseDrag;}
+            if(type==EventType.MouseDown){homePressedControl=PhotoControl(point);if(homePressedControl!=null)return true;}
+            if(homePressedControl!=null){if(type==EventType.MouseUp){var pressed=homePressedControl;homePressedControl=null;if(PhotoControl(point)==pressed)PhotoAction(pressed);}return type==EventType.MouseDrag||type==EventType.MouseUp;}
+            if(ZoomPointer(type,point,ref homeDraft.scale))return true;
+            var area=new Rect(0,130,width-390,780);
+            if(type==EventType.MouseDown&&area.Contains(point)&&Input.touchCount<2){appreciationDragging=true;pointerStart=point;panStart=new Vector2(homeDraft.x,homeDraft.y);return true;}
+            if(type==EventType.MouseDrag&&appreciationDragging&&Input.touchCount<2){var pan=panStart+point-pointerStart;homeDraft.x=pan.x;homeDraft.y=pan.y;return true;}
+            if(type==EventType.MouseUp&&appreciationDragging){appreciationDragging=false;return true;}
+            if(type==EventType.ScrollWheel&&area.Contains(point)){homeDraft.scale=Mathf.Clamp(homeDraft.scale-delta.y*.08f,.35f,2.3f);return true;}return false;
+        }
+        void OpenLobbyIllustrationEditor(){homeIllustrationEditing=true;homeControlsHidden=homeRevealPointer=false;homePressedControl=null;var active=CharacterRoster.Active;homeDraft=LobbyIllustrationSettings.Get(active.skin);appreciationDragging=zoomDragging=false;Cue("btn_appear");}
+        void CloseLobbyIllustrationEditor(bool save){if(save)LobbyIllustrationSettings.Save(CharacterRoster.Active.skin,homeDraft);homeIllustrationEditing=homeControlsHidden=homeRevealPointer=false;homePressedControl=null;appreciationDragging=zoomDragging=false;Cue("btn_cancel");}
+        void DrawLobbyIllustrationEditor(){
+            if(GUI.enabled){bool injected=CharacterPointer(out var type,out var point,out var delta);if(PhotoPointer(type,point,delta)&&!injected)Event.current.Use();}
+            if(homeControlsHidden||!homeIllustrationEditing)return;
+            DrawNativeZoomControls(ref homeDraft.scale,true);
+            CImage(new Rect(width-305,15,84,84),"Photo/btn_close");if(Hit(PhotoClose,"lobby-illustration-cancel"))PhotoAction("close");
+            CImage(PhotoReset,"Photo/btn_reset");if(Hit(PhotoReset,"lobby-illustration-reset"))PhotoAction("reset");
+            CImage(PhotoSave,"Photo/btn_save");if(Hit(PhotoSave,"lobby-illustration-save"))PhotoAction("save");
+            CImage(PhotoHide,"Photo/btn_hide");if(Hit(PhotoHide,"lobby-illustration-hide"))PhotoAction("hide");
+            if(Event.current.type==EventType.Repaint&&Input.touchCount==2){appreciationDragging=false;float distance=Vector2.Distance(Input.GetTouch(0).position,Input.GetTouch(1).position);if(pinchStart>0)homeDraft.scale=Mathf.Clamp(homeDraft.scale*distance/pinchStart,.35f,2.3f);pinchStart=distance;}else if(Input.touchCount!=2)pinchStart=0;
+        }
 #if UNITY_EDITOR
+        sealed class ReviewPointer {public EventType type;public Vector2 point,delta;}
+        readonly Queue<ReviewPointer> reviewGuiPointer=new Queue<ReviewPointer>();
+        public void ReviewQueueGuiPointer(EventType type,Vector2 point,Vector2 delta){reviewGuiPointer.Enqueue(new ReviewPointer{type=type,point=point,delta=delta});}
         public void ReviewSettleDorm(){dormOpened=pageBegan=Now-1;pageMoving=false;dormLeaving=false;sortBegan=Now-1;previousIllustration=null;previousSkinBegan=Now-1;}
         public void ReviewSkinIndex(int index,bool animate=true){if(animate)SetSkinIndex(index);else{skinIndex=index;skinPosition=skinFrom=index;skinMotionBegan=Now-1;}}
         public void ReviewCarouselPointer(EventType type,Vector2 p){SkinCarouselPointer(type,p);}
@@ -221,6 +289,11 @@ namespace YunJian.Riichi {
         public void ReviewInfoScroll(float y){infoScroll.y=y;}
         public void ReviewZoomSlider(float p,bool home=false){var point=new Vector2(width-300,199.99f+581.643f*Mathf.Clamp01(p));if(home){ZoomPointer(EventType.MouseDown,point,ref homeDraft.scale);ZoomPointer(EventType.MouseUp,point,ref homeDraft.scale);}else{ZoomPointer(EventType.MouseDown,point,ref appreciationZoom);ZoomPointer(EventType.MouseUp,point,ref appreciationZoom);}}
         public bool ReviewLiveEnabled=>characterArt.Animate;
+        public bool ReviewHomeEditing=>homeIllustrationEditing;
+        public bool ReviewHomeControlsHidden=>homeControlsHidden;
+        public LobbyIllustrationPose ReviewHomeDraft=>homeDraft;
+        public float ReviewInfoOffset=>infoScroll.y;
+        public Texture ReviewCharacterTexture=>characterArt.Art(CurrentOutfit,Now);
         public Rect ReviewSortRect(bool starred,int index)=>SortCardRect(starred,index);
 #endif
     }

@@ -12,7 +12,7 @@ namespace YunJian.Riichi.Editor {
         public static void Run(){
             checks.Clear();CharacterRoster.BeginPreview();
             try{
-                Check(PlayerSettings.bundleVersion=="0.6.4"&&PlayerSettings.Android.bundleVersionCode==52,"0.6.4 update uses versionCode 52");
+                Check(PlayerSettings.Android.bundleVersionCode>=52,"Character-system update preserves compatible versionCode >=52");
                 Check(CharacterRoster.All.Length==4,"Four reference characters are available offline");
                 Check(CharacterRoster.All.Sum(c=>c.skins.Length)==21,"All 21 APK skins are catalogued");
                 Check(CharacterRoster.All.Sum(c=>c.emojis.Length)==71,"All 71 chat expressions are unlocked");

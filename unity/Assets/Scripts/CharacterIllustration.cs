@@ -24,14 +24,18 @@ namespace YunJian.Riichi {
             readonly float[] world=new float[65536];static readonly int[] Quad={0,1,2,2,3,0};
             readonly CommandBuffer commands=new CommandBuffer{name="Original character skeleton"};readonly Material unpremultiply;
             RenderTexture pma,result;Rect bounds;float time=-1;int frame=-1;public string[] Animations;
-            public Part(string folder){
+            public Part(string folder,CharacterSkin skin){
                 var atlas=new Atlas(new StringReader(Resources.Load<TextAsset>("Majsoul/Characters/"+folder+"/atlas").text),"",new Pages(folder));atlas.FlipV();
                 var binary=new SkeletonBinary(new AtlasAttachmentLoader(atlas));var bytes=Resources.Load<TextAsset>("Majsoul/Characters/"+folder+"/skeleton").bytes;
                 var data=binary.ReadSkeletonData(new MemoryStream(bytes));skeleton=new Skeleton(data);state=new AnimationState(new AnimationStateData(data){DefaultMix=.18f});
                 Animations=data.Animations.Select(a=>a.Name).ToArray();string idle=Animations.FirstOrDefault(a=>a=="idle")??Animations.FirstOrDefault(a=>a.IndexOf("idle",StringComparison.OrdinalIgnoreCase)>=0)??Animations.FirstOrDefault();
                 if(idle!=null)state.SetAnimation(0,idle,true);state.Apply(skeleton);skeleton.UpdateWorldTransform(Skeleton.Physics.Update);
-                bounds=VisibleBounds();
-                int rh=1536,rw=Mathf.Clamp(Mathf.RoundToInt(rh*bounds.width/bounds.height),256,2048);pma=new RenderTexture(rw,rh,0,RenderTextureFormat.ARGB32);pma.Create();result=new RenderTexture(rw,rh,0,RenderTextureFormat.ARGB32);result.Create();
+                var still=CharacterRoster.Texture("Skins/"+skin.id+"/full");
+                // Match the source still's logical canvas. Fitting the animated
+                // mesh bounds independently changes scale and position on LIVE/OFF.
+                float logicalHeight=still!=null&&skin.spineWidth>0?skin.spineWidth*(float)still.height/still.width:0;
+                bounds=logicalHeight>0?new Rect(-skin.pivotX,skin.pivotY-logicalHeight,skin.spineWidth,logicalHeight):VisibleBounds();
+                float rasterScale=Mathf.Min(1536/bounds.height,2048/bounds.width);int rw=Mathf.Max(1,Mathf.RoundToInt(bounds.width*rasterScale)),rh=Mathf.Max(1,Mathf.RoundToInt(bounds.height*rasterScale));pma=new RenderTexture(rw,rh,0,RenderTextureFormat.ARGB32);pma.Create();result=new RenderTexture(rw,rh,0,RenderTextureFormat.ARGB32);result.Create();
                 unpremultiply=new Material(Shader.Find("YunJian/CharacterStraightAlpha"));mesh.indexFormat=IndexFormat.UInt32;
                 Debug.Log("CHARACTER SPINE "+folder+" animations="+string.Join(",",Animations)+" bounds="+bounds);
             }
@@ -86,7 +90,7 @@ namespace YunJian.Riichi {
         public bool Animate=true;
         public Texture Art(CharacterSkin skin,float now){
             if(!skin.dynamic||!Animate)return CharacterRoster.Texture("Skins/"+skin.id+"/full");
-            if(!dynamics.TryGetValue(skin.id,out var parts)){parts=skin.parts.Select(p=>new Part(p)).ToArray();dynamics[skin.id]=parts;}
+            if(!dynamics.TryGetValue(skin.id,out var parts)){parts=skin.parts.Select(p=>new Part(p,skin)).ToArray();dynamics[skin.id]=parts;}
             return parts.Length==0?CharacterRoster.Texture("Skins/"+skin.id+"/full"):parts[0].Draw(now);
         }
         public void Play(CharacterSkin skin,string name){if(dynamics.TryGetValue(skin.id,out var parts))foreach(var p in parts)p.Play(name);}
