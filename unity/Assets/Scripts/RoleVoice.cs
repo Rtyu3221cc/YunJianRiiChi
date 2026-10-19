@@ -10,7 +10,9 @@ namespace YunJian.Riichi
     {
         AudioSource output;
         Dictionary<string, AudioClip> clips = new Dictionary<string, AudioClip>();
-        readonly Queue<Tuple<string, float>> queue = new Queue<Tuple<string, float>>();
+        readonly Queue<Tuple<AudioClip, float>> queue = new Queue<Tuple<AudioClip, float>>();
+        RoomView observed;
+        AudioClip ClipFor(PublicSound e){string key=e.kind=="discard"?e.tile:e.kind;var players=observed?.players;string role=players!=null&&e.seat>=0&&e.seat<players.Length?players[e.seat].character:"yiji";return key==null?null:CharacterVoices.Clip(role,key);}
         string room;
         int cursor;
         bool enabledVoice = true, suspended;
@@ -29,15 +31,16 @@ namespace YunJian.Riichi
         void Stop() { output.Stop(); queue.Clear(); }
         public void Reset() { Stop(); room = null; cursor = 0; }
         public void Suspend(bool flag) { suspended = flag; Reset(); }
-        public void Preview() { Stop(); if (clips.TryGetValue("ron", out var clip)) output.PlayOneShot(clip); }
-        public void Observe(RoomView state){if(string.IsNullOrEmpty(state.audioRoom)){Reset();return;}if(room!=state.audioRoom){Reset();room=state.audioRoom;cursor=state.audioSeq;last=Time.unscaledTime;}}
+        public void Preview() { Stop();var clip=CharacterVoices.Clip(CharacterRoster.Active.character,"ron");if(clip!=null)output.PlayOneShot(clip); }
+        public void Observe(RoomView state){observed=state;if(string.IsNullOrEmpty(state.audioRoom)){Reset();return;}if(room!=state.audioRoom){Reset();room=state.audioRoom;cursor=state.audioSeq;last=Time.unscaledTime;}}
         public void QueuePresented(string key,PublicSound e){
             if(room!=key || e.id<=cursor)return;cursor=e.id;if(!enabledVoice || suspended)return;
-            if(e.kind=="ron" || e.kind=="tsumo")Stop();string name=e.kind=="discard"?e.tile:e.kind;
-            if(name!=null && clips.ContainsKey(name))queue.Enqueue(Tuple.Create(name,Time.unscaledTime));
+            if(e.kind=="ron" || e.kind=="tsumo")Stop();var clip=ClipFor(e);
+            if(clip!=null)queue.Enqueue(Tuple.Create(clip,Time.unscaledTime));
         }
         public void Accept(RoomView state)
         {
+            observed=state;
             if (string.IsNullOrEmpty(state.audioRoom)) { Reset(); return; }
             if (room != state.audioRoom) { Reset(); room = state.audioRoom; cursor = state.audioSeq; last = Time.unscaledTime; return; }
             bool stale = Time.unscaledTime - last >= 8; last = Time.unscaledTime;
@@ -46,8 +49,7 @@ namespace YunJian.Riichi
             if (events.Any(e => e.kind == "ron" || e.kind == "tsumo")) { Stop(); events = events.Where(e => e.kind == "ron" || e.kind == "tsumo").ToArray(); }
             foreach (var e in events)
             {
-                string key = e.kind == "discard" ? e.tile : e.kind;
-                if (clips.ContainsKey(key)) queue.Enqueue(Tuple.Create(key, Time.unscaledTime));
+                var clip=ClipFor(e);if(clip!=null)queue.Enqueue(Tuple.Create(clip,Time.unscaledTime));
             }
             while (queue.Count > 8) queue.Dequeue();
         }
@@ -57,7 +59,7 @@ namespace YunJian.Riichi
             while (queue.Count > 0)
             {
                 var item = queue.Dequeue(); if (Time.unscaledTime - item.Item2 >= 8) continue;
-                output.clip = clips[item.Item1]; output.Play(); return;
+                output.clip = item.Item1; output.Play(); return;
             }
         }
     }

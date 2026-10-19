@@ -38,10 +38,11 @@ namespace YunJian.Riichi {
             float scale=CharacterInkHeight/ink.height;
             return new Rect(center.x-ink.center.x*scale,center.y-ink.center.y*scale,lettering.width*scale,lettering.height*scale);
         }
-        public void Draw(string word,int relative,int n,float width,float height,float age){
+        public void Draw(string word,int relative,int n,float width,float height,float age,PlayerView player=null){
             if(age<0||age>=.8f||Event.current.type!=EventType.Repaint)return;
             int slot=relative==0?0:relative==n-1?3:relative==1&&n==4?1:2;
-            if(!pictures.TryGetValue(slot,out var picture))pictures[slot]=picture=Compose(slot);
+            int pictureKey=slot*1000000+CharacterRoster.Skin(player?.character,player?.skin??0).id;
+            if(!pictures.TryGetValue(pictureKey,out var picture))pictures[pictureKey]=picture=Compose(slot,CharacterRoster.Portrait(player),CharacterRoster.Skin(player?.character,player?.skin??0).id);
             if(!words.TryGetValue(word,out var lettering))words[word]=lettering=Resources.Load<Texture2D>("Majsoul/Callouts1018/"+word);
             // These direction-specific scales affect only the portrait/background.
             float unit=slot==0?.55f:slot==1?.50f:slot==2?.49f:.48f;
@@ -68,15 +69,18 @@ namespace YunJian.Riichi {
             }
             GUI.color=old;
         }
-        Picture Compose(int slot){
+        Picture Compose(int slot,Texture2D character,int skin){
             if(layout==null)layout=JsonUtility.FromJson<Layout>(Resources.Load<TextAsset>("Majsoul/Callouts1018/layout").text);
             if(camera==null){
                 camera=new GameObject("Native shout composition camera").AddComponent<Camera>();camera.enabled=false;camera.transform.position=new Vector3(6000,5000,-20);camera.orthographic=true;camera.orthographicSize=1024;camera.aspect=1;camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=Color.clear;camera.cullingMask=1<<15;camera.nearClipPlane=.1f;camera.farClipPlane=100;
                 target=new RenderTexture(2048,2048,0,RenderTextureFormat.ARGB32){name="APK native shout composition"};target.Create();camera.targetTexture=target;
             }
             var transforms=new Dictionary<string,Transform>();var source=new Dictionary<string,Node>();var meshes=new List<Mesh>();var materials=new List<Material>();GameObject root=null;Material portrait=null;
-            foreach(var node in layout.nodes){
-                if(node.slot!=slot)continue;
+            foreach(var template in layout.nodes){
+                if(template.slot!=slot)continue;
+                var node=JsonUtility.FromJson<Node>(JsonUtility.ToJson(template));
+                bool illustration=node.path=="illust/mask/father/illust",background=node.path=="container_shout",letter=node.path=="img_content";
+                if(illustration){var placed=CharacterFraming.NativeLocal(skin,"J0",slot,new Rect(node.position[0],node.position[1],node.size[0],node.size[1]),out var flip);node.position=new[]{placed.x,placed.y};node.size=new[]{placed.width,placed.height};node.scale[0]=flip?-1:1;}
                 var go=new GameObject("Native shout "+node.path);go.layer=15;var t=go.transform;
                 if(node.path.Length==0){root=go;t.position=new Vector3(6000,5000,0);}
                 else{
@@ -85,14 +89,13 @@ namespace YunJian.Riichi {
                     t.localScale=new Vector3(node.scale[0],node.scale[1],node.scale[2]);t.localRotation=new Quaternion(node.rotation[0],node.rotation[1],node.rotation[2],node.rotation[3]);
                 }
                 transforms[node.path]=t;source[node.path]=node;
-                bool illustration=node.path=="illust/mask/father/illust",background=node.path=="container_shout",letter=node.path=="img_content";
                 if(!illustration&&!background&&!letter)continue;
-                var texture=Resources.Load<Texture2D>(illustration?"Majsoul/Actions/yiji-full":"Majsoul/Callouts1018/"+(letter?"shout_lizhi":node.image));
+                var texture=illustration?character:Resources.Load<Texture2D>("Majsoul/Callouts1018/"+(letter?"shout_lizhi":node.image));
                 // APK capsui.CImage.FixImage: EnumFixMode 1 = FORCE_KEEP_WIDTH.
                 // These textures retain Sprite.rect and its transparent trim margins;
                 // stretching a tight Sprite.image crop into this rectangle deforms text.
-                if(node.fixMode==1&&texture!=null)node.size[1]=node.size[0]*texture.height/texture.width;
-                else if(node.fixMode==2&&texture!=null)node.size[0]=node.size[1]*texture.width/texture.height;
+                if(!illustration&&node.fixMode==1&&texture!=null)node.size[1]=node.size[0]*texture.height/texture.width;
+                else if(!illustration&&node.fixMode==2&&texture!=null)node.size[0]=node.size[1]*texture.width/texture.height;
                 // The word is drawn independently by Draw(), after this composition.
                 if(letter)continue;
                 float l=-node.pivot[0]*node.size[0],r=l+node.size[0],b=-node.pivot[1]*node.size[1],u=b+node.size[1];
@@ -102,7 +105,8 @@ namespace YunJian.Riichi {
                 if(illustration)portrait=material;
                 go.AddComponent<MeshFilter>().sharedMesh=mesh;var renderer=go.AddComponent<MeshRenderer>();renderer.sharedMaterial=material;renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;
             }
-            var mask=source["illust/mask"];portrait.SetTexture("_MaskTex",Resources.Load<Texture2D>("Majsoul/Callouts1018/"+mask.image));portrait.SetFloat("_UseMask",1);
+            var mask=source["illust/mask"];
+            portrait.SetTexture("_MaskTex",Resources.Load<Texture2D>("Majsoul/Callouts1018/"+mask.image));portrait.SetFloat("_UseMask",1);
             portrait.SetMatrix("_WorldToMask",Matrix4x4.Translate(new Vector3(mask.pivot[0],mask.pivot[1],0))*Matrix4x4.Scale(new Vector3(1/mask.size[0],1/mask.size[1],1))*transforms["illust/mask"].worldToLocalMatrix);
             camera.Render();var previous=RenderTexture.active;RenderTexture.active=target;
             var read=new Texture2D(2048,2048,TextureFormat.RGBA32,false);read.ReadPixels(new Rect(0,0,2048,2048),0,0);read.Apply();RenderTexture.active=previous;

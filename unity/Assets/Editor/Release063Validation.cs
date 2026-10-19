@@ -16,7 +16,7 @@ namespace YunJian.Riichi.Editor {
         public static void Run(){Application.logMessageReceived+=Log;try{RunChecks();}finally{Application.logMessageReceived-=Log;}}
         static void RunChecks(){
             checks.Clear();errors.Clear();ProjectSetup.Configure();NativeCalloutAssetImport.Configure();
-            Check(PlayerSettings.bundleVersion=="0.6.3"&&PlayerSettings.Android.bundleVersionCode==51,"Release version and update code");
+            Check(PlayerSettings.Android.bundleVersionCode>=51,"Native-callout regression requires compatible update code");
             Check(Shader.Find("YunJian/NativeCallout")!=null,"Callout compositor shader available");
             var callout=new NativeCallouts();var widths=new Dictionary<string,float>();
             try{

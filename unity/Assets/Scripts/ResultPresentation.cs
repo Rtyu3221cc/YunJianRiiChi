@@ -170,7 +170,7 @@ namespace YunJian.Riichi
             var viewport=TableViewport.Fit(Screen.width,Screen.height,Screen.safeArea,false);
             float extra=(Screen.safeArea.width/viewport.Scale-1280)/2;
             DrawNativeBackground(viewport);
-            var portrait=effects.Art("yiji-full");
+            var portrait=CharacterRoster.Portrait(v.players[d.seat]);
             if(portrait!=null)GUI.DrawTexture(NativeRect(-947,424,924.567f,1392.131f),portrait,ScaleMode.ScaleToFit);
             WinningHand(d,table);
             Image("bg_nickname",NativeRect(-965,-370.9f,396,83,.5f,.5f,1.947f));
@@ -333,7 +333,7 @@ namespace YunJian.Riichi
         void Final(RoomView v,TableRenderer table,TableEffects effects){
             var heading=new GUIStyle(roundText){fontSize=36,normal={textColor=white},padding=new RectOffset()};
             GUI.Label(new Rect(470.7f,23.333f,313.274f,69.333f),"终局",heading);
-            var portrait=effects.Art("yiji-full");if(portrait!=null)GUI.DrawTexture(new Rect(-15,80,600,755),portrait,ScaleMode.ScaleToFit);
+            var portrait=CharacterRoster.Portrait(v.players[v.you]);if(portrait!=null)GUI.DrawTexture(new Rect(-15,80,600,755),portrait,ScaleMode.ScaleToFit);
             if(finalLayout==null)finalLayout=JsonUtility.FromJson<FinalLayout>(Resources.Load<TextAsset>("Majsoul/Settlement/Final/gameend-layout").text);
             var seats=Enumerable.Range(0,v.n).OrderBy(i=>Rank(v,i,false)).ToArray();
             for(int rank=0;rank<seats.Length;rank++){

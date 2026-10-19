@@ -51,8 +51,9 @@ namespace YunJian.Riichi.Editor
             Require(File.Exists("Assets/Plugins/Android/riichi-host.androidlib/libs/riichi-host.jar"), "Missing compiled phone host");
             Release0545Validation.Run();
             Release063Validation.Run();
+            Release064Validation.Run();
             ProjectSetup.CreateScene();
-            Debug.Log("RIICHI UNITY VALIDATION PASS: imported textures, font, single-character audio, protocol, host plug-in and scene.");
+            Debug.Log("RIICHI UNITY VALIDATION PASS: imported textures, character roster/voices/framing, protocol, host plug-in and scene.");
         }
         static void Require(bool condition, string message) { if (!condition) throw new Exception(message); }
     }

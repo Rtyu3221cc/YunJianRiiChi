@@ -13,6 +13,8 @@ namespace YunJian.Riichi
         {Horizontal(bounds,Art("Majsoul/Lobby/Sprites/Necessary/"+(primary?"button_light":"button")),50,50);}
         public static void CaptionBar(Rect bounds)
         {Horizontal(bounds,Art("Majsoul/UI/button_text_bottom_s"),15,15);}
+        public static void CharacterButton(Rect bounds,bool disabled)
+        {Horizontal(bounds,Art("Majsoul/Characters/UI/"+(disabled?"button_gray":"button")),50,50);}
         static float Pixel(float coordinate,float scale,float offset)
         {return Mathf.Abs(scale)<.00001f?coordinate:(Mathf.Round(coordinate*scale+offset)-offset)/scale;}
         static void Horizontal(Rect bounds,Texture2D texture,float left,float right)

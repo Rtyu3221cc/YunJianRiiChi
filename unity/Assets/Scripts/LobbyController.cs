@@ -79,6 +79,7 @@ namespace YunJian.Riichi
         public void Initialize(RiichiClient owner)
         {
             client=owner;brush=Resources.Load<Font>("Majsoul/Lobby/Fonts/brush");body=Resources.Load<Font>("Majsoul/Font/game");
+            if(GetComponent<CharacterVoices>()==null)gameObject.AddComponent<CharacterVoices>();
             motion=JsonUtility.FromJson<MotionBank>(Resources.Load<TextAsset>("Majsoul/Lobby/motion").text);
             gardenMotion=JsonUtility.FromJson<GardenMotion>(Resources.Load<TextAsset>("Majsoul/Lobby/garden-motion").text);
             signEntry=JsonUtility.FromJson<SignEntryMotion>(Resources.Load<TextAsset>("Majsoul/Lobby/sign-entry-motion").text);
@@ -101,6 +102,7 @@ namespace YunJian.Riichi
         void Update()
         {
             if(client==null)return;discovery.Publish(client.State);
+            TickCharacterPages();
             UpdateQrFlow();
             if(modalClosing&&Now-closeStarted>=.15f){Modal="";modalClosing=false;}
             bool visible=Visible;
@@ -161,6 +163,7 @@ namespace YunJian.Riichi
         public void Back()
         {
             if(client.Busy)return;
+            if(CharacterBack())return;
             if(client.LobbyCloseSettings())return;
             if(Modal!=""){CloseModal();return;}
             if(Page==ScreenPage.Room){OpenModal("leave");return;}
@@ -272,7 +275,9 @@ namespace YunJian.Riichi
             var saved=GUI.matrix;var color=GUI.color;bool enabled=GUI.enabled;
             // Fill the physical screen proportionally, then lay controls within
             // the safe rectangle using one uniform scale. No stretched art.
-            GUI.matrix=Matrix4x4.identity;Image(new Rect(0,0,Screen.width,Screen.height),Page==ScreenPage.Room?"indoor":"yard",ScaleMode.ScaleAndCrop);
+            GUI.matrix=Matrix4x4.identity;
+            if(dormOpen)DrawDormBackground();
+            else Image(new Rect(0,0,Screen.width,Screen.height),Page==ScreenPage.Room?"indoor":"yard",ScaleMode.ScaleAndCrop);
             var safe=Screen.safeArea;
 #if UNITY_EDITOR
             if(DesignPreviewSafeArea.width>0)safe=DesignPreviewSafeArea;
@@ -280,8 +285,10 @@ namespace YunJian.Riichi
             float scale=Mathf.Min(safe.height/1080f,safe.width/1920f);width=safe.width/scale;
             bleedLeft=-safe.x/scale;bleedWidth=Screen.width/scale;
             GUI.matrix=Matrix4x4.TRS(new Vector3(safe.x,Screen.height-safe.yMax+(safe.height-1080*scale)/2),Quaternion.identity,new Vector3(scale,scale,1));
-            bool modal=Modal!="";GUI.enabled=enabled&&!modal&&!client.LobbyOverlayVisible;
-            if(Page==ScreenPage.Home||Page==ScreenPage.Modes)DrawGarden();
+            bool modal=Modal!="";GUI.enabled=enabled&&!modal&&!client.LobbyOverlayVisible&&!CharactersOverlay;
+            if(dormOpen&&(dormLeaving||Now-dormOpened<.25f)){var c=GUI.color;bool interactive=GUI.enabled;GUI.enabled=false;GUI.color=new Color(c.r,c.g,c.b,c.a*(1-DormOpacity));DrawGarden();GUI.color=c;GUI.enabled=interactive;}
+            if(dormOpen)DrawDorm();
+            else if(Page==ScreenPage.Home||Page==ScreenPage.Modes)DrawGarden();
             else if(Page==ScreenPage.Create){
                 var c=GUI.color;float entering=Now-transitionStarted;
                 if(outgoing==ScreenPage.Modes&&entering<.22f){GUI.enabled=false;GUI.color=new Color(c.r,c.g,c.b,c.a*(1-Mathf.Clamp01(entering/.22f)));DrawGarden();GUI.color=c;}
@@ -291,6 +298,9 @@ namespace YunJian.Riichi
                 GUI.color=new Color(c.r,c.g,c.b,c.a*alpha);GUI.enabled&=alpha>=1;DrawCreate(intro);GUI.color=c;
             }else DrawRoom();
             GUI.enabled=enabled;
+            sakura.Draw(new Rect(bleedLeft,0,bleedWidth,1080),Now);
+            if(sortOpen)DrawCharacterSort();
+            if(roleOpen||roleClosing){GUI.enabled=enabled&&!roleClosing;DrawRoleSelection();GUI.enabled=enabled;}
             if(modal){GUI.enabled=enabled&&!modalClosing;DrawModal();}
             GUI.matrix=saved;GUI.color=color;GUI.enabled=enabled;
         }
@@ -301,7 +311,8 @@ namespace YunJian.Riichi
             var old=GUI.color;GUI.color=new Color(old.r,old.g,old.b,old.a*Mathf.Clamp01(slide));
             // Native anim_alpha.indistance is the offset FROM the destination:
             // +300 starts on the right; OutBack then briefly passes to the left.
-            float portraitH=1370;Image(new Rect(width*.265f-portraitH*.657f/2+(1-slide)*portrait.indistance.x,125,portraitH*.657f,portraitH),"yiji-full",ScaleMode.ScaleToFit);GUI.color=old;
+            float portraitH=1370;DrawHomeCharacter(new Rect(width*.265f-portraitH*.657f/2+(1-slide)*portrait.indistance.x,125,portraitH*.657f,portraitH));GUI.color=old;
+            if(homeIllustrationEditing){DrawLobbyIllustrationEditor();return;}
             var topMatrix=GUI.matrix;GUI.matrix=topMatrix*Matrix4x4.Translate(new Vector3(0,EdgeOffset("container_top"),0));
             float inset=60*AppPreferences.ScreenInset;
             GUI.matrix=GUI.matrix*Matrix4x4.Translate(new Vector3(inset,0));DrawProfileBadge();GUI.matrix=topMatrix*Matrix4x4.Translate(new Vector3(-inset,EdgeOffset("container_top")));
@@ -309,7 +320,7 @@ namespace YunJian.Riichi
             DrawGardenShortcuts();
             GUI.matrix=topMatrix;
             float roleY=EdgeOffset("btn_roleSet");Image(new Rect(35+inset,970+roleY,92,92),"Sprites/Main/btn_roleset",ScaleMode.ScaleToFit);
-            if(Hit(new Rect(25+inset,960+roleY,115,115),"role")){help="当前雀士：一姬";OpenModal("help");}
+            if(Hit(new Rect(25+inset,960+roleY,115,115),"role"))OpenRoleSelection();
             string[] bottom={"btn1","btn4","btn0","btn2"};
             const float bottomScale=1.15f,iconWidth=134*bottomScale,iconHeight=130*bottomScale,pitch=140*bottomScale;
             var summon=new Rect(width-inset-34-183*bottomScale,1060-160*bottomScale+EdgeOffset("btn_xunmi"),183*bottomScale,160*bottomScale);
@@ -317,7 +328,7 @@ namespace YunJian.Riichi
             string[] bottomNodes={"btn_liaoshe","btn_youren","btn_guanzhan","btn_paipu"};
             for(int i=0;i<4;i++){
                 var r=new Rect(bottomStart+i*pitch,bottomTop+EdgeOffset(bottomNodes[i]),iconWidth,iconHeight);Image(r,"Sprites/Main/"+bottom[i],ScaleMode.ScaleToFit);
-                if(Hit(r,"bottom"+i)){help=i==0?"当前雀士：一姬":i==1?"与同一 Wi-Fi 或同一热点内的牌友创建或加入房间。":"功能暂未开放";OpenModal("help");}
+                if(Hit(r,"bottom"+i)){if(i==0)OpenDorm();else{help=i==1?"与同一 Wi-Fi 或同一热点内的牌友创建或加入房间。":"功能暂未开放";OpenModal("help");}}
             }
             if(GardenArtButton(summon,"btn6","summon"))GardenNotice("寻觅","寻觅功能暂未开放。");
             float x=width-inset-980;
@@ -586,7 +597,7 @@ namespace YunJian.Riichi
                 Image(r,"Sprites/Main/character_bg");
                 if(i<state.players.Length){
                     var p=state.players[i];GUI.BeginGroup(new Rect(r.x+13.2f*cardScale,r.y+20.5f*cardScale,350.9f*cardScale,743.9f*cardScale));
-                    float h=1060*cardScale,w=h*.657f;Image(new Rect((350.9f*cardScale-w)/2,-10,w,h),"yiji-full",ScaleMode.ScaleToFit);GUI.EndGroup();
+                    float h=1060*cardScale,w=h*.657f;var character=CharacterRoster.Portrait(p);if(character!=null)GUI.DrawTexture(new Rect((350.9f*cardScale-w)/2,-10,w,h),character,ScaleMode.ScaleToFit);GUI.EndGroup();
                     Image(r,"Sprites/Main/frame_gold");
                     if(i==0)Image(new Rect(r.x+28*cardScale,r.y+24*cardScale,107*cardScale,100*cardScale),"Sprites/Room/roomowner",ScaleMode.ScaleToFit);
                     if(p.ready)Image(new Rect(r.x+150*cardScale,r.y+512*cardScale,213*cardScale,158*cardScale),"Sprites/Main/ready",ScaleMode.ScaleToFit);
@@ -937,7 +948,7 @@ namespace YunJian.Riichi
             Image(canvas,"Sprites/RulePages/"+(three?"sanren":"siren"),ScaleMode.ScaleToFit);
         }
         void OnApplicationPause(bool paused){if(paused){sounds?.Stop();music?.Pause();CancelSearch();}}
-        void OnDestroy(){DisposeQrFlow();CancelSearch();discovery.Dispose();}
+        void OnDestroy(){characterArt.Dispose();DisposeQrFlow();CancelSearch();discovery.Dispose();}
 #if UNITY_EDITOR
         public float DesignPreviewClock=-1;
         public Rect DesignPreviewSafeArea;

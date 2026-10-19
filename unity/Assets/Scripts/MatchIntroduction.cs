@@ -7,10 +7,11 @@ namespace YunJian.Riichi
     {
         [Serializable] class Config {public Cell[] cells;}
         [Serializable] class ImageInfo {public string name;public float[] rect;}
-        [Serializable] class Cell {public int seat;public float[] start,end,body,name;public float duration;public ImageInfo[] images;public string portraitResource;}
+        [Serializable] class Cell {public int seat;public float[] start,end,body,name,anchor;public float duration;public ImageInfo[] images;public string portraitResource;public bool flip;}
         public const float Duration=3.5f;
         readonly HashSet<string> seen=new HashSet<string>();readonly NativeUiEffect effect=new NativeUiEffect();
         readonly Dictionary<string,Texture2D> art=new Dictionary<string,Texture2D>();
+        readonly Dictionary<string,Texture2D> characterCards=new Dictionary<string,Texture2D>();
         string observedRoom;int observedMatch;bool observedLobby;
         RoomView view;Config config;GUIStyle nameStyle,titleStyle;string key;float began;bool running,sound;
         public int Started {get;private set;}
@@ -61,6 +62,16 @@ namespace YunJian.Riichi
             GUI.Label(new Rect(r.center.x-209.9f*u,r.center.y-26*u,r.width*.65f,45*u),name,nameStyle);
         }
         static Rect RectAt(float[] d,Vector2 offset)=>new Rect(offset.x+d[0]*2/3,offset.y+d[1]*2/3,d[2]*2/3,d[3]*2/3);
+        Texture2D CharacterCard(Cell cell,PlayerView player){
+            string key=cell.seat+":"+CharacterRoster.Skin(player.character,player.skin).id;if(characterCards.TryGetValue(key,out var ready))return ready;
+            if(characterCards.Count>=12){foreach(var t in characterCards.Values)UnityEngine.Object.Destroy(t);characterCards.Clear();}
+            var bg=Art(cell.images[0].name);var portrait=CharacterRoster.Portrait(player);var b=cell.images[0].rect;var body=cell.body;
+            var placed=CharacterFraming.Intro(CharacterRoster.Skin(player.character,player.skin).id,cell.seat,new Rect(body[0],body[1],body[2],body[3]),new Vector2(cell.anchor[0],cell.anchor[1]),cell.flip,out var flip);
+            var rect=new Vector4((placed.x-b[0])/b[2],1-(placed.y-b[1]+placed.height)/b[3],placed.width/b[2],placed.height/b[3]);
+            var material=new Material(Shader.Find("YunJian/CharacterIntro"));material.SetTexture("_Background",bg);material.SetTexture("_Portrait",portrait);material.SetVector("_PortraitRect",rect);material.SetFloat("_Flip",flip?1:0);
+            var target=RenderTexture.GetTemporary(bg.width,bg.height,0,RenderTextureFormat.ARGB32);var previous=RenderTexture.active;Graphics.Blit(Texture2D.whiteTexture,target,material);RenderTexture.active=target;
+            ready=new Texture2D(bg.width,bg.height,TextureFormat.RGBA32,false){name="Native match character "+key};ready.ReadPixels(new Rect(0,0,bg.width,bg.height),0,0);ready.Apply(false,true);RenderTexture.active=previous;RenderTexture.ReleaseTemporary(target);UnityEngine.Object.Destroy(material);characterCards[key]=ready;return ready;
+        }
         public void Draw()
         {
             if(!Active)return;if(config==null)config=JsonUtility.FromJson<Config>(Resources.Load<TextAsset>("Majsoul/MatchIntro/layout").text);
@@ -69,7 +80,7 @@ namespace YunJian.Riichi
             if(nameStyle==null){var font=Resources.Load<Font>("Majsoul/Font/game");nameStyle=new GUIStyle(GUI.skin.label){font=font,fontSize=30,alignment=TextAnchor.MiddleLeft,padding=new RectOffset(),clipping=TextClipping.Overflow};nameStyle.normal.textColor=Color.white;}
             foreach(var c in config.cells){int seat=view.n==4?(view.you+c.seat)%4:c.seat==0?view.you:c.seat==1?(view.you+1)%3:c.seat==3?(view.you+2)%3:-1;if(seat<0)continue;
                 float enter=Mathf.Pow(Mathf.Clamp01((Age-.5f)/.4f),5),exit=Mathf.Pow(Mathf.Clamp01((Age-3)/.4f),5);var from=new Vector2(c.start[0],c.start[1]);var to=new Vector2(c.end[0],c.end[1]);var offset=Vector2.LerpUnclamped(Vector2.LerpUnclamped(from,to,enter),from,exit)*2/3;
-                var bg=c.images[0];GUI.DrawTexture(RectAt(bg.rect,offset),Art(c.portraitResource),ScaleMode.StretchToFill,true);
+                var bg=c.images[0];GUI.DrawTexture(RectAt(bg.rect,offset),CharacterCard(c,view.players[seat]),ScaleMode.StretchToFill,true);
                 var r=RectAt(c.name,offset);NamePanel(r,view.players[seat].name);
                 if(c.seat==0 && c.images.Length>1)GUI.DrawTexture(RectAt(c.images[1].rect,offset),Art("myself"),ScaleMode.ScaleToFit,true);
             }

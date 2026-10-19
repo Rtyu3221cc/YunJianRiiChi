@@ -19,7 +19,7 @@ namespace YunJian.Riichi {
                 if(i==0)client.LobbyOpenSettings();
                 else if(i==1)OpenGardenHelp();
                 else if(i==2)OpenRules();
-                else {string file=System.IO.Path.Combine(Application.persistentDataPath,"yunjian-lobby-"+System.DateTime.Now.ToString("yyyyMMdd-HHmmss")+".png");ScreenCapture.CaptureScreenshot(file);help="大厅截图已保存。";OpenModal("notice");}
+                else OpenLobbyIllustrationEditor();
             }
         }
     }

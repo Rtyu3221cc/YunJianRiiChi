@@ -387,7 +387,7 @@ namespace YunJian.Riichi
             float elapsed=ValidationFreeze?ValidationTime:Time.unscaledTime-started;
             if (current!=null && elapsed >= PlayLength) { CompleteHandoff(); Finish(); }
             if(cutInWin!=null && (ValidationFreeze?ValidationTime:Time.unscaledTime-callStarted)>=1.05f){
-                winCutIn.Play();GetComponent<GameAudio>()?.Cue("cutin");
+                var players=GetComponent<RiichiClient>().State?.players;winCutIn.Play(players!=null&&cutInWin.seat<players.Length?players[cutInWin.seat]:null);GetComponent<GameAudio>()?.Cue("cutin");
                 // Double ron shares one discarded tile. Show both winners first,
                 // then play that tile's complete burst after the final cut-in.
                 if(cutInWin.kind=="ron"&&!callEvents.Any(e=>e.kind=="ron"))SpawnWin(cutInWin,(ValidationFreeze?0:Time.unscaledTime)+WinCutIn.Duration+.18f);
@@ -433,7 +433,8 @@ namespace YunJian.Riichi
             if(IsWin(call)){NativeAnnouncements.DrawWin(call.kind,table.RelativeSeat(call.seat),n,width,height,ValidationFreeze?ValidationTime:Time.unscaledTime-callStarted);return;}
             string name=CallArt(call.kind);if(name==null)return;
             float time=ValidationFreeze?ValidationTime:Time.unscaledTime-callStarted;
-            nativeCallouts.Draw(name,table.RelativeSeat(call.seat),n,width,height,time);
+            var players=GetComponent<RiichiClient>().State?.players;
+            nativeCallouts.Draw(name,table.RelativeSeat(call.seat),n,width,height,time,players!=null&&call.seat<players.Length?players[call.seat]:null);
         }
 #if UNITY_EDITOR
         public void ValidationPlay(int seat,string kind,string tile=null,bool riichi=false,int riverIndex=0)

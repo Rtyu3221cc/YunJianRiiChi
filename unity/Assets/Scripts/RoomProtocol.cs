@@ -26,7 +26,8 @@ namespace YunJian.Riichi
     [Serializable] public class LobbyRoomView { public string category; public bool red, managed; }
     [Serializable] public class PlayerView
     {
-        public string name, avatar, autoReason;
+        public string name, avatar, autoReason, character;
+        public int skin;
         public bool bot, auto, ready, online, takeoverMask;
         public int score, wind, riichi, nuki, count;
         public string[] melds = new string[0];
@@ -49,6 +50,7 @@ namespace YunJian.Riichi
     [Serializable] public class RequestBody
     {
         public string op, token, host, name, pin, recovery, action, id, category, room;
+        public string character; public int skin;public bool randomCharacters;public CharacterChoice[] characterPool;
         public int version, n, rounds, seat, handSeq;
         public int idleSeconds=120;
         public bool red = true, bots, fillBots, lobbyFlow, ready, enabled, userActive, present=true;

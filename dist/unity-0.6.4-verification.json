@@ -1,0 +1,40 @@
+{
+  "version": "0.6.4",
+  "versionCode": 52,
+  "date": "2026-10-19",
+  "nodeTests": 129,
+  "nodeFailures": 0,
+  "characterProtocolGroups": 5,
+  "unityUnitChecks": 524,
+  "unitBreakdown": {
+    "character": 375,
+    "callout": 87,
+    "legacy": 62
+  },
+  "runtimeStages": {
+    "table": true,
+    "lobby": true,
+    "room": true
+  },
+  "characterUiChecks": [
+    "selected dorm diamond directly toggles favorite",
+    "first skin has no previous arrow",
+    "swipe selects contract skin and equip applies it",
+    "live button switches to static illustration",
+    "live button restores original skeleton animation",
+    "long-press sort order survives confirm",
+    "lobby illustration pose is saved per skin"
+  ],
+  "androidDeviceTested": false,
+  "artifactRedownloaded": false,
+  "apk": {
+    "file": "yunjian-riichi-unity-0.6.4.apk",
+    "bytes": 193584457,
+    "sha256": "5312613fe82472e4ebdc9a032ae67c8fada9b62299efca66b92f004cc809226b",
+    "v1": true,
+    "v2": true,
+    "independentV1": true,
+    "certificateSHA256": "d1d8e506c6d3b62e9610dce294c07008057318fa9bafae702fb8b01f35f0dc2f",
+    "alignment16KB": true
+  }
+}

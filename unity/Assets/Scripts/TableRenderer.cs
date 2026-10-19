@@ -185,7 +185,7 @@ namespace YunJian.Riichi
                 }
                 catch { /* Keep default avatar for malformed saved data. */ }
             }
-            return Resources.Load<Texture2D>("Majsoul/Portraits/" + (p.bot&&!p.takeoverMask ? "yiji" : "erjietang"));
+            return CharacterRoster.Portrait(p,"smallhead");
         }
         public void Clear(bool resetOpening=true,bool keepHand=false)
         {

@@ -194,6 +194,7 @@ namespace YunJian.Riichi
         IEnumerator Send(RequestBody req, Action success = null, bool poll = false)
         {
             if (Busy) yield break;
+            if(req.op=="create"||req.op=="join"||req.op=="character")CharacterRoster.FillRequest(req);
             if (!ValidEndpoint(endpoint)) { message = "请输入局域网 IPv4 地址，端口固定为 8765"; yield break; }
             if(active&&pendingUserActivity){req.userActive=true;pendingUserActivity=false;}
             Busy = true;
@@ -238,6 +239,7 @@ namespace YunJian.Riichi
                 success?.Invoke();
             }
         }
+        public void PublishCharacterSelection(){if(active&&State?.phase=="lobby"&&!Busy)StartCoroutine(Send(new RequestBody{op="character"}));}
         void ResetWaitPress()
         {waitPressCaptured=false;waitPressCancelled=false;waitHoldVisible=false;}
         void ObserveWaitState()

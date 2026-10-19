@@ -15,6 +15,9 @@ namespace YunJian.Riichi
         static Manifest manifest;
         static readonly Dictionary<string,AudioClip> clips=new Dictionary<string,AudioClip>();
         static readonly Dictionary<WinDetail,Plan> plans=new Dictionary<WinDetail,Plan>();
+        static readonly Dictionary<WinDetail,string> characters=new Dictionary<WinDetail,string>();
+        public static void BindCharacters(RoomView view){if(characters.Count>64){characters.Clear();plans.Clear();}foreach(var d in view?.result?.details??new WinDetail[0])if(d.seat>=0&&d.seat<view.players.Length)characters[d]=view.players[d.seat].character??"yiji";}
+        static string Character(WinDetail detail)=>characters.TryGetValue(detail,out var c)?c:"yiji";
         AudioSource output;
         bool enabledVoice=true,suspended;
         string key;float previous=-1;int winner=-1,skipSerial;bool wasScores,wasFinal;
@@ -44,15 +47,16 @@ namespace YunJian.Riichi
             if(plans.TryGetValue(d,out var plan))return plan;
             if(plans.Count>32)plans.Clear();float at=.6f;
             var rows=(d.yaku??new YakuDetail[0]).Select((y,i)=>new{y,i,order=Entry(y)?.order??(Wind(y.name)!=null?(y.name.StartsWith("場風") || y.name.StartsWith("场风")?160:150):1000)}).OrderBy(x=>x.order).ThenBy(x=>x.i).Select(x=>new Row{yaku=x.y,voice=YakuVoice(x.y,d)}).ToArray();
-            foreach(var row in rows){row.at=at;at+=VoiceDuration(row.voice);}
+            string character=Character(d);
+            foreach(var row in rows){row.at=at;at+=character=="yiji"?VoiceDuration(row.voice):Mathf.Max(.5f,CharacterVoices.Clip(character,row.voice)?.length??.5f);}
             plan=new Plan{rows=rows,fuAt=at+(d.score?.damanguan>0?.7f:.3f),titleVoice=LimitVoice(d),drum=LimitDrum(d)};
-            plan.pointsAt=plan.fuAt+.7f;plan.titleAt=plan.pointsAt+(plan.titleVoice==null?0:.7f);plan.end=plan.titleAt+(plan.titleVoice==null?.3f:.5f+(Clip(plan.titleVoice)?.length??.5f)+.3f);plans[d]=plan;return plan;
+            plan.pointsAt=plan.fuAt+.7f;plan.titleAt=plan.pointsAt+(plan.titleVoice==null?0:.7f);plan.end=plan.titleAt+(plan.titleVoice==null?.3f:.5f+(CharacterVoices.Clip(character,plan.titleVoice)?.length??Clip(plan.titleVoice)?.length??.5f)+.3f);plans[d]=plan;return plan;
         }
         void Awake(){output=gameObject.AddComponent<AudioSource>();output.playOnAwake=false;output.spatialBlend=0;}
         public void Configure(bool enabled,float volume){enabledVoice=enabled;output.volume=Mathf.Clamp01(volume);if(!enabled)output.Stop();}
         public void Suspend(bool flag){suspended=flag;if(flag)output.Stop();}
         public void Reset(){output.Stop();key=null;previous=-1;winner=-1;wasScores=false;wasFinal=false;}
-        void Voice(string name){if(string.IsNullOrEmpty(name))return;PlayedKeys.Add(name);if(enabledVoice && !suspended && Clip(name)!=null){output.clip=Clip(name);output.Play();VoicesPlayed++;}}
+        void Voice(string name,string character="yiji"){if(string.IsNullOrEmpty(name))return;PlayedKeys.Add(name);var clip=CharacterVoices.Clip(character,name);if(clip==null&&character=="yiji")clip=Clip(name);if(enabledVoice && !suspended && clip!=null){output.clip=clip;output.Play();VoicesPlayed++;}}
         // Called once per frame from the client, never from repeated GUI passes.
         public void Tick(RoomView view,ResultPresentation display,bool visible,GameAudio audio,bool validation=false){
             if(view?.result==null || view.phase!="result"){if(key!=null)Reset();return;}
@@ -68,7 +72,7 @@ namespace YunJian.Riichi
             if(jump)output.Stop();
             if(!jump){
                 if(display.ShowingDraw){
-                    if(crossed(0)){string abort=view.result.title=="九种九牌"?"gameend_jiuzhongjiupai":view.result.title=="四风连打"?"gameend_sifenglianda":view.result.title=="四家立直"?"gameend_sijializhi":view.result.title=="四杠散了"?"gameend_sigangliuju":null;Voice(abort);}
+                    if(crossed(0)){string abort=view.result.title=="九种九牌"?"gameend_jiuzhongjiupai":view.result.title=="四风连打"?"gameend_sifenglianda":view.result.title=="四家立直"?"gameend_sijializhi":view.result.title=="四杠散了"?"gameend_sigangliuju":null;Voice(abort,view.players[view.result.abortHand?.seat??view.you].character);}
                 }else if(display.ShowingFinal){}
                 else if(display.ShowingScores){
                     const float step=.15f;
@@ -76,9 +80,9 @@ namespace YunJian.Riichi
                     if(age>=ResultPresentation.ScoreCountStart&&age<ResultPresentation.ScoreCountEnd&&beat>priorBeat&&view.result.delta?.Any(d=>d!=0)==true)audio.Cue("score_change");
                 }
                 else if(view.result.details!=null && winner<view.result.details.Length){
-                    var plan=Sequence(view.result.details[winner]);foreach(var row in plan.rows)if(crossed(row.at)){Voice(row.voice);audio.Cue("hule_fan_out",row.voice==null?1:.5f);}
+                    var detail=view.result.details[winner];var plan=Sequence(detail);string character=view.players[detail.seat].character;foreach(var row in plan.rows)if(crossed(row.at)){Voice(row.voice,character);audio.Cue("hule_fan_out",row.voice==null?1:.5f);}
                     if(crossed(plan.fuAt))audio.Cue("fu_appear");if(crossed(plan.pointsAt))audio.Cue("score_appear");
-                    if(plan.titleVoice!=null){if(crossed(plan.titleAt+(plan.drum=="yakuman"?.15f:.3f)))audio.Cue(plan.drum);if(crossed(plan.titleAt+.5f))Voice(plan.titleVoice);}
+                    if(plan.titleVoice!=null){if(crossed(plan.titleAt+(plan.drum=="yakuman"?.15f:.3f)))audio.Cue(plan.drum);if(crossed(plan.titleAt+.5f))Voice(plan.titleVoice,character);}
                 }
             }
             // Rank arrival is still audible when the player skips its entrance.

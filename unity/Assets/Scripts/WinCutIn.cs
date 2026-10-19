@@ -24,7 +24,8 @@ namespace YunJian.Riichi {
   public bool Freeze;public float FrozenAge;
   public float Age=>Freeze?FrozenAge:Time.unscaledTime-began;
   public bool Active=>canvas!=null && Age<Duration;
-  public void Play(){Reset();Build();began=Time.unscaledTime;}
+  PlayerView player;
+  public void Play(PlayerView character=null){Reset();player=character;Build();began=Time.unscaledTime;}
   public void Reset(){if(canvas!=null){canvas.SetActive(false);UnityEngine.Object.Destroy(canvas);}if(camera!=null)UnityEngine.Object.Destroy(camera.gameObject);if(image!=null){image.Release();UnityEngine.Object.Destroy(image);}canvas=null;camera=null;image=null;nodes.Clear();curves.Clear();Freeze=false;}
   void Build(){
    canvas=new GameObject("APK UI_CutIn",typeof(RectTransform),typeof(Canvas),typeof(CanvasScaler));
@@ -38,8 +39,8 @@ namespace YunJian.Riichi {
     var parent=path.Contains("/")?path.Substring(0,path.LastIndexOf('/')):"";
     var go=new GameObject(path.Substring(path.LastIndexOf('/')+1),typeof(RectTransform));go.layer=15;var rt=go.GetComponent<RectTransform>();rt.SetParent(nodes[parent],false);
     rt.anchorMin=new Vector2(n.anchorMin[0],n.anchorMin[1]);rt.anchorMax=new Vector2(n.anchorMax[0],n.anchorMax[1]);rt.pivot=new Vector2(n.pivot[0],n.pivot[1]);rt.sizeDelta=new Vector2(n.size[0],n.size[1]);rt.anchoredPosition=new Vector2(n.position[0],n.position[1]);rt.localRotation=new Quaternion(n.rotation[0],n.rotation[1],n.rotation[2],n.rotation[3]);rt.localScale=new Vector3(n.scale[0],n.scale[1],n.scale[2]);nodes[path]=rt;
-    string image=path=="root/backline"?"Majsoul/Review1012c/cutinbg":path=="root/frontline"?"Majsoul/Review1012c/cutin_line":path.EndsWith("/illust")?"Majsoul/Actions/yiji-full":null;
-    if(image!=null){var raw=go.AddComponent<RawImage>();raw.texture=Resources.Load<Texture2D>(image);raw.raycastTarget=false;}
+    string image=path=="root/backline"?"Majsoul/Review1012c/cutinbg":path=="root/frontline"?"Majsoul/Review1012c/cutin_line":path.EndsWith("/illust")?"character":null;
+    if(image!=null){var raw=go.AddComponent<RawImage>();raw.texture=path.EndsWith("/illust")?CharacterRoster.PresentationPortrait(player):Resources.Load<Texture2D>(image);raw.raycastTarget=false;if(path.EndsWith("/illust")&&raw.texture!=null)rt.sizeDelta=new Vector2(rt.sizeDelta.x,rt.sizeDelta.x*raw.texture.height/raw.texture.width);}
     if(path.EndsWith("/mask")){go.AddComponent<Image>().raycastTarget=false;go.AddComponent<Mask>().showMaskGraphic=false;}
     if(path=="root/container_illust"){portrait=go.AddComponent<CanvasGroup>();portrait.blocksRaycasts=false;}
    }

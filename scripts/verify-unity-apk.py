@@ -7,15 +7,15 @@ from zipfile import ZipFile
 from importlib import import_module
 
 root = Path(__file__).resolve().parent.parent
-apk = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else root / 'unity/Builds/yunjian-riichi-unity-0.6.3.apk'
+apk = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else root / 'unity/Builds/yunjian-riichi-unity-0.6.4.apk'
 assets = root / 'app/src/main/assets'
 signature = import_module('verify-apk-signature').verify_signature(apk)
 with ZipFile(apk) as archive:
     assert archive.testzip() is None
     names = archive.namelist()
     metadata=archive.read('assets/bin/Data/Managed/Metadata/global-metadata.dat')
-    for runtime_class in (b'NativeSettingsUi',b'NativeYakuUi',b'PlaylistAudio',b'AppPreferences',b'RiichiDiscardVisual',b'NativeCallouts',b'WordRect'):
-        assert runtime_class in metadata,'Missing compiled 0.6.3 code: '+repr(runtime_class)
+    for runtime_class in (b'NativeSettingsUi',b'NativeYakuUi',b'PlaylistAudio',b'AppPreferences',b'RiichiDiscardVisual',b'NativeCallouts',b'WordRect',b'CharacterRoster',b'CharacterIllustration',b'CharacterFraming',b'CharacterVoices',b'LobbyIllustrationSettings',b'LobbySakura'):
+        assert runtime_class in metadata,'Missing compiled release code: '+repr(runtime_class)
     assert 'META-INF/MANIFEST.MF' in names, 'Missing v1/JAR signature manifest; run scripts/sign-unity-apk.ps1'
     for source in (root/'unity/Assets/Resources/Majsoul/Actions').glob('riichi-fire-*'):
         if source.suffix not in ('.png','.json'):continue
@@ -140,6 +140,20 @@ with ZipFile(apk) as archive:
     print('PASS: all five APK callout word textures preserve 187x143 original canvases.')
     shader_data = b''.join(archive.read(n) for n in names if 'globalgamemanagers.assets' in n)
     assert b'YunJian/NativeCallout' in shader_data,'Missing compiled four-direction callout shader'
+    character_root=root/'unity/Assets/Resources/Majsoul/Characters'
+    character_counts={suffix:0 for suffix in ['.png','.mp3','.bytes','.json','.ttf','.txt']}
+    for source in character_root.rglob('*'):
+        if source.suffix not in character_counts:continue
+        guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text(encoding='utf8')).group(1)
+        entry='assets/bin/Data/'+guid
+        assert entry in names,'Missing offline character resource: '+source.relative_to(character_root).as_posix()
+        character_counts[source.suffix]+=1
+        if source.suffix in ['.json','.bytes','.txt']:assert source.read_bytes() in archive.read(entry),'Stale character metadata or skeleton: '+source.name
+        if source.suffix=='.mp3':assert entry+'.resource' in names and archive.getinfo(entry+'.resource').file_size>0,'Missing original character audio data: '+source.name
+    assert character_counts['.mp3']==626,'Incomplete four-character voice pack'
+    for shader in [b'YunJian/CharacterSpine',b'YunJian/CharacterStraightAlpha',b'YunJian/CharacterIntro']:
+        assert shader in shader_data,'Missing character shader in player build: '+repr(shader)
+    print('PASS: complete four-character offline resources, 626 original voice clips, native skeleton bytes and player shaders.',character_counts)
     for source in (root/'unity/Assets/Resources/Majsoul/Settings').rglob('*'):
         if source.suffix not in ('.png','.json','.ttf','.mp3'):continue
         guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text(encoding='utf8')).group(1)
@@ -163,7 +177,7 @@ with ZipFile(apk) as archive:
 dist = root / 'dist'
 output = dist / apk.name
 output.write_bytes(apk.read_bytes())
-checksum = 'SHA256-unity-0.6.3.txt' if len(sys.argv) == 1 else 'SHA256-' + output.stem + '.txt'
+checksum = 'SHA256-unity-0.6.4.txt' if len(sys.argv) == 1 else 'SHA256-' + output.stem + '.txt'
 (dist / checksum).write_text(hashlib.sha256(output.read_bytes()).hexdigest().upper() + '  ' + output.name + '\n', encoding='utf8')
 print('PASS: APK ZIP integrity, current offline assets, phone host/JNI, ARM64 + ARMv7, original tile atlases, exact hand animation bytes, action textures, original turn-light assets and compiled shaders.')
 print(output.name, output.stat().st_size, hashlib.sha256(output.read_bytes()).hexdigest())
