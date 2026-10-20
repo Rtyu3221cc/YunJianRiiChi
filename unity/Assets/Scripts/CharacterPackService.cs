@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 namespace YunJian.Riichi {
-    [Serializable] public sealed class CharacterPackRecord {public string key,name,file,sha256,url;public int id,version;public long bytes;public bool builtin,recommended,available;public int[] skins;}
+    [Serializable] public sealed class CharacterPackRecord {public string key,name,file,sha256,url,compression;public int id,version;public long bytes;public bool builtin,recommended,available;public int[] skins;}
     [Serializable] public sealed class CharacterPackCatalog {public int schema,protocol;public string platform;public CharacterPackRecord[] packs;}
     // Content identity is independent of the transport URL. Receipts are written last.
     public sealed class CharacterPackService:MonoBehaviour {
@@ -19,6 +19,11 @@ namespace YunJian.Riichi {
         public static event Action Changed;
         static CharacterPackCatalog catalog;
         static readonly Dictionary<string,AssetBundle> bundles=new Dictionary<string,AssetBundle>();
+        static readonly HashSet<string> ready=new HashSet<string>();
+        static readonly Dictionary<string,int> lastFrame=new Dictionary<string,int>();
+        static readonly Dictionary<string,long> cachedBytes=new Dictionary<string,long>();
+        static readonly Dictionary<string,HashSet<UnityEngine.Object>> cachedAssets=new Dictionary<string,HashSet<UnityEngine.Object>>();
+        const long CacheBudget=192L*1024*1024;const int BundleLimit=32;
         static readonly Dictionary<string,int> pins=new Dictionary<string,int>();
         static readonly Dictionary<string,string> owners=new Dictionary<string,string>();
         readonly Queue<CharacterPackRecord> queue=new Queue<CharacterPackRecord>();
@@ -36,6 +41,35 @@ namespace YunJian.Riichi {
         public static string FilePath(CharacterPackRecord pack){if(!System.Text.RegularExpressions.Regex.IsMatch(pack.key,"^[a-z0-9_-]+$"))throw new InvalidDataException("资源标识无效");return Path.Combine(Root,pack.key,pack.sha256+".bundle");}
         public static bool Installed(string key){var p=Find(key);if(p==null)return false;if(p.builtin)return true;if(CharacterRoster.PreviewOnly&&!RespectPreviewAvailability)return p.available;if(!p.available||string.IsNullOrEmpty(p.sha256))return false;string f=FilePath(p);return File.Exists(f)&&new FileInfo(f).Length==p.bytes&&File.Exists(f+".ok")&&File.ReadAllText(f+".ok")==p.sha256;}
         public static bool Protected(string key)=>key=="yiji"||key=="erjietang";
+        // Verified in this session; verification does not retain every pack in RAM.
+        public static bool Ready(string key)=>Installed(key)&&(Protected(key)||ready.Contains(key));
+        public static void Touch(string relative){string key=Owner(relative);if(key!=null&&bundles.ContainsKey(key))lastFrame[key]=Time.frameCount;}
+        static void ReleaseCached(string key){if(bundles.TryGetValue(key,out var b)&&b!=null)b.Unload(true);bundles.Remove(key);lastFrame.Remove(key);cachedBytes.Remove(key);cachedAssets.Remove(key);}
+        static void TrimCache(){
+            while(bundles.Count>BundleLimit||cachedBytes.Values.Sum()>CacheBudget){
+                string active=CharacterRoster.Active.character,dorm=CharacterRoster.Dorm.key;
+                string key=lastFrame.Where(p=>p.Value<Time.frameCount&&p.Key!=active&&p.Key!=dorm&&!Pinned(p.Key)).OrderBy(p=>p.Value).Select(p=>p.Key).FirstOrDefault();
+                if(key==null)break;ReleaseCached(key);Revision++;
+            }
+        }
+        void LateUpdate(){TrimCache();}
+        static void RejectPack(CharacterPackRecord p,AssetBundle bundle){
+            if(bundle!=null)bundle.Unload(true);bundles.Remove(p.key);lastFrame.Remove(p.key);cachedBytes.Remove(p.key);cachedAssets.Remove(p.key);ready.Remove(p.key);
+            string receipt=FilePath(p)+".ok";if(File.Exists(receipt))File.Delete(receipt);
+            if(Instance!=null)Instance.Results[p.key]="加载失败，可重新下载";Notify();
+        }
+        static bool HasPortrait(CharacterPackRecord p,AssetBundle b)=>b!=null&&p.skins.Length>0&&b.LoadAsset<Texture2D>("skins/"+p.skins[0]+"/bighead")!=null;
+        static void VerifyBundle(CharacterPackRecord p){
+            if(bundles.TryGetValue(p.key,out var cached)&&cached!=null){LoadBundle(p,out _);return;}
+            var b=AssetBundle.LoadFromFile(FilePath(p));if(!HasPortrait(p,b)){RejectPack(p,b);return;}
+            b.Unload(true);ready.Add(p.key);
+        }
+        static bool LoadBundle(CharacterPackRecord p,out AssetBundle bundle){
+            if(bundles.TryGetValue(p.key,out bundle)&&bundle!=null&&ready.Contains(p.key)){lastFrame[p.key]=Time.frameCount;return true;}
+            if(!bundles.TryGetValue(p.key,out bundle)||bundle==null)bundle=AssetBundle.LoadFromFile(FilePath(p));
+            if(!HasPortrait(p,bundle)){RejectPack(p,bundle);bundle=null;return false;}
+            bundles[p.key]=bundle;lastFrame[p.key]=Time.frameCount;ready.Add(p.key);return true;
+        }
         public static bool ContainsSkin(string key,int skin)=>Find(key)?.skins?.Contains(skin)==true;
         public static bool Supports(string key,int skin)=>Installed(key)&&ContainsSkin(key,skin);
         public static string Owner(string relative){if(owners.TryGetValue(relative,out var owner))return owner;var parts=relative.Split('/');if(parts.Length<2)return null;if(parts[0]=="Voice"||parts[0]=="Emoji")owner=parts[1];else if((parts[0]=="Skins"||parts[0]=="Spine")&&int.TryParse(parts[1],out int skin))owner=All.FirstOrDefault(p=>p.skins.Contains(skin))?.key;owners[relative]=owner;return owner;}
@@ -45,8 +79,10 @@ namespace YunJian.Riichi {
             if(CharacterRoster.PreviewOnly&&!RespectPreviewAvailability)return UnityEditor.AssetDatabase.LoadAssetAtPath<T>("Assets/CharacterPacks/Source/"+owner+"/"+relative+Extension<T>(relative));
 #endif
             if(!Installed(owner))return null;
-            if(!bundles.TryGetValue(owner,out var bundle)||bundle==null){bundle=AssetBundle.LoadFromFile(FilePath(Find(owner)));if(bundle==null)return null;bundles[owner]=bundle;}
-            return bundle.LoadAsset<T>(relative.ToLowerInvariant());
+            if(!LoadBundle(Find(owner),out var bundle))return null;
+            var asset=bundle.LoadAsset<T>(relative.ToLowerInvariant());
+            if(asset!=null){if(!cachedAssets.TryGetValue(owner,out var ids))cachedAssets[owner]=ids=new HashSet<UnityEngine.Object>();if(ids.Add(asset)){long bytes=asset is Texture2D texture?(long)texture.width*texture.height*4:asset is AudioClip clip?(long)clip.samples*clip.channels*4:0;cachedBytes[owner]=(cachedBytes.TryGetValue(owner,out long size)?size:0)+bytes;}TrimCache();}
+            return asset;
         }
         static string Extension<T>(string relative){if(typeof(T)==typeof(Texture2D))return ".png";if(typeof(T)==typeof(AudioClip))return ".mp3";if(relative.EndsWith("/skeleton"))return ".bytes";if(relative.EndsWith("/atlas")||relative.EndsWith("/info"))return ".txt";return ".json";}
         public static Texture2D Thumbnail(string key){var p=Find(key);return p==null?null:Resources.Load<Texture2D>("Majsoul/CharacterDirectory/Avatars/"+p.id);}
@@ -56,11 +92,11 @@ namespace YunJian.Riichi {
         static void Notify(){Revision++;CharacterRoster.ReconcileInstalled();Changed?.Invoke();}
         public static bool Delete(string key,out string reason){
             reason="";var p=Find(key);if(p==null||p.builtin||Protected(key)){reason="基础角色不可删除";return false;}if(Pinned(key)){reason="资源正在对局或传输中使用，请稍后删除";return false;}if(Instance!=null&&(Instance.DownloadKey==key||Instance.queued.Contains(key))){reason="请先取消该角色的下载";return false;}
-            if(bundles.TryGetValue(key,out var bundle)){if(bundle!=null)bundle.Unload(true);bundles.Remove(key);}var folder=Path.GetDirectoryName(FilePath(p));if(Directory.Exists(folder)){if(!Path.GetFullPath(folder).StartsWith(Path.GetFullPath(Root)+Path.DirectorySeparatorChar,StringComparison.Ordinal))throw new InvalidDataException("资源路径越界");Directory.Delete(folder,true);}Instance?.Results.Remove(key);Notify();return true;
+            ready.Remove(key);ReleaseCached(key);var folder=Path.GetDirectoryName(FilePath(p));if(Directory.Exists(folder)){if(!Path.GetFullPath(folder).StartsWith(Path.GetFullPath(Root)+Path.DirectorySeparatorChar,StringComparison.Ordinal))throw new InvalidDataException("资源路径越界");Directory.Delete(folder,true);}Instance?.Results.Remove(key);Notify();return true;
         }
         public static void DeleteAll(){foreach(var p in All.Where(p=>!p.builtin))Delete(p.key,out _);}
         void Awake(){if(Instance!=null&&Instance!=this){Destroy(this);return;}Instance=this;Ensure();Directory.CreateDirectory(Root);gameObject.AddComponent<CharacterResourceOverlay>();StartCoroutine(ValidateInstalled());}
-        IEnumerator ValidateInstalled(){foreach(var p in All.Where(p=>!p.builtin&&p.available&&Installed(p.key))){string path=FilePath(p);var task=Task.Run(()=>HashFile(path));while(!task.IsCompleted)yield return null;if(task.IsFaulted||task.Result!=p.sha256){File.Delete(path+".ok");Notify();}}}
+        IEnumerator ValidateInstalled(){foreach(var p in All.Where(p=>!p.builtin&&p.available&&Installed(p.key)).ToArray()){string path=FilePath(p);var task=Task.Run(()=>HashFile(path));while(!task.IsCompleted)yield return null;if(!Installed(p.key))continue;if(task.IsFaulted||task.Result!=p.sha256){ready.Remove(p.key);ReleaseCached(p.key);File.Delete(path+".ok");Notify();}else VerifyBundle(p);yield return null;}}
         public void Download(string key,string source=null){var p=Find(key);if(p==null||p.builtin||!p.available||Installed(key)||!queued.Add(key))return;if(source!=null)sourceUrls[key]=source;queue.Enqueue(p);if(!processing)StartCoroutine(ProcessQueue());}
         readonly Dictionary<string,string> sourceUrls=new Dictionary<string,string>();
         public void DownloadGroup(bool recommended){foreach(var p in All.Where(p=>p.available&&!p.builtin&&(!recommended||p.recommended)))Download(p.key);}
@@ -82,15 +118,31 @@ namespace YunJian.Riichi {
                 }
                 if(!File.Exists(part)||new FileInfo(part).Length!=p.bytes){Error="文件大小不符，请重试";Stage="下载未完成";yield break;}
                 Stage="校验资源";Progress=1;var task=Task.Run(()=>HashFile(part));while(!task.IsCompleted)yield return null;if(cancel){Stage="已取消";yield break;}if(task.IsFaulted||task.Result!=p.sha256){File.Delete(part);Error="资源校验失败，未安装";Stage="校验失败";yield break;}
-                if(bundles.TryGetValue(p.key,out var previous)&&previous!=null)previous.Unload(true);if(File.Exists(final))File.Delete(final);File.Move(part,final);
-                Stage="加载资源";var load=AssetBundle.LoadFromFileAsync(final);yield return load;if(load.assetBundle==null){File.Delete(final);Error="资源包与当前客户端不兼容";Stage="加载失败";yield break;}bundles[p.key]=load.assetBundle;
-                File.WriteAllText(final+".ok.tmp",p.sha256);if(File.Exists(final+".ok"))File.Replace(final+".ok.tmp",final+".ok",null);else File.Move(final+".ok.tmp",final+".ok");Notify();Stage="已安装";yield break;
+                ready.Remove(p.key);ReleaseCached(p.key);if(File.Exists(final))File.Delete(final);File.Move(part,final);
+                Stage="加载资源";var load=AssetBundle.LoadFromFileAsync(final);yield return load;if(load.assetBundle==null){File.Delete(final);Error="资源包与当前客户端不兼容";Stage="加载失败";yield break;}
+                if(!HasPortrait(p,load.assetBundle)){load.assetBundle.Unload(true);File.Delete(final);Error="资源包缺少角色头像，未安装";Stage="加载失败";yield break;}
+                load.assetBundle.Unload(true);
+                File.WriteAllText(final+".ok.tmp",p.sha256);if(File.Exists(final+".ok"))File.Replace(final+".ok.tmp",final+".ok",null);else File.Move(final+".ok.tmp",final+".ok");ready.Add(p.key);Notify();Stage="已安装";yield break;
             }
             Error="下载源不支持续传，请重试";
         }
         public static bool StartupSeen=>File.Exists(Path.Combine(Root,"startup-seen"));
         public static void MarkStartupSeen(){Directory.CreateDirectory(Root);File.WriteAllText(Path.Combine(Root,"startup-seen"),"1");}
         void OnDestroy(){request?.Abort();request?.Dispose();if(Instance==this)Instance=null;}
-        public static void ResetForReview(){foreach(var b in bundles.Values)if(b!=null)b.Unload(true);bundles.Clear();pins.Clear();owners.Clear();catalog=null;Revision++;}
+        public static void ResetForReview(){foreach(var b in bundles.Values)if(b!=null)b.Unload(true);bundles.Clear();ready.Clear();lastFrame.Clear();cachedBytes.Clear();cachedAssets.Clear();pins.Clear();owners.Clear();catalog=null;Revision++;}
+#if UNITY_EDITOR
+        public static int ReviewLoadedBundles=>bundles.Count;
+        [Serializable] sealed class EditorBuildPlan {public string output;}
+        public static string EditorBundlePath(CharacterPackRecord pack){
+            string filename=string.IsNullOrEmpty(pack.file)?pack.key+"-v"+pack.version+"-windows.bundle":pack.file;
+            string root=Path.GetFullPath(Path.Combine(Application.dataPath,"../.."));
+            var asset=Resources.Load<TextAsset>("Majsoul/CharacterDirectory/build-plan");var plan=asset==null?null:JsonUtility.FromJson<EditorBuildPlan>(asset.text);
+            foreach(string folder in new[]{plan?.output,"build/character-resources-all","build/character-resources-v1","build/character-pack-experiment","build/character-packs-cache"}){
+                if(string.IsNullOrEmpty(folder))continue;string file=Path.GetFullPath(Path.Combine(root,folder,"windows",filename));
+                if(file.StartsWith(root+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)&&File.Exists(file))return file;
+            }
+            throw new FileNotFoundException("缺少验证资源包，请先构建或下载编辑器缓存",filename);
+        }
+#endif
     }
 }

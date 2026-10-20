@@ -11,6 +11,7 @@ namespace YunJian.Riichi {
         float skinPosition,skinFrom,skinPressPosition,skinPressX,sortPressedAt;
         int skinPressedCard=-1;
         string sortPressed;
+        readonly NativeScroll sortScroller=new NativeScroll();bool sortRailDragging;float sortRailGrab;
         CharacterSkin previousIllustration;
         float previousSkinBegan=-10;
         Vector2 skinDescriptionScroll;
@@ -130,8 +131,11 @@ namespace YunJian.Riichi {
             float x=width-1016;var panel=new Rect(x,146.8f,766,892);Tint(new Rect(x+17.5f,164.3f,731,857),new Color(.008f,.006f,.02f,.72f));CSlice(panel,"bg_bound");
             CImage(new Rect(x+437,66.8f,284,84),"tab_gray3");CImage(new Rect(x+191.53f,66.766f,284,84),"tab_bright2");Label(new Rect(x+256.03f,86.676f,180,63.98f),"角色",CText(42,TextAnchor.MiddleCenter,true),new Color(.2f,.1f,.04f));Label(new Rect(x+501.5f,86.676f,180,63.98f),"装扮",CText(42,TextAnchor.MiddleCenter,true),CharacterGold);
             var roles=CharacterRoster.Ordered(dormStars);var cardView=new Rect(x+30,190,700,720);DragCharacterPane(dormRoleDrag,cardView,new Vector2(700,Mathf.CeilToInt(roles.Length/3f)*198+30),ref dormRoleScroll,false);GUI.BeginGroup(cardView);var previousOffset=targetOffset;targetOffset+=cardView.position;for(int i=0;i<roles.Length;i++){
+                // The opaque sorting panel covers these portraits after its
+                // transition. Avoid keeping hidden cards alive in the cache.
+                if(sortOpen&&!sortClosing&&Now-sortBegan>=.18f)continue;
                 var r=new Rect(16.05f+i%3*220,18.3f+i/3*198-dormRoleScroll.y,204,192);if(r.yMax<0||r.y>cardView.height)continue;var role=roles[i];bool available=CharacterRoster.Available(role.key),selected=available&&role.key==CurrentCharacter.key;DrawCharacterCard(r,role,CharacterRoster.Outfit(role.key),selected,true);
-                if(!available){Tint(r,new Color(0,0,0,.66f));Label(new Rect(r.x+45,r.y+140,140,42),"未下载",CText(25),new Color(.85f,.85f,.85f));if(Hit(r,"dorm-character-"+role.key))CharacterResourceUi.Current.Ask(role.key);continue;}
+                if(!available){Tint(r,new Color(0,0,0,.66f));Label(new Rect(r.x+45,r.y+140,140,42),"未下载",CText(25,TextAnchor.MiddleCenter,true),new Color(.85f,.85f,.85f));if(Hit(r,"dorm-character-"+role.key))CharacterResourceUi.Current.Ask(role.key);continue;}
                 var star=new Rect(r.x+.15f,r.y+147,40,40);if((selected||CharacterRoster.Favorite(role.key))&&Hit(star,"dorm-star-"+role.key)){CharacterRoster.Star(role.key);continue;}if(Hit(r,"dorm-character-"+role.key))SelectDorm(role);
             }
             targetOffset=previousOffset;GUI.EndGroup();
@@ -161,7 +165,7 @@ namespace YunJian.Riichi {
             var portrait=new Rect(405.3f,76,204,204);CImage(portrait,"kuangbg");var head=CharacterRoster.Texture("Skins/"+CurrentOutfit.id+"/bighead");if(head!=null)GUI.DrawTexture(new Rect(portrait.x+3,portrait.y+3,198,198),head,ScaleMode.ScaleToFit);CImage(portrait,"kuangbound");CImage(new Rect(portrait.x+140,portrait.y+139,75,75),"bf_skin");if(Hit(portrait,"info-skins"))OpenSkins(DormView.Info);
             Label(new Rect(4,286,100,32),"简介：",NText("profile-label",26,TextAnchor.MiddleLeft),CharacterGold);Label(new Rect(35,325,578,introHeight),c.description,NText("profile-body",26,TextAnchor.UpperLeft,true),new Color(.85f,.85f,.9f));
             CImage(new Rect(0,emojiTop,294,51),"bf_title_bg");Label(new Rect(19.8f,emojiTop-1.5f,240,48),"聊天表情",NText("profile-heading",34,TextAnchor.MiddleLeft),CharacterGold);
-            for(int i=0;i<c.emojis.Length;i++){var r=new Rect(i%4*155,emojiTop+84+i/4*170,150,150);var t=CharacterRoster.Texture(c.emojis[i]);if(t!=null)GUI.DrawTexture(r,t,ScaleMode.ScaleToFit);CImage(r,"bound_emo");if(Hit(r,"character-expression-"+i))expression=i;}
+            for(int i=0;i<c.emojis.Length;i++){var r=new Rect(i%4*155,emojiTop+84+i/4*170,150,150);var t=CharacterRoster.Texture(c.emojis[i]);if(t!=null)GUI.DrawTexture(r,t,ScaleMode.ScaleToFit);CSlice(r,"bound_emo");if(Hit(r,"character-expression-"+i))expression=i;}
             GUI.EndScrollView();DrawInfoScrollbar(viewport,contentHeight);
         }
         void DrawInfoScrollbar(Rect r,float total){var rail=new Rect(r.xMax+19,383.5f,6.4f,622);CImage(rail,"ss_slidebar");float p=total<=r.height?0:Mathf.Clamp01(infoScroll.y/(total-r.height));CImage(new Rect(rail.center.x-17,rail.y+p*(rail.height-34),34,34),"ss_slidebtn");}
@@ -229,22 +233,41 @@ namespace YunJian.Riichi {
             if(Input.touchCount==2){appreciationDragging=false;float d=Vector2.Distance(Input.GetTouch(0).position,Input.GetTouch(1).position);if(pinchStart>0)zoom=Mathf.Clamp(zoom*d/pinchStart,.35f,2.3f);pinchStart=d;}else pinchStart=0;
         }
         void DrawAppreciation(){MoveIllustration(ref appreciationPan,ref appreciationZoom);DrawNativeZoomControls(ref appreciationZoom);CImage(new Rect(width-292,31,61.5f,63),"bf_close");if(Hit(new Rect(width-305,15,100,100),"appreciation-close"))CharacterBack();}
-        void OpenCharacterSort(){sortOpen=true;sortClosing=false;sortBegan=Now;sortOrder=CharacterRoster.Ordered(false,true).Select(r=>r.key).ToArray();sortStars.Clear();foreach(var r in CharacterRoster.All)if(CharacterRoster.Favorite(r.key))sortStars.Add(r.key);sortDrag=sortPressed=null;Cue("btn_appear");}
+        void OpenCharacterSort(){sortOpen=true;sortClosing=false;sortBegan=Now;sortOrder=CharacterRoster.Ordered(false,true).Select(r=>r.key).ToArray();sortStars.Clear();foreach(var r in CharacterRoster.All)if(CharacterRoster.Favorite(r.key))sortStars.Add(r.key);sortDrag=sortPressed=null;sortScroller.Offset=0;sortRailDragging=false;Cue("btn_appear");}
         void CloseCharacterSort(bool save){if(sortClosing)return;if(save){foreach(var role in CharacterRoster.All)if(CharacterRoster.Favorite(role.key)!=sortStars.Contains(role.key))CharacterRoster.Star(role.key);CharacterRoster.Reorder(sortOrder);}sortClosing=true;sortCloseBegan=Now;Cue("btn_cancel");}
-        Rect SortCardRect(bool starred,int index)=>new Rect(width/2-724+index*184,starred?170:435,160,160);
+        Rect SortViewport=>new Rect(width/2-820,80,1640,784);
+        int SortStarCount=>sortOrder.Count(k=>sortStars.Contains(k));
+        int SortStarRows=>Mathf.Max(1,Mathf.CeilToInt(SortStarCount/8f));
+        float SortOtherHeading=>354+(SortStarRows-1)*184;
+        float SortContentHeight=>SortOtherHeading+81+(Mathf.Max(1,Mathf.CeilToInt((sortOrder.Length-SortStarCount)/8f))-1)*184+184-SortViewport.y;
+        Rect SortCardRect(bool starred,int index)=>new Rect(width/2-724+index%8*184,(starred?170:SortOtherHeading+81)+index/8*184-sortScroller.Offset,160,160);
         bool SortPointer(EventType type,Vector2 point){
-            if(!sortOpen||sortClosing||type!=EventType.MouseDown&&type!=EventType.MouseDrag&&type!=EventType.MouseUp)return false;sortPointer=point;
+            if(!sortOpen||sortClosing||type!=EventType.MouseDown&&type!=EventType.MouseDrag&&type!=EventType.MouseUp)return false;sortPointer=point;if(!SortViewport.Contains(point)&&sortPressed==null&&sortDrag==null)return false;
             foreach(bool starred in new[]{true,false}){var keys=sortOrder.Where(k=>sortStars.Contains(k)==starred).ToArray();for(int i=0;i<keys.Length;i++){var r=SortCardRect(starred,i);var star=new Rect(r.x+2,r.yMax-38,38,38);if(type==EventType.MouseDown&&r.Contains(point)&&!star.Contains(point)){sortPressed=keys[i];sortPressedAt=Now;pointerStart=point;sortDragOffset=point-r.position;return true;}if(type==EventType.MouseUp&&sortDrag!=null&&r.Contains(point)){if(sortDrag!=keys[i]){var list=sortOrder.ToList();list.Remove(sortDrag);list.Insert(Math.Max(0,list.IndexOf(keys[i])),sortDrag);sortOrder=list.ToArray();}sortDrag=sortPressed=null;return true;}}}
             if(type==EventType.MouseDrag&&sortPressed!=null&&(Now-sortPressedAt>.18f||Vector2.Distance(point,pointerStart)>12))sortDrag=sortPressed;
             if(type==EventType.MouseUp){bool was=sortPressed!=null;sortPressed=sortDrag=null;return was;}return sortDrag!=null;
         }
-        void DrawSortPortrait(Rect r,string key,bool dragging){var role=CharacterRoster.Find(key);CImage(new Rect(r.x+5,r.y+5,r.width-10,r.height-10),"kuangbg");var t=CharacterRoster.Texture("Skins/"+CharacterRoster.Outfit(key)+"/bighead");if(t!=null)GUI.DrawTexture(new Rect(r.x+4,r.y+4,r.width-8,r.height-8),t,ScaleMode.ScaleToFit);CImage(r,"kuangbound");if(dragging)CSlice(r,"select_box_blue");}
+        void DrawSortPortrait(Rect r,string key,bool dragging){var role=CharacterRoster.Find(key);CImage(new Rect(r.x+5,r.y+5,r.width-10,r.height-10),"kuangbg");var t=CharacterRoster.Texture("Skins/"+CharacterRoster.Outfit(key)+"/bighead")??CharacterPackService.Thumbnail(key);if(t!=null)GUI.DrawTexture(new Rect(r.x+4,r.y+4,r.width-8,r.height-8),t,ScaleMode.ScaleToFit);CImage(r,"kuangbound");if(dragging)CSlice(r,"select_box_blue");}
         void DrawCharacterSort(){
             float alpha=sortClosing?1-Mathf.SmoothStep(0,1,(Now-sortCloseBegan)/.18f):Mathf.SmoothStep(0,1,(Now-sortBegan)/.18f);var color=GUI.color;bool enabled=GUI.enabled;GUI.color=new Color(color.r,color.g,color.b,color.a*alpha);GUI.enabled&=!sortClosing;Tint(new Rect(bleedLeft,0,bleedWidth,1080),new Color(0,0,0,.30f));CSlice(new Rect(bleedLeft,57,bleedWidth,966),"sort_bg");
-            var ev=Event.current;if(SortPointer(ev.type,ev.mousePosition))ev.Use();foreach(bool starred in new[]{true,false}){float y=starred?89:354;string heading=starred?"雀士排序 · 星标":"雀士排序 · 非星标";Label(new Rect(width/2-205,y,410,60),heading,NText("sort",39),CharacterGold);CImage(new Rect(width/2-430,y+23,184,22),"sort_deco_left");CImage(new Rect(width/2+246,y+23,184,22),"sort_deco_right");var keys=sortOrder.Where(k=>sortStars.Contains(k)==starred).ToArray();for(int i=0;i<keys.Length;i++){var r=SortCardRect(starred,i);DrawSortPortrait(r,keys[i],sortDrag==keys[i]);var sr=new Rect(r.x+2,r.yMax-38,38,38);CImage(sr,starred?"sort_favor_on":"sort_favor_off");if(Hit(sr,"sort-star-"+keys[i])){if(!sortStars.Add(keys[i]))sortStars.Remove(keys[i]);}}}
+            var ev=Event.current;var view=SortViewport;float content=SortContentHeight,max=Mathf.Max(0,content-view.height);
+            var rail=new Rect(view.xMax-20,view.y,42,view.height);float thumb=Mathf.Min(view.height,view.height*view.height/content);
+            if(ev.type==EventType.MouseDown&&max>0&&rail.Contains(ev.mousePosition)){sortRailDragging=true;float top=view.y+(view.height-thumb)*Mathf.Clamp01(sortScroller.Offset/max);sortRailGrab=ev.mousePosition.y>=top&&ev.mousePosition.y<=top+thumb?ev.mousePosition.y-top:thumb/2;}
+            if(sortRailDragging){if(ev.type==EventType.MouseDown||ev.type==EventType.MouseDrag)sortScroller.Offset=Mathf.Clamp01((ev.mousePosition.y-view.y-sortRailGrab)/Mathf.Max(1,view.height-thumb))*max;if(ev.type==EventType.MouseUp)sortRailDragging=false;if(ev.type==EventType.MouseDown||ev.type==EventType.MouseDrag||ev.type==EventType.MouseUp)ev.Use();}
+            else if(SortPointer(ev.type,ev.mousePosition))ev.Use();
+            if(sortPressed==null&&sortDrag==null&&!sortRailDragging)sortScroller.Input(view,content);
+            if(sortDrag!=null&&ev.type==EventType.Repaint){float direction=sortPointer.y<view.y+45?-1:sortPointer.y>view.yMax-45?1:0;sortScroller.Offset=Mathf.Clamp(sortScroller.Offset+direction*500*Mathf.Min(.05f,Time.unscaledDeltaTime),0,max);}
+            GUI.BeginGroup(view);var savedOffset=targetOffset;targetOffset+=view.position;
+            foreach(bool starred in new[]{true,false}){
+                float y=(starred?89:SortOtherHeading)-sortScroller.Offset-view.y;string heading=starred?"雀士排序 · 星标":"雀士排序 · 非星标";
+                Label(new Rect(width/2-205-view.x,y,410,60),heading,NText("sort",39),CharacterGold);CImage(new Rect(width/2-430-view.x,y+23,184,22),"sort_deco_left");CImage(new Rect(width/2+246-view.x,y+23,184,22),"sort_deco_right");
+                var keys=sortOrder.Where(k=>sortStars.Contains(k)==starred).ToArray();
+                for(int i=0;i<keys.Length;i++){var global=SortCardRect(starred,i);if(global.yMax<view.y||global.y>view.yMax)continue;var r=new Rect(global.position-view.position,global.size);DrawSortPortrait(r,keys[i],sortDrag==keys[i]);var sr=new Rect(r.x+2,r.yMax-38,38,38);CImage(sr,starred?"sort_favor_on":"sort_favor_off");if(Hit(sr,"sort-star-"+keys[i])){if(!sortStars.Add(keys[i]))sortStars.Remove(keys[i]);}}
+            }
+            targetOffset=savedOffset;GUI.EndGroup();NativePanel.Scrollbar(view.xMax-12,view.y+4,view.height-8,sortScroller.Offset,content);
             if(sortDrag!=null)DrawSortPortrait(new Rect(sortPointer-sortDragOffset,new Vector2(160,160)),sortDrag,true);
             var button=new Rect(width/2-207.5f,892.4f,415,93);NativeUiChrome.Button(button,true);Label(new Rect(button.x+35,button.y+15,345,63),"确认",CText(42,TextAnchor.MiddleCenter,true),new Color(.16f,.08f,.04f));if(Hit(button,"sort-save"))CloseCharacterSort(true);
-            CImage(new Rect(width-127,101,69.7f,71.4f),"bf_close");if(Hit(new Rect(width-155,66,130,130),"sort-cancel"))CloseCharacterSort(false);Label(new Rect(width/2-800,1019,1600,45),"长按拖动头像以更换显示顺序、星标状态",NText("sort-help",26),new Color(.75f,.75f,.8f));GUI.color=color;GUI.enabled=enabled;
+            CImage(new Rect(width-127,101,69.7f,71.4f),"bf_close");if(Hit(new Rect(width-155,66,130,130),"sort-cancel"))CloseCharacterSort(false);Label(new Rect(width/2-800,1019,1600,45),"上下滑动浏览，长按拖动头像排序，点击星标切换",NText("sort-help",26),new Color(.75f,.75f,.8f));GUI.color=color;GUI.enabled=enabled;
         }
         Rect PhotoReset=>new Rect(width/2-340,930,300,117.26f);
         Rect PhotoSave=>new Rect(width/2+40,930,300,117.26f);
@@ -298,6 +321,8 @@ namespace YunJian.Riichi {
         public float ReviewInfoOffset=>infoScroll.y;
         public Texture ReviewCharacterTexture=>characterArt.Art(CurrentOutfit,Now);
         public Rect ReviewSortRect(bool starred,int index)=>SortCardRect(starred,index);
+        public void ReviewOpenSort()=>OpenCharacterSort();
+        public void ReviewSortScrollToEnd(){sortScroller.Offset=Mathf.Max(0,SortContentHeight-SortViewport.height);}
 #endif
     }
 }

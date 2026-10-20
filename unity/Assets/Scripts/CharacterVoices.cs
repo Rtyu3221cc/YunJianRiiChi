@@ -9,7 +9,7 @@ namespace YunJian.Riichi {
         public static AudioClip Clip(string character,string action){
             if(string.IsNullOrEmpty(action))return null;
             character=CharacterRoster.Find(character)?.key??"yiji";if(!CharacterRoster.CanDisplay(character))character="yiji";string file=Actions.TryGetValue(action,out var mapped)?mapped:action,key=character+"/"+file;
-            if(!clips.TryGetValue(key,out var c)||c==null){
+            CharacterPackService.Touch("Voice/"+key);if(!clips.TryGetValue(key,out var c)||c==null){
                 c=CharacterPackService.Asset<AudioClip>("Voice/"+key);
                 if(c==null&&file.Contains("/"))c=CharacterPackService.Asset<AudioClip>("Voice/"+character+"/"+System.IO.Path.GetFileName(file));
                 if(c==null&&character=="yiji")c=Resources.Load<AudioClip>("Majsoul/Voice/yiji-"+action);

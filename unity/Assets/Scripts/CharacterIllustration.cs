@@ -84,20 +84,30 @@ namespace YunJian.Riichi {
                 for(int i=0;i<drawMaterials.Count;i++){drawMaterials[i].SetMatrix("_CharacterProjection",projection);commands.DrawMesh(mesh,Matrix4x4.identity,drawMaterials[i],i,0);}
                 Graphics.ExecuteCommandBuffer(commands);Graphics.Blit(pma,result,unpremultiply);RenderTexture.active=previous;return result;
             }
-            public void Dispose(){foreach(var m in materials.Values)UnityEngine.Object.Destroy(m);UnityEngine.Object.Destroy(mesh);UnityEngine.Object.Destroy(unpremultiply);commands.Dispose();pma.Release();result.Release();UnityEngine.Object.Destroy(pma);UnityEngine.Object.Destroy(result);}
+            public void Dispose(){foreach(var m in materials.Values)DestroyObject(m);DestroyObject(mesh);DestroyObject(unpremultiply);commands.Dispose();pma.Release();result.Release();DestroyObject(pma);DestroyObject(result);}
         }
         readonly Dictionary<int,Part[]> dynamics=new Dictionary<int,Part[]>();
-        sealed class Composite:IDisposable {public RenderTexture pma,result;public Material over,straight;public Composite(int w,int h){pma=new RenderTexture(w,h,0,RenderTextureFormat.ARGB32);result=new RenderTexture(w,h,0,RenderTextureFormat.ARGB32);pma.Create();result.Create();over=new Material(Shader.Find("YunJian/CharacterOver"));straight=new Material(Shader.Find("YunJian/CharacterStraightAlpha"));}public void Dispose(){pma.Release();result.Release();UnityEngine.Object.Destroy(pma);UnityEngine.Object.Destroy(result);UnityEngine.Object.Destroy(over);UnityEngine.Object.Destroy(straight);}}
+        readonly Dictionary<int,int> usedFrames=new Dictionary<int,int>();
+        static void DestroyObject(UnityEngine.Object value){if(Application.isPlaying)UnityEngine.Object.Destroy(value);else UnityEngine.Object.DestroyImmediate(value);}
+        sealed class Composite:IDisposable {public RenderTexture pma,result;public Material over,straight;public Composite(int w,int h){pma=new RenderTexture(w,h,0,RenderTextureFormat.ARGB32);result=new RenderTexture(w,h,0,RenderTextureFormat.ARGB32);pma.Create();result.Create();over=new Material(Shader.Find("YunJian/CharacterOver"));straight=new Material(Shader.Find("YunJian/CharacterStraightAlpha"));}public void Dispose(){pma.Release();result.Release();DestroyObject(pma);DestroyObject(result);DestroyObject(over);DestroyObject(straight);}}
         readonly Dictionary<int,Composite> composites=new Dictionary<int,Composite>();
         public bool Animate=true;int packRevision=-1;
         public Texture Art(CharacterSkin skin,float now){
+            CharacterPackService.Touch("Skins/"+skin.id+"/full");
             if(packRevision!=CharacterPackService.Revision){Dispose();packRevision=CharacterPackService.Revision;}
             if(!skin.dynamic||!Animate)return CharacterRoster.Texture("Skins/"+skin.id+"/full");
-            if(!dynamics.TryGetValue(skin.id,out var parts)){parts=skin.parts.Select(p=>new Part(p,skin)).ToArray();dynamics[skin.id]=parts;}
+            usedFrames[skin.id]=Time.frameCount;
+            if(!dynamics.TryGetValue(skin.id,out var parts)){
+                while(dynamics.Count>=4){int old=usedFrames.Where(p=>p.Key!=skin.id&&p.Value<Time.frameCount&&dynamics.ContainsKey(p.Key)).OrderBy(p=>p.Value).Select(p=>p.Key).DefaultIfEmpty(-1).First();if(old<0)break;foreach(var part in dynamics[old])part.Dispose();dynamics.Remove(old);usedFrames.Remove(old);if(composites.TryGetValue(old,out var obsoleteComposite)){obsoleteComposite.Dispose();composites.Remove(old);}}
+                // A failed pack can invalidate its receipt while this frame still
+                // holds the old outfit. Leave the frame drawable during fallback.
+                if(skin.parts.Any(p=>CharacterPackService.Asset<TextAsset>(p+"/atlas")==null||CharacterPackService.Asset<TextAsset>(p+"/skeleton")==null))return CharacterRoster.Texture("Skins/"+skin.id+"/full");
+                parts=skin.parts.Select(p=>new Part(p,skin)).ToArray();dynamics[skin.id]=parts;
+            }
             if(parts.Length==0)return CharacterRoster.Texture("Skins/"+skin.id+"/full");if(parts.Length==1)return parts[0].Draw(now);var first=parts[0].Draw(now);if(!composites.TryGetValue(skin.id,out var composite))composites[skin.id]=composite=new Composite(first.width,first.height);var previous=RenderTexture.active;RenderTexture.active=composite.pma;GL.Clear(true,true,Color.clear);foreach(var part in parts)Graphics.Blit(part.Draw(now),composite.pma,composite.over);Graphics.Blit(composite.pma,composite.result,composite.straight);RenderTexture.active=previous;return composite.result;
         }
         public void Play(CharacterSkin skin,string name){if(dynamics.TryGetValue(skin.id,out var parts))foreach(var p in parts)p.Play(name);}
         public void Draw(Rect rect,CharacterSkin skin,float now){if(Event.current.type!=EventType.Repaint)return;var t=Art(skin,now);if(t!=null)GUI.DrawTexture(rect,t,ScaleMode.ScaleToFit,true);}
-        public void Dispose(){foreach(var parts in dynamics.Values)foreach(var p in parts)p.Dispose();dynamics.Clear();foreach(var c in composites.Values)c.Dispose();composites.Clear();}
+        public void Dispose(){foreach(var parts in dynamics.Values)foreach(var p in parts)p.Dispose();dynamics.Clear();usedFrames.Clear();foreach(var c in composites.Values)c.Dispose();composites.Clear();}
     }
 }

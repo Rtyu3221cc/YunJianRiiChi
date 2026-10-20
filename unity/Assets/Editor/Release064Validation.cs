@@ -14,7 +14,7 @@ namespace YunJian.Riichi.Editor {
             try{
                 Check(PlayerSettings.Android.bundleVersionCode>=52,"Character-system update preserves compatible versionCode >=52");
                 var reference=CharacterRoster.All.Where(c=>new[]{"yiji","erjietang","weilai","siqiqiansuili"}.Contains(c.key)).ToArray();Check(reference.Length==4,"Four reference character definitions remain available");
-                Check(reference.Sum(c=>c.skins.Length)==21,"All 21 APK skins are catalogued");
+                Check(reference.Sum(c=>c.skins.Length)>=21,"The original reference outfits remain available alongside new skins");
                 Check(reference.Sum(c=>c.emojis.Length)==71,"All 71 chat expressions are unlocked");
                 foreach(var role in reference){
                     Check(role.skins[0].id==role.defaultSkin&&role.skins[1].id==role.bondSkin,role.key+" keeps initial and bond outfits first");

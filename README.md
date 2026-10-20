@@ -1,5 +1,13 @@
 # 云间日麻
 
+## Unity 0.6.7 · 全角色资源目录（2026-10-21）
+
+当前固定目录开放 **122 名角色、486 套服饰（69 套动态）**。一姬、二阶堂美树仍完整内置；其余角色按需下载，宿舍保留轻量头像。部分下载集合维持女性 TOP10＋汪次郎，全部下载提供当前目录中的其余角色。旧资源地址保留，新增／变更包使用独立版本。安装校验结束后释放临时资源，立绘和语音按需缓存；角色排序支持多行滚动。
+
+[下载 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.6.7/yunjian-riichi-unity-0.6.7.apk) · [程序发布页](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/tag/unity-0.6.7) · [全部角色资源](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/tag/character-resources-v2) · [新增角色／皮肤维护说明](docs/character-resource-maintenance.md) · [交接文档](docs/handoff-unity-0.6.7.md) · [实际资源截图](dist/previews/unity-0.6.7-resources/index.html)
+
+versionCode 55，保留原包名、证书与双架构。详细测试结果、资源加载检查和签名摘要见本版 `verification.json`。包括本轮资源窗口排版、四行列表和定位描边修正；新增角色与皮肤需要更新 APK，当前尚未实现远程目录热更新。Android 真机安装、触摸、声音、低内存及多手机热点尚未实测。
+
 ## Unity 0.6.6 · 角色资源按需下载（2026-10-20）
 
 女性TOP10＋汪次郎，共11名角色、71套服饰（17套动态），现已提供完整角色资源包；另保留未来与寺崎千穗理，共13名可用角色、79套服饰。一姬、二阶堂美树仍内置且不可删除，其余可从宿舍或设定的“资源”页下载、管理和删除。首次进入可选全部／推荐／暂不下载，推荐集合额外资源约231 MB。未知角色仅显示轻量头像和遮罩，不会误加入出战、星标或随机池。

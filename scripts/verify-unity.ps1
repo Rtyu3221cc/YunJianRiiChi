@@ -2,6 +2,10 @@ param([string]$EditorPath, [ValidateSet('Validate','Play','Android')][string]$Mo
 $ErrorActionPreference = 'Stop'
 $projectTask = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../unity'))
 $originalProjectTask = $projectTask
+$taskVersionSource = Get-Content -LiteralPath (Join-Path $projectTask "Assets/Editor/ProjectSetup.cs") -Raw
+$taskVersionMatch = [regex]::Match($taskVersionSource, 'ReleaseVersion\s*=\s*"(\d+\.\d+\.\d+)"')
+if (!$taskVersionMatch.Success) { throw "ReleaseVersion is missing in ProjectSetup.cs" }
+$taskReleaseVersion = $taskVersionMatch.Groups[1].Value
 if ($Mode -eq 'Android') {
  # Sync the maintained offline engine before copying/staging or invoking Unity.
  # This prevents a successful native build from silently packaging stale room rules.
@@ -50,17 +54,18 @@ $methodTask = switch ($Mode) { 'Play' { 'YunJian.Riichi.Editor.PlayValidation.Ru
 $argumentsTask = @('-batchmode','-projectPath',('"' + $projectTask + '"'),'-executeMethod',$methodTask,'-logFile',('"' + $logTask + '"'))
 if ($Mode -ne 'Play') { $argumentsTask += @('-nographics','-quit') }
 if ($Mode -eq 'Android') { $argumentsTask += @('-buildTarget','Android') }
-$unityTask = Start-Process -FilePath $EditorPath -ArgumentList $argumentsTask -WorkingDirectory $projectTask -WindowStyle Hidden -PassThru -Wait
+$unityTask = Start-Process -FilePath $EditorPath -ArgumentList $argumentsTask -WorkingDirectory $projectTask -WindowStyle Hidden -PassThru
+$unityTask.WaitForExit()
 if ($unityTask.ExitCode -ne 0) { throw "Unity validation failed (exit $($unityTask.ExitCode)). See $logTask" }
 if ($Mode -ne 'Android') {
  $markerTask = if ($Mode -eq 'Play') { 'RIICHI UNITY PLAY PASS' } else { 'RIICHI UNITY VALIDATION PASS' }
  if (!(Select-String -LiteralPath $logTask -SimpleMatch $markerTask -Quiet)) { throw 'Unity exited without the validation success marker.' }
-} elseif (!(Test-Path -LiteralPath (Join-Path $projectTask 'Builds/yunjian-riichi-unity-0.6.6.apk'))) { throw 'Unity did not produce the Android APK.' }
+} elseif (!(Test-Path -LiteralPath (Join-Path $projectTask "Builds/yunjian-riichi-unity-$taskReleaseVersion.apk"))) { throw 'Unity did not produce the Android APK.' }
 if ($Mode -eq 'Android' -and $projectTask -ne $originalProjectTask) {
  New-Item -ItemType Directory -Force (Join-Path $originalProjectTask 'Builds') | Out-Null
- Copy-Item -LiteralPath (Join-Path $projectTask 'Builds/yunjian-riichi-unity-0.6.6.apk') -Destination (Join-Path $originalProjectTask 'Builds/yunjian-riichi-unity-0.6.6.apk') -Force
+ Copy-Item -LiteralPath (Join-Path $projectTask "Builds/yunjian-riichi-unity-$taskReleaseVersion.apk") -Destination (Join-Path $originalProjectTask "Builds/yunjian-riichi-unity-$taskReleaseVersion.apk") -Force
 }
 if ($Mode -eq 'Android') {
- & (Join-Path $PSScriptRoot 'sign-unity-apk.ps1') -ApkPath (Join-Path $originalProjectTask 'Builds/yunjian-riichi-unity-0.6.6.apk') -EditorPath $EditorPath
+ & (Join-Path $PSScriptRoot 'sign-unity-apk.ps1') -ApkPath (Join-Path $originalProjectTask "Builds/yunjian-riichi-unity-$taskReleaseVersion.apk") -EditorPath $EditorPath
 }
 Get-Content -LiteralPath $logTask -Tail 20

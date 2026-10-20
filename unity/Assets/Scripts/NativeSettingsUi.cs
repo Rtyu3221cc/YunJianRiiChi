@@ -17,8 +17,8 @@ namespace YunJian.Riichi
         public Rect DesignPreviewSafeArea;
 #endif
         public NativeSettingsUi(PlaylistAudio value) { audio = value; }
-        public void Open() { opened = Time.unscaledTime; Tab = 0; MusicGroup = null; dropdown = false; scroll.Offset = 0; }
-        public bool Back() { if (MusicGroup != null) { CloseMusic(); return false; } audio.StopAudition(); return true; }
+        public void Open() { opened = Time.unscaledTime; Tab = 0; MusicGroup = null; dropdown = false; scroll.Offset = 0; CharacterResourceUi.Current?.ClearFocus(); }
+        public bool Back() { if (MusicGroup != null) { CloseMusic(); return false; } audio.StopAudition(); CharacterResourceUi.Current?.ClearFocus(); return true; }
         void CloseMusic() { MusicGroup = null; audio.ApplyPlaylist(); }
         public void OpenMusic(string group) { MusicGroup = group; musicOpened = Time.unscaledTime; }
         public void Draw(Action close) {
@@ -41,15 +41,15 @@ namespace YunJian.Riichi
             Slice("official-panel-frame", new Rect(rx + 188, 101, 1298, 874), 90, 90, 90, 90);
             Label("设置", rx + 842, 170, 51, new Color(.8784f, .6667f, .4314f), 1, TextAnchor.MiddleCenter);
             Image("native-pop2_close", new Rect(rx + 1376, 148, 44, 44));
-            if (Hit(new Rect(rx + 1358, 130, 80, 80))) { audio.StopAudition(); close(); }
+            if (Hit(new Rect(rx + 1358, 130, 80, 80))) { audio.StopAudition(); CharacterResourceUi.Current?.ClearFocus(); close(); }
             for (int i = 0; i < 3; i++) {
                 float x = rx + 2, y = 186 + i * 104; bool active = Tab == i;
                 Image("official-config-common_popup_tab_btn" + (active ? "_selected" : ""), new Rect(x, y, active ? 248 : 207, 108));
                 Label(i == 0 ? "声音" : i==1?"画面":"资源", x + 123, y + 55, 40, Gold, 1, TextAnchor.MiddleCenter);
-                if (Hit(new Rect(x, y, 207, 108))) { Tab = i; dropdown = false; scroll.Offset = 0; }
+                if (Hit(new Rect(x, y, 207, 108))) { if (Tab != i) CharacterResourceUi.Current?.ClearFocus(); Tab = i; dropdown = false; scroll.Offset = 0; }
             }
             Label("当前版本  Unity " + Application.version, rx + 1419, 901, 30, new Color(.608f, .631f, .698f), 0, TextAnchor.MiddleRight);
-            var view = new Rect(vx, vy, 1150, 630);
+            var view = new Rect(vx, vy, 1150, Tab==2?715:630);
             if (Tab == 0) {
                 scroll.Input(view, 875); GUI.BeginGroup(view);
                 DrawSound(-scroll.Offset);

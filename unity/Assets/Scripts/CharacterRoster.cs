@@ -54,8 +54,8 @@ namespace YunJian.Riichi {
         public static void TogglePool(string key,int skin){Load();if(InPool(key,skin))prefs.pool=prefs.pool.Where(c=>c.character!=key||c.skin!=skin).ToArray();else if(Available(key)&&Valid(new CharacterChoice(key,skin)))prefs.pool=prefs.pool.Append(new CharacterChoice(key,skin)).ToArray();Save();}
         public static void RemovePoolCharacter(string key){Load();prefs.pool=prefs.pool.Where(c=>c.character!=key).ToArray();Save();}
         public static void ClearPool(){Load();prefs.pool=new CharacterChoice[0];Save();}
-        public static Texture2D Texture(string relative){if(!textures.TryGetValue(relative,out var t)||t==null){t=CharacterPackService.Asset<Texture2D>(relative);if(t!=null)textures[relative]=t;}return t;}
-        public static Texture2D Portrait(PlayerView p,string kind="full") {var s=Skin(p?.character,p?.skin??0);return Texture("Skins/"+s.id+"/"+kind)??Texture("Skins/"+s.id+"/bighead");}
+        public static Texture2D Texture(string relative){CharacterPackService.Touch(relative);if(!textures.TryGetValue(relative,out var t)||t==null){t=CharacterPackService.Asset<Texture2D>(relative);if(t!=null)textures[relative]=t;}return t;}
+        public static Texture2D Portrait(PlayerView p,string kind="full") {var s=Skin(p?.character,p?.skin??0);return Texture("Skins/"+s.id+"/"+kind)??Texture("Skins/"+s.id+"/bighead")??Texture("Skins/400101/"+kind)??Texture("Skins/400101/bighead");}
         public static Texture2D PresentationPortrait(PlayerView p){var full=Portrait(p);return full.width>full.height*1.1f?Portrait(p,"bighead"):full;}
         public static CharacterUiArt Ui(string key){Load();return catalog.ui.FirstOrDefault(x=>x.key==key);}
         public static void FillRequest(RequestBody request){var a=Active;var pool=Pool;request.character=a.character;request.skin=a.skin;request.randomCharacters=Random&&pool.Length>0;request.characterPool=pool;}

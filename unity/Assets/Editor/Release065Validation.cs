@@ -13,7 +13,7 @@ namespace YunJian.Riichi.Editor {
         public static void Run(){
             checks.Clear();CharacterRoster.BeginPreview();
             try{
-                Check(PlayerSettings.bundleVersion=="0.6.6"&&PlayerSettings.Android.bundleVersionCode==54,"Release metadata is 0.6.6 / 54");
+                Check(PlayerSettings.bundleVersion==ProjectSetup.ReleaseVersion&&PlayerSettings.Android.bundleVersionCode==ProjectSetup.ReleaseCode,"Release metadata matches ProjectSetup");
                 CharacterRoster.Use("weilai",406903);CharacterRoster.TogglePool("weilai",406901);CharacterRoster.TogglePool("weilai",406903);CharacterRoster.TogglePool("siqiqiansuili",403301);CharacterRoster.TogglePool("yiji",400107);string candidates=Pool();
                 Check(!CharacterRoster.Random&&CharacterRoster.Pool.Length==4,"Candidates can be retained while random mode is disabled");
                 foreach(bool enabled in new[]{true,false,true}){CharacterRoster.Random=enabled;Check(Pool()==candidates,"Switching mode preserves candidate outfits: "+enabled);var request=new RequestBody();CharacterRoster.FillRequest(request);Check(request.randomCharacters==enabled&&request.characterPool.Length==4,"Public request follows the mode switch without losing candidates: "+enabled);}

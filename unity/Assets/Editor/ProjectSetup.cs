@@ -6,6 +6,8 @@ namespace YunJian.Riichi.Editor
 {
     [InitializeOnLoad] public static class ProjectSetup
     {
+        public const string ReleaseVersion="0.6.7";
+        public const int ReleaseCode=55;
         static ProjectSetup() { EditorApplication.delayCall += EnsureScene; }
         static void EnsureScene()
         {
@@ -29,8 +31,8 @@ namespace YunJian.Riichi.Editor
             PlayerSettings.companyName = "YunJian";
             PlayerSettings.productName = "云间日麻 3D";
             PlayerSettings.SetApplicationIdentifier(UnityEditor.Build.NamedBuildTarget.Android, "com.yunjian.riichi.unity");
-            PlayerSettings.bundleVersion = "0.6.6";
-            PlayerSettings.Android.bundleVersionCode = 54;
+            PlayerSettings.bundleVersion = ReleaseVersion;
+            PlayerSettings.Android.bundleVersionCode = ReleaseCode;
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel26;
             // Local, offline distribution: matches the existing phone-hosted service.
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel32;
@@ -62,7 +64,7 @@ namespace YunJian.Riichi.Editor
             if (!File.Exists("Assets/Scenes/Table.unity")) CreateScene();
             Configure();
             Directory.CreateDirectory("Builds");
-            var report = BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, "Builds/yunjian-riichi-unity-0.6.6.apk", BuildTarget.Android, BuildOptions.None);
+            var report = BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, "Builds/yunjian-riichi-unity-"+ReleaseVersion+".apk", BuildTarget.Android, BuildOptions.None);
             if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded) throw new System.Exception("Android build failed");
         }
     }

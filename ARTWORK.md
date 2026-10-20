@@ -1,5 +1,11 @@
 # 图像资源来源
 
+## Unity 0.6.7 全角色资源
+
+角色输入与固定资源索引保存在 `docs/character-resource-inputs/`，本次快照共 122 名角色、486 套服饰，其中 69 套带 Spine 4.2 动态。素材来自用户提供的雀魂 APK及同版本官方公开资源，逐文件 URL、资源键和 SHA-256 见 `docs/character-resources-all-sources.json`。补齐语音、表情、原始透明画布及多层骨骼，不将重新绘制的图片替换为原资源。
+
+一姬和二阶堂美树继续完整内置；其余角色以 GitHub Release 的 Android／Windows 独立包分发，运行时按需下载。旧版本附件继续保留。本节覆盖早期“所有素材完全离线内置”的历史描述；不代表获得额外素材授权。新增角色原始媒体可按输入快照重新准备，维护流程见 `docs/character-resource-maintenance.md`。
+
 Unity 0.5.29 的点击樱花使用官方 CDN 场景 `scene/effect_click_default.lh` 的图层参数与 `plane1X1-Plane01.lm` 平面网格；花瓣贴图为用户 APK `myassets/necessary/texture/yinghua.png`（即已有的 `UiEffects/native-ui-floower_00000.png`），闪光为 APK `myassets/common3d/texture/shanguang.png`（已有 `Actions/win-shanguang.png`）。来源与哈希见 `UiEffects/click-source.json`。
 
 Unity 0.5.28 的 `TableLook` 来自同一 APK：`scene_mj` 方向光、`Catfood` 卡通明暗与描边参数、`effect_shadow` 的 `shadow.png`、`room/sun_shine` 粒子及其 `yuanqiu2.png`、`bg_type` 底图；“暂无称号”为官方 `extendRes/title/notitle.png`（XOR 0x49 解码）。来源与哈希见 `TableLook/source.json`。
