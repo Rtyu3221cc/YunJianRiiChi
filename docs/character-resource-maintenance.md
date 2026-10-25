@@ -73,6 +73,8 @@ $taskUnity = 'D:\Unity\Lib\6000.6.4f1\Editor\Unity.exe'
 
 皮肤记录核对 `id`、`character_id`、`path`、`name_chs`、`desc_chs`、`spine_type`、`illust_data`、`lobby_offset`、`liaoshe_offset`。原路径里的 `charactor` 是上游拼写，**不要擅自改成 `character`**。
 
+**0.6.8 构图修正后的约束：** Unity 场景只使用 `framing-native-default.json`，该文件直接来自参考 APK 的 `default` TextAsset；`framing-default.json` 是网页版父节点偏移，不能互换。准备脚本统一调用 `scripts/character_framing.py`，覆盖 A0 大厅、B0 宿舍、B1 和牌、B2 终局、F0 卡片、I0 开局、J0 提示器、K0 切入。旧服饰优先使用其专用 `waitingroom.png`；`no_reverse` 服饰保留原版 `reverse/full.png` 为 `reverse-full.png`。目录还必须保存实际 PNG 的 `artWidth/artHeight`，界面排版不得为获取比例而同步读取大图。对照输入见 `framing-illustrations.json`，固定场景回归见 `tests/character-framing-regression.test.cjs`。
+
 构图还依赖 `full_x/y/width/height`、`smallhead_x/y/width`、`direction`、`no_reverse`、`lock_reverse`。动态还依赖 `spine_width/height`、`pivot_x/y`。这些值应来自相同版本的上游数据，不凭感觉猜坐标。
 
 ## 四、已有角色新增皮肤

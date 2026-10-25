@@ -14,6 +14,11 @@ namespace YunJian.Riichi
         string folder;
         IEnumerator Start()
         {
+            // Legacy timing/layout fixtures use the base hands and effects.
+            // Keep saved editor outfits out of this baseline without changing
+            // PlayerPrefs; WardrobeGameplayAudit exercises alternate loadouts.
+            WardrobeSelection.BeginPreview();
+            WardrobeSelection.Save(WardrobeCatalog.Data.items.GroupBy(i=>i.category).ToDictionary(g=>g.Key,g=>g.First().id));
             if(Environment.GetEnvironmentVariable("RIICHI_OPPONENT_HAND_PREVIEW")=="1"){
                 var preview=OpponentHandPreview.Run(GetComponent<RiichiClient>(),Path.GetFullPath("../build/opponent-hand-preview"));
                 while(true){bool more;try{more=preview.MoveNext();}catch(Exception e){Debug.LogException(e);EditorApplication.Exit(1);yield break;}if(!more)break;yield return preview.Current;}
@@ -43,6 +48,7 @@ namespace YunJian.Riichi
             if(Environment.GetEnvironmentVariable("RIICHI_REVIEW_0539")=="1")File.WriteAllText(Path.Combine(folder,"passed.txt"),"Actual Unity Play 0.5.39: opponent visible-geometry hand/meld clearance across 3/4 seats, viewers, two resolutions and 0..4 melds; retained sizes; polling; tsumo including winning tile and handoff; exhaustive face-up/down. Synthetic scenes, Android device untested.");
             Debug.Log("RIICHI UNITY PLAY PASS"); EditorApplication.Exit(0);
         }
+        void OnDestroy(){WardrobeSelection.EndPreview();}
         IEnumerator Run()
         {
             foreach (Vector2 resolution in new[] { new Vector2(1280, 720), new Vector2(1688, 780), new Vector2(2760, 1256), new Vector2(844, 390) })
@@ -103,6 +109,10 @@ namespace YunJian.Riichi
             {
                 var clip = Resources.Load<AudioClip>(entry.resource); Require(clip != null && clip.length > 0, "Unreadable audio: " + entry.key);
             }
+            // The live-room input test is complete. Synthetic result fixtures
+            // must not auto-ready or poll that room while their clocks freeze.
+            client.SessionPreviewOnly=true;
+            GetComponent<ResourceRoomCoordinator>().enabled=false;
             foreach (int n in new[] { 3, 4 })
             foreach (bool pressure in new[] { true, false })
             {
@@ -225,8 +235,8 @@ namespace YunJian.Riichi
             client.ShowValidationFixture(effectFixture);yield return null;Physics.SyncTransforms();
             ValidatePresentation(table,effectFixture);
             Require(table.ResponseTarget!=null,"Response discard is not highlighted");
-            var groundGlow=table.ResponseTarget.Find("Original response ground glow");
-            Require(groundGlow!=null && Mathf.Abs(groundGlow.position.y-.006f)<.001f && groundGlow.GetComponent<MeshRenderer>().sharedMaterial.shader.name=="YunJian/ResponseGlow","Response glow is not attached to the tile foot");
+            var responseIndicator=GetComponent<WardrobeResponseIndicator>();yield return null;
+            Require(responseIndicator.Effect!=null && responseIndicator.Target==table.ResponseTarget && Vector3.Distance(responseIndicator.Effect.transform.position,table.ResponseTarget.position+Vector3.up*table.Geometry.Depth*.5f)<.001f,"Equipped response indicator is not attached to the callable river tile");
             // The marker belongs to this client's own legal calls: a lone pass, or no
             // option at all, means another seat is deciding and nothing is highlighted.
             var ownOptions=effectFixture.options;
@@ -252,8 +262,8 @@ namespace YunJian.Riichi
             {
                 effectFixture.pending.from=seat;
                 effectFixture.last=new LastDiscard {from=seat,tile=effectFixture.players[seat].river.Last().tile};
-                client.ShowValidationFixture(effectFixture);yield return null;
-                Require(table.ResponseTarget.parent.name=="Seat "+seat && table.ResponseTarget.Find("Original response ground glow")!=null,"Directional model-foot glow missing");
+                client.ShowValidationFixture(effectFixture);yield return null;yield return null;
+                Require(table.ResponseTarget.parent.name=="Seat "+seat && responseIndicator.Target==table.ResponseTarget && responseIndicator.Effect!=null,"Directional equipped response indicator missing");
                 Capture(table,Path.Combine(folder,"response-glow-"+seat+".png"),1688,780);
                 fx.ValidationPlay(seat,"discard",effectFixture.players[seat].river.Last().tile);
                 yield return null;yield return null;
@@ -439,7 +449,8 @@ namespace YunJian.Riichi
                     Require(meshBounds.size.y>Mathf.Max(meshBounds.size.x,meshBounds.size.z),"Concealed mesh is lying flat: seat "+i);
                     Require(Mathf.Abs(meshBounds.min.y)<.001f,"Standing mesh floats or sinks into cloth: seat "+i);
                     var material=model.GetComponent<MeshRenderer>().sharedMaterials[0];
-                    Require(material.shader.name=="YunJian/OriginalTileBody"&&material.mainTexture==Resources.Load<Texture2D>("Majsoul/OriginalTile/table-back"),"Concealed back no longer uses original back material");
+                    var expectedBack=WardrobeCatalog.Texture(WardrobeSelection.Get("tileBack")?.table)??Resources.Load<Texture2D>("Majsoul/OriginalTile/table-back");
+                    Require(material.shader.name=="YunJian/OriginalTileBody"&&material.mainTexture==expectedBack,"Concealed back no longer uses the selected back material");
                     Require(Mathf.Abs(box.bounds.min.y) < .001f, "Standing tile floats or sinks into cloth");
                 }
             }
@@ -717,7 +728,7 @@ namespace YunJian.Riichi
                 else {Require(fx.ValidationKind==null,"Ron incorrectly moved the winner's hand");fx.ValidationTime=WinCutIn.Duration+.73f;yield return null;yield return null;}
                 var effect=fx.ValidationWin;
                 Require(effect!=null && effect.LayerCount==WinTileEffect.SourceLayerCount && effect.ParticleCount>0 && fx.SpawnedWinEffects==before+1,"Original nine-layer fire tornado burst missing/duplicated");
-                Require(Vector3.Distance(effect.transform.position,table.WinningPoint(e)+Vector3.up*.045f)<.001f,"Win effect detached from winning tile");
+                Require(Vector3.Distance(effect.transform.position,table.WinningPoint(e)+Vector3.up*.006f)<.001f,"Win effect detached from winning tile");
                 int pixels=effect.GetComponentsInChildren<ParticleSystemRenderer>().Max(renderer=>VisibleEffectPixels(table,renderer));
                 Require(pixels>20,"Fire win particles invisible on the actual camera");
                 effect.Sample(.55f); // Measure the peak independently of the call/hand lead-in.

@@ -4,6 +4,7 @@ Heavy optional files stay outside Resources. Existing published packs are reused
 changed roles receive a new bundle version. --force rebuilds corrected artwork.
 """
 from pathlib import Path
+from character_framing import placements as compile_placements
 import argparse, concurrent.futures, hashlib, json, re, runpy, time, urllib.request
 
 R = Path(__file__).resolve().parent.parent
@@ -124,9 +125,7 @@ def spine_from_apk(source, folder):
     assert seen == pages and (folder / 'skeleton.bytes').is_file(), str(folder)
 
 bank = json.loads((C / 'framing.json').read_text('utf8'))
-default_file=R/'build/character-review-r2/official-default.json'
-if not default_file.exists():default_file=R/'docs/character-resource-inputs/framing-default.json'
-defaults = json.loads(default_file.read_text('utf8'))['default']
+defaults = json.loads((R/'docs/character-resource-inputs/framing-native-default.json').read_text('utf8'))['default']
 new_framing, jobs, summary = [], [], []
 for role in catalog['roles']:
     if role['id'] not in TARGETS:
@@ -160,15 +159,19 @@ for role in catalog['roles']:
                         pivotX=item['pivot_x'], pivotY=item['pivot_y'], parts=parts,
                         lobbyOffset=item['lobby_offset'], dormOffset=item['liaoshe_offset'])
             role['skins'].append(skin)
-            for kind in ['full', 'bighead', 'smallhead', 'half', 'waitingroom']:
-                source = 'myassets/deco/character/' + key + '/' + kind + '/' + kind + '.png'
+            for kind in ['full', 'bighead', 'smallhead', 'half', 'waitingroom'] + (['reverse-full'] if item['no_reverse'] else []):
+                source = 'myassets/deco/character/' + key + ('/reverse/full.png' if kind == 'reverse-full' else '/' + kind + '/' + kind + '.png')
+                web_kind = 'reverse/full' if kind == 'reverse-full' else kind
                 dest = root / 'Skins' / str(sid) / (kind + '.png')
                 if dest.exists() and not args.force:continue
                 if source in S['paths']:
                     png(dest, S['obj'](source, 'Sprite'))
-                elif web + kind + '.png' in V:
-                    records.append(fetch(web + kind + '.png', dest))
+                elif web + web_kind + '.png' in V:
+                    records.append(fetch(web + web_kind + '.png', dest))
             assert all((root / 'Skins' / str(sid) / (k + '.png')).is_file() for k in ['full', 'bighead', 'smallhead']), sid
+            from PIL import Image
+            with Image.open(root/'Skins'/str(sid)/'full.png') as image:skin.update(artWidth=image.width,artHeight=image.height)
+            skin['hasWaitingroom']=(root/'Skins'/str(sid)/'waitingroom.png').is_file()
             if prefabs:
                 for source, part in zip(prefabs, parts):
                     spine_from_apk(source, root / part)
@@ -192,22 +195,7 @@ for role in catalog['roles']:
             dest = B / 'illust' / (key + '.json')
             records.append(fetch('lang/base/extendRes/illust_data/' + key + '.json', dest))
             data = json.loads(dest.read_text('utf8'))
-        placements = []
-        for kind in ['F0', 'I0', 'J0']:
-            for index in range(1 if kind == 'F0' else 4):
-                if not data:
-                    continue
-                d, a = defaults[kind][index], data[kind][index]
-                w, h = d['scale'] * data['w'], d['scale'] * data['h']
-                sign = -1 if a['reverse'] and not item['lock_reverse'] else 1
-                x, y = d['x'] + a['x'] * w * a['scale'], d['y'] + a['y'] * h * a['scale']
-                if sign < 0:
-                    x += 2 * data['center'] * w
-                off = dict(x=110, y=-234, scaleX=1.58, scaleY=1.58) if kind == 'F0' else d.get('offset', dict(x=0, y=0, scaleX=1, scaleY=1))
-                sx, sy = off['scaleX'], off['scaleY']
-                placements.append(dict(scene=kind, index=index,
-                    rect=[off['x'] + x/sx, off['y'] + y/sy, w/abs(sx)*a['scale'], h/abs(sy)*a['scale']],
-                    flip=sign * (1 if sx > 0 else -1) < 0))
+        placements = compile_placements(item, data, defaults)
         new_framing.append(dict(id=skin['id'], source=key or 'legacy crop table', placements=placements,
             full=[item['full_' + k] for k in ['x', 'y', 'width', 'height']],
             head=[item['smallhead_' + k] for k in ['x', 'y', 'width']],

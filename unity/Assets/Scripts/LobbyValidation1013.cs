@@ -113,7 +113,7 @@ namespace YunJian.Riichi
             yield return Shot("room-guest-ready");yield return Press("kick1");yield return Idle();Check(client.State.players.Length==1&&lobby.Modal=="","Human not kicked directly");
             yield return Api(new RequestBody{op="state",token=guest});Check(reply.state.phase=="join","Kicked token remains seated");
             yield return Press("bot1");yield return Idle();yield return Press("bot2");yield return Idle();Check(lobby.CanStart,"Full ready room cannot start");yield return Shot("room-ready-three");
-            yield return Press("start");yield return Idle();Check(client.State.phase=="play"&&!lobby.Visible,"Start did not hand off to existing table");yield return new WaitForSecondsRealtime(6.5f);yield return Shot("existing-table-handoff");
+            yield return Press("start");yield return Idle();yield return WaitFor(()=>client.State?.phase=="play"&&!lobby.Visible,"Start did not hand off to existing table after resource preparation");yield return new WaitForSecondsRealtime(6.5f);yield return Shot("existing-table-handoff");
             // The table exit now uses the same medium dialog as session prompts.
             lobby.ShowMatchExit();yield return null;Check(lobby.Modal=="match-exit","Table exit medium dialog missing");yield return Shot("table-exit-confirm");
             yield return Press("session-secondary");Check(client.LobbyActive&&lobby.Modal=="","Cancel table exit did not retain the match");

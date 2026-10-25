@@ -1,3 +1,4 @@
+from character_framing import placements as compile_placements
 """Prepare source assets, not an APK. Optional roles live outside Resources."""
 from pathlib import Path
 import json,runpy,io,re,hashlib,shutil,concurrent.futures,urllib.request,time
@@ -83,20 +84,13 @@ jobs=[(k,root/'Voice'/k.removeprefix('audio/sound/'))for k in V if k.startswith(
 jobs +=[(k,root/'Emoji'/'bamuwei'/Path(k).name)for k in V if k.startswith('extendRes/emo/e200007/')and re.fullmatch(r'\d+\.png',Path(k).name)]
 with concurrent.futures.ThreadPoolExecutor(max_workers=8)as pool:records=list(pool.map(lambda job:download(*job),jobs))
 js(B/'official-sources.json',records)
-bank=json.loads((C/'framing.json').read_text('utf8'));default=json.loads((R/'build/character-review-r2/official-default.json').read_text('utf8'))['default'];new=[]
+bank=json.loads((C/'framing.json').read_text('utf8'));default=json.loads((R/'docs/character-resource-inputs/framing-native-default.json').read_text('utf8'))['default'];new=[]
 for skin in role['skins']:
  item=byid[skin['id']];key=item['illust_data'];data=None
  if key:
   source='lang/base/extendRes/illust_data/'+key+'.json';dest=B/'illust'/(key+'.json')
   if source in V:records.append(download(source,dest));data=json.loads(dest.read_text('utf8'))
- scene=[]
- for kind in ['F0','I0','J0']:
-  for index in range(4 if kind!='F0'else 1):
-   if not data:continue
-   d=default[kind][index];a=data[kind][index];w=d['scale']*data['w'];h=d['scale']*data['h'];sign=-1 if a['reverse']and not item['lock_reverse']else 1;x=d['x']+a['x']*w*a['scale'];y=d['y']+a['y']*h*a['scale']
-   if sign<0:x+=2*data['center']*w
-   off=dict(x=110,y=-234,scaleX=1.58,scaleY=1.58)if kind=='F0'else d.get('offset',dict(x=0,y=0,scaleX=1,scaleY=1));sx=off['scaleX'];sy=off['scaleY'];x=off['x']+x/sx;y=off['y']+y/sy;w=w/abs(sx)*a['scale'];h=h/abs(sy)*a['scale'];sign*=1 if sx>0 else -1
-   scene.append(dict(scene=kind,index=index,rect=[x,y,w,h],flip=sign<0))
+ scene=compile_placements(item,data,default)
  new.append(dict(id=skin['id'],source=key or'legacy crop table',placements=scene,full=[item['full_'+k]for k in ['x','y','width','height']],head=[item['smallhead_'+k]for k in ['x','y','width']],direction=item['direction'],noReverse=bool(item['no_reverse']),lockReverse=bool(item['lock_reverse'])))
 bank['skins']=[x for x in bank['skins']if x['id']not in {s['id']for s in new}]+new;js(C/'framing.json',bank);js(B/'official-sources.json',records)
 manifest=[]

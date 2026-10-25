@@ -1,0 +1,72 @@
+{
+  "version": "0.6.13",
+  "versionCode": 61,
+  "date": "2026-10-26",
+  "nodeTests": 165,
+  "pythonInputTests": 8,
+  "unityUnitChecks": 571,
+  "unityUnitBreakdown": {
+    "session": 62,
+    "calloutAtlas": 87,
+    "character": 385,
+    "roleUi": 37
+  },
+  "sourceEffectFidelityChecks": 144,
+  "wardrobeGameplayChecks": 403,
+  "orientationChecks": 132,
+  "calloutViewpoints": 16,
+  "bubbleMotion": [
+    {
+      "effect": "mpzs_22event",
+      "viewer": 0,
+      "particles": 5,
+      "averageUp": 0.4730378985404968,
+      "minimumUp": 0.011452286504209042
+    },
+    {
+      "effect": "mpzs_22event",
+      "viewer": 1,
+      "particles": 5,
+      "averageUp": 0.47303783893585205,
+      "minimumUp": 0.011452286504209042
+    },
+    {
+      "effect": "mpzs_22event",
+      "viewer": 2,
+      "particles": 5,
+      "averageUp": 0.47303780913352966,
+      "minimumUp": 0.011452284641563892
+    },
+    {
+      "effect": "mpzs_22event",
+      "viewer": 3,
+      "particles": 5,
+      "averageUp": 0.47303783893585205,
+      "minimumUp": 0.011452285572886467
+    }
+  ],
+  "runtimePlayPassed": true,
+  "runtimeStages": [
+    "table",
+    "lobby",
+    "room"
+  ],
+  "androidDeviceTested": false,
+  "lobbyChecks": 472,
+  "waitingRoomChecks": 623,
+  "artifactRedownloaded": false,
+  "apk": {
+    "file": "yunjian-riichi-unity-0.6.13.apk",
+    "bytes": 193543462,
+    "sha256": "b076818a12efcfc949e81f832d0eff1db827babcb2e9026f365fae9913e13674",
+    "v1": true,
+    "v2": true,
+    "independentV1": true,
+    "certificateSHA256": "d1d8e506c6d3b62e9610dce294c07008057318fa9bafae702fb8b01f35f0dc2f",
+    "alignment16KB": true
+  },
+  "limitations": [
+    "Physical Android installation, touch, audio and multi-phone LAN await device testing.",
+    "Wardrobe resources are bundled; multi-presets, preset naming and wardrobe downloads are not implemented."
+  ]
+}

@@ -42,7 +42,7 @@ namespace YunJian.Riichi {
             if(age<0||age>=.8f||Event.current.type!=EventType.Repaint)return;
             int slot=relative==0?0:relative==n-1?3:relative==1&&n==4?1:2;
             int pictureKey=slot*1000000+CharacterRoster.Skin(player?.character,player?.skin??0).id;
-            if(!pictures.TryGetValue(pictureKey,out var picture))pictures[pictureKey]=picture=Compose(slot,CharacterRoster.Portrait(player),CharacterRoster.Skin(player?.character,player?.skin??0).id);
+            if(!pictures.TryGetValue(pictureKey,out var picture))pictures[pictureKey]=picture=Compose(slot,CharacterFraming.SceneTexture(CharacterRoster.Skin(player?.character,player?.skin??0).id,"J0",slot),CharacterRoster.Skin(player?.character,player?.skin??0).id);
             if(!words.TryGetValue(word,out var lettering))words[word]=lettering=Resources.Load<Texture2D>("Majsoul/Callouts1018/"+word);
             // These direction-specific scales affect only the portrait/background.
             float unit=slot==0?.55f:slot==1?.50f:slot==2?.49f:.48f;

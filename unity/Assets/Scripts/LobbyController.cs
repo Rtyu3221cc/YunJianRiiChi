@@ -103,6 +103,7 @@ namespace YunJian.Riichi
         {
             if(client==null)return;discovery.Publish(client.State);
             TickCharacterPages();
+            if(dormOpen&&dormView==DormView.Wardrobe&&dressEye)TickWardrobePreview();
             UpdateQrFlow();
             if(modalClosing&&Now-closeStarted>=.15f){Modal="";modalClosing=false;}
             bool visible=Visible;
@@ -277,6 +278,7 @@ namespace YunJian.Riichi
             // the safe rectangle using one uniform scale. No stretched art.
             GUI.matrix=Matrix4x4.identity;
             if(dormOpen)DrawDormBackground();
+            else if(Page==ScreenPage.Home||Page==ScreenPage.Modes){var background=WardrobeCatalog.Texture(WardrobeSelection.Get("lobbyBackground")?.texture)??Art("yard");if(background!=null)GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),background,ScaleMode.ScaleAndCrop);}
             else Image(new Rect(0,0,Screen.width,Screen.height),Page==ScreenPage.Room?"indoor":"yard",ScaleMode.ScaleAndCrop);
             var safe=Screen.safeArea;
 #if UNITY_EDITOR
@@ -596,8 +598,7 @@ namespace YunJian.Riichi
                 var r=new Rect(left+i*pitch*cardScale,162,cardWidth*cardScale,cardHeight*cardScale);
                 Image(r,"Sprites/Main/character_bg");
                 if(i<state.players.Length){
-                    var p=state.players[i];GUI.BeginGroup(new Rect(r.x+13.2f*cardScale,r.y+20.5f*cardScale,350.9f*cardScale,743.9f*cardScale));
-                    float h=1060*cardScale,w=h*.657f;var character=CharacterRoster.Portrait(p);if(character!=null)GUI.DrawTexture(new Rect((350.9f*cardScale-w)/2,-10,w,h),character,ScaleMode.ScaleToFit);GUI.EndGroup();
+                    var p=state.players[i];DrawRoomCharacter(new Rect(r.x+13.2f*cardScale,r.y+20.5f*cardScale,350.9f*cardScale,743.9f*cardScale),p,i);
                     Image(r,"Sprites/Main/frame_gold");
                     if(i==0)Image(new Rect(r.x+28*cardScale,r.y+24*cardScale,107*cardScale,100*cardScale),"Sprites/Room/roomowner",ScaleMode.ScaleToFit);
                     if(p.ready)Image(new Rect(r.x+150*cardScale,r.y+512*cardScale,213*cardScale,158*cardScale),"Sprites/Main/ready",ScaleMode.ScaleToFit);
@@ -948,7 +949,7 @@ namespace YunJian.Riichi
             Image(canvas,"Sprites/RulePages/"+(three?"sanren":"siren"),ScaleMode.ScaleToFit);
         }
         void OnApplicationPause(bool paused){if(paused){sounds?.Stop();music?.Pause();CancelSearch();}}
-        void OnDestroy(){characterArt.Dispose();DisposeQrFlow();CancelSearch();discovery.Dispose();}
+        void OnDestroy(){DisposeWardrobe();characterArt.Dispose();DisposeQrFlow();CancelSearch();discovery.Dispose();}
 #if UNITY_EDITOR
         public float DesignPreviewClock=-1;
         public Rect DesignPreviewSafeArea;

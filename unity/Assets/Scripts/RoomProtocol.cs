@@ -3,7 +3,10 @@ using System;
 namespace YunJian.Riichi
 {
     // This DTO contains only Room.view() public state, never the host snapshot.
-    [Serializable] public class RoomReply { public bool ok, networkError; public string error, token, code; public RoomView state; }
+    [Serializable] public class RoomReply {
+        public bool ok, networkError; public string error, token, code; public RoomView state;
+        public static RoomReply Parse(string json){var reply=UnityEngine.JsonUtility.FromJson<RoomReply>(json);reply?.state?.Normalize();return reply;}
+    }
     [Serializable] public class RoomView
     {
         public string phase, pin, recovery, drawn, audioRoom;
@@ -20,13 +23,18 @@ namespace YunJian.Riichi
         public WaitDetail[] waitDetails = new WaitDetail[0];
         public DiscardHint[] discardHints = new DiscardHint[0];
         public PublicSound[] audioEvents = new PublicSound[0];
+        public int emoteSeq,emoteCooldownMs;public PublicEmote[] emotes=new PublicEmote[0];
         public PendingView pending;
         public LastDiscard last;
         public ResultView result;
+        // JsonUtility can materialize a JSON null inline class as a zero-value
+        // object. A real preparation always has a positive server revision.
+        public void Normalize(){if(resourceSetup!=null&&resourceSetup.revision<=0)resourceSetup=null;}
     }
     [Serializable] public class LobbyRoomView { public string category; public bool red, managed; }
     [Serializable] public class PlayerView
     {
+        public WardrobeLoadout wardrobe;
         public string name, avatar, autoReason, character;
         public int skin;
         public bool bot, auto, ready, online, takeoverMask;
@@ -43,6 +51,7 @@ namespace YunJian.Riichi
     [Serializable] public class Choice { public string id, kind, tile, meld; }
     // 'riichi' marks the declaration discard so the client plays the sideways clip.
     [Serializable] public class PublicSound { public int id, seat, nuki, from, riverIndex, meldIndex; public string kind, tile, winSource, meld, meldKind; public bool riichi; }
+    [Serializable] public class PublicEmote {public int id,seat,emoji,skin,ageMs;public string character;public long at;}
     [Serializable] public class ResultView { public string title; public int[] delta; public bool matchOver, repeat; public WinDetail[] details; public bool draw, abort; public DrawDetail abortHand; public DrawDetail[] drawDetails = new DrawDetail[0]; }
     [Serializable] public class WinDetail { public int seat, from; public string name, hand, tile, winSource; public bool ron; public ScoreDetail score; public int nuki; public string limit; public string[] tiles, melds, ura; public YakuDetail[] yaku; }
     [Serializable] public class YakuDetail { public string name; public int han, yakuman; }
@@ -50,8 +59,10 @@ namespace YunJian.Riichi
     [Serializable] public class ScoreDetail { public int fu, fanshu, defen, damanguan;public int[] delta; }
     [Serializable] public class RequestBody
     {
+        public WardrobeLoadout wardrobe;
         public string op, token, host, name, pin, recovery, action, id, category, room;
         public string character; public int skin;public bool randomCharacters;public CharacterChoice[] characterPool;
+        public int emoji;public bool randomBotAppearance;public CharacterChoice[] botCharacters;
         public int resourceProtocol=1,setupRevision;public string resourceStatus;public string[] fallbackCharacters;public ResourceShareRequest resourceShare;
         public int version, n, rounds, seat, handSeq;
         public int idleSeconds=120;

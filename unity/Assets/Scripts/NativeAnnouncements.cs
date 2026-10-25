@@ -13,9 +13,10 @@ namespace YunJian.Riichi {
    if(win==null)win=JsonUtility.FromJson<Layout>(Resources.Load<TextAsset>("Majsoul/Presentation0535/ui_huleshow-layout").text);
    int slot=relative==0?2:relative==n-1?1:relative==1&&n==4?3:0;
    var node=win.nodes.First(x=>x.path=="/UI_HuleShow/container_"+(kind=="ron"?"rong":"zimo")+"/"+slot);
-   var motion=node.components.First(c=>c.alphain_time>0 && c.scale_in_start!=null && c.scale_in_start.x>1);float t=Mathf.Clamp01(age/motion.alphain_time);float scale=Mathf.Lerp(motion.scale_in_start.x,1,Mathf.SmoothStep(0,1,t));
-   float unit=Mathf.Min(width/1280,height/720);Vector2 center=new Vector2(width/2+node.position[0]*2/3*unit,height/2-node.position[1]*2/3*unit);center.y=Mathf.Clamp(center.y,node.size[1]*unit/3+8,height-node.size[1]*unit/3-8);return new Rect(center.x-node.size[0]*scale*unit/3,center.y-node.size[1]*scale*unit/3,node.size[0]*scale*unit*2/3,node.size[1]*scale*unit*2/3);
+   var basis=win.nodes.First(x=>x.path=="/UI_HuleShow/container_rong/2");var motion=basis.components.First(c=>c.alphain_time>0 && c.scale_in_start!=null && c.scale_in_start.x>1);float t=Mathf.Clamp01(age/motion.alphain_time);float scale=Mathf.Lerp(motion.scale_in_start.x,1,Mathf.SmoothStep(0,1,t));
+   var texture=WinTexture(kind);float unit=Mathf.Min(width/1280,height/720),h=basis.size[1]*2/3*unit*scale,w=h*texture.width/texture.height;Vector2 center=new Vector2(width/2+node.position[0]*2/3*unit,height/2-node.position[1]*2/3*unit);center.y=Mathf.Clamp(center.y,h/2+8,height-h/2-8);return new Rect(center.x-w/2,center.y-h/2,w,h);
   }
+  public static Texture2D WinTexture(string kind)=>Resources.Load<Texture2D>("Majsoul/Presentation0535/"+(kind=="ron"?"show_rong":"show_zimo"));
   public static Rect LastRect(float width,float height,float age){
    if(al==null)al=JsonUtility.FromJson<Layout>(Resources.Load<TextAsset>("Majsoul/Presentation0535/ui_al-layout").text);
    var node=al.nodes.First(x=>x.path=="/UI_AL/node");var motion=node.components.First(c=>c.alphain_time>0 && c.scale_in_start!=null && c.scale_in_start.x>1);float t=Mathf.Clamp01(age/motion.alphain_time);float scale=Mathf.Lerp(motion.scale_in_start.x,1,t*t*t);
@@ -23,7 +24,7 @@ namespace YunJian.Riichi {
   }
   public static void DrawWin(string kind,int relative,int n,float width,float height,float age){
    var old=GUI.color;GUI.color=new Color(0,0,0,.3f*Mathf.Clamp01(age/.15f));GUI.DrawTexture(new Rect(0,0,width,height),Texture2D.whiteTexture);GUI.color=new Color(1,1,1,Mathf.Clamp01(age/.2f)*Mathf.Clamp01((1.05f-age)/.15f));
-   GUI.DrawTexture(WinRect(kind,relative,n,width,height,age),Resources.Load<Texture2D>("Majsoul/Presentation0535/"+(kind=="ron"?"show_rong":"show_zimo")),ScaleMode.ScaleToFit);GUI.color=old;
+   GUI.DrawTexture(WinRect(kind,relative,n,width,height,age),WinTexture(kind),ScaleMode.ScaleToFit);GUI.color=old;
   }
  }
  public sealed class AllLastAnnouncement {

@@ -12,6 +12,7 @@ namespace YunJian.Riichi
         public Camera Camera { get; private set; }
         public Camera HandCamera { get; private set; }
         OriginalTiles original;
+        string wardrobeTileKey;
         public TableTileGeometry Geometry => original.Geometry;
         readonly ReferenceScoreHub scoreHub = new ReferenceScoreHub();
         // Outside OnGUI this also re-renders a shining preview; inside it only reads.
@@ -127,6 +128,7 @@ namespace YunJian.Riichi
             // The Catfood tile shaders only read the direction of scene_mj/light.
             Shader.SetGlobalVector("_MjLightDir", TableLook.LightDirection);
             original = new OriginalTiles();
+            wardrobeTileKey=WardrobeSelection.Get("tileFace").id+"/"+WardrobeSelection.Get("tileBack").id;
             // GUI panels (chi choices, waits, settlement) read these; render them up front.
             original.HandTexture(null); foreach (var face in AllFaces) original.HandTexture(face);
             new GameObject("Original room sun_shine").AddComponent<SunShine>();
@@ -147,7 +149,7 @@ namespace YunJian.Riichi
             frame = Material("Frame", new Color(.13f, .08f, .12f));
             red = Material("RiichiDot", new Color(.76f, .09f, .12f)); gold = Material("Selection", new Color(1, .73f, .2f));
             felt = new Material(Shader.Find("YunJian/TableCloth"));
-            var texture = Resources.Load<Texture2D>("Majsoul/Table/cloth-chigua");
+            var texture = WardrobeCatalog.Texture(WardrobeSelection.Get("cloth")?.texture)??Resources.Load<Texture2D>("Majsoul/Table/cloth-chigua");
             if (texture != null) { felt.mainTexture = texture; felt.mainTextureScale = new Vector2(-1, -1); felt.mainTextureOffset = Vector2.one; }
             var baseRoot = new GameObject("Table").transform;
             // Extend the surface beyond the camera, like a seated player's view.
@@ -185,7 +187,8 @@ namespace YunJian.Riichi
                 }
                 catch { /* Keep default avatar for malformed saved data. */ }
             }
-            return CharacterRoster.Portrait(p,"smallhead");
+            var skin=CharacterRoster.Skin(p.character,p.skin);
+            return CharacterRoster.DisplayTexture("Skins/"+skin.id+"/smallhead")??CharacterPackService.Thumbnail(p.character)??CharacterPackService.Thumbnail("yiji");
         }
         public void Clear(bool resetOpening=true,bool keepHand=false)
         {
@@ -224,9 +227,10 @@ namespace YunJian.Riichi
             return root;
         }
         // The carried stick mirrors the deposited one so the hand-off is seamless.
-        public Transform CreateEffectStick()
+        public Transform CreateEffectStick(int seat=-1)
         {
             var root = new GameObject("Carried riichi stick").transform;
+            var choice=WardrobeRuntime.Item(Client.State,seat,"stick");if(!string.IsNullOrEmpty(choice?.model)){root.gameObject.AddComponent<WardrobeModelVisual>().Initialize(choice,.74f);return root;}
             Cube("Riichi 1000", root, Vector3.zero, new Vector3(.74f, .045f, .075f), ivory);
             Cube("Red dot", root, new Vector3(0, .024f, 0), new Vector3(.045f, .004f, .045f), red);
             return root;
@@ -540,6 +544,11 @@ namespace YunJian.Riichi
             }
             bool keepHand=view.phase=="result" && view.result!=null && !view.result.draw && cameraHand!=null && handTiles.Count>0;
             Clear(false,keepHand);state=view;opening.Observe(view,GetComponent<RiichiClient>()?.IntroRemaining??0);
+            if(!keepHand){
+                string key=WardrobeSelection.Get("tileFace").id+"/"+WardrobeSelection.Get("tileBack").id;
+                if(key!=wardrobeTileKey){original.Dispose();original=new OriginalTiles();original.HandTexture(null);foreach(var face in AllFaces)original.HandTexture(face);wardrobeTileKey=key;}
+                felt.mainTexture=WardrobeCatalog.Texture(WardrobeSelection.Get("cloth")?.texture);
+            }
             bool exhausted=state.phase=="result" && state.result!=null && state.result.draw && !state.result.abort && (state.result.drawDetails?.Length??0)>0;
             bool terminals=state.result!=null && state.result.abort && (state.result.abortHand?.tiles?.Length??0)>0;
             if(exhausted || terminals || state.phase=="result" && (state.result?.details?.Length??0)>0){string next=state.audioRoom+":"+state.round+":"+state.honba+":"+state.result.title;
@@ -556,12 +565,11 @@ namespace YunJian.Riichi
                 if (deposited)
                 {
                     // Grouped per seat so a placement animation can hide and reveal it.
-                    var stick = new GameObject("Riichi stick seat " + i).transform; stick.SetParent(seat, false);
+                    var stick = CreateEffectStick(i);stick.name="Riichi stick seat "+i;stick.SetParent(seat, false);
                     // The plate's lower recessed slot holds the deposited stick; it has to sit
                     // above the plate surface (hub root y = .092) instead of on the table.
                     stick.localPosition = new Vector3(0, .105f, -.833f);
-                    Cube("Riichi 1000", stick, Vector3.zero, new Vector3(.74f, .045f, .075f), ivory);
-                    Cube("Red dot", stick, new Vector3(0, .024f, 0), new Vector3(.045f, .004f, .045f), red);
+
                     stickAnchors[i] = stick;
                 }
                 DrawMelds(seat, p);
@@ -720,7 +728,7 @@ namespace YunJian.Riichi
                     {
                         responseTarget=tile;
                         responseSeat=seatIndex;responseIndex=raw+1;
-                        responseGlow=original.CreateResponseGlow(tile, TableTileGeometry.Width);responseGlow.gameObject.SetActive(false);
+                        // The native equipped indicator is managed across polling rebuilds.
                     }
                     cursor += width;
                 }

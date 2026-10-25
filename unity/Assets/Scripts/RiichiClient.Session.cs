@@ -83,7 +83,7 @@ namespace YunJian.Riichi
                 web.SetRequestHeader("Content-Type","application/json");web.timeout=5;web.redirectLimit=0;
                 yield return web.SendWebRequest();
                 if(web.result!=UnityWebRequest.Result.Success){done(new RoomReply{networkError=true,error=web.error});yield break;}
-                RoomReply reply;try{reply=JsonUtility.FromJson<RoomReply>(web.downloadHandler.text);}catch{reply=null;}
+                RoomReply reply;try{reply=RoomReply.Parse(web.downloadHandler.text);}catch{reply=null;}
                 done(reply??new RoomReply{error="无效响应"});
             }
         }

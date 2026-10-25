@@ -1,1335 +1,1627 @@
 {
-  "skinId": 305034,
-  "effect": "ron_huolongjuan",
-  "audioId": 305034,
-  "nodes": [
+ "schema": 2,
+ "nodes": [
+  {
+   "name": "ron_huolongjuan",
+   "parent": -1,
+   "position": [
+    0,
+    0,
+    0
+   ],
+   "rotation": [
+    0,
+    0,
+    0,
+    -1
+   ],
+   "scale": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "ron_huolongjuan",
+   "parent": 0,
+   "position": [
+    0,
+    0,
+    0
+   ],
+   "rotation": [
+    0,
+    0,
+    0,
+    -1
+   ],
+   "scale": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "yuan add xiao shu (2)",
+   "parent": 1,
+   "position": [
+    0,
+    0,
+    0
+   ],
+   "rotation": [
+    -0.7071068,
+    0,
+    0,
+    0.7071068
+   ],
+   "scale": [
+    1.2,
+    1.200002,
+    1.200003
+   ]
+  },
+  {
+   "name": "yuan add (13)",
+   "parent": 2,
+   "position": [
+    0,
+    0,
+    0
+   ],
+   "rotation": [
+    0,
+    -2.107342e-08,
+    0,
+    -1
+   ],
+   "scale": [
+    0.6666667,
+    0.666668,
+    0.5000002
+   ]
+  },
+  {
+   "name": "lizi (1)",
+   "parent": 2,
+   "position": [
+    0,
+    0,
+    0.003999997
+   ],
+   "rotation": [
+    1,
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.5833332,
+    0.5833334,
+    0.5833328
+   ]
+  },
+  {
+   "name": "lizi (2)",
+   "parent": 2,
+   "position": [
+    0,
+    0,
+    0.003999998
+   ],
+   "rotation": [
+    1,
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.5833332,
+    0.5833333,
+    0.5833327
+   ]
+  },
+  {
+   "name": "shexianadd (2)",
+   "parent": 2,
+   "position": [
+    0.0038,
+    -0.003399999,
+    -0.01399999
+   ],
+   "rotation": [
+    -1,
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.8333333,
+    0.8333324,
+    0.8333316
+   ]
+  },
+  {
+   "name": "yuan add (10)",
+   "parent": 2,
+   "position": [
+    0,
+    0,
+    0
+   ],
+   "rotation": [
+    0,
+    -2.107342e-08,
+    0,
+    -1
+   ],
+   "scale": [
+    0.6666668,
+    0.666667,
+    0.4999994
+   ]
+  },
+  {
+   "name": "yuan add (15)",
+   "parent": 2,
+   "position": [
+    0,
+    0,
+    0
+   ],
+   "rotation": [
+    1,
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.6000001,
+    0.6000003,
+    2.063038
+   ]
+  },
+  {
+   "name": "gaoliang (2)",
+   "parent": 2,
+   "position": [
+    0.009999999,
+    0.01699999,
+    -0.1409999
+   ],
+   "rotation": [
+    1,
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    1.4125,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "feng add (7)",
+   "parent": 2,
+   "position": [
+    0.01,
+    -0.003,
+    0.225
+   ],
+   "rotation": [
+    0,
+    -0.7071068,
+    -0.7071068,
+    0
+   ],
+   "scale": [
+    0.4270762,
+    1.362289,
+    0.797468
+   ]
+  }
+ ],
+ "layers": [
+  {
+   "name": "yuan add xiao shu (2)",
+   "node": 2,
+   "texture": "r4-891615adf6699699",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 1,
+   "duration": 5,
+   "delay": 0,
+   "lifeMin": 1.25,
+   "lifeMax": 1.25,
+   "sizeMin": 0.7,
+   "sizeMax": 0.7,
+   "speedMin": 0,
+   "speedMax": 0,
+   "rotationMin": 0,
+   "rotationMax": 0,
+   "colorMin": [
+    1,
+    0.7205883,
+    0.3014706,
+    0.641
+   ],
+   "colorMax": [
+    1,
+    0.7205883,
+    0.3014706,
+    0.641
+   ],
+   "size3d": [
+    0.7,
+    5,
+    1
+   ],
+   "size3dMin": [
+    0.7,
+    5,
+    1
+   ],
+   "maxParticles": 1,
+   "renderMode": 3,
+   "stretch": 2,
+   "gravity": 0,
+   "rate": 0,
+   "bursts": [
     {
-      "name": "ron_huolongjuan",
-      "parent": -1,
-      "position": [
-        0,
-        0,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0,
-        -1
-      ],
-      "scale": [
-        1,
-        1,
-        1
-      ]
-    },
-    {
-      "name": "ron_huolongjuan",
-      "parent": 0,
-      "position": [
-        0,
-        0,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0,
-        -1
-      ],
-      "scale": [
-        1,
-        1,
-        1
-      ]
-    },
-    {
-      "name": "yuan add xiao shu (2)",
-      "parent": 1,
-      "position": [
-        0,
-        0,
-        0
-      ],
-      "rotation": [
-        -0.7071068,
-        0,
-        0,
-        0.7071068
-      ],
-      "scale": [
-        1.2,
-        1.200002,
-        1.200003
-      ]
-    },
-    {
-      "name": "yuan add (13)",
-      "parent": 2,
-      "position": [
-        0,
-        0,
-        0
-      ],
-      "rotation": [
-        0,
-        -2.107342e-08,
-        0,
-        -1
-      ],
-      "scale": [
-        0.6666667,
-        0.666668,
-        0.5000002
-      ]
-    },
-    {
-      "name": "lizi (1)",
-      "parent": 2,
-      "position": [
-        0,
-        0,
-        0.003999997
-      ],
-      "rotation": [
-        1,
-        0,
-        0,
-        0
-      ],
-      "scale": [
-        0.5833332,
-        0.5833334,
-        0.5833328
-      ]
-    },
-    {
-      "name": "lizi (2)",
-      "parent": 2,
-      "position": [
-        0,
-        0,
-        0.003999998
-      ],
-      "rotation": [
-        1,
-        0,
-        0,
-        0
-      ],
-      "scale": [
-        0.5833332,
-        0.5833333,
-        0.5833327
-      ]
-    },
-    {
-      "name": "shexianadd (2)",
-      "parent": 2,
-      "position": [
-        0.0038,
-        -0.003399999,
-        -0.01399999
-      ],
-      "rotation": [
-        -1,
-        0,
-        0,
-        0
-      ],
-      "scale": [
-        0.8333333,
-        0.8333324,
-        0.8333316
-      ]
-    },
-    {
-      "name": "yuan add (10)",
-      "parent": 2,
-      "position": [
-        0,
-        0,
-        0
-      ],
-      "rotation": [
-        0,
-        -2.107342e-08,
-        0,
-        -1
-      ],
-      "scale": [
-        0.6666668,
-        0.666667,
-        0.4999994
-      ]
-    },
-    {
-      "name": "yuan add (15)",
-      "parent": 2,
-      "position": [
-        0,
-        0,
-        0
-      ],
-      "rotation": [
-        1,
-        0,
-        0,
-        0
-      ],
-      "scale": [
-        0.6000001,
-        0.6000003,
-        2.063038
-      ]
-    },
-    {
-      "name": "gaoliang (2)",
-      "parent": 2,
-      "position": [
-        0.009999999,
-        0.01699999,
-        -0.1409999
-      ],
-      "rotation": [
-        1,
-        0,
-        0,
-        0
-      ],
-      "scale": [
-        1.4125,
-        1,
-        1
-      ]
-    },
-    {
-      "name": "feng add (7)",
-      "parent": 2,
-      "position": [
-        0.01,
-        -0.003,
-        0.225
-      ],
-      "rotation": [
-        0,
-        -0.7071068,
-        -0.7071068,
-        0
-      ],
-      "scale": [
-        0.4270762,
-        1.362289,
-        0.797468
-      ]
+     "time": 0,
+     "min": 0,
+     "max": 1
     }
-  ],
-  "layers": [
+   ],
+   "alpha": [
     {
-      "name": "yuan add xiao shu (2)",
-      "node": 2,
-      "duration": 5,
-      "delay": 0,
-      "gravity": 0,
-      "rate": 0,
-      "maxParticles": 1,
-      "renderMode": 3,
-      "stretch": 2,
-      "colorMin": [
-        1,
-        0.7205883,
-        0.3014706,
-        0.641
-      ],
-      "colorMax": [
-        1,
-        0.7205883,
-        0.3014706,
-        0.641
-      ],
-      "size3d": [
-        0.7,
-        5,
-        1
-      ],
-      "size3dMin": [],
-      "alpha": [
-        {
-          "time": 0,
-          "value": 1
-        },
-        {
-          "time": 1,
-          "value": 0.6117647
-        }
-      ],
-      "size": [
-        {
-          "time": 0,
-          "value": 1
-        },
-        {
-          "time": 0.1110325,
-          "value": 0.3088569
-        },
-        {
-          "time": 0.7397149,
-          "value": 0.2474365
-        },
-        {
-          "time": 1,
-          "value": 0
-        }
-      ],
-      "sizeX": [
-        {
-          "time": 0,
-          "value": 1
-        },
-        {
-          "time": 0.1110325,
-          "value": 0.3088569
-        },
-        {
-          "time": 0.7397149,
-          "value": 0.2474365
-        },
-        {
-          "time": 1,
-          "value": 0
-        }
-      ],
-      "sizeY": [
-        {
-          "time": 0,
-          "value": 1
-        },
-        {
-          "time": 1,
-          "value": 1
-        }
-      ],
-      "sizeZ": [
-        {
-          "time": 0,
-          "value": 1
-        },
-        {
-          "time": 1,
-          "value": 1
-        }
-      ],
-      "tiles": [
-        1,
-        1
-      ],
-      "frames": [],
-      "cycles": 1,
-      "bursts": [
-        {
-          "time": 0,
-          "min": 0,
-          "max": 1
-        }
-      ],
-      "texture": "native-tornado-yuanqiu2_add",
-      "tint": [
-        0.5,
-        0.5,
-        0.5,
-        0.5
-      ],
-      "blendDst": 1,
-      "lifeMin": 1.25,
-      "lifeMax": 1.25,
-      "sizeMin": 0.7,
-      "sizeMax": 0.7,
-      "speedMin": 0,
-      "speedMax": 0,
-      "rotationMin": 0,
-      "rotationMax": 0,
-      "shape": -1,
-      "radius": 0.03,
-      "coneAngle": 0,
-      "angularSpeed": 0,
-      "velocityMin": [],
-      "velocityMax": []
+     "time": 0,
+     "value": 1
     },
     {
-      "name": "yuan add (13)",
-      "node": 3,
-      "duration": 5,
-      "delay": 0,
-      "gravity": 0,
-      "rate": 0,
-      "maxParticles": 2,
-      "renderMode": 2,
-      "stretch": 2,
-      "colorMin": [
-        0.9926471,
-        0.3785348,
-        0.1021842,
-        1
-      ],
-      "colorMax": [
-        0.9926471,
-        0.3785348,
-        0.1021842,
-        1
-      ],
-      "size3d": [],
-      "size3dMin": [],
-      "alpha": [
-        {
-          "time": 0,
-          "value": 1
-        },
-        {
-          "time": 0.4764782,
-          "value": 1
-        },
-        {
-          "time": 1,
-          "value": 0
-        }
-      ],
-      "size": [
-        {
-          "time": 0,
-          "value": 0
-        },
-        {
-          "time": 0.01514123,
-          "value": 0.9496914
-        },
-        {
-          "time": 1,
-          "value": 1
-        }
-      ],
-      "sizeX": [],
-      "sizeY": [],
-      "sizeZ": [],
-      "tiles": [
-        1,
-        1
-      ],
-      "frames": [],
-      "cycles": 1,
-      "bursts": [
-        {
-          "time": 0,
-          "min": 2,
-          "max": 2
-        }
-      ],
-      "texture": "native-tornado-yuanqiu2_add",
-      "tint": [
-        0.5,
-        0.5,
-        0.5,
-        0.5
-      ],
-      "blendDst": 1,
-      "lifeMin": 1.3,
-      "lifeMax": 1.3,
-      "sizeMin": 0.5,
-      "sizeMax": 0.5,
-      "speedMin": 0,
-      "speedMax": 0,
-      "rotationMin": 0,
-      "rotationMax": 0,
-      "shape": -1,
-      "radius": 0.03,
-      "coneAngle": 0,
-      "angularSpeed": 0,
-      "velocityMin": [],
-      "velocityMax": []
-    },
-    {
-      "name": "lizi (1)",
-      "node": 4,
-      "duration": 1.2,
-      "delay": 0,
-      "gravity": 0,
-      "rate": 100,
-      "maxParticles": 230,
-      "renderMode": 1,
-      "stretch": 5.48,
-      "colorMin": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "colorMax": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "size3d": [],
-      "size3dMin": [],
-      "alpha": [
-        {
-          "time": 0,
-          "value": 1
-        },
-        {
-          "time": 0.4764782,
-          "value": 1
-        },
-        {
-          "time": 1,
-          "value": 0
-        }
-      ],
-      "size": [
-        {
-          "time": 0,
-          "value": 1
-        },
-        {
-          "time": 1,
-          "value": 0
-        }
-      ],
-      "sizeX": [],
-      "sizeY": [],
-      "sizeZ": [],
-      "tiles": [
-        1,
-        1
-      ],
-      "frames": [],
-      "cycles": 1,
-      "bursts": [
-        {
-          "time": 0,
-          "min": 0,
-          "max": 30
-        }
-      ],
-      "texture": "native-tornado-lizi_00015",
-      "tint": [
-        0.5,
-        0.5,
-        0.5,
-        0.5
-      ],
-      "blendDst": 1,
-      "lifeMin": 0.3,
-      "lifeMax": 0.5,
-      "sizeMin": 0.05,
-      "sizeMax": 0.02,
-      "speedMin": 1,
-      "speedMax": 0.8,
-      "rotationMin": 0,
-      "rotationMax": 0,
-      "shape": 2,
-      "radius": 0.06,
-      "coneAngle": 50.86,
-      "angularSpeed": 0,
-      "velocityMin": [],
-      "velocityMax": []
-    },
-    {
-      "name": "lizi (2)",
-      "node": 5,
-      "duration": 1.2,
-      "delay": 0,
-      "gravity": 0,
-      "rate": 100,
-      "maxParticles": 230,
-      "renderMode": 0,
-      "stretch": 3,
-      "colorMin": [
-        0.3676471,
-        0.3342381,
-        0.291955,
-        1
-      ],
-      "colorMax": [
-        0.3676471,
-        0.3342381,
-        0.291955,
-        1
-      ],
-      "size3d": [],
-      "size3dMin": [],
-      "alpha": [
-        {
-          "time": 0,
-          "value": 1
-        },
-        {
-          "time": 1,
-          "value": 0
-        }
-      ],
-      "size": [
-        {
-          "time": 0,
-          "value": 1
-        },
-        {
-          "time": 1,
-          "value": 0
-        }
-      ],
-      "sizeX": [],
-      "sizeY": [],
-      "sizeZ": [],
-      "tiles": [
-        3,
-        4
-      ],
-      "frames": [
-        {
-          "time": 0,
-          "value": 0.0
-        },
-        {
-          "time": 1,
-          "value": 0.9998999999999999
-        }
-      ],
-      "cycles": 1,
-      "bursts": [
-        {
-          "time": 0,
-          "min": 0,
-          "max": 30
-        }
-      ],
-      "texture": "native-tornado-bomb_suixue_alpha",
-      "tint": [
-        0.5,
-        0.5,
-        0.5,
-        0.5
-      ],
-      "blendDst": 771,
-      "lifeMin": 0.5,
-      "lifeMax": 0.8,
-      "sizeMin": 0.05,
-      "sizeMax": 0.02,
-      "speedMin": 1,
-      "speedMax": 0.8,
-      "rotationMin": 0,
-      "rotationMax": 0,
-      "shape": 2,
-      "radius": 0.06,
-      "coneAngle": 50.86,
-      "angularSpeed": 0,
-      "velocityMin": [],
-      "velocityMax": [],
-      "randomFrame": false
-    },
-    {
-      "name": "shexianadd (2)",
-      "node": 6,
-      "duration": 0.85,
-      "delay": 0,
-      "gravity": 0,
-      "rate": 45,
-      "maxParticles": 95,
-      "renderMode": 1,
-      "stretch": 5,
-      "colorMin": [
-        1,
-        0.5425964,
-        0.1911765,
-        1
-      ],
-      "colorMax": [
-        1,
-        0.5425964,
-        0.1911765,
-        1
-      ],
-      "size3d": [],
-      "size3dMin": [],
-      "alpha": [
-        {
-          "time": 0,
-          "value": 1
-        },
-        {
-          "time": 0.6441138,
-          "value": 1
-        },
-        {
-          "time": 1,
-          "value": 0
-        }
-      ],
-      "size": [
-        {
-          "time": 0,
-          "value": 0
-        },
-        {
-          "time": 0.1200801,
-          "value": 0.4841585
-        },
-        {
-          "time": 1,
-          "value": 1
-        }
-      ],
-      "sizeX": [],
-      "sizeY": [],
-      "sizeZ": [],
-      "tiles": [
-        4,
-        4
-      ],
-      "frames": [],
-      "cycles": 1,
-      "bursts": [
-        {
-          "time": 0,
-          "min": 0,
-          "max": 5
-        }
-      ],
-      "texture": "native-tornado-fire_bai_alpha",
-      "tint": [
-        0.5,
-        0.5,
-        0.5,
-        0.5
-      ],
-      "blendDst": 771,
-      "lifeMin": 0.15,
-      "lifeMax": 0.5,
-      "sizeMin": 0.04,
-      "sizeMax": 0.045,
-      "speedMin": -0.05,
-      "speedMax": -0.05,
-      "rotationMin": 0,
-      "rotationMax": 0,
-      "shape": 2,
-      "radius": 0.06,
-      "coneAngle": 30,
-      "angularSpeed": 0,
-      "velocityMin": [],
-      "velocityMax": [],
-      "randomFrame": true
-    },
-    {
-      "name": "yuan add (10)",
-      "node": 7,
-      "duration": 5,
-      "delay": 0,
-      "gravity": 0,
-      "rate": 0,
-      "maxParticles": 2,
-      "renderMode": 2,
-      "stretch": 2,
-      "colorMin": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "colorMax": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "size3d": [],
-      "size3dMin": [],
-      "alpha": [
-        {
-          "time": 0,
-          "value": 1
-        },
-        {
-          "time": 0.20589,
-          "value": 0.6941177
-        },
-        {
-          "time": 1,
-          "value": 0
-        }
-      ],
-      "size": [
-        {
-          "time": 0,
-          "value": 0
-        },
-        {
-          "time": 0.01514123,
-          "value": 0.9496914
-        },
-        {
-          "time": 0.1017863,
-          "value": 0.7094252
-        },
-        {
-          "time": 1,
-          "value": 0.6192031
-        }
-      ],
-      "sizeX": [],
-      "sizeY": [],
-      "sizeZ": [],
-      "tiles": [
-        1,
-        1
-      ],
-      "frames": [],
-      "cycles": 1,
-      "bursts": [
-        {
-          "time": 0,
-          "min": 2,
-          "max": 2
-        }
-      ],
-      "texture": "native-tornado-lizi_00115",
-      "tint": [
-        0.5,
-        0.5,
-        0.5,
-        0.5
-      ],
-      "blendDst": 1,
-      "lifeMin": 1.5,
-      "lifeMax": 1.5,
-      "sizeMin": 0.8,
-      "sizeMax": 0.8,
-      "speedMin": 0,
-      "speedMax": 0,
-      "rotationMin": 0,
-      "rotationMax": 0,
-      "shape": -1,
-      "radius": 0.03,
-      "coneAngle": 0,
-      "angularSpeed": 0,
-      "velocityMin": [],
-      "velocityMax": []
-    },
-    {
-      "name": "yuan add (15)",
-      "node": 8,
-      "duration": 1.02,
-      "delay": 0,
-      "gravity": 0,
-      "rate": 5,
-      "maxParticles": 11,
-      "renderMode": 4,
-      "stretch": 2,
-      "colorMin": [
-        0.6911765,
-        0.2156246,
-        0.04065744,
-        1
-      ],
-      "colorMax": [
-        0.6911765,
-        0.2156246,
-        0.04065744,
-        1
-      ],
-      "size3d": [],
-      "size3dMin": [],
-      "alpha": [
-        {
-          "time": 0,
-          "value": 1
-        },
-        {
-          "time": 0.4147097,
-          "value": 0.9550701
-        },
-        {
-          "time": 1,
-          "value": 0
-        }
-      ],
-      "size": [
-        {
-          "time": 0,
-          "value": 0
-        },
-        {
-          "time": 1,
-          "value": 1
-        }
-      ],
-      "sizeX": [],
-      "sizeY": [],
-      "sizeZ": [],
-      "tiles": [
-        4,
-        4
-      ],
-      "frames": [
-        {
-          "time": 0,
-          "value": 0.9999
-        },
-        {
-          "time": 1,
-          "value": 0.0
-        }
-      ],
-      "cycles": 1,
-      "bursts": [
-        {
-          "time": 0,
-          "min": 1,
-          "max": 1
-        }
-      ],
-      "texture": "native-tornado-sequence_1063_alpha",
-      "tint": [
-        0.5,
-        0.5,
-        0.5,
-        1
-      ],
-      "blendDst": 771,
-      "lifeMin": 0.5,
-      "lifeMax": 0.5,
-      "sizeMin": 0.1,
-      "sizeMax": 0.1,
-      "speedMin": 0,
-      "speedMax": 0,
-      "rotationMin": 0,
-      "rotationMax": 360,
-      "shape": -1,
-      "radius": 0.03,
-      "coneAngle": 0,
-      "angularSpeed": 500,
-      "velocityMin": [],
-      "velocityMax": [],
-      "randomFrame": false,
-      "mesh": {
-        "positions": [
-          -6.812780384279904e-08,
-          1.5585824251174927,
-          -0.0,
-          0.7792912125587463,
-          1.3497720956802368,
-          -0.0,
-          0.7792912125587463,
-          1.3497720956802368,
-          -0.6349999904632568,
-          -6.812780384279904e-08,
-          1.5585824251174927,
-          -0.6349999904632568,
-          1.3497719764709473,
-          0.7792912125587463,
-          -0.6349999904632568,
-          1.3497719764709473,
-          0.7792912125587463,
-          -0.0,
-          1.5585824251174927,
-          0.0,
-          -0.6349999904632568,
-          1.5585824251174927,
-          0.0,
-          -0.0,
-          1.3497719764709473,
-          -0.7792912125587463,
-          -0.6349999904632568,
-          1.3497719764709473,
-          -0.7792912125587463,
-          -0.0,
-          0.7792912125587463,
-          -1.3497720956802368,
-          -0.6349999904632568,
-          0.7792912125587463,
-          -1.3497720956802368,
-          -0.0,
-          -6.812780384279904e-08,
-          -1.5585824251174927,
-          -0.6349999904632568,
-          -6.812780384279904e-08,
-          -1.5585824251174927,
-          -0.0,
-          -0.7792913317680359,
-          -1.3497719764709473,
-          -0.6349999904632568,
-          -0.7792913317680359,
-          -1.3497719764709473,
-          -0.0,
-          -1.3497719764709473,
-          -0.7792913317680359,
-          -0.6349999904632568,
-          -1.3497719764709473,
-          -0.7792913317680359,
-          -0.0,
-          -1.5585824251174927,
-          -2.3533939952358196e-07,
-          -0.6349999904632568,
-          -1.5585824251174927,
-          -2.3533939952358196e-07,
-          -0.0,
-          -1.3497720956802368,
-          0.7792909145355225,
-          -0.6349999904632568,
-          -1.3497720956802368,
-          0.7792909145355225,
-          -0.0,
-          -0.7792916893959045,
-          1.3497716188430786,
-          -0.6349999904632568,
-          -0.7792916893959045,
-          1.3497716188430786,
-          -0.0,
-          -6.812780384279904e-08,
-          1.5585824251174927,
-          -0.6349999904632568,
-          -6.812780384279904e-08,
-          1.5585824251174927,
-          -0.0
-        ],
-        "uv": [
-          -0.000605463981628418,
-          0.000605463981628418,
-          0.08272787183523178,
-          0.000605463981628418,
-          0.08272794634103775,
-          0.9993947148323059,
-          -0.000605388602707535,
-          0.9993947148323059,
-          0.16606128215789795,
-          0.9993947148323059,
-          0.16606120765209198,
-          0.000605463981628418,
-          0.24939462542533875,
-          0.9993947148323059,
-          0.24939453601837158,
-          0.000605463981628418,
-          0.33272796869277954,
-          0.9993947148323059,
-          0.3327278792858124,
-          0.000605463981628418,
-          0.41606128215789795,
-          0.9993946552276611,
-          0.4160611927509308,
-          0.0006054043769836426,
-          0.49939459562301636,
-          0.9993946552276611,
-          0.4993945360183716,
-          0.0006054043769836426,
-          0.5827279090881348,
-          0.9993946552276611,
-          0.58272784948349,
-          0.0006054043769836426,
-          0.666061282157898,
-          0.9993946552276611,
-          0.6660612225532532,
-          0.0006054043769836426,
-          0.7493945956230164,
-          0.9993946552276611,
-          0.7493945360183716,
-          0.0006054043769836426,
-          0.8327279090881348,
-          0.9993946552276611,
-          0.83272784948349,
-          0.0006054043769836426,
-          0.916061282157898,
-          0.9993946552276611,
-          0.9160612225532532,
-          0.0006054043769836426,
-          0.9993946552276611,
-          0.9993946552276611,
-          0.9993945360183716,
-          0.0006054043769836426
-        ],
-        "indices": [
-          2,
-          1,
-          0,
-          3,
-          2,
-          0,
-          2,
-          4,
-          1,
-          4,
-          5,
-          1,
-          4,
-          6,
-          5,
-          6,
-          7,
-          5,
-          6,
-          8,
-          7,
-          8,
-          9,
-          7,
-          8,
-          10,
-          9,
-          10,
-          11,
-          9,
-          10,
-          12,
-          11,
-          12,
-          13,
-          11,
-          12,
-          14,
-          13,
-          14,
-          15,
-          13,
-          14,
-          16,
-          15,
-          16,
-          17,
-          15,
-          16,
-          18,
-          17,
-          18,
-          19,
-          17,
-          18,
-          20,
-          19,
-          20,
-          21,
-          19,
-          20,
-          22,
-          21,
-          22,
-          23,
-          21,
-          22,
-          24,
-          23,
-          24,
-          25,
-          23
-        ]
-      }
-    },
-    {
-      "name": "gaoliang (2)",
-      "node": 9,
-      "duration": 1.2,
-      "delay": 0,
-      "gravity": 0,
-      "rate": 10,
-      "maxParticles": 20,
-      "renderMode": 1,
-      "stretch": 3,
-      "colorMin": [
-        0.5661765,
-        0.3442996,
-        0.2789252,
-        1
-      ],
-      "colorMax": [
-        0.5661765,
-        0.3442996,
-        0.2789252,
-        1
-      ],
-      "size3d": [],
-      "size3dMin": [],
-      "alpha": [
-        {
-          "time": 0,
-          "value": 0
-        },
-        {
-          "time": 0.07353323,
-          "value": 1
-        },
-        {
-          "time": 0.4735332,
-          "value": 1
-        },
-        {
-          "time": 1,
-          "value": 0
-        }
-      ],
-      "size": [
-        {
-          "time": 0,
-          "value": 0.2849121
-        },
-        {
-          "time": 1,
-          "value": 1
-        }
-      ],
-      "sizeX": [],
-      "sizeY": [],
-      "sizeZ": [],
-      "tiles": [
-        1,
-        1
-      ],
-      "frames": [],
-      "cycles": 1,
-      "bursts": [],
-      "texture": "native-tornado-yuanqiu2_add",
-      "tint": [
-        0.5,
-        0.5,
-        0.5,
-        0.5
-      ],
-      "blendDst": 1,
-      "lifeMin": 0.15,
-      "lifeMax": 0.15,
-      "sizeMin": 0.3,
-      "sizeMax": 0.3,
-      "speedMin": -0.035,
-      "speedMax": -0.035,
-      "rotationMin": 0,
-      "rotationMax": 0,
-      "shape": 2,
-      "radius": 0.01,
-      "coneAngle": 0,
-      "angularSpeed": 0,
-      "velocityMin": [],
-      "velocityMax": []
-    },
-    {
-      "name": "feng add (7)",
-      "node": 10,
-      "duration": 1,
-      "delay": 0,
-      "gravity": 0,
-      "rate": 2,
-      "maxParticles": 5,
-      "renderMode": 4,
-      "stretch": 2,
-      "colorMin": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "colorMax": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "size3d": [],
-      "size3dMin": [],
-      "alpha": [
-        {
-          "time": 0,
-          "value": 0
-        },
-        {
-          "time": 0.2235294,
-          "value": 1
-        },
-        {
-          "time": 0.6529488,
-          "value": 1
-        },
-        {
-          "time": 1,
-          "value": 0
-        }
-      ],
-      "size": [],
-      "sizeX": [],
-      "sizeY": [],
-      "sizeZ": [],
-      "tiles": [
-        4,
-        4
-      ],
-      "frames": [
-        {
-          "time": 0,
-          "value": 0.0
-        },
-        {
-          "time": 1,
-          "value": 0.9999
-        }
-      ],
-      "cycles": 1,
-      "bursts": [
-        {
-          "time": 0,
-          "min": 0,
-          "max": 1
-        }
-      ],
-      "texture": "native-tornado-longjuanfeng_alpha",
-      "tint": [
-        0.5,
-        0.5,
-        0.5,
-        0.5
-      ],
-      "blendDst": 771,
-      "lifeMin": 0.8,
-      "lifeMax": 0.8,
-      "sizeMin": 0.22,
-      "sizeMax": 0.22,
-      "speedMin": 0,
-      "speedMax": 0,
-      "rotationMin": 0,
-      "rotationMax": 0,
-      "shape": -1,
-      "radius": 0.03,
-      "coneAngle": 0,
-      "angularSpeed": 0,
-      "velocityMin": [],
-      "velocityMax": [],
-      "randomFrame": false,
-      "mesh": {
-        "positions": [
-          -1.2699999809265137,
-          1.2699999809265137,
-          -0.0,
-          1.2699999809265137,
-          1.2699999809265137,
-          -0.0,
-          -1.2699999809265137,
-          -1.2699999809265137,
-          -0.0,
-          1.2699999809265137,
-          -1.2699999809265137,
-          -0.0
-        ],
-        "uv": [
-          0.0,
-          0.0,
-          1.0,
-          0.0,
-          0.0,
-          1.0,
-          1.0,
-          1.0
-        ],
-        "indices": [
-          2,
-          1,
-          0,
-          1,
-          2,
-          3
-        ]
-      }
+     "time": 1,
+     "value": 0.6117647
     }
-  ]
+   ],
+   "colors": [
+    {
+     "time": 0,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "time": 1,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   ],
+   "size": [
+    {
+     "time": 0,
+     "value": 1
+    },
+    {
+     "time": 0.1110325,
+     "value": 0.3088569
+    },
+    {
+     "time": 0.7397149,
+     "value": 0.2474365
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "sizeX": [
+    {
+     "time": 0,
+     "value": 1
+    },
+    {
+     "time": 0.1110325,
+     "value": 0.3088569
+    },
+    {
+     "time": 0.7397149,
+     "value": 0.2474365
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "sizeY": [
+    {
+     "time": 0,
+     "value": 1
+    },
+    {
+     "time": 1,
+     "value": 1
+    }
+   ],
+   "sizeZ": [
+    {
+     "time": 0,
+     "value": 1
+    },
+    {
+     "time": 1,
+     "value": 1
+    }
+   ],
+   "tiles": [
+    1,
+    1
+   ],
+   "frames": [],
+   "cycles": 1,
+   "angularSpeed": 0,
+   "shape": -1,
+   "radius": 0.01,
+   "coneAngle": 0,
+   "nativeShape": true,
+   "box": [
+    1,
+    1,
+    1
+   ],
+   "randomDirection": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "blendSrc": 5,
+   "scaleMode": 0,
+   "simulationSpace": 1
+  },
+  {
+   "name": "yuan add (13)",
+   "node": 3,
+   "texture": "r4-891615adf6699699",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 1,
+   "duration": 5,
+   "delay": 0,
+   "lifeMin": 1.3,
+   "lifeMax": 1.3,
+   "sizeMin": 0.5,
+   "sizeMax": 0.5,
+   "speedMin": 0,
+   "speedMax": 0,
+   "rotationMin": 0,
+   "rotationMax": 0,
+   "colorMin": [
+    0.9926471,
+    0.3785348,
+    0.1021842,
+    1
+   ],
+   "colorMax": [
+    0.9926471,
+    0.3785348,
+    0.1021842,
+    1
+   ],
+   "size3d": [],
+   "size3dMin": [],
+   "maxParticles": 2,
+   "renderMode": 2,
+   "stretch": 2,
+   "gravity": 0,
+   "rate": 0,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 2,
+     "max": 2
+    }
+   ],
+   "alpha": [
+    {
+     "time": 0,
+     "value": 1
+    },
+    {
+     "time": 0.4764782,
+     "value": 1
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "colors": [
+    {
+     "time": 0,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "time": 1,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   ],
+   "size": [
+    {
+     "time": 0,
+     "value": 0
+    },
+    {
+     "time": 0.01514123,
+     "value": 0.9496914
+    },
+    {
+     "time": 1,
+     "value": 1
+    }
+   ],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    1,
+    1
+   ],
+   "frames": [],
+   "cycles": 1,
+   "angularSpeed": 0,
+   "shape": -1,
+   "radius": 0.01,
+   "coneAngle": 0,
+   "nativeShape": true,
+   "box": [
+    1,
+    1,
+    1
+   ],
+   "randomDirection": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "blendSrc": 5,
+   "scaleMode": 0,
+   "simulationSpace": 1
+  },
+  {
+   "name": "lizi (1)",
+   "node": 4,
+   "texture": "r4-b8170c99edcdc7c0",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 1,
+   "duration": 1.2,
+   "delay": 0,
+   "lifeMin": 0.3,
+   "lifeMax": 0.5,
+   "sizeMin": 0.05,
+   "sizeMax": 0.02,
+   "speedMin": 1,
+   "speedMax": 0.8,
+   "rotationMin": 0,
+   "rotationMax": 0,
+   "colorMin": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "colorMax": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "size3d": [],
+   "size3dMin": [],
+   "maxParticles": 230,
+   "renderMode": 1,
+   "stretch": 5.48,
+   "gravity": 0,
+   "rate": 100,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 0,
+     "max": 30
+    }
+   ],
+   "alpha": [
+    {
+     "time": 0,
+     "value": 1
+    },
+    {
+     "time": 0.4764782,
+     "value": 1
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "colors": [
+    {
+     "time": 0,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "time": 1,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   ],
+   "size": [
+    {
+     "time": 0,
+     "value": 1
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    1,
+    1
+   ],
+   "frames": [],
+   "cycles": 1,
+   "angularSpeed": 0,
+   "shape": 2,
+   "radius": 0.06,
+   "coneAngle": 50.86,
+   "nativeShape": true,
+   "box": [
+    1,
+    1,
+    1
+   ],
+   "randomDirection": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "blendSrc": 5,
+   "scaleMode": 0,
+   "simulationSpace": 1
+  },
+  {
+   "name": "lizi (2)",
+   "node": 5,
+   "texture": "r4-7ee57ee440e12f1b",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 771,
+   "duration": 1.2,
+   "delay": 0,
+   "lifeMin": 0.8,
+   "lifeMax": 0.5,
+   "sizeMin": 0.05,
+   "sizeMax": 0.02,
+   "speedMin": 1,
+   "speedMax": 0.8,
+   "rotationMin": 0,
+   "rotationMax": 0,
+   "colorMin": [
+    0.3676471,
+    0.3342381,
+    0.291955,
+    1
+   ],
+   "colorMax": [
+    0.3676471,
+    0.3342381,
+    0.291955,
+    1
+   ],
+   "size3d": [],
+   "size3dMin": [],
+   "maxParticles": 230,
+   "renderMode": 0,
+   "stretch": 3,
+   "gravity": 0,
+   "rate": 100,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 0,
+     "max": 30
+    }
+   ],
+   "alpha": [
+    {
+     "time": 0,
+     "value": 1
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "colors": [
+    {
+     "time": 0,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "time": 1,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   ],
+   "size": [
+    {
+     "time": 0,
+     "value": 1
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    3,
+    4
+   ],
+   "frames": [
+    {
+     "time": 0,
+     "value": 0.0
+    },
+    {
+     "time": 1,
+     "value": 0.9998999999999999
+    }
+   ],
+   "cycles": 1,
+   "angularSpeed": 0,
+   "shape": 2,
+   "radius": 0.06,
+   "coneAngle": 50.86,
+   "nativeShape": true,
+   "box": [
+    1,
+    1,
+    1
+   ],
+   "randomDirection": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "blendSrc": 5,
+   "scaleMode": 0,
+   "simulationSpace": 1,
+   "frameMin": 0.0,
+   "frameMax": 0.0,
+   "startFrame": 0.0
+  },
+  {
+   "name": "shexianadd (2)",
+   "node": 6,
+   "texture": "r4-fec7089977c3757a",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 771,
+   "duration": 0.85,
+   "delay": 0,
+   "lifeMin": 0.15,
+   "lifeMax": 0.5,
+   "sizeMin": 0.04,
+   "sizeMax": 0.045,
+   "speedMin": -0.05,
+   "speedMax": -0.05,
+   "rotationMin": 0,
+   "rotationMax": 0,
+   "colorMin": [
+    1,
+    0.5425964,
+    0.1911765,
+    1
+   ],
+   "colorMax": [
+    1,
+    0.5425964,
+    0.1911765,
+    1
+   ],
+   "size3d": [],
+   "size3dMin": [],
+   "maxParticles": 95,
+   "renderMode": 1,
+   "stretch": 5,
+   "gravity": 0,
+   "rate": 45,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 0,
+     "max": 5
+    }
+   ],
+   "alpha": [
+    {
+     "time": 0,
+     "value": 1
+    },
+    {
+     "time": 0.6441138,
+     "value": 1
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "colors": [
+    {
+     "time": 0,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "time": 1,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   ],
+   "size": [
+    {
+     "time": 0,
+     "value": 0
+    },
+    {
+     "time": 0.1200801,
+     "value": 0.4841585
+    },
+    {
+     "time": 1,
+     "value": 1
+    }
+   ],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    4,
+    4
+   ],
+   "frames": [],
+   "cycles": 1,
+   "angularSpeed": 0,
+   "shape": 2,
+   "radius": 0.06,
+   "coneAngle": 30,
+   "nativeShape": true,
+   "box": [
+    1,
+    1,
+    1
+   ],
+   "randomDirection": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": true,
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1,
+   "frameMin": 0.0,
+   "frameMax": 0.9375,
+   "startFrame": 0.0
+  },
+  {
+   "name": "yuan add (10)",
+   "node": 7,
+   "texture": "r4-b15f09a06547f37e",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 1,
+   "duration": 5,
+   "delay": 0,
+   "lifeMin": 1.5,
+   "lifeMax": 1.5,
+   "sizeMin": 0.8,
+   "sizeMax": 0.8,
+   "speedMin": 0,
+   "speedMax": 0,
+   "rotationMin": 0,
+   "rotationMax": 0,
+   "colorMin": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "colorMax": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "size3d": [],
+   "size3dMin": [],
+   "maxParticles": 2,
+   "renderMode": 2,
+   "stretch": 2,
+   "gravity": 0,
+   "rate": 0,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 2,
+     "max": 2
+    }
+   ],
+   "alpha": [
+    {
+     "time": 0,
+     "value": 1
+    },
+    {
+     "time": 0.20589,
+     "value": 0.6941177
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "colors": [
+    {
+     "time": 0,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "time": 1,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   ],
+   "size": [
+    {
+     "time": 0,
+     "value": 0
+    },
+    {
+     "time": 0.01514123,
+     "value": 0.9496914
+    },
+    {
+     "time": 0.1017863,
+     "value": 0.7094252
+    },
+    {
+     "time": 1,
+     "value": 0.6192031
+    }
+   ],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    1,
+    1
+   ],
+   "frames": [],
+   "cycles": 1,
+   "angularSpeed": 0,
+   "shape": -1,
+   "radius": 0.01,
+   "coneAngle": 0,
+   "nativeShape": true,
+   "box": [
+    1,
+    1,
+    1
+   ],
+   "randomDirection": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "blendSrc": 5,
+   "scaleMode": 0,
+   "simulationSpace": 1
+  },
+  {
+   "name": "yuan add (15)",
+   "node": 8,
+   "texture": "r4-b4821be206601b60",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    1
+   ],
+   "blendDst": 771,
+   "duration": 1.02,
+   "delay": 0,
+   "lifeMin": 0.5,
+   "lifeMax": 0.5,
+   "sizeMin": 0.1,
+   "sizeMax": 0.1,
+   "speedMin": 0,
+   "speedMax": 0,
+   "rotationMin": 0,
+   "rotationMax": 360,
+   "colorMin": [
+    0.6911765,
+    0.2156246,
+    0.04065744,
+    1
+   ],
+   "colorMax": [
+    0.6911765,
+    0.2156246,
+    0.04065744,
+    1
+   ],
+   "size3d": [],
+   "size3dMin": [],
+   "maxParticles": 11,
+   "renderMode": 4,
+   "stretch": 2,
+   "gravity": 0,
+   "rate": 5,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 1,
+     "max": 1
+    }
+   ],
+   "alpha": [
+    {
+     "time": 0,
+     "value": 1
+    },
+    {
+     "time": 0.4147097,
+     "value": 0.9550701
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "colors": [
+    {
+     "time": 0,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "time": 1,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   ],
+   "size": [
+    {
+     "time": 0,
+     "value": 0
+    },
+    {
+     "time": 1,
+     "value": 1
+    }
+   ],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    4,
+    4
+   ],
+   "frames": [
+    {
+     "time": 0,
+     "value": 0.9999
+    },
+    {
+     "time": 1,
+     "value": 0.0
+    }
+   ],
+   "cycles": 1,
+   "angularSpeed": 500,
+   "shape": -1,
+   "radius": 0.01,
+   "coneAngle": 0,
+   "nativeShape": true,
+   "box": [
+    1,
+    1,
+    1
+   ],
+   "randomDirection": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "mesh": {
+    "positions": [
+     -6.812780384279904e-08,
+     1.5585824251174927,
+     -0.0,
+     0.7792912125587463,
+     1.3497720956802368,
+     -0.0,
+     0.7792912125587463,
+     1.3497720956802368,
+     -0.6349999904632568,
+     -6.812780384279904e-08,
+     1.5585824251174927,
+     -0.6349999904632568,
+     1.3497719764709473,
+     0.7792912125587463,
+     -0.6349999904632568,
+     1.3497719764709473,
+     0.7792912125587463,
+     -0.0,
+     1.5585824251174927,
+     0.0,
+     -0.6349999904632568,
+     1.5585824251174927,
+     0.0,
+     -0.0,
+     1.3497719764709473,
+     -0.7792912125587463,
+     -0.6349999904632568,
+     1.3497719764709473,
+     -0.7792912125587463,
+     -0.0,
+     0.7792912125587463,
+     -1.3497720956802368,
+     -0.6349999904632568,
+     0.7792912125587463,
+     -1.3497720956802368,
+     -0.0,
+     -6.812780384279904e-08,
+     -1.5585824251174927,
+     -0.6349999904632568,
+     -6.812780384279904e-08,
+     -1.5585824251174927,
+     -0.0,
+     -0.7792913317680359,
+     -1.3497719764709473,
+     -0.6349999904632568,
+     -0.7792913317680359,
+     -1.3497719764709473,
+     -0.0,
+     -1.3497719764709473,
+     -0.7792913317680359,
+     -0.6349999904632568,
+     -1.3497719764709473,
+     -0.7792913317680359,
+     -0.0,
+     -1.5585824251174927,
+     -2.3533939952358196e-07,
+     -0.6349999904632568,
+     -1.5585824251174927,
+     -2.3533939952358196e-07,
+     -0.0,
+     -1.3497720956802368,
+     0.7792909145355225,
+     -0.6349999904632568,
+     -1.3497720956802368,
+     0.7792909145355225,
+     -0.0,
+     -0.7792916893959045,
+     1.3497716188430786,
+     -0.6349999904632568,
+     -0.7792916893959045,
+     1.3497716188430786,
+     -0.0,
+     -6.812780384279904e-08,
+     1.5585824251174927,
+     -0.6349999904632568,
+     -6.812780384279904e-08,
+     1.5585824251174927,
+     -0.0
+    ],
+    "uv": [
+     -0.000605463981628418,
+     0.9993945360183716,
+     0.08272787183523178,
+     0.9993945360183716,
+     0.08272794634103775,
+     0.0006052851676940918,
+     -0.000605388602707535,
+     0.0006052851676940918,
+     0.16606128215789795,
+     0.0006052851676940918,
+     0.16606120765209198,
+     0.9993945360183716,
+     0.24939462542533875,
+     0.0006052851676940918,
+     0.24939453601837158,
+     0.9993945360183716,
+     0.33272796869277954,
+     0.0006052851676940918,
+     0.3327278792858124,
+     0.9993945360183716,
+     0.41606128215789795,
+     0.0006053447723388672,
+     0.4160611927509308,
+     0.9993945956230164,
+     0.49939459562301636,
+     0.0006053447723388672,
+     0.4993945360183716,
+     0.9993945956230164,
+     0.5827279090881348,
+     0.0006053447723388672,
+     0.58272784948349,
+     0.9993945956230164,
+     0.666061282157898,
+     0.0006053447723388672,
+     0.6660612225532532,
+     0.9993945956230164,
+     0.7493945956230164,
+     0.0006053447723388672,
+     0.7493945360183716,
+     0.9993945956230164,
+     0.8327279090881348,
+     0.0006053447723388672,
+     0.83272784948349,
+     0.9993945956230164,
+     0.916061282157898,
+     0.0006053447723388672,
+     0.9160612225532532,
+     0.9993945956230164,
+     0.9993946552276611,
+     0.0006053447723388672,
+     0.9993945360183716,
+     0.9993945956230164
+    ],
+    "indices": [
+     0,
+     1,
+     2,
+     0,
+     2,
+     3,
+     1,
+     4,
+     2,
+     1,
+     5,
+     4,
+     5,
+     6,
+     4,
+     5,
+     7,
+     6,
+     7,
+     8,
+     6,
+     7,
+     9,
+     8,
+     9,
+     10,
+     8,
+     9,
+     11,
+     10,
+     11,
+     12,
+     10,
+     11,
+     13,
+     12,
+     13,
+     14,
+     12,
+     13,
+     15,
+     14,
+     15,
+     16,
+     14,
+     15,
+     17,
+     16,
+     17,
+     18,
+     16,
+     17,
+     19,
+     18,
+     19,
+     20,
+     18,
+     19,
+     21,
+     20,
+     21,
+     22,
+     20,
+     21,
+     23,
+     22,
+     23,
+     24,
+     22,
+     23,
+     25,
+     24
+    ]
+   },
+   "blendSrc": 5,
+   "scaleMode": 0,
+   "simulationSpace": 1,
+   "angularMin": 500,
+   "angularMax": 500,
+   "rotationCurve": [],
+   "frameMin": 0.0,
+   "frameMax": 0.0,
+   "startFrame": 0.0
+  },
+  {
+   "name": "gaoliang (2)",
+   "node": 9,
+   "texture": "r4-891615adf6699699",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 1,
+   "duration": 1.2,
+   "delay": 0,
+   "lifeMin": 0.15,
+   "lifeMax": 0.15,
+   "sizeMin": 0.3,
+   "sizeMax": 0.3,
+   "speedMin": -0.035,
+   "speedMax": -0.035,
+   "rotationMin": 0,
+   "rotationMax": 0,
+   "colorMin": [
+    0.5661765,
+    0.3442996,
+    0.2789252,
+    1
+   ],
+   "colorMax": [
+    0.5661765,
+    0.3442996,
+    0.2789252,
+    1
+   ],
+   "size3d": [],
+   "size3dMin": [],
+   "maxParticles": 20,
+   "renderMode": 1,
+   "stretch": 3,
+   "gravity": 0,
+   "rate": 10,
+   "bursts": [],
+   "alpha": [
+    {
+     "time": 0,
+     "value": 0
+    },
+    {
+     "time": 0.07353323,
+     "value": 1
+    },
+    {
+     "time": 0.4735332,
+     "value": 1
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "colors": [
+    {
+     "time": 0,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "time": 1,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   ],
+   "size": [
+    {
+     "time": 0,
+     "value": 0.2849121
+    },
+    {
+     "time": 1,
+     "value": 1
+    }
+   ],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    1,
+    1
+   ],
+   "frames": [],
+   "cycles": 1,
+   "angularSpeed": 0,
+   "shape": 2,
+   "radius": 0.01,
+   "coneAngle": 0,
+   "nativeShape": true,
+   "box": [
+    1,
+    1,
+    1
+   ],
+   "randomDirection": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "blendSrc": 5,
+   "scaleMode": 0,
+   "simulationSpace": 1
+  },
+  {
+   "name": "feng add (7)",
+   "node": 10,
+   "texture": "r4-6365e88a4fb68b80",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 771,
+   "duration": 1,
+   "delay": 0,
+   "lifeMin": 0.8,
+   "lifeMax": 0.8,
+   "sizeMin": 0.22,
+   "sizeMax": 0.22,
+   "speedMin": 0,
+   "speedMax": 0,
+   "rotationMin": 0,
+   "rotationMax": 0,
+   "colorMin": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "colorMax": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "size3d": [],
+   "size3dMin": [],
+   "maxParticles": 5,
+   "renderMode": 4,
+   "stretch": 2,
+   "gravity": 0,
+   "rate": 2,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 0,
+     "max": 1
+    }
+   ],
+   "alpha": [
+    {
+     "time": 0,
+     "value": 0
+    },
+    {
+     "time": 0.2235294,
+     "value": 1
+    },
+    {
+     "time": 0.6529488,
+     "value": 1
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "colors": [
+    {
+     "time": 0,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "time": 1,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   ],
+   "size": [],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    4,
+    4
+   ],
+   "frames": [
+    {
+     "time": 0,
+     "value": 0.0
+    },
+    {
+     "time": 1,
+     "value": 0.9999
+    }
+   ],
+   "cycles": 1,
+   "angularSpeed": 0,
+   "shape": -1,
+   "radius": 0.01,
+   "coneAngle": 0,
+   "nativeShape": true,
+   "box": [
+    1,
+    1,
+    1
+   ],
+   "randomDirection": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "mesh": {
+    "positions": [
+     -1.2699999809265137,
+     1.2699999809265137,
+     -0.0,
+     1.2699999809265137,
+     1.2699999809265137,
+     -0.0,
+     -1.2699999809265137,
+     -1.2699999809265137,
+     -0.0,
+     1.2699999809265137,
+     -1.2699999809265137,
+     -0.0
+    ],
+    "uv": [
+     0.0,
+     1.0,
+     1.0,
+     1.0,
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "indices": [
+     0,
+     1,
+     2,
+     3,
+     2,
+     1
+    ]
+   },
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1,
+   "frameMin": 0.0,
+   "frameMax": 0.0,
+   "startFrame": 0.0
+  }
+ ]
 }

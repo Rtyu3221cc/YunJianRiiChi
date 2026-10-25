@@ -26,13 +26,15 @@ namespace YunJian.Riichi
             var layout=Load(folder,"effects");foreach(var p in layout.players)p.nuki=3;client.ShowValidationFixture(layout);yield return null;
             for(int seat=0;seat<layout.n;seat++){var tile=table.NorthTarget(seat,1);var expected=NativeReviewLayout.NorthLocal(NativeReviewLayout.Physical(table.RelativeSeat(seat),layout.n),0,table.SeatAngle(seat));Check(Quaternion.Angle(tile.localRotation,Quaternion.identity)<.01f && Vector3.Distance(tile.localPosition,expected)<.001f,"North anchor/yaw differs from APK babei/hai");}
             ScreenCapture.CaptureScreenshot(Path.Combine(folder,"review-0523-north.png"));yield return new WaitForSecondsRealtime(.1f);
-            // Same material/native plane in all winning directions; its column faces the camera.
+            // The source effect keeps its world-up root. Its vertical billboard
+            // handles the camera-facing flame separately from horizontal rings.
             for(int seat=0;seat<4;seat++){
                 var win=Load(folder,"win-4-tsumo-"+seat+"-0");win.audioRoom="review-facing-"+seat;var events=win.audioEvents;int seq=win.audioSeq;win.audioEvents=new PublicSound[0];win.audioSeq=seq-1;client.ShowValidationFixture(win);yield return null;
                 fx.ValidationFreeze=true;fx.ValidationTime=.2f;fx.Accept(win);win.audioEvents=events;win.audioSeq=seq;fx.Accept(win);fx.ValidationTime=1.55f;yield return null;yield return null;
                 fx.ValidationTime=1.06f;yield return null;fx.CutIn.Freeze=true;fx.CutIn.FrozenAge=WinCutIn.Duration+.01f;fx.ValidationTime=0;yield return null;yield return null;fx.ValidationTime=1.55f;yield return null;yield return null;
-                var effect=fx.ValidationWin;Check(effect!=null,"Winning effect not queued after APK cutin");fx.ValidationTime=effect.StartedAt+.45f;yield return null;
-                var ray=effect.transform.position-table.Camera.transform.position;ray.y=0;Check(Vector3.Dot(effect.transform.forward,ray.normalized)>.999f,"Side winner has an edge-on fire sheet");
+                var effect=fx.ValidationWin;Check(effect!=null,"Winning effect not queued after APK cutin: seat="+seat+" hand="+fx.ValidationKind+" call="+fx.ValidationCallKind+" cutin="+fx.CutIn.Active+" arrange="+table.ArrangingHand+" spawned="+fx.SpawnedWinEffects);fx.ValidationTime=effect.StartedAt+.45f;yield return null;
+                Check(Quaternion.Angle(effect.transform.rotation,Quaternion.identity)<.01f,"Winning effect tilts the original world-up hierarchy");
+                Check(effect.GetComponentsInChildren<ParticleSystemRenderer>().Any(r=>r.renderMode==ParticleSystemRenderMode.VerticalBillboard),"Winning effect lacks its original upright flame billboard");
                 ScreenCapture.CaptureScreenshot(Path.Combine(folder,"review-0523-fire-seat-"+seat+".png"));yield return new WaitForSecondsRealtime(.1f);
             }
             // Gate a real reaction UI behind an unfinished discard, including the call banner.
@@ -42,7 +44,7 @@ namespace YunJian.Riichi
             Check(!client.OptionsReady && fx.ValidationCallKind==null && fx.ValidationKind=="discard","Call started before previous discard finished");
             fx.ValidationTime=.65f;yield return null;yield return null;Check(fx.ValidationCallKind=="pon" && !client.OptionsReady,"Queued meld did not follow previous hand");fx.Reset();yield return null;Check(client.OptionsReady,"Actions never unlocked after animation");
             Check(HandRevealMotion.Progress(.12f)<.08f && HandRevealMotion.Progress(.36f)>1 && HandRevealMotion.Progress(.44f)<1,"Push-down lacks acceleration/contact/settle");
-            Debug.Log("RIICHI REVIEW 0523 PASS: preserved losing hand, every North at its APK anchor facing its owner, camera-facing fire in all four seats, chronological calls and gated options, nonlinear reveal.");
+            Debug.Log("RIICHI REVIEW 0523 PASS: preserved losing hand, every North at its APK anchor facing its owner, source world-up fire and vertical billboard in all four seats, chronological calls and gated options, nonlinear reveal.");
             Resolution(754,347);for(int f=0;f<7;f++)yield return null;
             var data=Load(folder,"win-4-tsumo-0-0");data.audioEvents=new PublicSound[0];var d=data.result.details[0];
             var limits=new[]{"普通和牌","满贯","跳满","倍满","三倍满","累计役满","役满","两倍役满","三倍役满","四倍役满","五倍役满","六倍役满"};var points=new[]{1000,8000,12000,16000,24000,32000,32000,64000,96000,128000,160000,192000};

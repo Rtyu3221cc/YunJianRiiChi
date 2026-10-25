@@ -1,0 +1,1026 @@
+{
+ "schema": 2,
+ "nodes": [
+  {
+   "name": "effect_hupai_default",
+   "parent": -1,
+   "position": [
+    0,
+    0,
+    0
+   ],
+   "rotation": [
+    0,
+    0,
+    0,
+    -1
+   ],
+   "scale": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "effect_hupai",
+   "parent": 0,
+   "position": [
+    0,
+    0,
+    0
+   ],
+   "rotation": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "scale": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "ground_yuan",
+   "parent": 1,
+   "position": [
+    0,
+    0.005,
+    0.01
+   ],
+   "rotation": [
+    0.7071068,
+    0,
+    0,
+    -0.7071068
+   ],
+   "scale": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "bao_shin",
+   "parent": 2,
+   "position": [
+    0,
+    0,
+    0
+   ],
+   "rotation": [
+    0,
+    0,
+    0,
+    -1
+   ],
+   "scale": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "shexian",
+   "parent": 2,
+   "position": [
+    0,
+    0,
+    0
+   ],
+   "rotation": [
+    0,
+    0,
+    0,
+    -1
+   ],
+   "scale": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "lizi_down",
+   "parent": 2,
+   "position": [
+    0,
+    0,
+    0
+   ],
+   "rotation": [
+    0,
+    -1,
+    0,
+    0
+   ],
+   "scale": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "light",
+   "parent": 2,
+   "position": [
+    0,
+    0,
+    0
+   ],
+   "rotation": [
+    0,
+    -1,
+    0,
+    0
+   ],
+   "scale": [
+    1.000001,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "lizi",
+   "parent": 2,
+   "position": [
+    0,
+    0,
+    0
+   ],
+   "rotation": [
+    0,
+    -1,
+    0,
+    0
+   ],
+   "scale": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "kuosan",
+   "parent": 1,
+   "position": [
+    0,
+    0.012,
+    0.01
+   ],
+   "rotation": [
+    0.7071068,
+    0,
+    0,
+    -0.7071068
+   ],
+   "scale": [
+    1,
+    1,
+    1
+   ]
+  }
+ ],
+ "layers": [
+  {
+   "name": "ground_yuan",
+   "node": 2,
+   "texture": "r4-891615adf6699699",
+   "tint": [
+    0.4852941,
+    0.4852941,
+    0.4852941,
+    0.5
+   ],
+   "blendDst": 1,
+   "duration": 1,
+   "delay": 0,
+   "lifeMin": 1.8,
+   "lifeMax": 1.8,
+   "sizeMin": 0.7,
+   "sizeMax": 0.7,
+   "speedMin": 0,
+   "speedMax": 0,
+   "rotationMin": 0,
+   "rotationMax": 0,
+   "colorMin": [
+    0.4862745,
+    0.7647059,
+    0.9333333,
+    1
+   ],
+   "colorMax": [
+    0.4862745,
+    0.7647059,
+    0.9333333,
+    1
+   ],
+   "size3d": [],
+   "size3dMin": [],
+   "maxParticles": 1,
+   "renderMode": 2,
+   "stretch": 2,
+   "gravity": 0,
+   "rate": 0,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 0,
+     "max": 1
+    }
+   ],
+   "alpha": [
+    {
+     "time": 0,
+     "value": 1
+    },
+    {
+     "time": 0.20589,
+     "value": 1
+    },
+    {
+     "time": 0.402945,
+     "value": 0
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "colors": [
+    {
+     "time": 0,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "time": 1,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   ],
+   "size": [
+    {
+     "time": 0,
+     "value": 0
+    },
+    {
+     "time": 0.03928445,
+     "value": 0.9496914
+    },
+    {
+     "time": 1,
+     "value": 1
+    }
+   ],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    1,
+    1
+   ],
+   "frames": [],
+   "cycles": 1,
+   "angularSpeed": 0,
+   "shape": -1,
+   "radius": 0.01,
+   "coneAngle": 0,
+   "nativeShape": true,
+   "box": [
+    1,
+    1,
+    1
+   ],
+   "randomDirection": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1
+  },
+  {
+   "name": "bao_shin",
+   "node": 3,
+   "texture": "r4-805b49ef8c107c57",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 1,
+   "duration": 0.5,
+   "delay": 0,
+   "lifeMin": 0.3,
+   "lifeMax": 0.3,
+   "sizeMin": 0.5,
+   "sizeMax": 0.5,
+   "speedMin": 0,
+   "speedMax": 0,
+   "rotationMin": 0,
+   "rotationMax": 0,
+   "colorMin": [
+    0.5294118,
+    0.7098039,
+    1,
+    1
+   ],
+   "colorMax": [
+    0.5294118,
+    0.7098039,
+    1,
+    1
+   ],
+   "size3d": [],
+   "size3dMin": [],
+   "maxParticles": 12,
+   "renderMode": 2,
+   "stretch": 2,
+   "gravity": 0,
+   "rate": 5,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 0,
+     "max": 2
+    }
+   ],
+   "alpha": [
+    {
+     "time": 0,
+     "value": 1
+    },
+    {
+     "time": 0.20589,
+     "value": 1
+    },
+    {
+     "time": 0.402945,
+     "value": 0
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "colors": [
+    {
+     "time": 0,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "time": 1,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   ],
+   "size": [
+    {
+     "time": 0,
+     "value": 0
+    },
+    {
+     "time": 0.03928445,
+     "value": 0.9496914
+    },
+    {
+     "time": 1,
+     "value": 1
+    }
+   ],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    1,
+    1
+   ],
+   "frames": [],
+   "cycles": 1,
+   "angularSpeed": 0,
+   "shape": -1,
+   "radius": 0.01,
+   "coneAngle": 0,
+   "nativeShape": true,
+   "box": [
+    1,
+    1,
+    1
+   ],
+   "randomDirection": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1
+  },
+  {
+   "name": "shexian",
+   "node": 4,
+   "texture": "r4-b74357245e219bca",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 1,
+   "duration": 0.5,
+   "delay": 0,
+   "lifeMin": 0.3,
+   "lifeMax": 0.3,
+   "sizeMin": 0.5,
+   "sizeMax": 0.5,
+   "speedMin": 0,
+   "speedMax": 0,
+   "rotationMin": 0,
+   "rotationMax": 0,
+   "colorMin": [
+    0.7137255,
+    0.8941177,
+    1,
+    1
+   ],
+   "colorMax": [
+    0.7137255,
+    0.8941177,
+    1,
+    1
+   ],
+   "size3d": [],
+   "size3dMin": [],
+   "maxParticles": 11,
+   "renderMode": 2,
+   "stretch": 2,
+   "gravity": 0,
+   "rate": 5,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 0,
+     "max": 1
+    }
+   ],
+   "alpha": [
+    {
+     "time": 0,
+     "value": 1
+    },
+    {
+     "time": 0.20589,
+     "value": 1
+    },
+    {
+     "time": 0.402945,
+     "value": 0
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "colors": [
+    {
+     "time": 0,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "time": 1,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   ],
+   "size": [
+    {
+     "time": 0,
+     "value": 0
+    },
+    {
+     "time": 0.03928445,
+     "value": 0.9496914
+    },
+    {
+     "time": 1,
+     "value": 1
+    }
+   ],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    3,
+    4
+   ],
+   "frames": [
+    {
+     "time": 0,
+     "value": 0.0
+    },
+    {
+     "time": 1,
+     "value": 0.9998999999999999
+    }
+   ],
+   "cycles": 1,
+   "angularSpeed": 0,
+   "shape": -1,
+   "radius": 0.01,
+   "coneAngle": 0,
+   "nativeShape": true,
+   "box": [
+    1,
+    1,
+    1
+   ],
+   "randomDirection": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1,
+   "frameMin": 0.0,
+   "frameMax": 0.0,
+   "startFrame": 0.0
+  },
+  {
+   "name": "lizi_down",
+   "node": 5,
+   "texture": "r4-057d750ad26d1201",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 1,
+   "duration": 0.8,
+   "delay": 0,
+   "lifeMin": 1,
+   "lifeMax": 1,
+   "sizeMin": 0.3,
+   "sizeMax": 0.3,
+   "speedMin": -0.1,
+   "speedMax": -0.1,
+   "rotationMin": -89.99999,
+   "rotationMax": -89.99999,
+   "colorMin": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "colorMax": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "size3d": [
+    0.3,
+    0.3,
+    0.3
+   ],
+   "size3dMin": [
+    0.3,
+    0.3,
+    0.3
+   ],
+   "maxParticles": 5,
+   "renderMode": 0,
+   "stretch": 5,
+   "gravity": 0,
+   "rate": 0,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 0,
+     "max": 5
+    }
+   ],
+   "alpha": [
+    {
+     "time": 0,
+     "value": 1
+    },
+    {
+     "time": 0.402945,
+     "value": 0
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "colors": [
+    {
+     "time": 0,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "time": 1,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   ],
+   "size": [
+    {
+     "time": 0,
+     "value": 1
+    },
+    {
+     "time": 0.4402748,
+     "value": 0.2995626
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    1,
+    1
+   ],
+   "frames": [],
+   "cycles": 1,
+   "angularSpeed": 0,
+   "shape": -1,
+   "radius": 0.01,
+   "coneAngle": 0,
+   "nativeShape": true,
+   "box": [
+    1,
+    1,
+    1
+   ],
+   "randomDirection": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1
+  },
+  {
+   "name": "light",
+   "node": 6,
+   "texture": "r4-105d72e22917e25a",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 1,
+   "duration": 0.8,
+   "delay": 0,
+   "lifeMin": 0.4,
+   "lifeMax": 0.4,
+   "sizeMin": 0.18,
+   "sizeMax": 0.18,
+   "speedMin": -0.1,
+   "speedMax": -0.1,
+   "rotationMin": 0,
+   "rotationMax": 0,
+   "colorMin": [
+    0.5450981,
+    0.8666667,
+    1,
+    1
+   ],
+   "colorMax": [
+    0.5450981,
+    0.8666667,
+    1,
+    1
+   ],
+   "size3d": [
+    0.18,
+    0.08,
+    0.01
+   ],
+   "size3dMin": [
+    0.18,
+    0.08,
+    0.01
+   ],
+   "maxParticles": 3,
+   "renderMode": 1,
+   "stretch": 10,
+   "gravity": 0,
+   "rate": 0,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 0,
+     "max": 3
+    }
+   ],
+   "alpha": [],
+   "colors": [],
+   "size": [],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    1,
+    4
+   ],
+   "frames": [
+    {
+     "time": 0,
+     "value": 0.0
+    },
+    {
+     "time": 1,
+     "value": 0.5
+    }
+   ],
+   "cycles": 5,
+   "angularSpeed": 0,
+   "shape": 3,
+   "radius": 0.01,
+   "coneAngle": 0,
+   "nativeShape": true,
+   "box": [
+    0,
+    0,
+    0
+   ],
+   "randomDirection": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1,
+   "frameMin": 0.0,
+   "frameMax": 0.0,
+   "startFrame": 0.0
+  },
+  {
+   "name": "lizi",
+   "node": 7,
+   "texture": "r4-2525e0ba6293d3f1",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 1,
+   "duration": 1,
+   "delay": 0,
+   "lifeMin": 0.7200001,
+   "lifeMax": 0.87,
+   "sizeMin": 0.02,
+   "sizeMax": 0.04,
+   "speedMin": 0.2,
+   "speedMax": 0.2,
+   "rotationMin": 0,
+   "rotationMax": 0,
+   "colorMin": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "colorMax": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "size3d": [],
+   "size3dMin": [],
+   "maxParticles": 27,
+   "renderMode": 0,
+   "stretch": 2,
+   "gravity": 0.05,
+   "rate": 0,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 0,
+     "max": 11
+    },
+    {
+     "time": 0.15,
+     "min": 0,
+     "max": 11
+    },
+    {
+     "time": 0.3,
+     "min": 0,
+     "max": 5
+    }
+   ],
+   "alpha": [],
+   "colors": [],
+   "size": [
+    {
+     "time": 0,
+     "value": 1
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    1,
+    1
+   ],
+   "frames": [],
+   "cycles": 1,
+   "angularSpeed": 0,
+   "shape": 1,
+   "radius": 0.01,
+   "coneAngle": 25,
+   "nativeShape": true,
+   "box": [
+    1,
+    1,
+    1
+   ],
+   "randomDirection": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1
+  },
+  {
+   "name": "kuosan",
+   "node": 8,
+   "texture": "r4-23b8a6accbf45f52",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 1,
+   "duration": 1,
+   "delay": 0,
+   "lifeMin": 0.3,
+   "lifeMax": 0.3,
+   "sizeMin": 1,
+   "sizeMax": 1,
+   "speedMin": 0,
+   "speedMax": 0,
+   "rotationMin": 0,
+   "rotationMax": 0,
+   "colorMin": [
+    0.3529412,
+    0.7607843,
+    1,
+    1
+   ],
+   "colorMax": [
+    0.3529412,
+    0.7607843,
+    1,
+    1
+   ],
+   "size3d": [],
+   "size3dMin": [],
+   "maxParticles": 5,
+   "renderMode": 2,
+   "stretch": 2,
+   "gravity": 0,
+   "rate": 0,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 2,
+     "max": 5
+    }
+   ],
+   "alpha": [
+    {
+     "time": 0,
+     "value": 1
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "colors": [
+    {
+     "time": 0,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "time": 1,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   ],
+   "size": [
+    {
+     "time": 0,
+     "value": 0
+    },
+    {
+     "time": 1,
+     "value": 1
+    }
+   ],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    4,
+    4
+   ],
+   "frames": [
+    {
+     "time": 0,
+     "value": 0.0
+    },
+    {
+     "time": 1,
+     "value": 0.9999
+    }
+   ],
+   "cycles": 1,
+   "angularSpeed": 0,
+   "shape": -1,
+   "radius": 0.01,
+   "coneAngle": 0,
+   "nativeShape": true,
+   "box": [
+    1,
+    1,
+    1
+   ],
+   "randomDirection": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1,
+   "frameMin": 0.0,
+   "frameMax": 0.0,
+   "startFrame": 0.0
+  }
+ ]
+}

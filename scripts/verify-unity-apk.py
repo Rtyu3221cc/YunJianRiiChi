@@ -15,6 +15,26 @@ with ZipFile(apk) as archive:
     assert archive.testzip() is None
     names = archive.namelist()
     metadata=archive.read('assets/bin/Data/Managed/Metadata/global-metadata.dat')
+    for cls in (b'WardrobeCatalog',b'WardrobeLoadout',b'WardrobeRuntime',b'WardrobeModelVisual',b'WardrobeMotionPreview',b'WardrobeResponseIndicator'):
+        assert cls in metadata,'Missing wardrobe runtime: '+repr(cls)
+    for source in (root/'unity/Assets/Resources/Majsoul/Wardrobe').rglob('*'):
+        if source.suffix not in ('.png','.json','.bytes','.mp3','.shader'):continue
+        guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text('utf8'))[1]
+        entry='assets/bin/Data/'+guid
+        assert entry in names,'Missing wardrobe resource: '+source.name
+        if source.suffix in ('.json','.bytes'):assert source.read_bytes() in archive.read(entry),'Stale wardrobe resource: '+source.name
+        if source.suffix=='.mp3':assert entry+'.resource' in names,'Missing wardrobe music stream: '+source.name
+    print('PASS: wardrobe runtime, bundled selections, source models, five cat action clips, effects and music.')
+    import json
+    for filename in ['fire-effect','flame-win-effect','default-win-effect','riichi-ice-effect','riichi-fire-effect']:
+        source=root/'unity/Assets/Resources/Majsoul/Actions'/(filename+'.json')
+        guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text('utf8'))[1]
+        assert source.read_bytes() in archive.read('assets/bin/Data/'+guid),'Stale complete source effect: '+filename
+        for layer in json.loads(source.read_text('utf8'))['layers']:
+            texture=root/'unity/Assets/Resources/Majsoul/Actions'/(layer['texture']+'.png')
+            guid=re.search(r'guid: (\w+)',Path(str(texture)+'.meta').read_text('utf8'))[1]
+            assert 'assets/bin/Data/'+guid in names,'Missing effect source texture: '+texture.name
+    print('PASS: complete original effect graphs and all referenced textures.')
     for runtime_class in (b'NativeSettingsUi',b'NativeYakuUi',b'PlaylistAudio',b'AppPreferences',b'RiichiDiscardVisual',b'NativeCallouts',b'WordRect',b'CharacterRoster',b'CharacterIllustration',b'CharacterFraming',b'CharacterVoices',b'LobbyIllustrationSettings',b'LobbySakura',b'RoleRandomKnob',b'DrawRoleSkinPopover'):
         assert runtime_class in metadata,'Missing compiled release code: '+repr(runtime_class)
     assert 'META-INF/MANIFEST.MF' in names, 'Missing v1/JAR signature manifest; run scripts/sign-unity-apk.ps1'
@@ -98,7 +118,9 @@ with ZipFile(apk) as archive:
             else:assert entry+'.resource' in names and archive.getinfo(entry+'.resource').file_size>0, 'Missing original voice data: '+source.name
     import json
     tornado=json.loads((root/'unity/Assets/Resources/Majsoul/Actions/fire-effect.json').read_text())
-    assert tornado['skinId']==305034 and len(tornado['layers'])==9
+    assert tornado['schema']==2 and len(tornado['layers'])==9
+    lineage=json.loads((root/'unity/Assets/Resources/Majsoul/Wardrobe/provenance-r4.json').read_text('utf8'))['records']
+    assert any(r.get('path')=='scene/ron_huolongjuan.lh' and r.get('output')=='fire-effect.json' for r in lineage),'Wrong fire-tornado source graph'
     for layer in tornado['layers']:
         source=root/'unity/Assets/Resources/Majsoul/Actions'/(layer['texture']+'.png')
         guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text()).group(1)

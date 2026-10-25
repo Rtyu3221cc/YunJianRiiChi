@@ -22,7 +22,9 @@ for clip in manifest['clips']:
     file=root/'unity/Assets/Resources'/(clip['resource']+'.mp3')
     assert file.exists() and file.stat().st_size>1000
 effect=json.loads((assets/'Actions/fire-effect.json').read_text(encoding='utf8'))
-assert effect['skinId']==305034 and effect['audioId']==305034 and len(effect['layers'])==9
+assert effect['schema']==2 and len(effect['layers'])==9
+lineage=json.loads((assets/'Wardrobe/provenance-r4.json').read_text('utf8'))['records']
+assert any(r.get('path')=='scene/ron_huolongjuan.lh' and r.get('output')=='fire-effect.json' for r in lineage)
 assert len([l for l in effect['layers']if l['renderMode']==4])==2
 for layer in effect['layers']:
     assert (assets/'Actions'/(layer['texture']+'.png')).exists()

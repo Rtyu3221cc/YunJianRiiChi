@@ -7,7 +7,7 @@ namespace YunJian.Riichi
     // clears it; polling, table rebuilds and repeated declaration events do not.
     public sealed class RiichiDiscardVisual : MonoBehaviour
     {
-        sealed class Burst { public PublicSound action; public WinTileEffect effect; public Transform carried; public bool settled; }
+        sealed class Burst { public PublicSound action; public WinTileEffect effect; public Transform carried; public bool settled,ground; }
         readonly HashSet<int> shown = new HashSet<int>();
         readonly List<Burst> live = new List<Burst>();
         string hand; int players;
@@ -28,9 +28,11 @@ namespace YunJian.Riichi
         public bool TryPlay(PublicSound action,Transform carried,float now) {
             if(hand==null||action==null||action.kind!="discard"||!action.riichi||action.seat<0||action.seat>=players||carried==null||!shown.Add(action.seat))return false;
             var effect=new GameObject("Original fire riichi seat "+action.seat).AddComponent<WinTileEffect>();effect.transform.SetParent(transform,false);
-            effect.InitializeTable("Majsoul/Actions/riichi-fire-effect",Point(carried),Rotation(carried),now,(uint)(action.id+71));
-            live.Add(new Burst{action=action,effect=effect,carried=carried});PlayedCount++;
-            GetComponent<GameAudio>()?.Cue("effect_rich_fire");return true;
+            var choice=WardrobeRuntime.Item(table.Client.State,action.seat,"riichiEffect");
+            var point=choice.groundEffect?table.DiscardPoint(action.seat,action.tile,action.riverIndex)+Vector3.up*.006f:Point(carried);
+            effect.InitializeTable(choice.effect,point,choice.groundEffect?Quaternion.identity:Rotation(carried),now,(uint)(action.id+71));
+            live.Add(new Burst{action=action,effect=effect,carried=carried,ground=choice.groundEffect});PlayedCount++;
+            GetComponent<GameAudio>()?.Cue(choice.cue);return true;
         }
         public void Settle(PublicSound action) {
             foreach(var burst in live)if(burst.action==action){burst.settled=true;burst.carried=null;}
@@ -40,7 +42,7 @@ namespace YunJian.Riichi
             for(int i=live.Count-1;i>=0;i--){
                 var burst=live[i];var effect=burst.effect;if(effect==null){live.RemoveAt(i);continue;}
                 var target=burst.settled?table.FindDiscard(burst.action.seat,burst.action.tile,burst.action.riverIndex):burst.carried;
-                if(target!=null){effect.transform.position=Point(target);effect.transform.rotation=Rotation(target);}
+                if(target!=null&&!burst.ground){effect.transform.position=Point(target);effect.transform.rotation=Rotation(target);}
                 float age=now-effect.StartedAt;effect.Sample(age);
                 if(age>=effect.PlaybackDuration&&effect.ParticleCount==0){effect.gameObject.SetActive(false);Destroy(effect.gameObject);live.RemoveAt(i);}
             }

@@ -25,8 +25,10 @@ namespace YunJian.Riichi
         readonly Dictionary<string,Transform> liveDora=new Dictionary<string,Transform>();
         readonly Dictionary<string, RenderTexture> handTextures = new Dictionary<string, RenderTexture>();
         Camera doraCamera, handPreviewCamera;
-        public OriginalTiles()
+        readonly WardrobeItem wardrobeFace,wardrobeBack;
+        public OriginalTiles(WardrobeItem face=null,WardrobeItem back=null)
         {
+            wardrobeFace=face??WardrobeSelection.Get("tileFace");wardrobeBack=back??WardrobeSelection.Get("tileBack");
             var d = JsonUtility.FromJson<MeshData>(Resources.Load<TextAsset>("Majsoul/OriginalTile/mesh").text);
             const float width = TableTileGeometry.SourceWidth, depth = TableTileGeometry.SourceDepth;
             var vertices = new Vector3[d.vertices.Length / 3]; var normals = new Vector3[vertices.Length]; var uv = new Vector2[vertices.Length];
@@ -58,7 +60,10 @@ namespace YunJian.Riichi
                 uv = new[] { new Vector2(0,0), new Vector2(0,1), new Vector2(1,1), new Vector2(1,0) }, triangles = new[] { 0,1,2,0,2,3 } };
             handMesh.RecalculateBounds(); handMesh.RecalculateNormals();
         }
-        static Texture2D Texture(string name) => Resources.Load<Texture2D>("Majsoul/OriginalTile/" + name);
+        Texture2D Texture(string name){
+            string path=name=="table-face"?wardrobeFace?.table:name=="hand-face"?wardrobeFace?.hand:name=="table-back"?wardrobeBack?.table:name=="hand-back"?wardrobeBack?.hand:null;
+            return WardrobeCatalog.Texture(path)??Resources.Load<Texture2D>("Majsoul/OriginalTile/"+name);
+        }
         Material Face(string tile, bool hand)
         {
             string key = (hand ? "hand/" : "table/") + tile;

@@ -41,7 +41,9 @@ namespace YunJian.Riichi.Editor {
                 }
                 foreach(string word in new[]{"shout_lizhi","shout_babei"})Check(widths[word]>widths["shout_chi"]*1.75f,word+" expands horizontally for two characters");
             }finally{callout.Dispose();}
-            var original=new OriginalTiles();
+            // This probe checks the original atlas independently of the saved
+            // wardrobe choice and the separately imported wardrobe atlases.
+            var original=new OriginalTiles(new WardrobeItem(),new WardrobeItem());
             try{
                 // Independent APK atlas landmarks: red/normal suits and honour rows.
                 string[] names={"m0","m1","p0","p3","s0","z1","z5","z6","z7"};

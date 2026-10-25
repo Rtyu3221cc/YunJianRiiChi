@@ -1,3 +1,4 @@
+from character_framing import placements as compile_placements
 """Import native illustration definitions; compile native scene placement math."""
 from pathlib import Path
 import runpy,json,hashlib,sys
@@ -27,14 +28,7 @@ defs=found['default']['default'];yiji=skins[400101];result=[]
 for role in catalog['roles']:
  for s in role['skins']:
   item=skins[s['id']];data=found.get(item['illust_data']);scene=[]
-  for key in ['F0','I0','J0']:
-   for index in range(4 if key in ['I0','J0']else 1):
-    if not data:continue
-    d=defs[key][index];a=(data.get(key)or data.get(key[0]+'0'))[index];w=d['scale']*data['w'];h=d['scale']*data['h'];sign=-1 if a['reverse']and not item['lock_reverse']else 1;x=d['x']+a['x']*w*a['scale'];y=d['y']+a['y']*h*a['scale']
-    if sign<0:x+=2*data['center']*w
-    offset=dict(x=110,y=-234,scaleX=1.58,scaleY=1.58)if key=='F0'else d.get('offset',dict(x=0,y=0,scaleX=1,scaleY=1));sx=offset['scaleX'];sy=offset['scaleY'];x=offset['x']+x/sx;y=offset['y']+y/sy;w=w/abs(sx)*a['scale'];h=h/abs(sy)*a['scale'];sign*=1 if sx>0 else -1
-    # Native Unity anchored position uses positive-up Y; callers project it once.
-    scene.append(dict(scene=key,index=index,rect=[round(v,6)for v in [x,y,w,h]],flip=sign<0))
+  scene=compile_placements(item,data,defs)
   result.append(dict(id=s['id'],source=item['illust_data']or'legacy crop table',placements=scene,full=[item['full_'+k]for k in ['x','y','width','height']],head=[item['smallhead_'+k]for k in ['x','y','width']],direction=item['direction'],noReverse=bool(item['no_reverse']),lockReverse=bool(item['lock_reverse'])))
 (D/'framing.json').write_text(json.dumps(dict(referenceFull=[yiji['full_'+k]for k in ['x','y','width','height']],referenceHead=[yiji['smallhead_'+k]for k in ['x','y','width']],skins=result),ensure_ascii=False,indent=2),encoding='utf8')
 (O/'framing-provenance.json').write_text(json.dumps(dict(records=records,missing=sorted(wanted-set(found)),formulaSource='Official v0.11.252.w code.js Tools._calculateIllust and getSkinData; APK default Unity offsets and Y-up conversion',scenes=dict(F0='waitingRoom / skin card; native force offset 110,-234,1.58,1.58',I0='fightBegin',J0='desktopInfo')),ensure_ascii=False,indent=2),encoding='utf8')

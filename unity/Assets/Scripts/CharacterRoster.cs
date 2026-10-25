@@ -6,7 +6,7 @@ using UnityEngine;
 namespace YunJian.Riichi {
     [Serializable] public sealed class CharacterChoice { public string character; public int skin; public CharacterChoice(){} public CharacterChoice(string c,int s){character=c;skin=s;} }
     [Serializable] public sealed class CharacterSkin {
-        public int id,spineWidth,spineHeight,pivotX,pivotY; public string key,name,description,lobbyOffset,dormOffset; public bool dynamic; public string[] parts;
+        public int id,spineWidth,spineHeight,pivotX,pivotY,artWidth,artHeight; public string key,name,description,lobbyOffset,dormOffset; public bool dynamic,hasWaitingroom; public string[] parts;
     }
     [Serializable] public sealed class CharacterDefinition {
         public int id,defaultSkin,bondSkin; public string key,name,cv,height,birth,age,blood,hobby,description; public CharacterSkin[] skins; public string[] emojis;
@@ -55,10 +55,18 @@ namespace YunJian.Riichi {
         public static void RemovePoolCharacter(string key){Load();prefs.pool=prefs.pool.Where(c=>c.character!=key).ToArray();Save();}
         public static void ClearPool(){Load();prefs.pool=new CharacterChoice[0];Save();}
         public static Texture2D Texture(string relative){CharacterPackService.Touch(relative);if(!textures.TryGetValue(relative,out var t)||t==null){t=CharacterPackService.Asset<Texture2D>(relative);if(t!=null)textures[relative]=t;}return t;}
+        public static Texture2D DisplayTexture(string relative)=>CharacterPackService.DisplayAsset<Texture2D>(relative);
+        public static Texture2D ListPortrait(CharacterDefinition role,int skin){
+            // Most cells show the initial outfit; its bundled 160px portrait is
+            // enough for the grid and never opens the optional character pack.
+            if(skin==role.defaultSkin||!Available(role.key))return CharacterPackService.Thumbnail(role.key);
+            return DisplayTexture("Skins/"+skin+"/bighead")??CharacterPackService.Thumbnail(role.key);
+        }
         public static Texture2D Portrait(PlayerView p,string kind="full") {var s=Skin(p?.character,p?.skin??0);return Texture("Skins/"+s.id+"/"+kind)??Texture("Skins/"+s.id+"/bighead")??Texture("Skins/400101/"+kind)??Texture("Skins/400101/bighead");}
         public static Texture2D PresentationPortrait(PlayerView p){var full=Portrait(p);return full.width>full.height*1.1f?Portrait(p,"bighead"):full;}
         public static CharacterUiArt Ui(string key){Load();return catalog.ui.FirstOrDefault(x=>x.key==key);}
         public static void FillRequest(RequestBody request){var a=Active;var pool=Pool;request.character=a.character;request.skin=a.skin;request.randomCharacters=Random&&pool.Length>0;request.characterPool=pool;}
+        public static void FillBotRequest(RequestBody request){request.randomBotAppearance=AppPreferences.RandomBotAppearance;request.botCharacters=request.randomBotAppearance?All.Where(r=>Available(r.key)).Select(r=>new CharacterChoice(r.key,Outfit(r.key))).ToArray():new CharacterChoice[0];}
         static void Save(){if(PreviewOnly)return;PlayerPrefs.SetString(PrefKey,JsonUtility.ToJson(prefs));PlayerPrefs.Save();}
         public static void ReconcileInstalled(){textures.Clear();if(prefs==null)return;prefs.favorites=prefs.favorites.Where(Available).ToArray();prefs.pool=prefs.pool.Where(p=>Available(p.character)).ToArray();prefs.outfits=prefs.outfits.Where(p=>Available(p.character)).ToArray();if(!Available(prefs.active.character))prefs.active=new CharacterChoice("yiji",400101);if(!Available(prefs.dorm))prefs.dorm="yiji";Save();}
         public static void BeginPreview(){PreviewOnly=true;catalog=null;prefs=null;textures.Clear();Load();prefs=new CharacterPreferences();}

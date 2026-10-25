@@ -68,6 +68,9 @@ namespace YunJian.Riichi
         float SourceHandoff => current?.kind=="kan"?.35f:(PlainDiscard || clip == null || clip.data.landTime <= 0) ? .40f : clip.data.landTime;
         float PlayLength => current?.kind=="tsumo"?1.16f:ClipLength;
         float Handoff => current?.kind=="tsumo"?1.14f:SourceHandoff;
+        float RiichiEffectAt {
+            get {var view=table.Client.State;var hand=WardrobeRuntime.Item(view,current.seat,"hand");var effect=WardrobeRuntime.Item(view,current.seat,"riichiEffect");float point=effect.groundEffect?hand.riichiNormalPoint:hand.riichiSidewaysPoint;return point>0?ClipLength*point:Mathf.Max(0,Handoff-.32f);}
+        }
         static string ClipFor(PublicSound item)
         {
             if (item.kind == "discard") return item.riichi ? RiichiClip : NormalClip;
@@ -77,7 +80,7 @@ namespace YunJian.Riichi
             return MeldKinds.Contains(item.kind) ? MeldClip : null;
         }
 
-        void Awake() { table = GetComponent<TableRenderer>();riichiVisual=gameObject.AddComponent<RiichiDiscardVisual>(); }
+        void Awake() { table = GetComponent<TableRenderer>();riichiVisual=gameObject.AddComponent<RiichiDiscardVisual>();gameObject.AddComponent<WardrobeResponseIndicator>(); }
         public Texture2D Art(string name)
         {
             if (!art.TryGetValue(name, out var image)) { image = Resources.Load<Texture2D>("Majsoul/Actions/"+name); art[name] = image; }
@@ -143,11 +146,15 @@ namespace YunJian.Riichi
             foreach(var e in handEvents.Where(e=>e.kind=="nuki"))table.NorthTarget(e.seat,e.nuki)?.gameObject.SetActive(true);
             handEvents.Clear();
         }
+        string handStyle;
         void LoadClip(string stem)
         {
-            if (clips.TryGetValue(stem, out clip)) return;
-            var data = JsonUtility.FromJson<HandData>(Resources.Load<TextAsset>("Majsoul/Actions/"+stem).text);
-            byte[] bytes = Resources.Load<TextAsset>("Majsoul/Actions/"+stem+"-frames").bytes;
+            var choice=WardrobeRuntime.Item(table.Client.State,current.seat,"hand");
+            if(current.kind=="discard"&&current.riichi&&WardrobeRuntime.Item(table.Client.State,current.seat,"riichiEffect").groundEffect)stem=NormalClip;
+            stem=WardrobeRuntime.Motion(choice,stem);
+            if (!clips.TryGetValue(stem, out clip)) {
+            var data = JsonUtility.FromJson<HandData>(Resources.Load<TextAsset>(stem).text);
+            byte[] bytes = Resources.Load<TextAsset>(stem+"-frames").bytes;
             var values = new float[bytes.Length/4]; Buffer.BlockCopy(bytes,0,values,0,bytes.Length);
             clip = new Clip { data = data, vertices = new Vector3[data.frames][], normals = new Vector3[data.frames][],
                               frameVertices = new Vector3[data.vertices], frameNormals = new Vector3[data.vertices] };
@@ -161,15 +168,18 @@ namespace YunJian.Riichi
                     clip.normals[f][i]=new Vector3(values[n],values[n+1],values[n+2]);
                 }
             }
-            if (mesh == null)
-            {
-                var uv=new Vector2[data.vertices]; for(int i=0;i<uv.Length;i++) uv[i]=new Vector2(data.uv[i*2],1-data.uv[i*2+1]);
-                mesh=new Mesh { name="Original animated hand", vertices=clip.vertices[0], normals=clip.normals[0], uv=uv, subMeshCount=2 };
-                mesh.SetTriangles(data.body,0); mesh.SetTriangles(data.nails,1); mesh.MarkDynamic();
-                body=new Material(Shader.Find("Unlit/Texture")) { mainTexture=Art("hand-skin") };
-                nails=new Material(Shader.Find("Unlit/Texture")) { mainTexture=Art("hand-nails") };
-            }
             clips[stem] = clip;
+            }
+            var surface=clip.data;
+            if (mesh == null || handStyle!=choice.id)
+            {
+                if(mesh!=null)Destroy(mesh);if(body!=null)Destroy(body);if(nails!=null)Destroy(nails);handStyle=choice.id;
+                var uv=new Vector2[surface.vertices]; for(int i=0;i<uv.Length;i++) uv[i]=new Vector2(surface.uv[i*2],1-surface.uv[i*2+1]);
+                mesh=new Mesh { name="Original animated hand", vertices=clip.vertices[0], normals=clip.normals[0], uv=uv, subMeshCount=2 };
+                mesh.SetTriangles(surface.body,0); mesh.SetTriangles(surface.nails,1); mesh.MarkDynamic();
+                body=new Material(Shader.Find("Unlit/Texture")) { mainTexture=WardrobeCatalog.Texture(choice.texture) };
+                nails=new Material(Shader.Find("Unlit/Texture")) { mainTexture=WardrobeCatalog.Texture(string.IsNullOrEmpty(choice.nailTexture)?choice.texture:choice.nailTexture) };
+            }
         }
         int spokenEvent=-1;
         void StartQueued(){
@@ -205,7 +215,7 @@ namespace YunJian.Riichi
             hand.AddComponent<MeshFilter>().sharedMesh=mesh;
             var renderer=hand.AddComponent<MeshRenderer>();renderer.sharedMaterials=new[]{body,nails};renderer.shadowCastingMode=ShadowCastingMode.Off;
             movingMeld=GroupCall?table.EventMeld(item):null;
-            animatedTile = GroupCall?null:stick ? table.CreateEffectStick()
+            animatedTile = GroupCall?null:stick ? table.CreateEffectStick(item.seat)
                         : item.kind=="nuki" ? table.CreateEffectTile("z4",table.NorthTarget(item.seat,item.nuki))
                         : string.IsNullOrEmpty(item.tile) ? null : table.CreateEffectTile(item.tile,item.kind=="tsumo"?table.WinningTarget(item):table.FindDiscard(item.seat,item.tile,item.riverIndex));
             if (animatedTile != null)
@@ -296,7 +306,8 @@ namespace YunJian.Riichi
             string key=item.from+":"+item.winSource+":"+item.tile;
             if(!winningBursts.Add(key))return;
             var effect=new GameObject("Original winning tile effect "+key).AddComponent<WinTileEffect>();effect.transform.SetParent(transform,false);
-            effect.Initialize(table.WinningPoint(item),table.SeatAngle(item.kind=="ron"?item.from:item.seat),now+.10f,(uint)(item.id+1));
+            var choice=WardrobeRuntime.Item(table.Client.State,item.seat,"winEffect");
+            effect.Initialize(table.WinningPoint(item),table.SeatAngle(item.kind=="ron"?item.from:item.seat),now+.10f,(uint)(item.id+1),choice.effect,choice.effectScale>0?choice.effectScale:1);effect.SoundCue=choice.cue;
             winEffects.Add(effect);SpawnedWinEffects++;
         }
         void EndWinEffects(){foreach(var e in winEffects)if(e!=null){e.gameObject.SetActive(false);Destroy(e.gameObject);}winEffects.Clear();}
@@ -306,7 +317,7 @@ namespace YunJian.Riichi
             for(int i=winEffects.Count-1;i>=0;i--){
                 var e=winEffects[i];if(e==null){winEffects.RemoveAt(i);continue;}
                 float age=now-e.StartedAt;
-                if(age>=0&&!e.SoundTriggered){e.SoundTriggered=true;GetComponent<GameAudio>()?.Cue("ron_huolongjuan");}
+                if(age>=0&&!e.SoundTriggered){e.SoundTriggered=true;GetComponent<GameAudio>()?.Cue(e.SoundCue);}
                 e.Sample(age);
                 // Continuous emitters have a particle tail beyond the old 1.8 s
                 // cutoff. Keep the table visible until that tail really ends.
@@ -407,7 +418,9 @@ namespace YunJian.Riichi
             mesh.vertices=clip.frameVertices;mesh.normals=clip.frameNormals;mesh.RecalculateBounds();
             if(animatedTile!=null)
             {
-                Vector3 p=TilePoint(current.kind=="tsumo"?Mathf.Min(elapsed,SourceHandoff):elapsed);
+                // A frame can cross the handoff time. Clamp every carried object
+                // to the contact keyframe before revealing its deposited counterpart.
+                Vector3 p=TilePoint(Mathf.Min(elapsed,SourceHandoff));
                 if(current.kind=="tsumo"){motion.GetComponentInChildren<MeshRenderer>().enabled=elapsed<clip.data.duration;}
                 PositionCarriedTile(p);
                 // A declared riichi tile lies sideways in the river, matching CreateTable.
@@ -417,7 +430,7 @@ namespace YunJian.Riichi
                     : current.kind=="tsumo" && targetTile!=null?targetTile.rotation:Quaternion.Euler(0,table.SeatAngle(current.seat)+(!stick&&current.riichi?90f:0f),0);
                 // Tsumo carries and slaps the tile face up for the entire motion.
             }
-            if(current.kind=="discard"&&current.riichi&&!riichiVisualAttempted&&elapsed>=Mathf.Max(0,Handoff-.32f)){
+            if(current.kind=="discard"&&current.riichi&&!riichiVisualAttempted&&elapsed>=RiichiEffectAt){
                 riichiVisualAttempted=true;riichiVisual.TryPlay(current,animatedTile,ValidationFreeze?ValidationTime:Time.unscaledTime);
             }
             if (elapsed>=Handoff) CompleteHandoff();

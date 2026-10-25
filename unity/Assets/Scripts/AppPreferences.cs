@@ -11,6 +11,9 @@ namespace YunJian.Riichi
         public static int Fps { get; private set; }
         public static float ScreenInset { get; private set; }
         public static int Revision { get; private set; }
+        static bool dynamicOutfits=true,randomBotAppearance=true;
+        public static bool DynamicOutfits {get{Load();return dynamicOutfits;}}
+        public static bool RandomBotAppearance {get{Load();return randomBotAppearance;}}
         static bool loaded;
         public static void Load()
         {
@@ -28,6 +31,9 @@ namespace YunJian.Riichi
             Fps = PlayerPrefs.GetInt("riichi.setting.fps", 60);
             if (Fps != 30 && Fps != 60 && Fps != 120) Fps = 60;
             ScreenInset = Mathf.Clamp01(PlayerPrefs.GetFloat("riichi.setting.inset", 0));
+            dynamicOutfits=PlayerPrefs.GetInt("riichi.setting.dynamicOutfits",1)!=0;
+            // Upgrade the former OFF default once; subsequent explicit choices persist.
+            randomBotAppearance=PlayerPrefs.GetInt("riichi.setting.randomBotDefaultVersion",0)<1||PlayerPrefs.GetInt("riichi.setting.randomBotAppearance",1)!=0;
             Application.targetFrameRate = Fps;
         }
         public static float Gain(int channel) {
@@ -37,12 +43,16 @@ namespace YunJian.Riichi
         public static void ToggleMute(int channel) { Muted[channel] = !Muted[channel]; Save(); }
         public static void SetFps(int value) { Fps = value; Application.targetFrameRate = value; Save(); }
         public static void SetInset(float value) { ScreenInset = Mathf.Clamp01(value); Save(); }
+        public static void SetDynamicOutfits(bool enabled){Load();dynamicOutfits=enabled;Save();}
+        public static void SetRandomBotAppearance(bool enabled){Load();randomBotAppearance=enabled;Save();}
         static void Save() {
+            if(CharacterRoster.PreviewOnly){Revision++;return;}
             for (int i = 0; i < 5; i++) {
                 PlayerPrefs.SetFloat("riichi.setting.volume." + i, Volume[i]);
                 PlayerPrefs.SetInt("riichi.setting.muted." + i, Muted[i] ? 1 : 0);
             }
             PlayerPrefs.SetInt("riichi.setting.fps", Fps); PlayerPrefs.SetFloat("riichi.setting.inset", ScreenInset);
+            PlayerPrefs.SetInt("riichi.setting.dynamicOutfits",dynamicOutfits?1:0);PlayerPrefs.SetInt("riichi.setting.randomBotAppearance",randomBotAppearance?1:0);PlayerPrefs.SetInt("riichi.setting.randomBotDefaultVersion",1);
             PlayerPrefs.Save(); Revision++;
         }
     }

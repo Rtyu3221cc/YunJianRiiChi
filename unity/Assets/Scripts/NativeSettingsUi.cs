@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 using static YunJian.Riichi.NativePanel;
 
@@ -11,17 +12,27 @@ namespace YunJian.Riichi
         readonly NativeScroll scroll = new NativeScroll();
         public int Tab;
         public string MusicGroup;
-        bool dropdown;
+        bool dropdown,botDropdown;
         float opened, musicOpened;
 #if UNITY_EDITOR
         public Rect DesignPreviewSafeArea;
+        public string ReviewPress;public readonly Dictionary<string,Rect> ReviewTargets=new Dictionary<string,Rect>();
 #endif
         public NativeSettingsUi(PlaylistAudio value) { audio = value; }
-        public void Open() { opened = Time.unscaledTime; Tab = 0; MusicGroup = null; dropdown = false; scroll.Offset = 0; CharacterResourceUi.Current?.ClearFocus(); }
-        public bool Back() { if (MusicGroup != null) { CloseMusic(); return false; } audio.StopAudition(); CharacterResourceUi.Current?.ClearFocus(); return true; }
+        public void Open() { opened = Time.unscaledTime; Tab = 0; MusicGroup = null; dropdown = botDropdown = false; scroll.Offset = 0; CharacterResourceUi.Current?.ClearFocus(); }
+        public bool Back() { if (MusicGroup != null) { CloseMusic(); return false; }if(dropdown||botDropdown){dropdown=botDropdown=false;return false;} audio.StopAudition(); CharacterResourceUi.Current?.ClearFocus(); return true; }
+        bool SettingsHit(Rect r,string id){
+#if UNITY_EDITOR
+            var m=GUI.matrix;var a=m.MultiplyPoint3x4(r.position);var b=m.MultiplyPoint3x4(new Vector3(r.xMax,r.yMax));ReviewTargets[id]=Rect.MinMaxRect(a.x,a.y,b.x,b.y);if(ReviewPress==id&&GUI.enabled){ReviewPress=null;return true;}
+#endif
+            return Hit(r);
+        }
         void CloseMusic() { MusicGroup = null; audio.ApplyPlaylist(); }
         public void OpenMusic(string group) { MusicGroup = group; musicOpened = Time.unscaledTime; }
         public void Draw(Action close) {
+#if UNITY_EDITOR
+            ReviewTargets.Clear();
+#endif
             var matrix = GUI.matrix; var color = GUI.color;
             var safe = Screen.safeArea;
 #if UNITY_EDITOR
@@ -42,11 +53,12 @@ namespace YunJian.Riichi
             Label("设置", rx + 842, 170, 51, new Color(.8784f, .6667f, .4314f), 1, TextAnchor.MiddleCenter);
             Image("native-pop2_close", new Rect(rx + 1376, 148, 44, 44));
             if (Hit(new Rect(rx + 1358, 130, 80, 80))) { audio.StopAudition(); CharacterResourceUi.Current?.ClearFocus(); close(); }
-            for (int i = 0; i < 3; i++) {
-                float x = rx + 2, y = 186 + i * 104; bool active = Tab == i;
+            int[] tabs={0,1,3,2};string[] names={"声音","画面","偏好","资源"};
+            for (int i = 0; i < tabs.Length; i++) {
+                float x = rx + 2, y = 186 + i * 104; bool active = Tab == tabs[i];
                 Image("official-config-common_popup_tab_btn" + (active ? "_selected" : ""), new Rect(x, y, active ? 248 : 207, 108));
-                Label(i == 0 ? "声音" : i==1?"画面":"资源", x + 123, y + 55, 40, Gold, 1, TextAnchor.MiddleCenter);
-                if (Hit(new Rect(x, y, 207, 108))) { if (Tab != i) CharacterResourceUi.Current?.ClearFocus(); Tab = i; dropdown = false; scroll.Offset = 0; }
+                Label(names[i], x + 123, y + 55, 40, Gold, 1, TextAnchor.MiddleCenter);
+                if (SettingsHit(new Rect(x, y, 207, 108),"settings-tab-"+tabs[i])) { if (Tab != tabs[i]) CharacterResourceUi.Current?.ClearFocus(); Tab = tabs[i]; dropdown = botDropdown = false; scroll.Offset = 0; }
             }
             Label("当前版本  Unity " + Application.version, rx + 1419, 901, 30, new Color(.608f, .631f, .698f), 0, TextAnchor.MiddleRight);
             var view = new Rect(vx, vy, 1150, Tab==2?715:630);
@@ -54,7 +66,7 @@ namespace YunJian.Riichi
                 scroll.Input(view, 875); GUI.BeginGroup(view);
                 DrawSound(-scroll.Offset);
                 GUI.EndGroup(); Scrollbar(vx + 1155, vy, 630, scroll.Offset, 875);
-            } else { GUI.BeginGroup(view);if(Tab==1)DrawGraphics();else CharacterResourceUi.Current.DrawSettings(view); GUI.EndGroup(); }
+            } else { GUI.BeginGroup(view);if(Tab==1)DrawGraphics();else if(Tab==3)DrawPreferences();else CharacterResourceUi.Current.DrawSettings(view); GUI.EndGroup(); }
             GUI.enabled = enabled; GUI.matrix = baseMatrix; GUI.color = Color.white;
             if (MusicGroup != null) DrawMusic(width);
             GUI.matrix = matrix; GUI.color = color;
@@ -108,6 +120,21 @@ namespace YunJian.Riichi
                     Label(options[i] + " 帧", x + 247.5f, rowY + 46, 30, Text, 0, TextAnchor.MiddleCenter);
                     if (Hit(new Rect(x + 8, rowY, 480, 83))) { AppPreferences.SetFps(options[i]); dropdown = false; }
                 }
+            }
+        }
+        void DrawPreferences(){
+            Section("使用偏好",0);Row(70,"动态服饰");
+            var toggle=new Rect(607,84,484,64);var old=GUI.color;GUI.color*=new Color(.58f,.58f,.68f,1);Slice("official-config-setting_entry_btn",toggle,35,1,35,1);GUI.color=old;
+            bool live=AppPreferences.DynamicOutfits;var selected=new Rect(toggle.x+(live?toggle.width/2:0),toggle.y,toggle.width/2,toggle.height);Slice("official-config-setting_entry_btn",selected,35,1,35,1);
+            Label("关闭",toggle.x+121,toggle.center.y,30,live?Muted:Text,0,TextAnchor.MiddleCenter,242,64);Label("开启",toggle.x+363,toggle.center.y,30,live?Text:Muted,0,TextAnchor.MiddleCenter,242,64);
+            if(SettingsHit(new Rect(toggle.x,toggle.y,242,64),"preference-live-off"))AppPreferences.SetDynamicOutfits(false);
+            if(SettingsHit(new Rect(toggle.x+242,toggle.y,242,64),"preference-live-on"))AppPreferences.SetDynamicOutfits(true);
+            Row(165,"电脑形象");var button=new Rect(607,179,484,64);Slice("official-config-setting_entry_btn",button,35,1,35,1);Label(AppPreferences.RandomBotAppearance?"从已下载雀士中随机":"一姬的初始形象",button.center.x-14,button.center.y,30,Text,0,TextAnchor.MiddleCenter,440,64);Image("official-config-setting_dropdown_tip",new Rect(1049,204,24,13));
+            if(SettingsHit(button,"preference-bot-dropdown"))botDropdown=!botDropdown;
+            Label("电脑形象设置对之后新增的电脑生效",36,290,27,Muted);Label("关闭动态服饰后，大厅和宿舍显示静态立绘",36,337,27,Muted);
+            if(botDropdown){const float x=600,y=211.5f;Slice("official-config-setting_dropdown_base",new Rect(x,y,496,232),50,50,50,50);
+                for(int i=0;i<2;i++){bool random=i==0;float row=y+31+i*83;if(AppPreferences.RandomBotAppearance==random)Slice("official-config-setting_dropdown_tip_selected",new Rect(x+8,row+18,480,60),1,1,1,1);Label(random?"从已下载雀士中随机":"一姬的初始形象",x+247.5f,row+46,30,Text,0,TextAnchor.MiddleCenter,470,70);
+                    if(SettingsHit(new Rect(x+8,row,480,83),random?"preference-bot-random":"preference-bot-ichihime")){AppPreferences.SetRandomBotAppearance(random);botDropdown=false;}}
             }
         }
         void DrawMusic(float width) {

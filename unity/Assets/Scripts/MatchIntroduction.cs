@@ -65,7 +65,7 @@ namespace YunJian.Riichi
         Texture2D CharacterCard(Cell cell,PlayerView player){
             string key=cell.seat+":"+CharacterRoster.Skin(player.character,player.skin).id;if(characterCards.TryGetValue(key,out var ready))return ready;
             if(characterCards.Count>=12){foreach(var t in characterCards.Values)UnityEngine.Object.Destroy(t);characterCards.Clear();}
-            var bg=Art(cell.images[0].name);var portrait=CharacterRoster.Portrait(player);var b=cell.images[0].rect;var body=cell.body;
+            var bg=Art(cell.images[0].name);var portrait=CharacterFraming.SceneTexture(CharacterRoster.Skin(player.character,player.skin).id,"I0",cell.seat);var b=cell.images[0].rect;var body=cell.body;
             var placed=CharacterFraming.Intro(CharacterRoster.Skin(player.character,player.skin).id,cell.seat,new Rect(body[0],body[1],body[2],body[3]),new Vector2(cell.anchor[0],cell.anchor[1]),cell.flip,out var flip);
             var rect=new Vector4((placed.x-b[0])/b[2],1-(placed.y-b[1]+placed.height)/b[3],placed.width/b[2],placed.height/b[3]);
             var material=new Material(Shader.Find("YunJian/CharacterIntro"));material.SetTexture("_Background",bg);material.SetTexture("_Portrait",portrait);material.SetVector("_PortraitRect",rect);material.SetFloat("_Flip",flip?1:0);

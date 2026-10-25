@@ -6,8 +6,8 @@ namespace YunJian.Riichi.Editor
 {
     [InitializeOnLoad] public static class ProjectSetup
     {
-        public const string ReleaseVersion="0.6.7";
-        public const int ReleaseCode=55;
+        public const string ReleaseVersion="0.6.13";
+        public const int ReleaseCode=61;
         static ProjectSetup() { EditorApplication.delayCall += EnsureScene; }
         static void EnsureScene()
         {
@@ -49,7 +49,7 @@ namespace YunJian.Riichi.Editor
             var graphics = new SerializedObject(graphicsAssets[0]);
             var shaders = graphics.FindProperty("m_AlwaysIncludedShaders");
             if (shaders == null) throw new System.Exception("无法读取 Always Included Shaders，请检查编辑器版本。");
-            foreach (var name in new[] { "Standard", "Unlit/Texture", "Unlit/Transparent", "Unlit/Color", "UI/Default", "YunJian/OriginalHand", "YunJian/OriginalTileFace", "YunJian/OriginalTileBody", "YunJian/OriginalTileOutline", "YunJian/ResponseGlow", "YunJian/TurnLight", "YunJian/NorthPetal", "YunJian/WinParticle", "YunJian/TableCloth", "YunJian/TileShadow", "YunJian/NativeCallout", "YunJian/CharacterSpine", "YunJian/CharacterStraightAlpha", "YunJian/CharacterIntro", "YunJian/CharacterOver" })
+            foreach (var name in new[] { "Standard", "Unlit/Texture", "Unlit/Transparent", "Unlit/Color", "UI/Default", "YunJian/OriginalHand", "YunJian/OriginalTileFace", "YunJian/OriginalTileBody", "YunJian/OriginalTileOutline", "YunJian/ResponseGlow", "YunJian/TurnLight", "YunJian/NorthPetal", "YunJian/WinParticle", "YunJian/TableCloth", "YunJian/TileShadow", "YunJian/NativeCallout", "YunJian/CharacterSpine", "YunJian/CharacterStraightAlpha", "YunJian/CharacterIntro", "YunJian/CharacterOver", "YunJian/EmoteGrayscale" })
             {
                 var shader = Shader.Find(name); if (shader == null) continue;
                 bool found = false; for (int i = 0; i < shaders.arraySize; i++) if (shaders.GetArrayElementAtIndex(i).objectReferenceValue == shader) found = true;

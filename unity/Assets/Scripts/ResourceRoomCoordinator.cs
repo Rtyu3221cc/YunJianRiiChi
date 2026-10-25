@@ -28,7 +28,22 @@ namespace YunJian.Riichi {
             string signature=revision+":"+report+":"+string.Join(",",declined.OrderBy(k=>k));if(reportSent!=signature&&!client.Busy){if(client.SendResourceRequest(new RequestBody{op="resourceAck",setupRevision=revision,resourceStatus=report,fallbackCharacters=declined.ToArray()}))reportSent=signature;}
             if(state.host&&setup.ready&&preloaded&&!client.Busy&&Time.unscaledTime>=nextStart){nextStart=Time.unscaledTime+1.5f;client.SendResourceRequest(new RequestBody{op="start",setupRevision=revision});}
         }
-        IEnumerator Preload(ResourceSetupView setup){preloading=true;int version=revision;foreach(var c in setup.choices){var skin=CharacterRoster.Skin(c.character,c.skin);CharacterRoster.Texture("Skins/"+skin.id+"/full");CharacterRoster.Texture("Skins/"+skin.id+"/bighead");foreach(string action in new[]{"riichi","ron","tsumo","chi","pon","kan","nuki"})CharacterVoices.Clip(c.character,action);yield return null;if(version!=revision){preloading=false;yield break;}}preloading=false;preloaded=true;}
+        IEnumerator Preload(ResourceSetupView setup){
+            preloading=true;int version=revision;
+            foreach(var c in setup.choices){
+                var skin=CharacterRoster.Skin(c.character,c.skin);
+                foreach(string path in CharacterFraming.AppearancePaths(skin.id)){
+                    if(version!=revision)yield break;CharacterRoster.DisplayTexture(path);
+                    while(CharacterPackService.DisplayPending(path)){if(version!=revision)yield break;yield return null;}yield return null;
+                }
+                string character=CharacterRoster.CanDisplay(c.character)?c.character:"yiji";
+                foreach(string action in new[]{"act_rich","act_drich","act_ron","act_tumo","act_chi","act_pon","act_kan","act_babei"}){
+                    if(version!=revision)yield break;string path="Voice/"+character+"/"+action;CharacterPackService.DisplayAsset<AudioClip>(path);
+                    while(CharacterPackService.DisplayPending(path)){if(version!=revision)yield break;yield return null;}yield return null;
+                }
+            }
+            if(version==revision){preloading=false;preloaded=true;}
+        }
         void UpdateShare(RoomView state){
             var local=CharacterPackService.All.Where(p=>!p.builtin&&p.available&&CharacterPackService.Installed(p.key)&&File.Exists(CharacterPackService.FilePath(p))).ToArray();var entries=local.Select(p=>new CharacterPackShareServer.Entry{key=p.key,hash=p.sha256,bytes=p.bytes,path=CharacterPackService.FilePath(p)}).ToList();
             // Any room member can reach the host even when hotspot peer isolation prevents a direct transfer.

@@ -27,6 +27,7 @@ namespace YunJian.Riichi.Editor {
    AssetDatabase.SaveAssets();Debug.Log("YAKUMAN INDICATOR APK MODULE IMPORT COMPLETE");
   }
   public static void RunDoubleYakuman(){AssetDatabase.Refresh();Import("Assets/Resources/Majsoul/NativeReview/","effect_yiman2");AssetDatabase.SaveAssets();Debug.Log("DOUBLE YAKUMAN PARTICLES IMPORTED");}
+  public static void ImportDecoration(string name){Import("Assets/Resources/Majsoul/NativeReview/",name);}
   static void Import(string folder,string name){
    {
     var config=JsonUtility.FromJson<NativeEffectSource>(File.ReadAllText(folder+name+"-source.json"));var root=new GameObject(name);var nodes=new Transform[config.nodes.Length];
@@ -41,6 +42,7 @@ namespace YunJian.Riichi.Editor {
      var renderer=p.GetComponent<ParticleSystemRenderer>();EditorJsonUtility.FromJsonOverwrite(File.ReadAllText(folder+n.renderer),renderer);
      if((int)renderer.renderMode!=n.renderMode)throw new Exception("Source renderer mode was not imported: "+n.name);
      var material=new Material(Shader.Find("YunJian/WinParticle")){name="APK "+n.name,mainTexture=AssetDatabase.LoadAssetAtPath<Texture2D>(folder+n.texture+".png")};material.SetColor("_TintColor",new Color(n.tint[0],n.tint[1],n.tint[2],n.tint[3]));material.SetFloat("_SrcBlend",n.srcBlend);material.SetFloat("_DstBlend",n.dstBlend);
+     if(n.textureScale!=null)material.mainTextureScale=new Vector2(n.textureScale[0],n.textureScale[1]);if(n.textureOffset!=null)material.mainTextureOffset=new Vector2(n.textureOffset[0],n.textureOffset[1]);
      string matPath=folder+name+"-"+i+".mat";if(AssetDatabase.LoadAssetAtPath<Material>(matPath)!=null)AssetDatabase.DeleteAsset(matPath);AssetDatabase.CreateAsset(material,matPath);renderer.sharedMaterial=material;
      if(!string.IsNullOrEmpty(n.mesh)){
       var d=JsonUtility.FromJson<MeshData>(File.ReadAllText(folder+n.mesh));var mesh=new Mesh{name="APK "+n.name};var vertices=new Vector3[d.vertices.Length/3];var uv=new Vector2[d.uv.Length/2];for(int j=0;j<vertices.Length;j++)vertices[j]=new Vector3(d.vertices[j*3],d.vertices[j*3+1],d.vertices[j*3+2]);for(int j=0;j<uv.Length;j++)uv[j]=new Vector2(d.uv[j*2],d.uv[j*2+1]);mesh.vertices=vertices;mesh.uv=uv;mesh.triangles=d.indices;mesh.RecalculateBounds();string meshPath=folder+name+"-"+i+".asset";if(AssetDatabase.LoadAssetAtPath<Mesh>(meshPath)!=null)AssetDatabase.DeleteAsset(meshPath);AssetDatabase.CreateAsset(mesh,meshPath);renderer.mesh=mesh;

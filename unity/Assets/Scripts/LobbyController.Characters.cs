@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace YunJian.Riichi {
     public sealed partial class LobbyController {
-        enum DormView { Select,Info,Skins,Appreciate }
+        enum DormView { Select,Info,Skins,Appreciate,Wardrobe }
         DormView dormView,skinReturn=DormView.Select;bool dormOpen,dormStars,sortOpen,roleOpen,roleClosing,randomTab,roleStars,skinExpanded;
         float characterTransition=-10,roleStarted,roleClosed;int skinIndex;string rolePreview,sortDrag;Vector2 infoScroll,appreciationPan,panStart,pointerStart;float appreciationZoom=1,pinchStart;
         readonly CharacterIllustration characterArt=new CharacterIllustration();

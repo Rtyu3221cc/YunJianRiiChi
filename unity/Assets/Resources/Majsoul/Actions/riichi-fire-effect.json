@@ -1,4 +1,5 @@
 {
+ "schema": 2,
  "nodes": [
   {
    "name": "effect_liqi_fire",
@@ -225,7 +226,7 @@
   {
    "name": "guang",
    "node": 2,
-   "texture": "riichi-fire-yuanqiu2",
+   "texture": "r4-891615adf6699699",
    "tint": [
     0.5,
     0.5,
@@ -318,7 +319,11 @@
    "radius": 0.01,
    "coneAngle": 0,
    "nativeShape": true,
-   "box": [],
+   "box": [
+    1,
+    1,
+    1
+   ],
    "randomDirection": 0,
    "velocityMin": [],
    "velocityMax": [],
@@ -356,12 +361,15 @@
      2,
      1
     ]
-   }
+   },
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1
   },
   {
    "name": "guangyun",
    "node": 3,
-   "texture": "riichi-fire-pai_faguang_huang",
+   "texture": "r4-f2dcdc4d7ed79200",
    "tint": [
     0.5,
     0.5,
@@ -454,7 +462,11 @@
    "radius": 0.01,
    "coneAngle": 0,
    "nativeShape": true,
-   "box": [],
+   "box": [
+    1,
+    1,
+    1
+   ],
    "randomDirection": 0,
    "velocityMin": [],
    "velocityMax": [],
@@ -492,12 +504,15 @@
      2,
      1
     ]
-   }
+   },
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1
   },
   {
    "name": "guangyunTrail",
    "node": 4,
-   "texture": "riichi-fire-daodan_tuowei",
+   "texture": "r4-26f2b8f7ff442e2c",
    "tint": [
     0.5,
     0.5,
@@ -590,7 +605,11 @@
    "radius": 0.01,
    "coneAngle": 0,
    "nativeShape": true,
-   "box": [],
+   "box": [
+    1,
+    1,
+    1
+   ],
    "randomDirection": 0,
    "velocityMin": [],
    "velocityMax": [],
@@ -628,12 +647,15 @@
      2,
      1
     ]
-   }
+   },
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1
   },
   {
    "name": "bao",
    "node": 5,
-   "texture": "riichi-fire-Particle_Impact01",
+   "texture": "r4-b2970b16eab0ad30",
    "tint": [
     0.5,
     0.5,
@@ -743,7 +765,11 @@
    "radius": 0.01,
    "coneAngle": 0,
    "nativeShape": true,
-   "box": [],
+   "box": [
+    1,
+    1,
+    1
+   ],
    "randomDirection": 0,
    "velocityMin": [],
    "velocityMax": [],
@@ -791,12 +817,15 @@
     -89.99999,
     0,
     0
-   ]
+   ],
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1
   },
   {
    "name": "qiu alpha",
    "node": 6,
-   "texture": "riichi-fire-duqiu",
+   "texture": "r4-8f5834d5c3e8e80b",
    "tint": [
     0.5,
     0.5,
@@ -914,7 +943,11 @@
    "radius": 0.01,
    "coneAngle": 0,
    "nativeShape": true,
-   "box": [],
+   "box": [
+    1,
+    1,
+    1
+   ],
    "randomDirection": 0,
    "velocityMin": [
     0.01,
@@ -926,12 +959,16 @@
     0,
     0.1
    ],
-   "randomFrame": false
+   "randomFrame": false,
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1,
+   "velocitySpace": 0
   },
   {
    "name": "qiu add",
    "node": 7,
-   "texture": "riichi-fire-duqiu",
+   "texture": "r4-8f5834d5c3e8e80b",
    "tint": [
     0.5,
     0.5,
@@ -1049,7 +1086,11 @@
    "radius": 0.01,
    "coneAngle": 0,
    "nativeShape": true,
-   "box": [],
+   "box": [
+    1,
+    1,
+    1
+   ],
    "randomDirection": 0,
    "velocityMin": [
     0.01,
@@ -1061,12 +1102,16 @@
     0,
     0.1
    ],
-   "randomFrame": false
+   "randomFrame": false,
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1,
+   "velocitySpace": 0
   },
   {
    "name": "lizi",
    "node": 8,
-   "texture": "riichi-fire-Particle_Impact01",
+   "texture": "r4-b2970b16eab0ad30",
    "tint": [
     0.5,
     0.5,
@@ -1176,7 +1221,11 @@
    "radius": 0.025,
    "coneAngle": 0,
    "nativeShape": true,
-   "box": [],
+   "box": [
+    1,
+    1,
+    1
+   ],
    "randomDirection": 0,
    "velocityMin": [
     0.01,
@@ -1188,12 +1237,16 @@
     0,
     0.2
    ],
-   "randomFrame": false
+   "randomFrame": false,
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 0,
+   "velocitySpace": 0
   },
   {
    "name": "yan",
    "node": 9,
-   "texture": "riichi-fire-mianhuatang",
+   "texture": "r4-7f77d656d806e2b5",
    "tint": [
     0.5,
     0.5,
@@ -1320,12 +1373,16 @@
    ],
    "frames": [],
    "cycles": 1,
-   "angularSpeed": 0,
+   "angularSpeed": 500,
    "shape": 1,
    "radius": 0.01,
    "coneAngle": 0,
    "nativeShape": true,
-   "box": [],
+   "box": [
+    1,
+    1,
+    1
+   ],
    "randomDirection": 0,
    "velocityMin": [
     0.01,
@@ -1337,12 +1394,19 @@
     0,
     0
    ],
-   "randomFrame": false
+   "randomFrame": false,
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1,
+   "velocitySpace": 0,
+   "angularMin": 200,
+   "angularMax": 500,
+   "rotationCurve": []
   },
   {
    "name": "guangyunTrail (1)",
    "node": 10,
-   "texture": "riichi-fire-_64x64_sunshine_zhi",
+   "texture": "r4-8fe6fe3cbcf25b97",
    "tint": [
     0.5,
     0.5,
@@ -1443,7 +1507,11 @@
    "radius": 0.01,
    "coneAngle": 0,
    "nativeShape": true,
-   "box": [],
+   "box": [
+    1,
+    1,
+    1
+   ],
    "randomDirection": 0,
    "velocityMin": [],
    "velocityMax": [],
@@ -1481,7 +1549,10 @@
      2,
      1
     ]
-   }
+   },
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1
   }
  ]
 }
