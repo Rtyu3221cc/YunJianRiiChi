@@ -79,9 +79,11 @@ def assemble():
         copy=B/'zip-copy-check'/apk.name;copy.parent.mkdir(parents=True,exist_ok=True);copy.write_bytes(payload)
     assert module('signature0616','verify-apk-signature.py').verify_signature(copy)==signature
     copy.unlink();copy.parent.rmdir()
-    files=release_files+[source_zip,release_zip]
+    # User preference: source ZIP is a local backup; GitHub already hosts code.
+    files=release_files+[release_zip]
     assert all(p.stat().st_size<=prepare.RELEASE_LIMIT for p in files)
     save(B/'release-assets.json',[dict(path=p.relative_to(R).as_posix(),name=p.name,bytes=p.stat().st_size,sha256=prepare.sha256(p))for p in files])
+    save(B/'local-source-backup.json',dict(path=source_zip.relative_to(R).as_posix(),bytes=source_zip.stat().st_size,sha256=prepare.sha256(source_zip),githubUpload=False))
     print('RELEASE ASSEMBLY PASS',len(rows),'source files',signature['bytes'],signature['sha256'],flush=True)
 
 def curate():
