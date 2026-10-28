@@ -253,13 +253,18 @@ namespace YunJian.Riichi
         {waitPressCaptured=false;waitPressCancelled=false;waitHoldVisible=false;}
         void ObserveWaitState()
         {
-            if(State==null||State.phase!="play"||State.turn!=State.you||!State.options.Any(o=>o.kind=="discard"||o.kind=="riichi")){
+            bool discardDecision=State!=null&&State.phase=="play"&&State.turn==State.you&&State.options.Any(o=>o.kind=="discard"||o.kind=="riichi");
+            bool hasWaits=State!=null&&((State.waitDetails?.Length??0)>0||discardDecision&&(State.discardHints??new DiscardHint[0]).Any(h=>(h.waits?.Length??0)>0));
+            if(State==null||(State.phase!="play"&&State.phase!="reaction")||!hasWaits){
                 waitDecisionKey=null;ResetWaitPress();return;
             }
-            string next=State.audioRoom+":"+State.matchSeq+":"+State.handSeq+":"+State.players[State.you].river.Length+":"+string.Join(",",State.hand)+":"+State.drawn+":"+string.Join(",",State.players[State.you].melds);
+            // A poll of the same ron/skip decision must preserve both an open
+            // popup and its in-flight touch. Version changes also include
+            // presence updates, so identify the actual public table decision.
+            string next=State.audioRoom+":"+State.matchSeq+":"+State.handSeq+":"+State.phase+":"+State.turn+":"+string.Join(",",State.hand)+":"+State.drawn+":"+string.Join(";",State.players.Select(p=>p.river.Length+"/"+string.Join(",",p.melds)))+":"+State.pending?.from+":"+State.pending?.kind+":"+State.pending?.tile;
             if(next==waitDecisionKey)return;
             waitDecisionKey=next;waitPressCaptured=false;waitPressCancelled=false;
-            waitHoldVisible=(State.waitDetails?.Length??0)>0;
+            waitHoldVisible=discardDecision&&(State.waitDetails?.Length??0)>0;
         }
         // Capture the whole gesture, including release outside the button, so
         // dragging off this read-only control cannot accidentally discard a tile.
@@ -588,7 +593,6 @@ namespace YunJian.Riichi
                 CurrentWaitPanel=TableIndicators.WaitRect(CurrentWaitDetails.Length,new Vector2((top.x+bottom.x)/2,0),top.y-10,w*.70f);
                 TableIndicators.Waits(table,CurrentWaitDetails,CurrentWaitPanel);
             }
-            DrawResponseMarker();
             if(!AutoPlaying)DrawActionButtons(w,h);
             effects.DrawCall(w,h,State.n);
             allLast.Draw(w,h);
@@ -670,18 +674,6 @@ namespace YunJian.Riichi
                 for(int j=0;j<digits.Length;j++)GUI.DrawTexture(new Rect(r.center.x-digits.Length*tw/2+j*tw,r.y+5,tw-1,tw*1.5f),table.HandTexture(meld[0].ToString()+digits[j]),ScaleMode.ScaleToFit);
                 bool old=GUI.enabled;GUI.enabled&=!Busy;if(GUI.Button(r,"",GUIStyle.none))Act(choices[i].id);GUI.enabled=old;
             }
-        }
-        void DrawResponseMarker()
-        {
-            var target=table.ResponseTarget;if(target==null)return;
-            var box=target.GetComponent<BoxCollider>();Vector2 min=new Vector2(float.MaxValue,float.MaxValue),max=new Vector2(float.MinValue,float.MinValue);
-            foreach(int x in new[]{-1,1})foreach(int y in new[]{-1,1})foreach(int z in new[]{-1,1})
-            {
-                var point=table.Camera.WorldToScreenPoint(box.transform.TransformPoint(box.center+Vector3.Scale(box.size/2,new Vector3(x,y,z))));
-                var gui=viewport.FromScreen(point,Screen.height);min=Vector2.Min(min,gui);max=Vector2.Max(max,gui);
-            }
-            Rect r=Rect.MinMaxRect(min.x-3,min.y-3,max.x+3,max.y+3);
-            var arrow=effects.Art("response-arrow");if(arrow!=null) {var old=GUI.color;GUI.color=new Color(1,.9f,.2f);GUI.DrawTexture(new Rect(r.center.x-13,r.y-22+Mathf.Sin(Time.unscaledTime*5)*2,26,20),arrow,ScaleMode.ScaleToFit);GUI.color=old;}
         }
         void DrawResult()
         {

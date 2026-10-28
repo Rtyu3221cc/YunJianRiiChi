@@ -28,21 +28,24 @@ namespace YunJian.Riichi {
         readonly WardrobeMotionPreview dressMotion=new WardrobeMotionPreview();
         readonly WardrobeTablePreview dressTable=new WardrobeTablePreview();
         readonly CharacterPaneDrag dressDrag=new CharacterPaneDrag();
+        readonly CharacterPaneDrag dressItemDrag=new CharacterPaneDrag();
+        Vector2 dressItemScroll;bool dressItemRailDragging;float dressItemRailGrab;
         Vector2 dressScroll;Rect dressSliceClip;bool dressEye;string dressCategory="stick";float dressPreviewBegan;AudioSource dressAudio;
 #if UNITY_EDITOR
         float dressReviewAge=-1;
 #endif
         bool DressDirty=>dressDraft.Any(p=>WardrobeSelection.Get(p.Key)?.id!=p.Value);
+        static bool DressCanPreview(string category)=>category!="winEffect"&&category!="riichiEffect"&&category!="callout";
         WardrobeItem Draft(string key)=>dressDraft.TryGetValue(key,out var id)?WardrobeCatalog.Find(id):WardrobeSelection.Get(key);
         void OpenWardrobe(){
             StopDressPreview();dressDraft.Clear();foreach(var i in WardrobeCatalog.Data.items)if(!dressDraft.ContainsKey(i.category))dressDraft[i.category]=WardrobeSelection.Get(i.category).id;
-            dressEye=false;dressCategory="stick";dressScroll=Vector2.zero;SetDormPage(DormView.Wardrobe);
+            dressEye=false;dressCategory="stick";dressScroll=dressItemScroll=Vector2.zero;dressItemDrag.Reset();dressItemRailDragging=false;SetDormPage(DormView.Wardrobe);
         }
         void StopDressPreview(){dressTable.Hide();dressMotion.Hide();if(dressAudio!=null)dressAudio.Stop();if(PlaylistAudio.Active!=null)PlaylistAudio.Active.ExternalAudition=false;}
         void DisposeWardrobe(){StopDressPreview();dressMotion.Dispose();foreach(var m in dressSlices.Values)Destroy(m);dressSlices.Clear();}
         void TickWardrobePreview(){
             if(!dressEye)return;
-            var item=Draft(dressCategory);if(item==null)return;
+            var item=Draft(dressCategory);if(item==null)return;if(dressCategory=="hand")item=WardrobeRuntime.ResolveHand(item,CurrentCharacter.key);
             float age=Time.unscaledTime-dressPreviewBegan;
 #if UNITY_EDITOR
             if(dressReviewAge>=0)age=dressReviewAge;
@@ -50,11 +53,12 @@ namespace YunJian.Riichi {
             if(item.standardStick||!string.IsNullOrEmpty(item.model)||!string.IsNullOrEmpty(item.effect)||!string.IsNullOrEmpty(item.nativeEffect)||!string.IsNullOrEmpty(item.motion))dressMotion.Tick(item,age);
         }
         void SelectDressCategory(string key){
-            StopDressPreview();dressCategory=key;dressEye=false;int i=Array.FindIndex(dressCategories,c=>c.key==key);
+            StopDressPreview();dressCategory=key;dressEye=false;dressItemScroll=Vector2.zero;dressItemDrag.Reset();dressItemRailDragging=false;int i=Array.FindIndex(dressCategories,c=>c.key==key);
             float top=i*DressPitch;if(top<dressScroll.y)dressScroll.y=top;else if(top+150>dressScroll.y+DressViewHeight)dressScroll.y=top+150-DressViewHeight;
             dressScroll.y=Mathf.Clamp(dressScroll.y,0,dressCategories.Length*DressPitch+12-DressViewHeight);
         }
         void ToggleDressEye(){
+            if(!DressCanPreview(dressCategory)){dressEye=false;StopDressPreview();return;}
             dressEye=!dressEye;StopDressPreview();dressPreviewBegan=Time.unscaledTime;
 #if UNITY_EDITOR
             dressReviewAge=-1;
@@ -95,8 +99,23 @@ namespace YunJian.Riichi {
             float s=30;var t=WardrobeCatalog.Texture("Majsoul/Wardrobe/UI/select_corner");if(t==null)return;
             GUI.DrawTextureWithTexCoords(new Rect(r.x-5,r.y-5,s,s),t,new Rect(0,0,1,1));GUI.DrawTextureWithTexCoords(new Rect(r.xMax-s+5,r.y-5,s,s),t,new Rect(1,0,-1,1));GUI.DrawTextureWithTexCoords(new Rect(r.x-5,r.yMax-s+5,s,s),t,new Rect(0,1,1,-1));GUI.DrawTextureWithTexCoords(new Rect(r.xMax-s+5,r.yMax-s+5,s,s),t,new Rect(1,1,-1,-1));
         }
-        void DrawWardrobe(){
-            float x=(width-1660)/2;var outer=new Rect(x,155,1660,855);Tint(new Rect(x+14,169,1632,827),new Color(.015f,.012f,.028f,.91f));WSlice(outer,"bg_bound");DressTabs(x+1660,true);
+        void DrawDormDressTransition(){
+            bool toDress=dormView==DormView.Wardrobe;float t=Mathf.Clamp01((Now-pageBegan)/PageDuration),q=Mathf.SmoothStep(0,1,t);
+            var role=new Rect(width-1016,146.8f,766,892);var dress=new Rect(width-1910,155,1660,855);
+            var frame=InterpolateRect(toDress?role:dress,toDress?dress:role,q);
+            var color=GUI.color;bool enabled=GUI.enabled;GUI.enabled=false;
+            float portrait=toDress?1-Mathf.SmoothStep(0,1,t/.7f):Mathf.SmoothStep(0,1,t);
+            GUI.color=new Color(color.r,color.g,color.b,color.a*portrait);
+            var skin=CurrentOutfit;var r=DormPortrait(skin);CharacterFraming.NativeLocal(skin.id,"B0",0,r,out bool flip);characterArt.Draw(r,skin,Now,flip);DrawDormLeftButtons();DrawCharacterNameplate();
+            GUI.color=color;Tint(new Rect(frame.x+15,frame.y+14,frame.width-30,frame.height-28),new Color(.015f,.012f,.028f,.91f));WSlice(frame,"bg_bound");
+            float outgoing=1-Mathf.Clamp01(t/.36f),incoming=Mathf.Clamp01((t-.65f)/.35f);
+            GUI.color=new Color(color.r,color.g,color.b,color.a*(toDress?outgoing:incoming));if(GUI.color.a>.001f)DrawDormCards(false);
+            GUI.color=new Color(color.r,color.g,color.b,color.a*(toDress?incoming:outgoing));if(GUI.color.a>.001f)DrawWardrobe(false);
+            GUI.color=color;DressTabs(role.xMax,toDress);GUI.enabled=enabled;
+        }
+        void DrawWardrobe(bool shell=true){
+            float x=width-1910;var outer=new Rect(x,155,1660,855);
+            if(shell){Tint(new Rect(x+14,169,1632,827),new Color(.015f,.012f,.028f,.91f));WSlice(outer,"bg_bound");DressTabs(x+1660,true);}
             var viewport=new Rect(x+39,193,724,DressViewHeight);float total=dressCategories.Length*DressPitch+12;DragCharacterPane(dressDrag,viewport,new Vector2(viewport.width,total),ref dressScroll,false);GUI.BeginGroup(viewport);var offset=targetOffset;targetOffset+=viewport.position;
             dressSliceClip=new Rect(0,0,viewport.width,viewport.height);float k=DressRowWidth/612.99f;
             for(int i=0;i<dressCategories.Length;i++){
@@ -114,14 +133,26 @@ namespace YunJian.Riichi {
             Label(save,DressDirty?"保存":"使用中",CText(43,TextAnchor.MiddleCenter,true),new Color(.2f,.13f,.08f));if(Hit(save,"dress-save",DressDirty)){WardrobeSelection.Save(dressDraft);StopDressPreview();}
             var pane=new Rect(x+797,194,816,782);WSlice(pane,"bf_popout");var category=dressCategories.First(c=>c.key==dressCategory);var entries=WardrobeCatalog.Items(dressCategory);
             Label(new Rect(pane.x+42,pane.y+15,460,70),category.name,CText(39,TextAnchor.MiddleLeft,true),CharacterGold);WImage(new Rect(pane.x+36,pane.y+91,pane.width-72,2),"line");
-            if(entries.Length>0){WImage(new Rect(pane.xMax-104,pane.y+18,60,60),"dress_up_check_button");if(Hit(new Rect(pane.xMax-112,pane.y+10,76,76),"dress-eye"))ToggleDressEye();}
+            if(entries.Length>0&&DressCanPreview(dressCategory)){WImage(new Rect(pane.xMax-104,pane.y+18,60,60),"dress_up_check_button");if(Hit(new Rect(pane.xMax-112,pane.y+10,76,76),"dress-eye"))ToggleDressEye();}
             if(entries.Length==0){WImage(new Rect(pane.center.x-88,pane.center.y-69,176,138),"noinfo",ScaleMode.ScaleToFit);return;}
             if(dressEye){DrawDressPreview(pane,Draft(dressCategory));return;}
+            var itemView=new Rect(pane.x+26,pane.y+112,pane.width-62,pane.height-136);float itemHeight=Mathf.Max(itemView.height,22+(Mathf.CeilToInt(entries.Length/4f)-1)*182+143);
+            DressItemRail(itemView,itemHeight);DragCharacterPane(dressItemDrag,itemView,new Vector2(itemView.width,itemHeight),ref dressItemScroll,false);
+            GUI.BeginGroup(itemView);offset=targetOffset;targetOffset+=itemView.position;
             for(int i=0;i<entries.Length;i++){
-                var item=entries[i];var card=new Rect(pane.x+59+i%4*178,pane.y+123+i/4*182,143,143);CImage(card,"kuangbg");DressImage(new Rect(card.x+3,card.y+3,card.width-6,card.height-6),item.icon,ScaleMode.ScaleAndCrop);CImage(card,"kuangbound");
+                var item=entries[i];var card=new Rect(33+i%4*178,11+i/4*182-dressItemScroll.y,143,143);if(card.yMax<0||card.y>itemView.height)continue;CImage(card,"kuangbg");DressImage(new Rect(card.x+3,card.y+3,card.width-6,card.height-6),item.icon,ScaleMode.ScaleAndCrop);CImage(card,"kuangbound");
                 if(Draft(dressCategory)?.id==item.id)DressCorners(new Rect(card.x-5,card.y-5,card.width+10,card.height+10));
                 if(Hit(new Rect(card.x-5,card.y-5,card.width+10,card.height+10),"dress-item-"+item.id)){dressDraft[dressCategory]=item.id;StopDressPreview();}
+                if(dressCategory=="hand")Label(new Rect(card.x-15,card.yMax+6,card.width+30,38),item.name,CText(25,TextAnchor.MiddleCenter,true),CharacterGold);
             }
+            targetOffset=offset;GUI.EndGroup();
+        }
+        void DressItemRail(Rect view,float content){
+            float max=Mathf.Max(0,content-view.height);if(max<=0)return;var rail=new Rect(view.xMax+7,view.y+6,6.4f,view.height-12);var hit=new Rect(rail.x-17,rail.y-8,40,rail.height+16);var ev=Event.current;int control=GUIUtility.GetControlID("dress-item-rail".GetHashCode(),FocusType.Passive);
+            float top=rail.y+Mathf.Clamp01(dressItemScroll.y/max)*(rail.height-34);
+            if(GUI.enabled&&ev.type==EventType.MouseDown&&hit.Contains(ev.mousePosition)){dressItemRailDragging=true;dressItemRailGrab=Mathf.Abs(ev.mousePosition.y-top-17)<25?ev.mousePosition.y-top:17;GUIUtility.hotControl=control;}
+            if(dressItemRailDragging){if(ev.type==EventType.MouseDown||ev.type==EventType.MouseDrag){dressItemScroll.y=max*Mathf.Clamp01((ev.mousePosition.y-rail.y-dressItemRailGrab)/(rail.height-34));ev.Use();}else if(ev.rawType==EventType.MouseUp){dressItemRailDragging=false;GUIUtility.hotControl=0;ev.Use();}}
+            CImage(rail,"ss_slidebar");CImage(new Rect(rail.center.x-17,rail.y+Mathf.Clamp01(dressItemScroll.y/max)*(rail.height-34),34,34),"ss_slidebtn");
         }
         void DrawDressPreview(Rect pane,WardrobeItem item){
             var area=new Rect(pane.x+24,pane.y+110,pane.width-48,pane.height-132);
@@ -145,6 +176,9 @@ namespace YunJian.Riichi {
         public void PreviewWardrobeCategory(string category)=>SelectDressCategory(category);
         public void PreviewWardrobeAge(float age){dressReviewAge=age;}
         public string PreviewWardrobeDiagnostics()=>dressMotion.Describe();
+        public void PreviewWardrobeGridOffset(float y){dressItemScroll.y=y;}
+        public float PreviewWardrobeGridScroll=>dressItemScroll.y;
+        public void PreviewWardrobeForRole(string role,int skin,string category="hand"){PreviewDorm(role,skin);OpenWardrobe();SelectDressCategory(category);ReviewSettleDorm();}
 #endif
     }
 }

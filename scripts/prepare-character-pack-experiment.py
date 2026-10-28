@@ -28,7 +28,7 @@ def download(key,dest):
  dest.write_bytes(data);return dict(path=str(dest.relative_to(R)),url=url,sha256=hashlib.sha256(data).hexdigest())
 roles=[]
 for c in cfg['item_definition/character']:
- key=c['sound_folder'];role=dict(id=c['id'],key=key,name=c['name_chs'],cv=c['desc_cv_chs'],height=c['desc_stature_chs'],birth=c['desc_birth_chs'],age=c['desc_age_chs'],blood=c['desc_bloodtype_chs'],hobby=c['desc_hobby_chs'],description=c['desc_chs'],defaultSkin=c['init_skin'],bondSkin=c['full_fetter_skin'],skins=[],emojis=[])
+ key=c['sound_folder'];role=dict(id=c['id'],key=key,name=c['name_chs'],sex=c['sex'],cv=c['desc_cv_chs'],height=c['desc_stature_chs'],birth=c['desc_birth_chs'],age=c['desc_age_chs'],blood=c['desc_bloodtype_chs'],hobby=c['desc_hobby_chs'],description=c['desc_chs'],defaultSkin=c['init_skin'],bondSkin=c['full_fetter_skin'],skins=[],emojis=[])
  for sk in cfg['item_definition/skin']:
   if sk['character_id']!=c['id']:continue
   sid=sk['id'];prefix='myassets/spine/'+str(sid)+'/';parts=[('Spine/'+str(sid)+'/'+('main'if p.count('/')==3 else p.split('/')[-2]))for p in sorted(S['paths'])if p.startswith(prefix)and p.endswith('/character.prefab')]

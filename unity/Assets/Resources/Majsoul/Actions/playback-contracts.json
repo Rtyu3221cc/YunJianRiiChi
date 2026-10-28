@@ -1,0 +1,277 @@
+{
+  "schema": 1,
+  "source": "Original ModelAnimationController plus declaration Dapai/LiQiPai branch",
+  "sourceTableSHA256": "dbf36f221fd98d24a53310ecc577116376fb7218919d3a38c77ad51ff7bba9ea",
+  "rows": [
+    {
+      "type": "hand_human",
+      "action": "Dapai",
+      "speed": 0.9399999976158142,
+      "lifetime": 0.48936170336886087,
+      "cue": 0.3393617029884057,
+      "release": 0.3393617029884057,
+      "sourceId": 1000101
+    },
+    {
+      "type": "hand_human",
+      "action": "LiQiPai",
+      "speed": 2.0,
+      "lifetime": 0.8075,
+      "cue": 0.275,
+      "release": 0.65,
+      "sourceId": 1000102
+    },
+    {
+      "type": "hand_human",
+      "action": "LiZhi",
+      "speed": 1.0,
+      "lifetime": 0.8,
+      "cue": 0.5,
+      "release": 0.5,
+      "sourceId": 1000103
+    },
+    {
+      "type": "hand_human",
+      "action": "Fulu",
+      "speed": 2.0,
+      "lifetime": 0.45,
+      "cue": 0.075,
+      "release": 0.3665,
+      "sourceId": 1000104
+    },
+    {
+      "type": "hand_human",
+      "action": "Zimo",
+      "speed": 1.0,
+      "lifetime": 0.9,
+      "cue": 0.45,
+      "release": 0.9,
+      "sourceId": 1000105
+    },
+    {
+      "type": "hand_cat_orange",
+      "action": "Dapai",
+      "speed": 0.8500000238418579,
+      "lifetime": 0.5882352776180919,
+      "cue": 0.3752941071203426,
+      "release": 0.3752941071203426,
+      "sourceId": 1000201
+    },
+    {
+      "type": "hand_cat_orange",
+      "action": "LiQiPai",
+      "speed": 1.2000000476837158,
+      "lifetime": 0.7499999701976787,
+      "cue": 0.33333332008785727,
+      "release": 0.599999976158143,
+      "sourceId": 1000202
+    },
+    {
+      "type": "hand_cat_orange",
+      "action": "LiZhi",
+      "speed": 1.0,
+      "lifetime": 0.8,
+      "cue": 0.5,
+      "release": 0.5,
+      "sourceId": 1000203
+    },
+    {
+      "type": "hand_cat_orange",
+      "action": "Fulu",
+      "speed": 2.0,
+      "lifetime": 0.45,
+      "cue": 0.075,
+      "release": 0.3665,
+      "sourceId": 1000204
+    },
+    {
+      "type": "hand_cat_orange",
+      "action": "Zimo",
+      "speed": 1.0,
+      "lifetime": 0.9,
+      "cue": 0.45,
+      "release": 0.9,
+      "sourceId": 1000205
+    },
+    {
+      "type": "hand_dog",
+      "action": "Dapai",
+      "speed": 1.0,
+      "lifetime": 0.533,
+      "cue": 0.26,
+      "release": 0.26,
+      "sourceId": 1000501
+    },
+    {
+      "type": "hand_dog",
+      "action": "LiQiPai",
+      "speed": 1.0,
+      "lifetime": 0.9,
+      "cue": 0.27,
+      "release": 0.65,
+      "sourceId": 1000502
+    },
+    {
+      "type": "hand_dog",
+      "action": "LiZhi",
+      "speed": 1.0,
+      "lifetime": 0.8,
+      "cue": 0.5,
+      "release": 0.5,
+      "sourceId": 1000503
+    },
+    {
+      "type": "hand_dog",
+      "action": "Fulu",
+      "speed": 2.0,
+      "lifetime": 0.45,
+      "cue": 0.075,
+      "release": 0.3665,
+      "sourceId": 1000504
+    },
+    {
+      "type": "hand_dog",
+      "action": "Zimo",
+      "speed": 1.0,
+      "lifetime": 0.9,
+      "cue": 0.45,
+      "release": 0.9,
+      "sourceId": 1000505
+    },
+    {
+      "type": "hand_man",
+      "action": "Dapai",
+      "speed": 1.5,
+      "lifetime": 0.5333333333333333,
+      "cue": 0.4333333333333333,
+      "release": 0.4333333333333333,
+      "sourceId": 1000601
+    },
+    {
+      "type": "hand_man",
+      "action": "LiQiPai",
+      "speed": 1.0,
+      "lifetime": 0.9,
+      "cue": 0.27,
+      "release": 0.65,
+      "sourceId": 1000602
+    },
+    {
+      "type": "hand_man",
+      "action": "LiZhi",
+      "speed": 1.0,
+      "lifetime": 0.8,
+      "cue": 0.5,
+      "release": 0.5,
+      "sourceId": 1000603
+    },
+    {
+      "type": "hand_man",
+      "action": "Fulu",
+      "speed": 1.0,
+      "lifetime": 0.5,
+      "cue": 0.1,
+      "release": 0.325,
+      "sourceId": 1000604
+    },
+    {
+      "type": "hand_man",
+      "action": "Zimo",
+      "speed": 1.0,
+      "lifetime": 0.833,
+      "cue": 0.52,
+      "release": 0.8,
+      "sourceId": 1000605
+    }
+  ],
+  "bindings": [
+    {
+      "id": "riichi-blue",
+      "sourceId": 305010,
+      "sourceName": "effect_liqi_bao",
+      "controller": "legacy",
+      "ground": false,
+      "action": "LiQiPai"
+    },
+    {
+      "id": "riichi-ice",
+      "sourceId": 305021,
+      "sourceName": "effect_liqi_ice",
+      "controller": "legacy",
+      "ground": true,
+      "action": "Dapai"
+    },
+    {
+      "id": "riichi-fire",
+      "sourceId": 305022,
+      "sourceName": "effect_liqi_fire",
+      "controller": "legacy",
+      "ground": false,
+      "action": "LiQiPai"
+    },
+    {
+      "id": "riichi-afterimage",
+      "sourceId": 305032,
+      "sourceName": "effect_liqi_canying",
+      "controller": "legacy",
+      "ground": false,
+      "action": "LiQiPai"
+    },
+    {
+      "id": "effect-liqi-longteng",
+      "sourceId": 305038,
+      "sourceName": "effect_liqi_longteng",
+      "controller": "legacy",
+      "ground": true,
+      "action": "Dapai"
+    },
+    {
+      "id": "effect-liqi-ding",
+      "sourceId": 305037,
+      "sourceName": "effect_liqi_ding",
+      "controller": "legacy",
+      "ground": false,
+      "action": "LiQiPai"
+    },
+    {
+      "id": "effect-liqi-23ex-maozhua",
+      "sourceId": 305324,
+      "sourceName": "effect_liqi_23ex_maozhua",
+      "controller": "legacy",
+      "ground": false,
+      "action": "LiQiPai"
+    },
+    {
+      "id": "riichi-bat",
+      "sourceId": 305300,
+      "sourceName": "effect_liqi_bianfujiejie",
+      "controller": "legacy",
+      "ground": true,
+      "action": "Dapai"
+    },
+    {
+      "id": "riichi-feather",
+      "sourceId": 305033,
+      "sourceName": "effect_liqi_feiyu",
+      "controller": "legacy",
+      "ground": true,
+      "action": "Dapai"
+    },
+    {
+      "id": "effect-liqi-23ex-liandao",
+      "sourceId": 305325,
+      "sourceName": "effect_liqi_23ex_liandao",
+      "controller": "legacy",
+      "ground": false,
+      "action": "LiQiPai"
+    },
+    {
+      "id": "effect-liqi-23ex-xueqiu",
+      "sourceId": 305326,
+      "sourceName": "effect_liqi_23ex_xueqiu",
+      "controller": "legacy",
+      "ground": false,
+      "action": "LiQiPai"
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "sourceWidth": 0.029754001647233963,
+  "sourceHeight": 0.03949800133705139,
+  "sourceDepth": 0.019314000383019447,
+  "mount": [
+    0.7071067811865475,
+    3.238960247701729e-16,
+    -1.756393562970832e-16,
+    0.7071067811865476
+  ],
+  "sourceFaceNormal": [
+    2.4610651529547737e-16,
+    4.552583019826451e-17,
+    -1.0
+  ],
+  "sourceUTangent": [
+    1.0,
+    1.3695570092785321e-15,
+    2.461065152954774e-16
+  ],
+  "sourceVTangent": [
+    -1.369557009278532e-15,
+    1.0,
+    4.5525830198264173e-17
+  ],
+  "targetFaceNormal": [
+    3.6439924028582237e-17,
+    1.0,
+    4.9817125702493475e-17
+  ],
+  "targetUTangent": [
+    1.0,
+    -3.643992402858227e-17,
+    6.631072984880061e-16
+  ],
+  "targetVTangent": [
+    -6.631072984880062e-16,
+    -4.981712570249345e-17,
+    1.0
+  ],
+  "mountMatrix": [
+    1.0,
+    7.064497107905259e-16,
+    2.0966659126689514e-16,
+    2.0966659126689517e-16,
+    -4.291295504228987e-18,
+    -1.0,
+    -7.064497107905258e-16,
+    1.0,
+    -4.2912955042291414e-18
+  ],
+  "sourceMeshSHA256": "59d3fa84ea01cc1430d8dff78cbee753b6ba6296d38ebcb137429cd73a026043",
+  "nativeMeshSHA256": "c321ceecc41158bb7d28a1420cc6a8c896a02ca5c9f35647020289569cb56dad",
+  "derivation": "Match face UV tangents and geometric plane; compressed native vertex normals are used only to select the front sign."
+}

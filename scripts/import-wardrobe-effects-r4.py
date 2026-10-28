@@ -24,13 +24,15 @@ ns=dict(Path=Path,json=json,fetch=fetch,texture=texture,mesh=mesh)
 for n in tree.body:
     if isinstance(n,ast.FunctionDef) and n.name in ['keys','pick','walk']:exec(compile(ast.Module(body=[n],type_ignores=[]),'<source-graph>', 'exec'),ns)
 def convert(key,output):
-    source=json.loads(fetch('scene/'+key+'.lh'));ns['nodes']=[];ns['layers']=[];ns['walk'](source)
+    from effect_compatibility import require_supported
+    source=json.loads(fetch('scene/'+key+'.lh'));require_supported(source,key);ns['nodes']=[];ns['layers']=[];ns['walk'](source)
     native=[]
     def visit(n):
         if n['type']=='ShuriKenParticle3D':native.append(n['customProps'])
         for c in n.get('child',[]):visit(c)
     visit(source)
     for l,c in zip(ns['layers'],native):
+        l.update(sourceBursts=True,sourceAutoSeed=c.get('autoRandomSeed',True),sourceSeed=c.get('randomSeed',0))
         material=json.loads(fetch('scene/'+c['material']['path']))['props'];l['blendSrc']=1 if material.get('srcBlend')==1 else 5
         l['scaleMode']=c.get('scaleMode',0);l['simulationSpace']=c.get('simulationSpace',1)
         size=c.get('sizeOverLifetime',{}).get('size',{})
@@ -41,8 +43,10 @@ def convert(key,output):
         l['box']=[shape.get('box'+a,1) for a in 'XYZ'];l['randomDirection']=shape.get({0:'sphereRandomDirection',1:'hemiSphereRandomDirection',2:'coneRandomDirection',3:'boxRandomDirection',4:'circleRandomDirection'}.get(typ,''),0)
         velocity=c.get('velocityOverLifetime',{})
         if velocity.get('enable'):
-            v=velocity['velocity'];l['velocitySpace']=velocity.get('space',0)
+            v=velocity['velocity'];l['velocitySpace']=velocity.get('space',0);l['velocityType']=v['type']
             if v['type']==0:l['velocityMin']=l['velocityMax']=v['constant']
+            if v['type']==1:
+                for axis in 'XYZ':l['velocity'+axis]=ns['keys'](v.get('gradient'+axis,{}).get('velocitys',[]))
         rotation=c.get('rotationOverLifetime',{})
         if rotation.get('enable'):
             angular=rotation['angularVelocity'];l['angularSpeed']=angular.get('constant',0)

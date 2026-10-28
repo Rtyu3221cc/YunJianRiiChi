@@ -1,0 +1,76 @@
+{
+  "revision": 12,
+  "date": "2026-10-28",
+  "basis": "Original 4.0.51 / 0.16.289 client preview and native GLES program",
+  "records": [
+    {
+      "sourceKey": "ron_ko",
+      "config": {
+        "schema": 3,
+        "nativeEffect": "EffectsR11/ron_ko",
+        "sourceVersion": "4.0.51",
+        "sourceId": 305039,
+        "nativeWorldEuler": [
+          0,
+          180,
+          0
+        ]
+      },
+      "sha256": "aaa9466a8c339c8e80c1200d0ae480341ee07b0650dc87fab4ea2bd38850dc6d"
+    },
+    {
+      "sourceKey": "effect_liqi_23ex_maozhua",
+      "config": {
+        "schema": 3,
+        "nativeEffect": "EffectsR11/effect_liqi_23ex_maozhua",
+        "sourceVersion": "4.0.51",
+        "sourceId": 305324,
+        "nativeTileEuler": [
+          0,
+          180,
+          0
+        ]
+      },
+      "sha256": "1da45a386cfd03d733a1063dfe936c3fab5efad194bd66d4c40a2c9aa40d43ff"
+    },
+    {
+      "sourceKey": "effect_liqi_23ex_liandao",
+      "config": {
+        "schema": 3,
+        "nativeEffect": "EffectsR11/effect_liqi_23ex_liandao",
+        "sourceVersion": "4.0.51",
+        "sourceId": 305325,
+        "nativeTileEuler": [
+          90,
+          90,
+          0
+        ],
+        "nativeVariants": [
+          "EffectsR11/effect_liqi_23ex_liandao",
+          "EffectsR11/effect_liqi_23ex_liandao_2",
+          "EffectsR11/effect_liqi_23ex_liandao_3",
+          "EffectsR11/effect_liqi_23ex_liandao_4"
+        ]
+      },
+      "sha256": "96d3584c3f45531912f0b75543f63b4aefe1a7d3faeda08cb7b3e05e4bd44841"
+    },
+    {
+      "sourceKey": "effect_liqi_23ex_xueqiu",
+      "config": {
+        "schema": 3,
+        "nativeEffect": "EffectsR11/effect_liqi_23ex_xueqiu",
+        "sourceVersion": "4.0.51",
+        "sourceId": 305326,
+        "nativeTileEuler": [
+          0,
+          180,
+          0
+        ]
+      },
+      "sha256": "9193a11a878a89ea13e811623427f8f2e9eaf0bcc17cd56ac6f097e2c5974b72"
+    }
+  ],
+  "shaderSHA256": "f68ca7f3b1b9b49826dca7839227435e9f3e42c18042d60b56d024135e97498e",
+  "evidence": "dist/previews/2026-10-27-effects-reference/source/r12/",
+  "apkBuilt": false
+}

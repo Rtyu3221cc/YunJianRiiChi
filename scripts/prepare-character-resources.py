@@ -47,7 +47,7 @@ byid = {s['id']: s for s in CFG['item_definition/skin']}
 records = [];changed=set()
 for c in CFG['item_definition/character']:
     if c['id']not in TARGETS or any(r['key']==c['sound_folder']for r in catalog['roles']):continue
-    catalog['roles'].append(dict(id=c['id'],key=c['sound_folder'],name=c['name_chs'],cv=c['desc_cv_chs'],height=c['desc_stature_chs'],birth=c['desc_birth_chs'],age=c['desc_age_chs'],blood=c['desc_bloodtype_chs'],hobby=c['desc_hobby_chs'],description=c['desc_chs'],defaultSkin=c['init_skin'],bondSkin=c['full_fetter_skin'],skins=[],emojis=[]))
+    catalog['roles'].append(dict(id=c['id'],key=c['sound_folder'],name=c['name_chs'],sex=c['sex'],cv=c['desc_cv_chs'],height=c['desc_stature_chs'],birth=c['desc_birth_chs'],age=c['desc_age_chs'],blood=c['desc_bloodtype_chs'],hobby=c['desc_hobby_chs'],description=c['desc_chs'],defaultSkin=c['init_skin'],bondSkin=c['full_fetter_skin'],skins=[],emojis=[]))
 
 def js(p, value):
     p.parent.mkdir(parents=True, exist_ok=True)

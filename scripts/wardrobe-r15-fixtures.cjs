@@ -1,0 +1,21 @@
+const fs=require('node:fs');
+globalThis.Majiang=require('../app/src/main/assets/core.js');
+const {Room}=require('../app/src/main/assets/engine.js');
+const out='build/wardrobe-r15';fs.mkdirSync(out,{recursive:true});
+const room=new Room('wardrobe-r15');
+const send=q=>{const a=room.dispatch(q);if(!a.ok)throw Error(a.error);return a;};
+send({op:'create',host:'wardrobe-r15',n:4,name:'旅人',rounds:1});
+for(let i=1;i<4;i++)send({op:'join',pin:room.s.pin,name:'牌友'+i});
+send({op:'start',token:room.s.players[0].token,version:room.s.version});
+const s=room.s;s.dealer=0;s.turn=1;s.interrupted=true;s.drawKind='normal';s.wall=Array(30).fill('p9');s.indicators=['z4'];s.ura=['z4'];s.phase='play';s.pending=null;
+for(const p of s.players){p.hand='m19p147s258z12344';p.river=[{tile:'p2'}];}
+s.players[0].hand='m123p123s123z1112';s.players[1].hand='m19p147s258z12344z2';
+send({op:'action',token:s.players[1].token,version:s.version,action:'discard:z2_',id:'r15-ron'});
+const ron=room.view(0);
+if(ron.phase!=='reaction'||!ron.options.some(o=>o.kind==='ron')||!ron.waitDetails.length)throw Error('No legal ron/wait fixture');
+fs.writeFileSync(out+'/ron-waits.json',JSON.stringify(ron));
+s.phase='play';s.pending=null;s.turn=0;s.players[0].hand='m123p123s123z1112z2';s.drawKind='normal';
+const tsumo=room.view(0);
+if(!tsumo.options.some(o=>o.kind==='tsumo')||!tsumo.waitDetails.length)throw Error('No legal tsumo/wait fixture');
+fs.writeFileSync(out+'/tsumo-waits.json',JSON.stringify(tsumo));
+console.log('R15 legal public ron and tsumo wait fixtures PASS');

@@ -1,0 +1,34 @@
+{
+  "revision": 13,
+  "date": "2026-10-28",
+  "effect": "effect-liqi-23ex-liandao",
+  "followPosition": true,
+  "followTileRotation": false,
+  "worldEuler": [
+    0,
+    180,
+    0
+  ],
+  "sourceVariants": 4,
+  "sourceClient": "4.0.51 / 0.16.289",
+  "checks": {
+    "geometry": 13,
+    "actualTable": 24,
+    "allEffectRegression": 620
+  },
+  "apkBuilt": false,
+  "files": [
+    {
+      "file": "unity/Assets/Resources/Majsoul/Actions/native-effect_liqi_23ex_liandao.json",
+      "sha256": "2fe185958f4ec399cbdbbc5f31c77151671cdbb50fab7454c064acd375ac03c4"
+    },
+    {
+      "file": "unity/Assets/Scripts/WinTileEffect.cs",
+      "sha256": "7789e4f46e86c70b7c8e97ea46ad2c1d7e569b00e135bbfd3bced160ecaa0502"
+    },
+    {
+      "file": "unity/Assets/Scripts/RiichiDiscardVisual.cs",
+      "sha256": "bf4475a19f171e22cac8c0d8c5d95feb83e779cd9846d535babbaa1a7d450b76"
+    }
+  ]
+}

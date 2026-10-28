@@ -86,6 +86,7 @@ namespace YunJian.Riichi {
         }
         void DrawDorm(){
             var saved=GUI.color;GUI.color=new Color(saved.r,saved.g,saved.b,saved.a*DormOpacity);
+            if(pageMoving&&(dormView==DormView.Wardrobe||outgoingDorm==DormView.Wardrobe)){CharacterHeader("宿舍");DrawDormDressTransition();GUI.color=saved;return;}
             if(dormView==DormView.Wardrobe){bool controls=GUI.enabled;GUI.enabled&=!dormLeaving;CharacterHeader("宿舍");DrawWardrobe();GUI.enabled=controls;GUI.color=saved;return;}
             var skin=dormView==DormView.Skins?BrowsingSkin:CurrentOutfit;Rect r=DormPortrait(skin);float pageProgress=Mathf.SmoothStep(0,1,(Now-pageBegan)/PageDuration);
             if(dormView==DormView.Appreciate)r=InterpolateRect(r,AppreciatePortrait(skin),pageMoving?pageProgress:1);
@@ -131,10 +132,9 @@ namespace YunJian.Riichi {
             if(Hit(new Rect(x+150,180,Mathf.Max(250,width-x-1200),650),"character-touch")){characterArt.Play(CurrentOutfit,"click");GetComponent<CharacterVoices>()?.Play(CurrentCharacter.key,"lobby_normal"+UnityEngine.Random.Range(1,6));}
         }
         float IllustrationAspect(CharacterSkin skin){if(skin.artWidth>0&&skin.artHeight>0)return (float)skin.artWidth/skin.artHeight;var t=CharacterRoster.Texture("Skins/"+skin.id+"/full");return t==null?.7f:(float)t.width/t.height;}
-        void DrawDormCards(){
-            float x=width-1016;var panel=new Rect(x,146.8f,766,892);Tint(new Rect(x+17.5f,164.3f,731,857),new Color(.008f,.006f,.02f,.72f));CSlice(panel,"bg_bound");
-            CImage(new Rect(x+437,66.8f,284,84),"tab_gray3");CImage(new Rect(x+191.53f,66.766f,284,84),"tab_bright2");Label(new Rect(x+256.03f,86.676f,180,63.98f),"角色",CText(42,TextAnchor.MiddleCenter,true),new Color(.2f,.1f,.04f));Label(new Rect(x+501.5f,86.676f,180,63.98f),"装扮",CText(42,TextAnchor.MiddleCenter,true),CharacterGold);
-            if(Hit(new Rect(x+437,66.8f,284,84),"dress-tab"))OpenWardrobe();
+        void DrawDormCards(bool shell=true){
+            float x=width-1016;var panel=new Rect(x,146.8f,766,892);
+            if(shell){Tint(new Rect(x+17.5f,164.3f,731,857),new Color(.008f,.006f,.02f,.72f));CSlice(panel,"bg_bound");DressTabs(panel.xMax,false);}
             var roles=CharacterRoster.Ordered(dormStars);var cardView=new Rect(x+30,190,700,720);DragCharacterPane(dormRoleDrag,cardView,new Vector2(700,Mathf.CeilToInt(roles.Length/3f)*198+30),ref dormRoleScroll,false);GUI.BeginGroup(cardView);var previousOffset=targetOffset;targetOffset+=cardView.position;for(int i=0;i<roles.Length;i++){
                 // The opaque sorting panel covers these portraits after its
                 // transition. Avoid keeping hidden cards alive in the cache.

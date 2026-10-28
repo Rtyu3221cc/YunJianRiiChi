@@ -55,6 +55,17 @@ namespace YunJian.Riichi
         public bool IsMatchingTile(string tile) => selectedTile!=null && TileKind(tile)==selectedTile;
         static string TileKind(string tile) => string.IsNullOrEmpty(tile)?null:tile.Replace("0","5");
         string drawKey;float drawBegan;
+#if UNITY_EDITOR
+        public float ReviewRevealTime=-1;
+#endif
+        float RevealNow {
+            get {
+#if UNITY_EDITOR
+                if(ReviewRevealTime>=0)return ReviewRevealTime;
+#endif
+                return Time.unscaledTime;
+            }
+        }
         readonly List<Tuple<Transform,Vector3>> drawTiles=new List<Tuple<Transform,Vector3>>();
         readonly List<Transform> winningRows=new List<Transform>();
         readonly Dictionary<int,Transform> standingHands=new Dictionary<int,Transform>();
@@ -76,16 +87,21 @@ namespace YunJian.Riichi
         {
             if(drawTiles.Count==0)return;
             var fx=GetComponent<TableEffects>();
-            if(drawBegan<0){if(fx.HasPendingActions && !fx.WinActionStarted)return;drawBegan=Time.unscaledTime;GetComponent<GameAudio>()?.DrawReveal(drawKey);}
-            float age=Time.unscaledTime-drawBegan;
+            if(drawBegan<0){if(fx.HasPendingActions && !fx.WinActionStarted){SampleDrawReveal(0,false);return;}drawBegan=RevealNow;GetComponent<GameAudio>()?.DrawReveal(drawKey);}
+            SampleDrawReveal(RevealNow-drawBegan,true);
+        }
+        void SampleDrawReveal(float age,bool started)
+        {
             bool selfWinner=state?.phase=="result" && (state.result?.details??new WinDetail[0]).Any(d=>d.seat==state.you);
-            if(cameraHand!=null && selfWinner){
+            if(started&&cameraHand!=null && selfWinner){
                 foreach(var hand in handTiles){var renderer=hand.GetComponent<MeshRenderer>();var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block);block.SetFloat("_Opacity",Mathf.Clamp01(1-age/.14f));renderer.SetPropertyBlock(block);}
                 if(age<.14f)return;
                 cameraHand.gameObject.SetActive(false);
             }
-            foreach(var detail in state.result?.details??new WinDetail[0])if(standingHands.TryGetValue(detail.seat,out var standing))standing.gameObject.SetActive(false);
-            foreach(var row in winningRows)row.gameObject.SetActive(true);
+            if(started){
+                foreach(var detail in state.result?.details??new WinDetail[0])if(standingHands.TryGetValue(detail.seat,out var standing))standing.gameObject.SetActive(false);
+                foreach(var row in winningRows)row.gameObject.SetActive(true);
+            }
             float t=HandRevealMotion.Progress(age-(selfWinner ? .14f : 0));
             foreach(var tile in drawTiles){
                 tile.Item1.localRotation=Quaternion.Euler(-90*(1-t),0,0);
@@ -551,7 +567,7 @@ namespace YunJian.Riichi
             }
             bool exhausted=state.phase=="result" && state.result!=null && state.result.draw && !state.result.abort && (state.result.drawDetails?.Length??0)>0;
             bool terminals=state.result!=null && state.result.abort && (state.result.abortHand?.tiles?.Length??0)>0;
-            if(exhausted || terminals || state.phase=="result" && (state.result?.details?.Length??0)>0){string next=state.audioRoom+":"+state.round+":"+state.honba+":"+state.result.title;
+            if(exhausted || terminals || state.phase=="result" && (state.result?.details?.Length??0)>0){string next=state.audioRoom+":"+state.handSeq+":"+state.round+":"+state.honba+":"+state.result.title;
                 if(next!=drawKey){drawKey=next;drawBegan=-1;}
             }else drawKey=null;
             if (state.phase != "play" && state.phase != "reaction" && state.phase != "result") return;
@@ -610,6 +626,9 @@ namespace YunJian.Riichi
                 else CreateStandingHand(seat,i,p.count);
             }
             DrawWinningTiles();
+            // New meshes must have their current pose before any camera can
+            // render them. Polling rebuilds reuse the existing reveal clock.
+            if(drawTiles.Count>0)SampleDrawReveal(drawBegan<0?0:RevealNow-drawBegan,drawBegan>=0);
             SelectHand(Client.SelectedIndex);
         }
         WinDetail SelfDrawWinner(int seat) => state.phase=="result" ? state.result?.details?.FirstOrDefault(d=>d.seat==seat && !d.ron) : null;

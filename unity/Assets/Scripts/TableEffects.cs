@@ -10,7 +10,7 @@ namespace YunJian.Riichi
     // Public committed events drive presentation; no opponent hand is inspected.
     public sealed class TableEffects : MonoBehaviour
     {
-        [Serializable] class HandData { public int vertices, frames, fps; public float duration, landTime; public float[] uv, tilePoints; public int[] body, nails; }
+        [Serializable] class HandData { public int vertices, frames, fps; public float duration, landTime; public float[] uv, tilePoints,tileRotations; public int[] body, nails; }
         // Every clip is baked from the same public mesh, UVs and triangle groups; only
         // the sampled frames, the carried-object path and the timing differ.
         sealed class Clip { public HandData data; public Vector3[][] vertices, normals; public Vector3[] frameVertices, frameNormals; }
@@ -59,17 +59,40 @@ namespace YunJian.Riichi
         public bool AwaitingDiscard(int seat,int index)=>current?.kind=="discard"&&current.seat==seat&&current.riverIndex==index&&!handedOff||handEvents.Any(e=>e.kind=="discard"&&e.seat==seat&&e.riverIndex==index);
         public bool ValidationFreeze;
         public float ValidationTime;
+#if UNITY_EDITOR
+        public bool ValidationSequentialClock;
+        float validationHandBegan,validationCallBegan,validationCutInBegan=-1;
+#endif
+        float HandAge {
+            get {if(!ValidationFreeze)return Time.unscaledTime-started;
+#if UNITY_EDITOR
+                if(ValidationSequentialClock)return ValidationTime-validationHandBegan;
+#endif
+                return ValidationTime;}
+        }
+        float CallAge {
+            get {if(!ValidationFreeze)return Time.unscaledTime-callStarted;
+#if UNITY_EDITOR
+                if(ValidationSequentialClock)return ValidationTime-validationCallBegan;
+#endif
+                return ValidationTime;}
+        }
         public int ActiveSeat => current == null ? -1 : current.seat;
         // A discard keeps the source keyframes but is retimed to 0.62 s; the declaration,
         // the stick placement and the meld motion play at their own baked length.
         bool PlainDiscard => current != null && current.kind == "discard" && !current.riichi;
-        float ClipLength => current?.kind=="kan"?.45f:(PlainDiscard || clip == null || clip.data.duration <= 0) ? .62f : clip.data.duration;
+        bool IsDeclaration=>current?.kind=="discard"&&current.riichi;
+        SourceHandAction DeclarationPlan=>IsDeclaration?SourcePlaybackContracts.Declaration(DeclarationHand,WardrobeRuntime.Item(table.Client.State,current.seat,"riichiEffect")):null;
+        bool SidewaysDeclaration=>IsDeclaration&&DeclarationPlan.action=="LiQiPai";
+        WardrobeItem DeclarationHand=>WardrobeRuntime.Item(table.Client.State,current.seat,"hand");
+        float DeclarationSpeed=>DeclarationPlan?.speed??1;
+        float ClipLength => current?.kind=="kan"?.45f:(PlainDiscard || clip == null || clip.data.duration <= 0) ? .62f : clip.data.duration/DeclarationSpeed;
         // The carried object stops moving when the real river tile / stick / meld takes over.
-        float SourceHandoff => current?.kind=="kan"?.35f:(PlainDiscard || clip == null || clip.data.landTime <= 0) ? .40f : clip.data.landTime;
-        float PlayLength => current?.kind=="tsumo"?1.16f:ClipLength;
+        float SourceHandoff => DeclarationPlan?.release??(current?.kind=="kan"?.35f:(PlainDiscard || clip == null || clip.data.landTime <= 0) ? .40f : clip.data.landTime/DeclarationSpeed);
+        float PlayLength => current?.kind=="tsumo"?1.16f:DeclarationPlan?.lifetime??ClipLength;
         float Handoff => current?.kind=="tsumo"?1.14f:SourceHandoff;
         float RiichiEffectAt {
-            get {var view=table.Client.State;var hand=WardrobeRuntime.Item(view,current.seat,"hand");var effect=WardrobeRuntime.Item(view,current.seat,"riichiEffect");float point=effect.groundEffect?hand.riichiNormalPoint:hand.riichiSidewaysPoint;return point>0?ClipLength*point:Mathf.Max(0,Handoff-.32f);}
+            get {if(DeclarationPlan!=null)return DeclarationPlan.cue;return Mathf.Max(0,Handoff-.32f);}
         }
         static string ClipFor(PublicSound item)
         {
@@ -88,6 +111,9 @@ namespace YunJian.Riichi
         }
         public void Reset()
         {
+#if UNITY_EDITOR
+            validationCutInBegan=-1;
+#endif
             riichiVisual?.StopVisuals();
             Finish(); FinishCall(); EndImpact(); EndNorthEffects(); EndWinEffects(); winningBursts.Clear();riichiCalls.Clear();winCutIn.Reset();cutInWin=null; ClearQueuedHands(); callEvents.Clear(); room = null; cursor = 0;spokenEvent=-1; last = Time.unscaledTime;
         }
@@ -146,12 +172,13 @@ namespace YunJian.Riichi
             foreach(var e in handEvents.Where(e=>e.kind=="nuki"))table.NorthTarget(e.seat,e.nuki)?.gameObject.SetActive(true);
             handEvents.Clear();
         }
-        string handStyle;
+        string handStyle,activeMotionResource;
         void LoadClip(string stem)
         {
             var choice=WardrobeRuntime.Item(table.Client.State,current.seat,"hand");
-            if(current.kind=="discard"&&current.riichi&&WardrobeRuntime.Item(table.Client.State,current.seat,"riichiEffect").groundEffect)stem=NormalClip;
+            if(IsDeclaration)stem=DeclarationPlan.action=="Dapai"?NormalClip:RiichiClip;
             stem=WardrobeRuntime.Motion(choice,stem);
+            activeMotionResource=stem;
             if (!clips.TryGetValue(stem, out clip)) {
             var data = JsonUtility.FromJson<HandData>(Resources.Load<TextAsset>(stem).text);
             byte[] bytes = Resources.Load<TextAsset>(stem+"-frames").bytes;
@@ -197,6 +224,9 @@ namespace YunJian.Riichi
         {
             if(item.kind=="discard" && item.riverIndex>0 && table.FindDiscard(item.seat,item.tile,item.riverIndex)==null)return;
             current=item; started=Time.unscaledTime; handedOff=false;impactQueued=false;riichiVisualAttempted=false; PlayedEvents++;
+#if UNITY_EDITOR
+            validationHandBegan=ValidationTime;
+#endif
             string stem=ClipFor(item); if (stem==null) return;
             LoadClip(stem);
             bool stick=item.kind=="riichi-stick";
@@ -238,7 +268,7 @@ namespace YunJian.Riichi
         }
         void HideTarget()
         {
-            float elapsed=ValidationFreeze?ValidationTime:Time.unscaledTime-started;
+            float elapsed=HandAge;
             if (current.kind=="riichi-stick") targetStick=table.StickTarget(current.seat);
             else if (current.kind=="tsumo") targetTile=table.WinningTarget(current);
             else if (current.kind=="nuki") northTarget=table.NorthTarget(current.seat,current.nuki);
@@ -271,6 +301,10 @@ namespace YunJian.Riichi
             int a=(int)frame,b=Mathf.Min(a+1,clip.data.frames-1); float t=frame-a;
             return Vector3.Lerp(new Vector3(clip.data.tilePoints[a*3],clip.data.tilePoints[a*3+1],clip.data.tilePoints[a*3+2]),new Vector3(clip.data.tilePoints[b*3],clip.data.tilePoints[b*3+1],clip.data.tilePoints[b*3+2]),t);
         }
+        Quaternion TileRotation(float elapsed){
+            var q=clip.data.tileRotations;float f=Mathf.Clamp01(elapsed/ClipLength)*(clip.data.frames-1);int a=(int)f,b=Mathf.Min(a+1,clip.data.frames-1);
+            return Quaternion.Slerp(new Quaternion(q[a*4],q[a*4+1],q[a*4+2],q[a*4+3]),new Quaternion(q[b*4],q[b*4+1],q[b*4+2],q[b*4+3]),f-a);
+        }
         void PositionCarriedTile(Vector3 point)
         {
             var position=motion.TransformPoint(point)-Vector3.up*.12f;
@@ -297,7 +331,13 @@ namespace YunJian.Riichi
             {
                 // The supplied sakura burst belongs to pointer clicks, not North.
             }
-            else if (current.kind=="tsumo") SpawnWin(current,ValidationFreeze?Handoff:started+Handoff);
+            else if (current.kind=="tsumo") {
+                float at=ValidationFreeze?Handoff:started+Handoff;
+#if UNITY_EDITOR
+                if(ValidationFreeze&&ValidationSequentialClock)at+=validationHandBegan;
+#endif
+                SpawnWin(current,at);
+            }
             else if (MeldKinds.Contains(current.kind) && !impactQueued){SpawnImpact();impactQueued=true;}
         }
         void SpawnWin(PublicSound item,float now)
@@ -379,7 +419,12 @@ namespace YunJian.Riichi
             impact.rotation = Quaternion.LookRotation(impact.position - table.Camera.transform.position, Vector3.up);
         }
         PublicSound cutInWin;
-        void BeginCall(PublicSound item) { call=item; callStarted=Time.unscaledTime; if(IsWin(item))cutInWin=item; }
+        void BeginCall(PublicSound item) { call=item; callStarted=Time.unscaledTime;
+#if UNITY_EDITOR
+            validationCallBegan=ValidationTime;
+#endif
+            if(IsWin(item))cutInWin=item;
+        }
         void FinishCall() { call=null; }
         void ConfigureOverlay()
         {
@@ -392,21 +437,28 @@ namespace YunJian.Riichi
         }
         void Update()
         {
+#if UNITY_EDITOR
+            if(ValidationSequentialClock&&validationCutInBegan>=0){winCutIn.Freeze=true;winCutIn.FrozenAge=ValidationTime-validationCutInBegan;}
+#endif
             winCutIn.Sample(winCutIn.Age);
             StartQueued();
             UpdateImpact(); UpdateNorthEffects(); UpdateWinEffects();
-            float elapsed=ValidationFreeze?ValidationTime:Time.unscaledTime-started;
+            float elapsed=HandAge;
             if (current!=null && elapsed >= PlayLength) { CompleteHandoff(); Finish(); }
-            if(cutInWin!=null && (ValidationFreeze?ValidationTime:Time.unscaledTime-callStarted)>=1.05f){
+            if(cutInWin!=null && CallAge>=1.05f){
                 var players=GetComponent<RiichiClient>().State?.players;winCutIn.Play(players!=null&&cutInWin.seat<players.Length?players[cutInWin.seat]:null);GetComponent<GameAudio>()?.Cue("cutin");
                 // Double ron shares one discarded tile. Show both winners first,
                 // then play that tile's complete burst after the final cut-in.
-                if(cutInWin.kind=="ron"&&!callEvents.Any(e=>e.kind=="ron"))SpawnWin(cutInWin,(ValidationFreeze?0:Time.unscaledTime)+WinCutIn.Duration+.18f);
+                float at=ValidationFreeze?0:Time.unscaledTime;
+#if UNITY_EDITOR
+                if(ValidationSequentialClock){validationCutInBegan=ValidationTime;at=ValidationTime;winCutIn.Freeze=true;winCutIn.FrozenAge=0;}
+#endif
+                if(cutInWin.kind=="ron"&&!callEvents.Any(e=>e.kind=="ron"))SpawnWin(cutInWin,at+WinCutIn.Duration+.18f);
                 cutInWin=null;
             }
-            if (call!=null && (ValidationFreeze?ValidationTime:Time.unscaledTime-callStarted) >= 1.05f) FinishCall();
+            if (call!=null && CallAge >= 1.05f) FinishCall();
             if (current==null || motion==null || clip==null) return;
-            elapsed=ValidationFreeze?ValidationTime:Time.unscaledTime-started;
+            elapsed=HandAge;
             if(GroupCall && meldTarget!=null && !handedOff){
                 if(elapsed>=.033f&&!impactQueued){SpawnImpact();impactQueued=true;}
                 bool visible=elapsed>=.10f;meldTarget.gameObject.SetActive(visible);
@@ -428,6 +480,10 @@ namespace YunJian.Riichi
                 animatedTile.rotation=current.kind=="discard"&&targetTile!=null?targetTile.rotation:current.kind=="nuki" && table.NorthTarget(current.seat,current.nuki)!=null
                     ? table.NorthTarget(current.seat,current.nuki).rotation
                     : current.kind=="tsumo" && targetTile!=null?targetTile.rotation:Quaternion.Euler(0,table.SeatAngle(current.seat)+(!stick&&current.riichi?90f:0f),0);
+                if(current.kind=="discard"&&current.riichi&&clip.data.tileRotations?.Length==clip.data.frames*4){
+                    var turn=TileRotation(Mathf.Min(elapsed,SourceHandoff))*Quaternion.Inverse(TileRotation(SourceHandoff));
+                    animatedTile.rotation=motion.rotation*turn*Quaternion.Inverse(motion.rotation)*animatedTile.rotation;
+                }
                 // Tsumo carries and slaps the tile face up for the entire motion.
             }
             if(current.kind=="discard"&&current.riichi&&!riichiVisualAttempted&&elapsed>=RiichiEffectAt){
@@ -443,9 +499,9 @@ namespace YunJian.Riichi
         {
             if(winCutIn.Active){winCutIn.Draw(width,height);return;}
             if (call==null) return;
-            if(IsWin(call)){NativeAnnouncements.DrawWin(call.kind,table.RelativeSeat(call.seat),n,width,height,ValidationFreeze?ValidationTime:Time.unscaledTime-callStarted);return;}
+            if(IsWin(call)){NativeAnnouncements.DrawWin(call.kind,table.RelativeSeat(call.seat),n,width,height,CallAge);return;}
             string name=CallArt(call.kind);if(name==null)return;
-            float time=ValidationFreeze?ValidationTime:Time.unscaledTime-callStarted;
+            float time=CallAge;
             var players=GetComponent<RiichiClient>().State?.players;
             nativeCallouts.Draw(name,table.RelativeSeat(call.seat),n,width,height,time,players!=null&&call.seat<players.Length?players[call.seat]:null);
         }
@@ -460,13 +516,15 @@ namespace YunJian.Riichi
         public string ValidationKind => current==null?null:current.kind;
         public float ValidationPlayLength => PlayLength;
         public float ValidationHandoff => Handoff;
+        public float ValidationRiichiCue => RiichiEffectAt;
         public Transform ValidationAnimatedTile => animatedTile;
         public Transform ValidationImpact => impact;
         public Transform ValidationTarget => targetTile!=null?targetTile:targetStick!=null?targetStick:northTarget!=null?northTarget:meldTarget;
         public WinTileEffect ValidationWin => winEffects.LastOrDefault();
         public NorthPetals ValidationPetals => northEffects.LastOrDefault();
         public string ValidationCallKind => call==null?null:call.kind;
-        public float ValidationCallAlpha => call==null?0f:Mathf.Clamp01((ValidationFreeze?ValidationTime:Time.unscaledTime-callStarted)/.12f);
+        public float ValidationCallAlpha => call==null?0f:Mathf.Clamp01(CallAge/.12f);
+        public string ValidationMotion=>current==null?null:activeMotionResource;
 #endif
         void OnDestroy() {nativeCallouts.Dispose();winCutIn.Reset(); Finish();FinishCall();EndImpact();EndNorthEffects();EndWinEffects();if(overlay!=null)Destroy(overlay.gameObject);if(mesh!=null)Destroy(mesh);if(body!=null)Destroy(body);if(nails!=null)Destroy(nails); }
     }

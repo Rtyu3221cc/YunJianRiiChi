@@ -9,7 +9,7 @@ namespace YunJian.Riichi {
         public int id,spineWidth,spineHeight,pivotX,pivotY,artWidth,artHeight; public string key,name,description,lobbyOffset,dormOffset; public bool dynamic,hasWaitingroom; public string[] parts;
     }
     [Serializable] public sealed class CharacterDefinition {
-        public int id,defaultSkin,bondSkin; public string key,name,cv,height,birth,age,blood,hobby,description; public CharacterSkin[] skins; public string[] emojis;
+        public int id,defaultSkin,bondSkin,sex; public string key,name,cv,height,birth,age,blood,hobby,description; public CharacterSkin[] skins; public string[] emojis;
     }
     [Serializable] public sealed class CharacterUiArt {public string key;public int width,height;public float[] border;}
     [Serializable] sealed class CharacterCatalog { public CharacterDefinition[] roles; public CharacterUiArt[] ui; }

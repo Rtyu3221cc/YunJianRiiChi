@@ -41,7 +41,7 @@ png('indoor',obj('myassets/scenes/lobby/main/texture/indoor_1.jpg','Texture2D'))
 roles=[];ids=[200069,200001,200002,200033]
 for id in ids:
  c=next(c for c in config['item_definition/character']if c['id']==id);key=c['sound_folder']
- role=dict(id=id,key=key,name=c['name_chs'],cv=c['desc_cv_chs'],height=c['desc_stature_chs'],birth=c['desc_birth_chs'],age=c['desc_age_chs'],blood=c['desc_bloodtype_chs'],hobby=c['desc_hobby_chs'],description=c['desc_chs'],defaultSkin=c['init_skin'],bondSkin=c['full_fetter_skin'],skins=[],emojis=[])
+ role=dict(id=id,key=key,name=c['name_chs'],sex=c['sex'],cv=c['desc_cv_chs'],height=c['desc_stature_chs'],birth=c['desc_birth_chs'],age=c['desc_age_chs'],blood=c['desc_bloodtype_chs'],hobby=c['desc_hobby_chs'],description=c['desc_chs'],defaultSkin=c['init_skin'],bondSkin=c['full_fetter_skin'],skins=[],emojis=[])
  for sk in config['item_definition/skin']:
   if sk['character_id']!=id:continue
   skinKey=sk['path'].rsplit('/',1)[-1].lower();base='myassets/deco/character/'+skinKey+'/'

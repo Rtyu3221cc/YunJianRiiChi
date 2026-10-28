@@ -1,0 +1,259 @@
+{
+  "version": "0.6.16",
+  "versionCode": 64,
+  "package": "com.yunjian.riichi.unity",
+  "date": "2026-10-28",
+  "apk": {
+    "file": "yunjian-riichi-unity-0.6.16.apk",
+    "bytes": 215009145,
+    "sha256": "dc39293c5ab29d4636f15698fe158e0d4b0d0b038f6d2bdd19a96edf409bbb4f",
+    "v1": true,
+    "v2": true,
+    "independentV1": true,
+    "certificateSHA256": "d1d8e506c6d3b62e9610dce294c07008057318fa9bafae702fb8b01f35f0dc2f",
+    "alignment16KB": true
+  },
+  "apkBuilt": true,
+  "githubUploaded": false,
+  "androidDeviceTested": false,
+  "nodeTests": 181,
+  "nativeEffects": 24,
+  "nativePrefabs": 27,
+  "nativeParticleLayers": 312,
+  "scytheGeometryChecks": 13,
+  "allEffectsPreviewChecks": 620,
+  "effects": [
+    {
+      "effect": "ron-flame",
+      "native": "EffectsR11/ron_fire",
+      "particleLayers": 14,
+      "staticMeshes": 0,
+      "motion": false,
+      "prefabSHA256": "aa3b68603605d5e0675a5d4e5fb27573f6b5d39f47503fbf07f3f88b5eae5f99"
+    },
+    {
+      "effect": "ron-wind",
+      "native": "EffectsR11/ron_wind",
+      "particleLayers": 13,
+      "staticMeshes": 0,
+      "motion": false,
+      "prefabSHA256": "008902a7e6c343a6089fdf07ebc46ac69c3c6313c8256758227256f349a91e21"
+    },
+    {
+      "effect": "ron-sakura",
+      "native": "EffectsR11/ron_sakura",
+      "particleLayers": 13,
+      "staticMeshes": 0,
+      "motion": false,
+      "prefabSHA256": "082edd523f5de16dfc58d5c00a3b3fe8d8cc9d6f6ede9d0751adf812e06b4d4a"
+    },
+    {
+      "effect": "ron-blackfire",
+      "native": "EffectsR11/ron_heihuo",
+      "particleLayers": 20,
+      "staticMeshes": 0,
+      "motion": false,
+      "prefabSHA256": "7b535e3989538a642b8092fb74b3cf4db38b38830ae6601d5ae709d8acf721d0"
+    },
+    {
+      "effect": "ron-tornado",
+      "native": "EffectsR11/ron_huolongjuan",
+      "particleLayers": 9,
+      "staticMeshes": 0,
+      "motion": false,
+      "prefabSHA256": "af1235b5629db8237e04311127918115772911aa02ab6f832a86701219eee221"
+    },
+    {
+      "effect": "ron-reactor",
+      "native": "EffectsR11/ron_keji",
+      "particleLayers": 9,
+      "staticMeshes": 0,
+      "motion": false,
+      "prefabSHA256": "027618e9f35badaedadd1524e4a87ee987047cf8b1ee91e6913436dae0f34e9a"
+    },
+    {
+      "effect": "ron-meiguihua",
+      "native": "EffectsR11/ron_meiguihua",
+      "particleLayers": 9,
+      "staticMeshes": 0,
+      "motion": false,
+      "prefabSHA256": "722b37ccab39e8c595fe2c78c7f722ae5e405a2622c6fa71a95136f6c22ea09a"
+    },
+    {
+      "effect": "ron-ko",
+      "native": "EffectsR11/ron_ko",
+      "particleLayers": 7,
+      "staticMeshes": 0,
+      "motion": false,
+      "prefabSHA256": "cc01ab57af4d7fd95d7c35dabd6e2bc0ab905c889773c8b62f31570e9f0b2282"
+    },
+    {
+      "effect": "ron-nilin",
+      "native": "EffectsR11/ron_nilin",
+      "particleLayers": 10,
+      "staticMeshes": 0,
+      "motion": false,
+      "prefabSHA256": "dd8c0e90e199705bbc8a12b738d707d0b22e69492191fb909b8f23b68ebc73d3"
+    },
+    {
+      "effect": "ron-youlingaoao",
+      "native": "EffectsR11/ron_youlingaoao",
+      "particleLayers": 9,
+      "staticMeshes": 0,
+      "motion": false,
+      "prefabSHA256": "e874d2e08b5af69ffcbd66d84c6b339e9928163f7f4aa553b0a2f2ad8696041c"
+    },
+    {
+      "effect": "ron-23ex-heidong",
+      "native": "EffectsR11/ron_23ex_heidong",
+      "particleLayers": 14,
+      "staticMeshes": 3,
+      "motion": true,
+      "prefabSHA256": "5aefb87c44553097ec0b78e3e4db00ccc56cd0c19779eab2dca6ce641646c164"
+    },
+    {
+      "effect": "ron-23ex-liandao",
+      "native": "EffectsR11/ron_23ex_liandao",
+      "particleLayers": 69,
+      "staticMeshes": 0,
+      "motion": true,
+      "prefabSHA256": "2a685d652692235f0f7ff51c563678b1da93d246371c29ea46e5d23abd5b04e4"
+    },
+    {
+      "effect": "ron-23ex-shuizhu",
+      "native": "EffectsR11/ron_23ex_shuizhu",
+      "particleLayers": 11,
+      "staticMeshes": 0,
+      "motion": true,
+      "prefabSHA256": "93f23136b9959d1cb10aa4c3a376e00ed35210660b09bbe917b42dbf9c862da0"
+    },
+    {
+      "effect": "riichi-blue",
+      "native": "EffectsR11/effect_liqi_bao",
+      "particleLayers": 7,
+      "staticMeshes": 0,
+      "motion": false,
+      "prefabSHA256": "fbdbe6ae1ed85b82292c4298a2def2da925147465367626707f6ca02e2d8c047"
+    },
+    {
+      "effect": "riichi-ice",
+      "native": "EffectsR11/effect_liqi_ice",
+      "particleLayers": 8,
+      "staticMeshes": 0,
+      "motion": false,
+      "prefabSHA256": "f00652ecc00a15934258417afe95190d4ee30e6be3b4dab69032dc1140cd78e7"
+    },
+    {
+      "effect": "riichi-fire",
+      "native": "EffectsR11/effect_liqi_fire",
+      "particleLayers": 9,
+      "staticMeshes": 0,
+      "motion": false,
+      "prefabSHA256": "b33ce263eb65ee2afdb4973a29635065f8c35def5d0eed18eac268edf004ef0e"
+    },
+    {
+      "effect": "riichi-afterimage",
+      "native": "EffectsR11/effect_liqi_canying",
+      "particleLayers": 6,
+      "staticMeshes": 0,
+      "motion": false,
+      "prefabSHA256": "2246732721c18a87cc2a75c342b4877663f62767d873d2ce2e23d7f534ba12e9"
+    },
+    {
+      "effect": "effect-liqi-longteng",
+      "native": "EffectsR11/effect_liqi_longteng",
+      "particleLayers": 6,
+      "staticMeshes": 0,
+      "motion": false,
+      "prefabSHA256": "f2d61b1eb776e18bd41f9590afb6423b3ebd2ee27206c5f0ddda94ca18595d48"
+    },
+    {
+      "effect": "effect-liqi-ding",
+      "native": "EffectsR11/effect_liqi_ding",
+      "particleLayers": 6,
+      "staticMeshes": 0,
+      "motion": true,
+      "prefabSHA256": "fdc8144753573a35cf257fe35c200e3760f55e37b2ebbdb4386b2fd4f6219cf2"
+    },
+    {
+      "effect": "effect-liqi-23ex-maozhua",
+      "native": "EffectsR11/effect_liqi_23ex_maozhua",
+      "particleLayers": 11,
+      "staticMeshes": 0,
+      "motion": false,
+      "prefabSHA256": "3e86d4162a2f99e3820d6dad671e1b86edb1751ed36dfa2ea44b4e43f9d86b78"
+    },
+    {
+      "effect": "riichi-bat",
+      "native": "EffectsR11/effect_liqi_bianfujiejie",
+      "particleLayers": 8,
+      "staticMeshes": 0,
+      "motion": false,
+      "prefabSHA256": "9e80d15fd5852b8d4ad56ba2faa6be240de83afd285258dc37c43ea4511c43c5"
+    },
+    {
+      "effect": "riichi-feather",
+      "native": "EffectsR11/effect_liqi_feiyu",
+      "particleLayers": 5,
+      "staticMeshes": 0,
+      "motion": false,
+      "prefabSHA256": "a4799705799499f6503da1753d31694110d1cdcf90123c403d9e75a22bc82cd6"
+    },
+    {
+      "effect": "effect-liqi-23ex-liandao",
+      "native": "EffectsR11/effect_liqi_23ex_liandao",
+      "particleLayers": 8,
+      "staticMeshes": 0,
+      "motion": true,
+      "prefabSHA256": "7588e507cbc1495a437967a1328188bc92f44cea0231d1673d2a6f1f60caf6ba"
+    },
+    {
+      "effect": "effect-liqi-23ex-liandao",
+      "native": "EffectsR11/effect_liqi_23ex_liandao_2",
+      "particleLayers": 8,
+      "staticMeshes": 0,
+      "motion": true,
+      "prefabSHA256": "e8dd685df3812649dd783d987ae79c8344d9a3965b56a6fda5643f5fbf2e8012"
+    },
+    {
+      "effect": "effect-liqi-23ex-liandao",
+      "native": "EffectsR11/effect_liqi_23ex_liandao_3",
+      "particleLayers": 8,
+      "staticMeshes": 0,
+      "motion": true,
+      "prefabSHA256": "1741ec8f2451eb716fb2c88446f26627ab7e016a739337f776601a0917eacc05"
+    },
+    {
+      "effect": "effect-liqi-23ex-liandao",
+      "native": "EffectsR11/effect_liqi_23ex_liandao_4",
+      "particleLayers": 8,
+      "staticMeshes": 0,
+      "motion": true,
+      "prefabSHA256": "7cacd30bf8fa084a4f171e8b214397f331105ecff8701a803dbfae497b5fba2e"
+    },
+    {
+      "effect": "effect-liqi-23ex-xueqiu",
+      "native": "EffectsR11/effect_liqi_23ex_xueqiu",
+      "particleLayers": 7,
+      "staticMeshes": 2,
+      "motion": true,
+      "prefabSHA256": "9593c59798a429b43c9a2ab568ff861659acf00618befa1185ffe1d745c0abcf"
+    }
+  ],
+  "limitations": [
+    "Physical Android installation, input, audio, GPU rendering, performance and LAN await the user device test.",
+    "The existing North-tile gap assertion remains reproducible with baseline outfits; this task did not change that layout.",
+    "The 620 all-effects and 13 scythe checks are prior R13 evidence, not a fresh full-game runtime run."
+  ],
+  "unityUnitChecks": 571,
+  "unityUnitBreakdown": {
+    "session": 62,
+    "calloutAtlas": 87,
+    "character": 385,
+    "roleUi": 37
+  },
+  "pythonTests": 11,
+  "wardrobeRuntimeChecks": 58,
+  "handChoices": 2,
+  "backgroundTakeoverGraceSeconds": 120
+}

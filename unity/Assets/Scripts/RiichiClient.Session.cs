@@ -150,7 +150,10 @@ namespace YunJian.Riichi
         {
             if(!active||State==null||State.phase=="lobby")return;
             if(!paused){resumingConnection=true;return;}
-            if(!Busy)StartCoroutine(Send(new RequestBody{op="presence",present=false}));
+            // A state poll may already be in flight when Android suspends us.
+            // Presence has no turn-version requirement and must not be dropped
+            // by the gameplay Busy flag or apply a stale table response.
+            StartCoroutine(SessionRequest(endpoint,new RequestBody{op="presence",present=false,token=token,room=State.audioRoom},reply=>{}));
         }
         void DrawAutoPlay(float width,float height)
         {

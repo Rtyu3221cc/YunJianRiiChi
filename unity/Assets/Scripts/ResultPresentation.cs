@@ -16,6 +16,9 @@ namespace YunJian.Riichi
         readonly Dictionary<string,Texture2D> art=new Dictionary<string,Texture2D>();
         string key; int winner; bool scores,drawStage,finalPage; float started, skipped;
         public bool ShowingFinal=>finalPage;
+#if UNITY_EDITOR
+        public int EquippedAvatarFramesDrawn {get;private set;}
+#endif
         GUIStyle text, number, roundText; Font font;
         [Serializable] sealed class FinalItem {public string name;public float[] rect;public float fontSize;}
         [Serializable] sealed class FinalCard {public float[] rect;public float scale;public FinalItem[] items;}
@@ -71,6 +74,19 @@ namespace YunJian.Riichi
         }
         void Image(string name,Rect r,ScaleMode mode=ScaleMode.StretchToFill)
         {var t=Art(name);if(t!=null)GUI.DrawTexture(r,t,mode);}
+        void Avatar(RoomView v,TableRenderer table,int seat,Rect portrait,Rect background)
+        {
+            var item=WardrobeRuntime.Item(v,seat,"headFrame");
+            var frame=item!=null&&item.id!="headframe_default"?WardrobeCatalog.Texture(item.texture):null;
+            if(frame==null)Image("bg_head1",background);
+            var face=table.Portrait(v.players[seat]);
+            if(face!=null)GUI.DrawTexture(portrait,face,ScaleMode.ScaleToFit);
+            if(frame==null)return;
+            GUI.DrawTexture(WardrobeCatalog.AvatarFrameRect(portrait,item),frame,ScaleMode.ScaleToFit,true);
+#if UNITY_EDITOR
+            EquippedAvatarFramesDrawn++;
+#endif
+        }
         void Label(Rect r,string value,int size,Color color,TextAnchor align=TextAnchor.MiddleCenter)
         {
             text.fontSize=size;text.alignment=align;text.normal.textColor=color;
@@ -296,10 +312,8 @@ namespace YunJian.Riichi
                 int relative=(seat-v.you+v.n)%v.n;Rect r=NativeReviewLayout.ScoreRect(relative,v.n);Vector2 c=r.center;
                 var cardMatrix=GUI.matrix;
                 Image("scorechange_bg",r);
-                var portrait=table.Portrait(v.players[seat]);
                 Rect head=new Rect(r.x+219,r.y-23,85,85);
-                Image("bg_head1",head);
-                if(portrait!=null)GUI.DrawTexture(new Rect(head.x+4,head.y+4,head.width-8,head.height-8),portrait,ScaleMode.ScaleToFit);
+                Avatar(v,table,seat,new Rect(head.x+4,head.y+4,head.width-8,head.height-8),head);
                 Label(new Rect(r.x+23,r.y+4,190,30),v.players[seat].name,19,white,TextAnchor.MiddleCenter);
                 Glyphs(new Rect(r.x+160,r.y+75,143,45),Digits(DisplayScore(v,seat),"ww_"),36,TextAnchor.MiddleRight);
                 int delta=v.result.delta!=null&&seat<v.result.delta.Length?v.result.delta[seat]:0;
@@ -346,8 +360,7 @@ namespace YunJian.Riichi
                 Image("bg_end",FinalRect(card,"rank"));
                 Image("Final/s_"+(rank+1),FinalRect(card,"rank/node"));
                 Image("Final/s_"+(rank+1)+"_"+(rank+1),FinalRect(card,"rank/ASPECIALTEXTNODE!@#1"));
-                var head=FinalRect(card,"head/node");var face=table.Portrait(v.players[seat]);
-                Image("bg_head1",FinalRect(card,"head/bg"));if(face!=null)GUI.DrawTexture(head,face,ScaleMode.ScaleToFit);
+                Avatar(v,table,seat,FinalRect(card,"head/node"),FinalRect(card,"head/bg"));
                 var name=FinalRect(card,"container_name/label_name");var self=FinalRect(card,"myself");
                 name.width=(seat==v.you?self.x:FinalRect(card,"img_g0").x)-name.x-12;
                 var nameItem=card.items.First(i=>i.name=="container_name/label_name");int nameSize=Mathf.RoundToInt(nameItem.fontSize);
@@ -386,6 +399,9 @@ namespace YunJian.Riichi
         void Waiting(){Label(WaitingRect,"已确认，等待其他玩家",22,white,TextAnchor.MiddleRight);}
         public Action Draw(RoomView v,TableRenderer table,TableEffects effects,Font gameFont,Func<Rect,string,bool> button)
         {
+#if UNITY_EDITOR
+            EquippedAvatarFramesDrawn=0;
+#endif
             Observe(v);if(text==null){font=gameFont;text=new GUIStyle(GUI.skin.label){font=font,wordWrap=false,clipping=TextClipping.Clip};number=new GUIStyle(text){font=Resources.Load<Font>("Majsoul/Settlement/score-font"),fontSize=31,alignment=TextAnchor.MiddleLeft};
                 roundText=new GUIStyle(text){font=Resources.Load<Font>("Majsoul/Settlement/round-font-chs"),fontSize=31,alignment=TextAnchor.MiddleCenter};}
             if(finalPage){

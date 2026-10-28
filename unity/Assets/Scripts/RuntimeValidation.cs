@@ -292,8 +292,9 @@ namespace YunJian.Riichi
             fx.ValidationPlay(0,"discard",effectFixture.players[0].river.Last().tile,true);
             yield return null;yield return null;
             Require(fx.ValidationRiichiDiscard,"Riichi discard did not select the declaration clip");
-            Require(Mathf.Abs(fx.ValidationPlayLength-1.70f)<.01f,"Riichi clip length is not the source length");
-            Require(Mathf.Abs(fx.ValidationHandoff-1.2667f)<.01f,"Riichi tile hand-off is not the settle time");
+            var declarationPlan=SourcePlaybackContracts.Declaration(WardrobeRuntime.Item(client.State,0,"hand"),WardrobeRuntime.Item(client.State,0,"riichiEffect"));
+            Require(Mathf.Abs(fx.ValidationPlayLength-declarationPlan.lifetime)<.01f,"Riichi clip length is not the resolved source lifetime");
+            Require(Mathf.Abs(fx.ValidationHandoff-declarationPlan.release)<.01f,"Riichi hand-off must use the source release keypoint, not a baked-vertex stop heuristic");
             var carried=fx.ValidationAnimatedTile;
             Require(carried!=null,"Riichi discard has no carried tile");
             // The carried declaration tile copies its river tile exactly, including that
@@ -1019,9 +1020,9 @@ namespace YunJian.Riichi
             var camera=table.Camera;var previous=camera.targetTexture;var active=RenderTexture.active;
             var target=new RenderTexture(1688,780,24);var pixels=new Texture2D(1688,780,TextureFormat.RGB24,false);
             camera.targetTexture=target;table.HandCamera.targetTexture=target;table.FitCamera(1688f/780);
-            effectRenderer.enabled=false;camera.Render();table.HandCamera.Render();table.GetComponent<TableEffects>().RenderOverlay(target);RenderTexture.active=target;
+            effectRenderer.enabled=false;camera.Render();table.GetComponent<NativeEffectCamera>()?.RenderTo(target);table.HandCamera.Render();table.GetComponent<TableEffects>().RenderOverlay(target);RenderTexture.active=target;
             pixels.ReadPixels(new Rect(0,0,1688,780),0,0);pixels.Apply();var before=pixels.GetPixels32();
-            effectRenderer.enabled=true;camera.Render();table.HandCamera.Render();table.GetComponent<TableEffects>().RenderOverlay(target);pixels.ReadPixels(new Rect(0,0,1688,780),0,0);pixels.Apply();var after=pixels.GetPixels32();
+            effectRenderer.enabled=true;camera.Render();table.GetComponent<NativeEffectCamera>()?.RenderTo(target);table.HandCamera.Render();table.GetComponent<TableEffects>().RenderOverlay(target);pixels.ReadPixels(new Rect(0,0,1688,780),0,0);pixels.Apply();var after=pixels.GetPixels32();
             int visible=0;for(int i=0;i<before.Length;i++)if(Mathf.Abs(after[i].r-before[i].r)+Mathf.Abs(after[i].g-before[i].g)+Mathf.Abs(after[i].b-before[i].b)>20)visible++;
             camera.targetTexture=previous;table.HandCamera.targetTexture=null;RenderTexture.active=active;target.Release();Destroy(target);Destroy(pixels);return visible;
         }

@@ -1,0 +1,147 @@
+{
+  "source": "build/wardrobe-r6-study/tables.json",
+  "sourceSHA256": "dbf36f221fd98d24a53310ecc577116376fb7218919d3a38c77ad51ff7bba9ea",
+  "rule": "ModelAnimationController.init_data divides lifetime and keypoints by speed",
+  "records": [
+    {
+      "id": "hand-human",
+      "source": {
+        "id": 1000102,
+        "name": "LiQiPai",
+        "type": "hand_human",
+        "lifetime": 1615,
+        "speed": 2.0,
+        "keypoint": [
+          [
+            550,
+            1300,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "resolved": {
+        "riichiSpeed": 2.0,
+        "riichiLifetime": 0.8075,
+        "riichiCue": 0.275
+      }
+    },
+    {
+      "id": "hand-cat",
+      "source": {
+        "id": 1000202,
+        "name": "LiQiPai",
+        "type": "hand_cat_orange",
+        "lifetime": 900,
+        "speed": 1.2000000476837158,
+        "keypoint": [
+          [
+            400,
+            720,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "resolved": {
+        "riichiSpeed": 1.2000000476837158,
+        "riichiLifetime": 0.7499999701976787,
+        "riichiCue": 0.33333332008785727
+      }
+    },
+    {
+      "id": "hand-cat-orange",
+      "source": {
+        "id": 1000202,
+        "name": "LiQiPai",
+        "type": "hand_cat_orange",
+        "lifetime": 900,
+        "speed": 1.2000000476837158,
+        "keypoint": [
+          [
+            400,
+            720,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "resolved": {
+        "riichiSpeed": 1.2000000476837158,
+        "riichiLifetime": 0.7499999701976787,
+        "riichiCue": 0.33333332008785727
+      }
+    },
+    {
+      "id": "hand-dog",
+      "source": {
+        "id": 1000502,
+        "name": "LiQiPai",
+        "type": "hand_dog",
+        "lifetime": 900,
+        "speed": 1.0,
+        "keypoint": [
+          [
+            270,
+            650,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "resolved": {
+        "riichiSpeed": 1.0,
+        "riichiLifetime": 0.9,
+        "riichiCue": 0.27
+      }
+    },
+    {
+      "id": "hand-man",
+      "source": {
+        "id": 1000602,
+        "name": "LiQiPai",
+        "type": "hand_man",
+        "lifetime": 900,
+        "speed": 1.0,
+        "keypoint": [
+          [
+            270,
+            650,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "resolved": {
+        "riichiSpeed": 1.0,
+        "riichiLifetime": 0.9,
+        "riichiCue": 0.27
+      }
+    }
+  ]
+}

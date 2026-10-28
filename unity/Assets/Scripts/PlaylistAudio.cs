@@ -24,6 +24,20 @@ namespace YunJian.Riichi
         public bool ExternalAudition {get;set;}
         RiichiClient client; int activeChannel, request; bool fading, loading, suspended, started;
         float fadeAt, fromGain = 1;
+        readonly RoundMusicEnvelope roundEnvelope=new RoundMusicEnvelope();
+        bool roundPaused;
+        public float RoundMusicGain=>roundEnvelope.Gain(RoundNow);
+#if UNITY_EDITOR
+        public float ReviewRoundTime=-1;
+#endif
+        float RoundNow {
+            get {
+#if UNITY_EDITOR
+                if(ReviewRoundTime>=0)return ReviewRoundTime;
+#endif
+                return Time.unscaledTime;
+            }
+        }
         public void Initialize(RiichiClient owner) { client = owner; }
         void Awake() {
             Active = this; AppPreferences.Load();
@@ -57,6 +71,9 @@ namespace YunJian.Riichi
         }
         void Update() {
             if (client == null || suspended) return;
+            roundEnvelope.Observe(client.State,client.LobbyPlaying,RoundNow);
+            bool pause=roundEnvelope.Held&&RoundMusicGain<=.0001f;
+            if(pause!=roundPaused){roundPaused=pause;foreach(var channel in channels){if(pause)channel.Pause();else channel.UnPause();}}
             string nextGroup = client.LobbyPlaying ? "mj" : "lobby";
             if (!started || nextGroup != Group) { started = true; Group = nextGroup; ApplyPlaylist(); }
             UpdateRiichi();RefreshVolumes();
@@ -66,8 +83,9 @@ namespace YunJian.Riichi
         void UpdateRiichi(){
             var view=client.State;bool play=client.LobbyPlaying&&view!=null&&(view.phase=="play"||view.phase=="reaction")&&view.you>=0&&view.you<view.players.Length&&view.players[view.you].riichi>0;
             string next=play?view.audioRoom+":"+view.handSeq+":"+WardrobeRuntime.Item(view,view.you,"music").id:null;
+            if(roundEnvelope.Held&&RoundMusicGain>0&&riichiKey!=null)next=riichiKey;
             if(next!=riichiKey){riichi.Stop();riichiKey=next;if(play){riichi.clip=Resources.Load<AudioClip>(WardrobeRuntime.Item(view,view.you,"music").audio);if(riichi.clip!=null)riichi.Play();}}
-            riichi.volume=AppPreferences.Gain(1);
+            riichi.volume=AppPreferences.Gain(1)*RoundMusicGain;
         }
         public void ApplyPlaylist() {
             StopAudition();
@@ -88,14 +106,14 @@ namespace YunJian.Riichi
             int next = running ? 1 - activeChannel : activeChannel;
             channels[next].Stop(); channels[next].clip = clip; channels[next].volume = 0; channels[next].Play();
             // Playback can be suspended while a streamed clip is becoming ready.
-            if (suspended) channels[next].Pause();
+            if (suspended||roundPaused) channels[next].Pause();
             CurrentId = id; loading = false;
             if (running) { fromGain = AppPreferences.Gain(1) > 0 ? channels[activeChannel].volume / AppPreferences.Gain(1) : 1; fadeAt = Time.unscaledTime; fading = true; }
             else { activeChannel = next; fading = false; }
             RefreshVolumes();
         }
         void RefreshVolumes() {
-            float gain = AppPreferences.Gain(1) * (AuditionPlaying || RiichiPlaying || ExternalAudition ? 0 : 1);
+            float gain = AppPreferences.Gain(1) * RoundMusicGain * (AuditionPlaying || RiichiPlaying || ExternalAudition ? 0 : 1);
             audition.volume = AppPreferences.Gain(1);
             if (fading) {
                 float t = Mathf.Clamp01((Time.unscaledTime - fadeAt) / FadeSeconds);
@@ -110,7 +128,7 @@ namespace YunJian.Riichi
             audition.volume = AppPreferences.Gain(1); if (audition.clip != null) { audition.UnPause(); if (!audition.isPlaying) audition.Play(); }
         }
         public void StopAudition() { audition.Stop(); AuditionId = 0; }
-        void OnApplicationPause(bool pause) { suspended = pause; foreach (var s in channels.Concat(new[] { audition,riichi })) { if (pause) s.Pause(); else s.UnPause(); } }
+        void OnApplicationPause(bool pause) { suspended = pause; foreach (var s in channels.Concat(new[] { audition,riichi })) { if (pause) s.Pause(); else if(!roundPaused||s==audition)s.UnPause(); } }
         void OnDestroy() { if (Active == this) Active = null; }
     }
 }

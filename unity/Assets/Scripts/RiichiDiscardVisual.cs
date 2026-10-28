@@ -23,15 +23,22 @@ namespace YunJian.Riichi
             // Joining or resuming an already-declared hand must not replay old FX.
             if(baseline&&view!=null)for(int i=0;i<view.players.Length;i++)if(view.players[i].riichi>0)shown.Add(i);
         }
-        Vector3 Point(Transform tile) => tile.position+Vector3.up*table.Geometry.Depth*.5f;
-        static Quaternion Rotation(Transform tile) => tile.rotation*Quaternion.Euler(90,0,0);
+        Vector3 Point(Transform tile) {var box=tile.GetComponent<BoxCollider>();return box!=null?tile.TransformPoint(box.center):tile.position+tile.up*table.Geometry.Depth*.5f;}
+        // Some source effects already encode the four seat orientations. Those
+        // follow the tile's position while retaining their authored world plane.
+        static Quaternion Rotation(Transform tile,WinTileEffect effect) => effect.TableRotation(tile.rotation);
         public bool TryPlay(PublicSound action,Transform carried,float now) {
             if(hand==null||action==null||action.kind!="discard"||!action.riichi||action.seat<0||action.seat>=players||carried==null||!shown.Add(action.seat))return false;
             var effect=new GameObject("Original fire riichi seat "+action.seat).AddComponent<WinTileEffect>();effect.transform.SetParent(transform,false);
             var choice=WardrobeRuntime.Item(table.Client.State,action.seat,"riichiEffect");
-            var point=choice.groundEffect?table.DiscardPoint(action.seat,action.tile,action.riverIndex)+Vector3.up*.006f:Point(carried);
-            effect.InitializeTable(choice.effect,point,choice.groundEffect?Quaternion.identity:Rotation(carried),now,(uint)(action.id+71));
-            live.Add(new Burst{action=action,effect=effect,carried=carried,ground=choice.groundEffect});PlayedCount++;
+            bool ground=SourcePlaybackContracts.Binding(choice).ground;
+            var point=ground?table.DiscardPoint(action.seat,action.tile,action.riverIndex)+Vector3.up*.006f:Point(carried);
+            bool native=!string.IsNullOrEmpty(choice.nativeEffect);
+            float scale=ground?1:TableTileGeometry.WorldWidth(carried)/((native?TableTileGeometry.SourceWidth:SourcePlaybackContracts.TileWidth)*TableTileGeometry.SourceUnits);
+            int sourceView=((int)Mathf.Round(Mathf.Repeat(-table.SeatAngle(action.seat),360)/90))%4;
+            effect.InitializeTable(choice.effect,point,Quaternion.identity,now,(uint)(action.id+71),false,scale,sourceView);
+            if(!ground)effect.transform.rotation=Rotation(carried,effect);
+            live.Add(new Burst{action=action,effect=effect,carried=carried,ground=ground});PlayedCount++;
             GetComponent<GameAudio>()?.Cue(choice.cue);return true;
         }
         public void Settle(PublicSound action) {
@@ -42,7 +49,7 @@ namespace YunJian.Riichi
             for(int i=live.Count-1;i>=0;i--){
                 var burst=live[i];var effect=burst.effect;if(effect==null){live.RemoveAt(i);continue;}
                 var target=burst.settled?table.FindDiscard(burst.action.seat,burst.action.tile,burst.action.riverIndex):burst.carried;
-                if(target!=null&&!burst.ground){effect.transform.position=Point(target);effect.transform.rotation=Rotation(target);}
+                if(target!=null&&!burst.ground){effect.transform.position=Point(target);effect.transform.rotation=Rotation(target,effect);}
                 float age=now-effect.StartedAt;effect.Sample(age);
                 if(age>=effect.PlaybackDuration&&effect.ParticleCount==0){effect.gameObject.SetActive(false);Destroy(effect.gameObject);live.RemoveAt(i);}
             }

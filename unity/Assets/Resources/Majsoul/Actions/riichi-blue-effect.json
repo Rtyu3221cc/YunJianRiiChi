@@ -1,0 +1,1186 @@
+{
+ "schema": 2,
+ "nodes": [
+  {
+   "name": "effect_liqi_bao",
+   "parent": -1,
+   "position": [
+    0,
+    0,
+    0
+   ],
+   "rotation": [
+    0,
+    0,
+    0,
+    -1
+   ],
+   "scale": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "effcet_Trail",
+   "parent": 0,
+   "position": [
+    0,
+    0,
+    0
+   ],
+   "rotation": [
+    0,
+    0,
+    0,
+    -1
+   ],
+   "scale": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "guangyun",
+   "parent": 1,
+   "position": [
+    0.001,
+    0,
+    0.0092
+   ],
+   "rotation": [
+    0,
+    0,
+    0,
+    -1
+   ],
+   "scale": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "guangyun (1)",
+   "parent": 2,
+   "position": [
+    0,
+    0,
+    -0.0196
+   ],
+   "rotation": [
+    0,
+    0,
+    0,
+    -1
+   ],
+   "scale": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "bao",
+   "parent": 2,
+   "position": [
+    -0.0009999997,
+    -0.0008,
+    0
+   ],
+   "rotation": [
+    0,
+    0,
+    -0.7071068,
+    -0.7071068
+   ],
+   "scale": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "guangyunTrail",
+   "parent": 2,
+   "position": [
+    -0.0004999986,
+    0.04290005,
+    0
+   ],
+   "rotation": [
+    0.7071068,
+    -0.7071068,
+    0,
+    7.450581e-09
+   ],
+   "scale": [
+    1.568046,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "guangyunTrail (1)",
+   "parent": 2,
+   "position": [
+    -0.0004999986,
+    0.04290006,
+    0
+   ],
+   "rotation": [
+    0.7071068,
+    -0.7071068,
+    0,
+    7.450581e-09
+   ],
+   "scale": [
+    1.568047,
+    0.4130644,
+    1
+   ]
+  },
+  {
+   "name": "FireTrail",
+   "parent": 2,
+   "position": [
+    -0.001000003,
+    0.02640004,
+    -0.007200003
+   ],
+   "rotation": [
+    0,
+    0,
+    -0.7071068,
+    -0.7071068
+   ],
+   "scale": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "guang",
+   "parent": 2,
+   "position": [
+    -0.0009999997,
+    -0.0008,
+    0
+   ],
+   "rotation": [
+    0,
+    0,
+    -0.7071068,
+    -0.7071068
+   ],
+   "scale": [
+    1,
+    1,
+    1
+   ]
+  }
+ ],
+ "layers": [
+  {
+   "name": "guangyun",
+   "node": 2,
+   "texture": "r6-dfe5da3fbc8690b1",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 1,
+   "duration": 5,
+   "delay": 0,
+   "lifeMin": 0.5,
+   "lifeMax": 0.5,
+   "sizeMin": 0.02,
+   "sizeMax": 0.02,
+   "speedMin": 0,
+   "speedMax": 0,
+   "rotationMin": 89.99999,
+   "rotationMax": 89.99999,
+   "colorMin": [
+    0.2058824,
+    0.8357,
+    1,
+    0.522
+   ],
+   "colorMax": [
+    0.2058824,
+    0.8357,
+    1,
+    0.522
+   ],
+   "size3d": [],
+   "size3dMin": [],
+   "maxParticles": 1,
+   "renderMode": 4,
+   "stretch": 2,
+   "gravity": 0,
+   "rate": 0,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 0,
+     "max": 1
+    }
+   ],
+   "alpha": [
+    {
+     "time": 0,
+     "value": 0
+    },
+    {
+     "time": 0.2147097,
+     "value": 1
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "colors": [
+    {
+     "time": 0,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "time": 1,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   ],
+   "size": [],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    1,
+    1
+   ],
+   "frames": [],
+   "cycles": 1,
+   "angularSpeed": 0,
+   "shape": -1,
+   "radius": 0.01,
+   "coneAngle": 0,
+   "nativeShape": true,
+   "box": [
+    1,
+    1,
+    1
+   ],
+   "randomDirection": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "mesh": {
+    "positions": [
+     -1.2699999809265137,
+     1.2699999809265137,
+     -0.0,
+     1.2699999809265137,
+     1.2699999809265137,
+     -0.0,
+     -1.2699999809265137,
+     -1.2699999809265137,
+     -0.0,
+     1.2699999809265137,
+     -1.2699999809265137,
+     -0.0
+    ],
+    "uv": [
+     0.0,
+     1.0,
+     1.0,
+     1.0,
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "indices": [
+     0,
+     1,
+     2,
+     3,
+     2,
+     1
+    ]
+   },
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1,
+   "sourceBursts": true,
+   "sourceAutoSeed": true,
+   "sourceSeed": 3617629923
+  },
+  {
+   "name": "guangyun (1)",
+   "node": 3,
+   "texture": "r6-dfe5da3fbc8690b1",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 1,
+   "duration": 5,
+   "delay": 0,
+   "lifeMin": 1,
+   "lifeMax": 1,
+   "sizeMin": 0.022,
+   "sizeMax": 0.022,
+   "speedMin": 0,
+   "speedMax": 0,
+   "rotationMin": 89.99999,
+   "rotationMax": 89.99999,
+   "colorMin": [
+    0.4558824,
+    0.8874241,
+    1,
+    1
+   ],
+   "colorMax": [
+    0.4558824,
+    0.8874241,
+    1,
+    1
+   ],
+   "size3d": [],
+   "size3dMin": [],
+   "maxParticles": 1,
+   "renderMode": 4,
+   "stretch": 2,
+   "gravity": 0,
+   "rate": 0,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 0,
+     "max": 1
+    }
+   ],
+   "alpha": [
+    {
+     "time": 0,
+     "value": 0
+    },
+    {
+     "time": 0.2147097,
+     "value": 1
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "colors": [
+    {
+     "time": 0,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "time": 1,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   ],
+   "size": [],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    1,
+    1
+   ],
+   "frames": [],
+   "cycles": 1,
+   "angularSpeed": 0,
+   "shape": -1,
+   "radius": 0.01,
+   "coneAngle": 0,
+   "nativeShape": true,
+   "box": [
+    1,
+    1,
+    1
+   ],
+   "randomDirection": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "mesh": {
+    "positions": [
+     -1.2699999809265137,
+     1.2699999809265137,
+     -0.0,
+     1.2699999809265137,
+     1.2699999809265137,
+     -0.0,
+     -1.2699999809265137,
+     -1.2699999809265137,
+     -0.0,
+     1.2699999809265137,
+     -1.2699999809265137,
+     -0.0
+    ],
+    "uv": [
+     0.0,
+     1.0,
+     1.0,
+     1.0,
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "indices": [
+     0,
+     1,
+     2,
+     3,
+     2,
+     1
+    ]
+   },
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1,
+   "sourceBursts": true,
+   "sourceAutoSeed": true,
+   "sourceSeed": 226516332
+  },
+  {
+   "name": "bao",
+   "node": 4,
+   "texture": "r6-b2970b16eab0ad30",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 1,
+   "duration": 5,
+   "delay": 0.08,
+   "lifeMin": 0.4,
+   "lifeMax": 0.4,
+   "sizeMin": 0.15,
+   "sizeMax": 0.15,
+   "speedMin": 0,
+   "speedMax": 0,
+   "rotationMin": 0,
+   "rotationMax": 0,
+   "colorMin": [
+    0.2941176,
+    0.8539556,
+    1,
+    1
+   ],
+   "colorMax": [
+    0.2941176,
+    0.8539556,
+    1,
+    1
+   ],
+   "size3d": [],
+   "size3dMin": [],
+   "maxParticles": 2,
+   "renderMode": 4,
+   "stretch": 2,
+   "gravity": 0,
+   "rate": 0,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 0,
+     "max": 2
+    }
+   ],
+   "alpha": [
+    {
+     "time": 0,
+     "value": 0
+    },
+    {
+     "time": 0.5000076,
+     "value": 1
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "colors": [
+    {
+     "time": 0,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "time": 1,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   ],
+   "size": [
+    {
+     "time": 0,
+     "value": 0.0505619
+    },
+    {
+     "time": 0.5030181,
+     "value": 0.8978388
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    1,
+    1
+   ],
+   "frames": [],
+   "cycles": 1,
+   "angularSpeed": 0,
+   "shape": -1,
+   "radius": 0.01,
+   "coneAngle": 0,
+   "nativeShape": true,
+   "box": [
+    1,
+    1,
+    1
+   ],
+   "randomDirection": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "mesh": {
+    "positions": [
+     -1.2699999809265137,
+     1.2699999809265137,
+     -0.0,
+     1.2699999809265137,
+     1.2699999809265137,
+     -0.0,
+     -1.2699999809265137,
+     -1.2699999809265137,
+     -0.0,
+     1.2699999809265137,
+     -1.2699999809265137,
+     -0.0
+    ],
+    "uv": [
+     0.0,
+     1.0,
+     1.0,
+     1.0,
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "indices": [
+     0,
+     1,
+     2,
+     3,
+     2,
+     1
+    ]
+   },
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1,
+   "sourceBursts": true,
+   "sourceAutoSeed": true,
+   "sourceSeed": 1885499435
+  },
+  {
+   "name": "guangyunTrail",
+   "node": 5,
+   "texture": "r6-26f2b8f7ff442e2c",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 1,
+   "duration": 5,
+   "delay": 0,
+   "lifeMin": 0.5,
+   "lifeMax": 0.5,
+   "sizeMin": 0.015,
+   "sizeMax": 0.015,
+   "speedMin": 0,
+   "speedMax": 0,
+   "rotationMin": 180,
+   "rotationMax": 180,
+   "colorMin": [
+    0.2058824,
+    0.8357,
+    1,
+    0.522
+   ],
+   "colorMax": [
+    0.2058824,
+    0.8357,
+    1,
+    0.522
+   ],
+   "size3d": [],
+   "size3dMin": [],
+   "maxParticles": 1,
+   "renderMode": 4,
+   "stretch": 2,
+   "gravity": 0,
+   "rate": 0,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 0,
+     "max": 1
+    }
+   ],
+   "alpha": [
+    {
+     "time": 0,
+     "value": 0
+    },
+    {
+     "time": 0.2147097,
+     "value": 1
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "colors": [
+    {
+     "time": 0,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "time": 1,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   ],
+   "size": [],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    1,
+    1
+   ],
+   "frames": [],
+   "cycles": 1,
+   "angularSpeed": 0,
+   "shape": -1,
+   "radius": 0.01,
+   "coneAngle": 0,
+   "nativeShape": true,
+   "box": [
+    1,
+    1,
+    1
+   ],
+   "randomDirection": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "mesh": {
+    "positions": [
+     -1.2699999809265137,
+     1.2699999809265137,
+     -0.0,
+     1.2699999809265137,
+     1.2699999809265137,
+     -0.0,
+     -1.2699999809265137,
+     -1.2699999809265137,
+     -0.0,
+     1.2699999809265137,
+     -1.2699999809265137,
+     -0.0
+    ],
+    "uv": [
+     0.0,
+     1.0,
+     1.0,
+     1.0,
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "indices": [
+     0,
+     1,
+     2,
+     3,
+     2,
+     1
+    ]
+   },
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1,
+   "sourceBursts": true,
+   "sourceAutoSeed": true,
+   "sourceSeed": 2999153034
+  },
+  {
+   "name": "guangyunTrail (1)",
+   "node": 6,
+   "texture": "r6-26f2b8f7ff442e2c",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 1,
+   "duration": 5,
+   "delay": 0,
+   "lifeMin": 0.5,
+   "lifeMax": 0.5,
+   "sizeMin": 0.015,
+   "sizeMax": 0.015,
+   "speedMin": 0,
+   "speedMax": 0,
+   "rotationMin": 180,
+   "rotationMax": 180,
+   "colorMin": [
+    0.5514706,
+    0.9072009,
+    1,
+    1
+   ],
+   "colorMax": [
+    0.5514706,
+    0.9072009,
+    1,
+    1
+   ],
+   "size3d": [],
+   "size3dMin": [],
+   "maxParticles": 1,
+   "renderMode": 4,
+   "stretch": 2,
+   "gravity": 0,
+   "rate": 0,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 0,
+     "max": 1
+    }
+   ],
+   "alpha": [
+    {
+     "time": 0,
+     "value": 0
+    },
+    {
+     "time": 0.2147097,
+     "value": 1
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "colors": [
+    {
+     "time": 0,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "time": 1,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   ],
+   "size": [],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    1,
+    1
+   ],
+   "frames": [],
+   "cycles": 1,
+   "angularSpeed": 0,
+   "shape": -1,
+   "radius": 0.01,
+   "coneAngle": 0,
+   "nativeShape": true,
+   "box": [
+    1,
+    1,
+    1
+   ],
+   "randomDirection": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "mesh": {
+    "positions": [
+     -1.2699999809265137,
+     1.2699999809265137,
+     -0.0,
+     1.2699999809265137,
+     1.2699999809265137,
+     -0.0,
+     -1.2699999809265137,
+     -1.2699999809265137,
+     -0.0,
+     1.2699999809265137,
+     -1.2699999809265137,
+     -0.0
+    ],
+    "uv": [
+     0.0,
+     1.0,
+     1.0,
+     1.0,
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "indices": [
+     0,
+     1,
+     2,
+     3,
+     2,
+     1
+    ]
+   },
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1,
+   "sourceBursts": true,
+   "sourceAutoSeed": true,
+   "sourceSeed": 1619414671
+  },
+  {
+   "name": "FireTrail",
+   "node": 7,
+   "texture": "r6-fec7089977c3757a",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 1,
+   "duration": 0.2,
+   "delay": 0,
+   "lifeMin": 0.3,
+   "lifeMax": 0.4,
+   "sizeMin": 0.03,
+   "sizeMax": 0.04,
+   "speedMin": 0,
+   "speedMax": 0,
+   "rotationMin": 0,
+   "rotationMax": 360,
+   "colorMin": [
+    0.25,
+    0.7517244,
+    1,
+    1
+   ],
+   "colorMax": [
+    0.25,
+    0.7517244,
+    1,
+    1
+   ],
+   "size3d": [],
+   "size3dMin": [],
+   "maxParticles": 200,
+   "renderMode": 1,
+   "stretch": 2,
+   "gravity": 0,
+   "rate": 100,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 0,
+     "max": 0
+    }
+   ],
+   "alpha": [],
+   "colors": [],
+   "size": [
+    {
+     "time": 0,
+     "value": 0.2470551
+    },
+    {
+     "time": 0.1455722,
+     "value": 0.7300689
+    },
+    {
+     "time": 0.5794141,
+     "value": 1
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    4,
+    4
+   ],
+   "frames": [],
+   "cycles": 1,
+   "angularSpeed": 0,
+   "shape": 2,
+   "radius": 0.015,
+   "coneAngle": 0,
+   "nativeShape": true,
+   "box": [
+    1,
+    1,
+    1
+   ],
+   "randomDirection": 0,
+   "velocityMin": [
+    0.01,
+    0,
+    0
+   ],
+   "velocityMax": [
+    0.3,
+    0,
+    0.2
+   ],
+   "randomFrame": true,
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1,
+   "velocitySpace": 0,
+   "velocityType": 2,
+   "frameMin": 0.0,
+   "frameMax": 0.9999,
+   "startFrame": 0.0,
+   "sourceBursts": true,
+   "sourceAutoSeed": true,
+   "sourceSeed": 1877087438
+  },
+  {
+   "name": "guang",
+   "node": 8,
+   "texture": "r6-891615adf6699699",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "blendDst": 1,
+   "duration": 5,
+   "delay": 0.3,
+   "lifeMin": 1,
+   "lifeMax": 1,
+   "sizeMin": 0.05,
+   "sizeMax": 0.05,
+   "speedMin": 0,
+   "speedMax": 0,
+   "rotationMin": 89.99999,
+   "rotationMax": 89.99999,
+   "colorMin": [
+    0.2058824,
+    0.8357,
+    1,
+    1
+   ],
+   "colorMax": [
+    0.2058824,
+    0.8357,
+    1,
+    1
+   ],
+   "size3d": [],
+   "size3dMin": [],
+   "maxParticles": 1,
+   "renderMode": 4,
+   "stretch": 2,
+   "gravity": 0,
+   "rate": 0,
+   "bursts": [
+    {
+     "time": 0,
+     "min": 0,
+     "max": 1
+    }
+   ],
+   "alpha": [
+    {
+     "time": 0,
+     "value": 0
+    },
+    {
+     "time": 0.2147097,
+     "value": 1
+    },
+    {
+     "time": 1,
+     "value": 0
+    }
+   ],
+   "colors": [
+    {
+     "time": 0,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "time": 1,
+     "color": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   ],
+   "size": [],
+   "sizeX": [],
+   "sizeY": [],
+   "sizeZ": [],
+   "tiles": [
+    1,
+    1
+   ],
+   "frames": [],
+   "cycles": 1,
+   "angularSpeed": 0,
+   "shape": -1,
+   "radius": 0.01,
+   "coneAngle": 0,
+   "nativeShape": true,
+   "box": [
+    1,
+    1,
+    1
+   ],
+   "randomDirection": 0,
+   "velocityMin": [],
+   "velocityMax": [],
+   "randomFrame": false,
+   "mesh": {
+    "positions": [
+     -1.2699999809265137,
+     1.2699999809265137,
+     -0.0,
+     1.2699999809265137,
+     1.2699999809265137,
+     -0.0,
+     -1.2699999809265137,
+     -1.2699999809265137,
+     -0.0,
+     1.2699999809265137,
+     -1.2699999809265137,
+     -0.0
+    ],
+    "uv": [
+     0.0,
+     1.0,
+     1.0,
+     1.0,
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "indices": [
+     0,
+     1,
+     2,
+     3,
+     2,
+     1
+    ]
+   },
+   "blendSrc": 5,
+   "scaleMode": 1,
+   "simulationSpace": 1,
+   "sourceBursts": true,
+   "sourceAutoSeed": true,
+   "sourceSeed": 207802929
+  }
+ ]
+}

@@ -93,7 +93,9 @@ for(const n of [3,4]){
   for(let i=0;i<11;i++){time.advance(1000);ok(room.dispatch({op:'peek',token:guest}));}
   assert.equal(room.seen[guest],seen);assert.equal(JSON.stringify(room.s),before);
   time.advance(999);room.tick();assert(!room.s.players[seat].auto);
-  time.advance(1);assert.equal(time.now-lastOnline,12000);room.tick();assert.equal(room.s.players[seat].autoReason,'offline');
+  time.advance(1);assert.equal(time.now-lastOnline,12000);room.tick();assert(!room.s.players[seat].auto);assert(!room.view(0).players[seat].online);
+  time.advance(107999);heartbeat(room,humans.filter(t=>t!==guest));room.tick();assert(!room.s.players[seat].auto);
+  time.advance(1);room.tick();assert.equal(room.s.players[seat].autoReason,'offline');
   heartbeat(room,[guest]);assert(room.s.players[seat].auto,'state heartbeat must not silently recover control');
   const saved=JSON.stringify(room.s),restored=new Room('session-test-host',null,saved),original=structuredClone(restored.s.players[seat]);
   const wrong=send(restored,guest,'resume',{room:'a-different-room'});assert(!wrong.ok);assert.equal(JSON.stringify(restored.s),saved);
@@ -195,7 +197,7 @@ test('unlimited mode never starts idle takeover while connected, but still repla
  for(let i=0;i<61;i++){heartbeat(room,humans);room.tick();assert(room.s.players.every(p=>!p.auto));time.advance(10000);}
  assert.equal(room.view(0).idleSeconds,0);
  const seat=room.s.players.findIndex(p=>p.token===humans[1]);
- ok(send(room,humans[1],'presence',{present:false}));assert.equal(room.s.players[seat].autoReason,'offline');assert(room.view(0).players[seat].takeoverMask);
+ ok(send(room,humans[1],'presence',{present:false}));assert(!room.s.players[seat].auto);time.advance(119999);heartbeat(room,humans.filter(t=>t!==humans[1]));room.presence(time.now);assert(!room.s.players[seat].auto);time.advance(1);room.presence(time.now);assert.equal(room.s.players[seat].autoReason,'offline');assert(room.view(0).players[seat].takeoverMask);
 }));
 
 test('real input on another seat restarts its own idle clock, polling alone does not',()=>clock(time=>{
@@ -213,7 +215,7 @@ test('real input on another seat restarts its own idle clock, polling alone does
 test('manual takeover is unmasked, disconnect masks it, and resume restores the same seat',()=>clock(time=>{
  const {room,humans}=game(3),token=humans[1],seat=room.s.players.findIndex(p=>p.token===token);
  ok(send(room,token,'autoPlay',{enabled:true}));assert(!room.view(0).players[seat].takeoverMask);
- time.advance(12000);heartbeat(room,humans.filter(t=>t!==token));room.presence(time.now);
+ time.advance(120000);heartbeat(room,humans.filter(t=>t!==token));room.presence(time.now);
  assert.equal(room.s.players[seat].autoReason,'offline');assert(room.view(0).players[seat].takeoverMask);
  const hand=room.s.players[seat].hand;ok(send(room,token,'resume',{room:room.s.audioRoom}));
  assert(!room.view(0).players[seat].takeoverMask);assert(!room.s.players[seat].auto);assert.equal(room.s.players[seat].hand,hand);
@@ -235,7 +237,7 @@ test('whole-match and unlimited options survive a saved-room restart',()=>{
 test('unattended ordinary settlement advances after its grace period, including older saved results',()=>clock(time=>{
  const {room,host}=game(3,1);ok(send(room,host,'presence',{present:false}));room.abort('九种九牌');
  const hand=room.s.handSeq;delete room.s.resultFinishedAt;room.tick();assert.equal(room.s.phase,'result');
- time.advance(11999);room.tick();assert.equal(room.s.phase,'result');
+ time.advance(119999);room.tick();assert.equal(room.s.phase,'result');
  time.advance(1);room.tick();assert.equal(room.s.phase,'play');assert.equal(room.s.handSeq,hand+1);physicalTiles(room);
 }));
 

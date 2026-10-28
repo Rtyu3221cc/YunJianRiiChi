@@ -52,7 +52,7 @@ namespace YunJian.Riichi.Editor {
             }
             foreach(string id in new[]{"music-riichi","music-8bit"}){
                 var view=Fixture(4,0,"riichi-stick","hand-cat");view.players[0].wardrobe.music=id;view.phase="play";client.DesignPreviewSessionTable(view);client.ValidationIntro.Reset();yield return Wait();yield return Wait();
-                Check(GetComponent<PlaylistAudio>().RiichiPlaying,"Selected riichi music starts: "+id);view.phase="result";yield return Wait();Check(!GetComponent<PlaylistAudio>().RiichiPlaying,"Riichi music stops at result");
+                Check(GetComponent<PlaylistAudio>().RiichiPlaying,"Selected riichi music starts: "+id);view.phase="result";yield return Wait();yield return new WaitForSecondsRealtime(RoundMusicEnvelope.Duration+.05f);Check(!GetComponent<PlaylistAudio>().RiichiPlaying,"Riichi music stops after the win fade");
             }
         }
     }

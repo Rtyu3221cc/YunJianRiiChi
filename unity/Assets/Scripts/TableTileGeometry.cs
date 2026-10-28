@@ -10,7 +10,7 @@ namespace YunJian.Riichi
         public const float SourceUnits = .33f / SourceWidth;
         public const float Width = .35f;
         public readonly float Length, Depth, Pitch, SidewaysPitch, RiverRowPitch;
-        public float NorthPitch => Width + .001f;
+        public float NorthPitch => MeldSlot(false);
         public float GroupGap => Width * .45f;
         public float StackRise => Depth + .005f;
         public Vector3 FlatSize => new Vector3(Width, Depth, Length);

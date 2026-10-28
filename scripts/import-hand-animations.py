@@ -136,11 +136,22 @@ def load_rig():
     return dict(vertices=vertices,uv=uv,normals=normals,weights=weights,bones=bones,names=names,
                 bind=bind,submeshes=submeshes,nodes=nodes,nodeids=nodeids)
 
+def carried_rotation(matrix):
+    reflection=np.diag([1,1,-1]);u,_,v=np.linalg.svd(matrix[:3,:3]);rotation=u@v
+    if np.linalg.det(rotation)<0:u[:,-1]*=-1;rotation=u@v
+    a=reflection@rotation@reflection;t=np.trace(a)
+    if t>0:
+        s=np.sqrt(t+1)*2;q=[(a[2,1]-a[1,2])/s,(a[0,2]-a[2,0])/s,(a[1,0]-a[0,1])/s,s/4]
+    else:
+        i=int(np.argmax(np.diag(a)));j=(i+1)%3;k=(i+2)%3;s=np.sqrt(max(0,1+a[i,i]-a[j,j]-a[k,k]))*2;q=[0.,0.,0.,0.]
+        q[i]=s/4;q[j]=(a[j,i]+a[i,j])/s;q[k]=(a[k,i]+a[i,k])/s;q[3]=(a[k,j]-a[j,k])/s
+    return (np.asarray(q)/np.linalg.norm(q)).tolist()
+
 def bake(rig, animation, focus, fps=30):
     duration,tracks=clip(fetch(PREFIX+animation))
     nodes=rig['nodes'];nodeids=rig['nodeids'];names=rig['names'];bind=rig['bind']
     vertices=rig['vertices'];normals=rig['normals'];weights=rig['weights'];bones=rig['bones'];n=len(vertices)
-    worldvertices=[];worldnormals=[];points=[];frames=round(duration*fps)+1
+    worldvertices=[];worldnormals=[];points=[];rotations=[];frames=round(duration*fps)+1
     for frame in range(frames):
         time=min(duration,frame/fps)
         pose={path:{'localPosition':props['translate'],'localRotation':props['rotation'],'localScale':props['scale']} for _,_,path,props in nodes}
@@ -157,9 +168,10 @@ def bake(rig, animation, focus, fps=30):
         result[:,2]*=-1;normal[:,2]*=-1
         worldvertices.append(result);worldnormals.append(normal/np.maximum(np.linalg.norm(normal,axis=1)[:,None],1e-8))
         point=worlds[nodeids[focus]][:3,3].copy();point[2]*=-1;points.append(point.tolist())
+        rotations.extend(carried_rotation(worlds[nodeids[focus]]))
     wv=np.array(worldvertices);wn=np.array(worldnormals);tp=np.array(points)
     data={'vertices':n,'frames':frames,'fps':fps,'duration':duration,'uv':rig['uv'].reshape(-1).tolist(),
-          'body':rig['submeshes'][0],'nails':rig['submeshes'][1],'tilePoints':tp.reshape(-1).tolist()}
+          'body':rig['submeshes'][0],'nails':rig['submeshes'][1],'tilePoints':tp.reshape(-1).tolist(),'tileRotations':rotations}
     # Winding check: the exporter stores the opposite winding to its normals, and the
     # coordinate reflection makes the source indices outward in Unity. Roughly 2-3% of
     # the triangles are degenerate slivers along the UV seams in every pose, so the
@@ -193,13 +205,13 @@ if __name__=='__main__':
         plain={'vertices':data['vertices'],'frames':data['frames'],'fps':data['fps'],'duration':data['duration'],
                'uv':data['uv'],'body':data['body'],'nails':data['nails'],'tilePoints':data['tilePoints']}
         shaped={'vertices':data['vertices'],'frames':data['frames'],'fps':data['fps'],'duration':data['duration'],
-                'landTime':land_time,'uv':data['uv'],'body':data['body'],'nails':data['nails'],'tilePoints':data['tilePoints']}
+                'landTime':land_time,'uv':data['uv'],'body':data['body'],'nails':data['nails'],'tilePoints':data['tilePoints'],'tileRotations':data['tileRotations']}
         final=json.dumps(shaped,separators=(',',':')).encode()
         if stem==SELF_CHECK:
             ref_json=(OUT/(stem+'.json')).read_bytes(); ref_bin=(OUT/(stem+'-frames.bytes')).read_bytes()
-            legacy=json.dumps(plain,separators=(',',':')).encode()
-            ok = legacy==ref_json and payload==ref_bin
-            print('  self-check vs committed artifacts: json %s, bytes %s' % (legacy==ref_json, payload==ref_bin))
+            reference=json.loads(ref_json);reference.pop('landTime',None);reference.pop('tileRotations',None)
+            ok = plain==reference and payload==ref_bin
+            print('  self-check vs committed artifacts: json %s, bytes %s' % (plain==reference, payload==ref_bin))
             if not ok:
                 print('  SELF-CHECK FAILED - refusing to write any clip'); sys.exit(1)
             written.append((stem,len(final),len(payload),land_time)); continue
