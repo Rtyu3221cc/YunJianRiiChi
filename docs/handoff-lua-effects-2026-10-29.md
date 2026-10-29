@@ -5,10 +5,10 @@
 ## 工作区与本轮状态
 
 - 维护目录：`D:\MyWorkSpace\YunJianRiichi_Codex`。新对话可能默认落在聊天目录，所有命令显式指定工作区。
-- GitHub：`https://github.com/Rtyu3221cc/YunJianRiiChi`，`main`。发布副本为 `.publish/YunJianRiiChi`，本轮同步前提交为 `150606ce53eebd013ef5655276c2cdfd8299a3ad`。
+- GitHub：`https://github.com/Rtyu3221cc/YunJianRiiChi`，`main`。发布副本为 `.publish/YunJianRiiChi`。R20 已推送为 `aed3a85e601043eff063a018d1c40f7cd64ea6f7`；后续 R21 推送结果见 `build/source-push-r21/published.json`。
 - 维护目录原本就有大量修改和未跟踪文件。不要 reset、clean、批量删除或一键提交全部目录；代码推送在发布副本内完成。
-- 当前源码包含 R16 静态装扮扩展、R18 原版拖动／手内换序、R19 Fate 和牌特效，以及 R20 自摸手放大。R20 将自摸手缩放从 `0.36` 调到 `0.48`，线性增大约三分之一；牌本身尺寸、落点和动作时序保留。其他动作仍使用原有缩放。
-- 最近本地 APK 仍为 `dist/yunjian-riichi-unity-0.6.17.apk`，504,198,384 字节，SHA-256 `c3057d3547409ffe9ff0005447ee042de3bbdc57099750353f90b6d778114976`。它包含 R16／R17，**不包含 R18、R19、R20**。本轮只同步源码、资源、文档和预览，不构建新 APK、不建立新版 Release。
+- 当前源码包含 R16 静态装扮扩展、R18 原版拖动／手内换序、R19 Fate 和牌特效、R20 自摸手放大，以及 R21 拍桌／收手分离。自摸手缩放保持 `0.48`；牌在拍桌时固定，不再继续跟随骨架后半段二次下落。声音、手部寿命和释放后的特效按各手型源配置分别处理，已移除自摸固定 `1.14`／`1.16` 秒等待。其他动作仍使用原有缩放。
+- 最近本地 APK 仍为 `dist/yunjian-riichi-unity-0.6.17.apk`，504,198,384 字节，SHA-256 `c3057d3547409ffe9ff0005447ee042de3bbdc57099750353f90b6d778114976`。它包含 R16／R17，**不包含 R18～R21**。本轮只同步源码、资源、文档和预览，不构建新 APK、不建立新版 Release。
 - `ProjectSetup.ReleaseVersion`／`ReleaseCode` 仍为 `0.6.17`／`65`；这不是新构建完成的证据。下一次用户要求安装包时，再按新版本构建并验证。
 
 相关预览：
@@ -17,6 +17,15 @@
 - R18：`dist/previews/2026-10-29-original-input-r18/index.html`，25.4 秒拖动／换序／手切／摸切视频。
 - R19：`dist/previews/2026-10-29-fate-r19/index.html`，27.6 秒 Fate 荣和、自摸视频。
 - R20：`dist/previews/2026-10-29-tsumo-r20/index.html`，自摸手调整前后及完整特效衔接；准确检查数、帧数见同目录 `verification.json`。
+- R21：`dist/previews/2026-10-29-tsumo-r21/index.html`，修复拍桌前低位停顿与二次下落，包含慢放及正常速度。以此作为最新自摸动作预览。
+
+### R21 自摸时序补充
+
+旧实现虽使用原始挂点数据，却把挂点回到骨架静止姿态的尾段也当成携牌下落，并将接管固定到 1.14 秒。新实现从原版 Zimo 的声效标记之后寻找首个进入原始牌厚范围的采样帧，按该帧校准触桌落点；女性手约 0.5 秒、男性／橘猫约 0.533 秒，到点切换成真实桌面牌，手继续收回。牌尺寸、最终位置及旋转不变。
+
+`SourcePlaybackContracts.HandAction` 读取对应手型的 Zimo 配置；`TableEffects` 分离触桌、声效、寿命和特效开始时间。声音遵循配置 cue；手使用配置 lifetime；特效仍在 release 后 0.1 秒触发，不能为了提前落牌而一并提前特效。自摸不再把旧 `landTime` 当成实际拍桌点。
+
+四人桌四方向 × 女性／男性／橘猫手，另加两组三人桌，共 14 组、268 项运行断言通过。验证包含触桌前连续下降、切换零跳变、后续牌不动、轮询不二次下落、手继续收回、落牌声只响一次和完整 Fate／役种流程。新视频为 16.6 秒、498 帧、30 FPS，全部视频和音轨解码通过。细节见 `docs/自摸落牌时序修正-r21-2026-10-29.md`。
 
 ## Lua 已经怎样解码
 
@@ -175,14 +184,14 @@ Unity: D:/Unity/Lib/6000.6.4f1/Editor/Unity.exe
 
 UnityPy 位于 `tools/asset-inspector`，旧包 fallback `2022.3.62f2c1`；luaparse 位于 `tools/lua-parser-local/luaparse.js`；视频解码／编码 PyAV 位于 `tools/video-inspector`。这些本地工具目录不上传，克隆到其他机器时需要单独恢复依赖。
 
-`python scripts/prepare-original-input-stage.py --batch fate-r19` 或 `--batch tsumo-r20` 创建精简临时工程：只有不可变媒体使用硬链接，文本和 meta 为副本，排除可选的 `CharacterPacks/Source`。不要在这些硬链接媒体上编辑像素。录制直接向 PyAV 管道发送 RGBA，没有逐帧 PNG 大缓存。运行入口见 `FateR19Preview.Study/Movie`、`TsumoHandR20Preview.Run`；环境变量分别为 `YUNJIAN_R19_REPO`／`YUNJIAN_R20_REPO`。
+`python scripts/prepare-original-input-stage.py --batch fate-r19`、`--batch tsumo-r20` 或 `--batch tsumo-r21` 创建精简临时工程：只有不可变媒体使用硬链接，文本和 meta 为副本，排除可选的 `CharacterPacks/Source`。不要在这些硬链接媒体上编辑像素。录制直接向 PyAV 管道发送 RGBA，没有逐帧 PNG 大缓存。运行入口见 `FateR19Preview.Study/Movie`、`TsumoHandR20Preview.Run`、`TsumoContactR21Preview.Run`；环境变量分别为 `YUNJIAN_R19_REPO`／`YUNJIAN_R20_REPO`／`YUNJIAN_R21_REPO`。
 
-Unity 在沙箱内会遇到许可／UPM IPC 问题，当前有效方式是本机进程以 Hidden 窗口启动，单次一个 Unity，读取日志并核对退出码。完整角色源素材在精简工程中被排除，不能将对应角色图片单元测试宣称重新通过。
+Unity 在沙箱内会遇到许可／UPM IPC 问题，当前有效方式是本机进程以 Hidden 窗口启动，单次一个 Unity，读取日志并核对退出码。R21 首次导入遇到系统内存不足，仅关闭该批次残留后以 `-job-worker-count 2 -assetImportWorkerCount 1 -force-d3d11` 复用缓存成功完成；低内存时优先限制导入并发。完整角色源素材在精简工程中被排除，不能将对应角色图片单元测试宣称重新通过。
 
 此前已在用户授权下清理项目生成的 C／D 盘缓存约 46 GiB；记录在 `build/cleanup-20261028/`，没有清除原 APK、源码、原始分析、最终 APK、预览视频或签名密钥。主工程 `unity/Library` 保持不存在；录制完成后核对最终资源已回存维护目录，再按精确路径清理本批次 `build/<batch>/stage`。不要笼统删除整个 build／tools／dist 或共享 SDK。
 
-推送只在 `.publish/YunJianRiiChi` 按清单同步，先检查远端 main、变更范围、凭据扫描和测试。不得提交原 APK、解码明文、SDK、密钥、运行快照或临时 Library；完整源码 ZIP 只留本地、不上传。当前用户只要求本轮源码 push，不代表要求上传旧 APK 充当新构建。推送后核对远端 ref 与关键文件内容，不回下载发布附件重复验证。发布结果以 `build/source-push-r20/published.json` 和实际远端提交为准。
+推送只在 `.publish/YunJianRiiChi` 按清单同步，先检查远端 main、变更范围、凭据扫描和测试。不得提交原 APK、解码明文、SDK、密钥、运行快照或临时 Library；完整源码 ZIP 只留本地、不上传。当前用户只要求本轮源码 push，不代表要求上传旧 APK 充当新构建。推送后核对远端 ref 与关键文件内容，不回下载发布附件重复验证。发布结果以相应 `build/source-push-r20/published.json`／`build/source-push-r21/published.json` 和实际远端提交为准。
 
 ## 下一对话可直接粘贴
 
-> 在 D:\MyWorkSpace\YunJianRiichi_Codex 继续云间日麻。先读 docs/handoff-lua-effects-2026-10-29.md 和 docs/effects-restoration-index-r20.json，再沿用已恢复 Lua 与固定原生资源逐批还原剩余全部和牌／立直／鸣牌特效，包含原生清单尚未映射的条目。相关 Lua 已定向解码成功，不要重新从“Lua 加密读不了”开始。先核对 DesktopMgr 的新旧流程和每个特殊 ID，完整导入材质、网格、粒子与编译动画，提供实际游戏视频；没有资源或尚未支持的组件要保留缺口。保留 Fate、原版拖动、R20 自摸手 0.48、满贯才切入横幅、镰刀竖劈等已确认结果。磁盘要节省，使用精简临时工程，不自动打 APK，不把导入成功当作与原版画面完全一致。
+> 在 D:\MyWorkSpace\YunJianRiichi_Codex 继续云间日麻。先读 docs/handoff-lua-effects-2026-10-29.md 和 docs/effects-restoration-index-r20.json，再沿用已恢复 Lua 与固定原生资源逐批还原剩余全部和牌／立直／鸣牌特效，包含原生清单尚未映射的条目。相关 Lua 已定向解码成功，不要重新从“Lua 加密读不了”开始。先核对 DesktopMgr 的新旧流程和每个特殊 ID，完整导入材质、网格、粒子与编译动画，提供实际游戏视频；没有资源或尚未支持的组件要保留缺口。保留 Fate、原版拖动、自摸手 0.48 与 R21 拍桌即落稳／收手分离、满贯才切入横幅、镰刀竖劈等已确认结果。磁盘要节省，使用精简临时工程，不自动打 APK，不把导入成功当作与原版画面完全一致。

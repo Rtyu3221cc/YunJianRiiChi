@@ -2,7 +2,7 @@
 from pathlib import Path
 import argparse,hashlib,json,os,shutil,uuid
 R=Path(__file__).resolve().parent.parent
-p=argparse.ArgumentParser();p.add_argument('--batch',choices=['original-input-r18','fate-r19','tsumo-r20'],default='original-input-r18');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--batch',choices=['original-input-r18','fate-r19','tsumo-r20','tsumo-r21'],default='original-input-r18');a=p.parse_args()
 STAGE=R/'build'/a.batch/'stage';U=STAGE/'unity';U.mkdir(parents=True,exist_ok=True)
 immutable={'.png','.jpg','.jpeg','.mp3','.wav','.ttf','.bytes'}
 rows=[]

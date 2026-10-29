@@ -48,6 +48,7 @@ namespace YunJian.Riichi
         public bool WinActionStarted=>IsWin(current) || call?.kind=="ron";
         readonly List<NorthPetals> northEffects = new List<NorthPetals>();
         bool handedOff,impactQueued;
+        SourceHandAction tsumoPlan;float tsumoContact;bool tsumoSoundPlayed;
         public int SpawnedNorthEffects { get; private set; }
         float impactStarted;
         NativeParticleEffect nativeImpact;
@@ -88,11 +89,11 @@ namespace YunJian.Riichi
         bool SidewaysDeclaration=>IsDeclaration&&DeclarationPlan.action=="LiQiPai";
         WardrobeItem DeclarationHand=>WardrobeRuntime.Item(table.Client.State,current.seat,"hand");
         float DeclarationSpeed=>DeclarationPlan?.speed??1;
-        float ClipLength => current?.kind=="kan"?.45f:(PlainDiscard || clip == null || clip.data.duration <= 0) ? .62f : clip.data.duration/DeclarationSpeed;
+        float ClipLength => current?.kind=="kan"?.45f:(PlainDiscard || clip == null || clip.data.duration <= 0) ? .62f : clip.data.duration/(tsumoPlan?.speed??DeclarationSpeed);
         // The carried object stops moving when the real river tile / stick / meld takes over.
-        float SourceHandoff => DeclarationPlan?.release??(current?.kind=="kan"?.35f:(PlainDiscard || clip == null || clip.data.landTime <= 0) ? .40f : clip.data.landTime/DeclarationSpeed);
-        float PlayLength => current?.kind=="tsumo"?1.16f:DeclarationPlan?.lifetime??ClipLength;
-        float Handoff => current?.kind=="tsumo"?1.14f:SourceHandoff;
+        float SourceHandoff => current?.kind=="tsumo"?tsumoContact:DeclarationPlan?.release??(current?.kind=="kan"?.35f:(PlainDiscard || clip == null || clip.data.landTime <= 0) ? .40f : clip.data.landTime/DeclarationSpeed);
+        float PlayLength => tsumoPlan?.lifetime??DeclarationPlan?.lifetime??ClipLength;
+        float Handoff => SourceHandoff;
         float RiichiEffectAt {
             get {if(DeclarationPlan!=null)return DeclarationPlan.cue;return Mathf.Max(0,Handoff-.32f);}
         }
@@ -178,6 +179,7 @@ namespace YunJian.Riichi
         void LoadClip(string stem)
         {
             var choice=WardrobeRuntime.Item(table.Client.State,current.seat,"hand");
+            tsumoPlan=current.kind=="tsumo"?SourcePlaybackContracts.HandAction(choice,"Zimo"):null;
             if(IsDeclaration)stem=DeclarationPlan.action=="Dapai"?NormalClip:RiichiClip;
             stem=WardrobeRuntime.Motion(choice,stem);
             activeMotionResource=stem;
@@ -225,12 +227,13 @@ namespace YunJian.Riichi
         void Begin(PublicSound item)
         {
             if(item.kind=="discard" && item.riverIndex>0 && table.FindDiscard(item.seat,item.tile,item.riverIndex)==null)return;
-            current=item; started=Time.unscaledTime; handedOff=false;impactQueued=false;riichiVisualAttempted=false; PlayedEvents++;
+            current=item; started=Time.unscaledTime; handedOff=false;impactQueued=false;riichiVisualAttempted=false;tsumoSoundPlayed=false; PlayedEvents++;
 #if UNITY_EDITOR
             validationHandBegan=ValidationTime;
 #endif
             string stem=ClipFor(item); if (stem==null) return;
             LoadClip(stem);
+            if(tsumoPlan!=null)tsumoContact=FindTsumoContact();
             bool stick=item.kind=="riichi-stick";
             motion = new GameObject("Original hand seat "+item.seat).transform;
             if(overlay==null) {overlay=new GameObject("Discard hand overlay camera").AddComponent<Camera>();overlay.transform.SetParent(table.Camera.transform,false);}
@@ -312,6 +315,21 @@ namespace YunJian.Riichi
             var q=clip.data.tileRotations;float f=Mathf.Clamp01(elapsed/ClipLength)*(clip.data.frames-1);int a=(int)f,b=Mathf.Min(a+1,clip.data.frames-1);
             return Quaternion.Slerp(new Quaternion(q[a*4],q[a*4+1],q[a*4+2],q[a*4+3]),new Quaternion(q[b*4],q[b*4+1],q[b*4+2],q[b*4+3]),f-a);
         }
+        float FindTsumoContact(){
+            // Zimo's node continues toward its rig-rest pose after the slap.
+            // Stop carrying the card at the first post-cue frame within one tile
+            // thickness of rest, then let only the hand finish that return.
+            var data=clip.data;int last=data.frames-1;
+            int begin=Mathf.Clamp(Mathf.CeilToInt(tsumoPlan.cue/ClipLength*last),0,last);
+            int end=Mathf.Clamp(Mathf.CeilToInt(tsumoPlan.release/ClipLength*last),begin,last);
+            float tableHeight=data.tilePoints[last*3+1]+TableTileGeometry.SourceDepth;
+            for(int i=begin;i<=end;i++)if(data.tilePoints[i*3+1]<=tableHeight)return i*ClipLength/last;
+            return Mathf.Min(tsumoPlan.release,ClipLength);
+        }
+        void PlayLandingSound(){
+            if(current.kind=="tsumo"){if(tsumoSoundPlayed)return;tsumoSoundPlayed=true;}
+            GetComponent<GameAudio>()?.Landing(current.kind);
+        }
         void PositionCarriedTile(Vector3 point)
         {
             var position=motion.TransformPoint(point)-Vector3.up*.12f;
@@ -327,7 +345,7 @@ namespace YunJian.Riichi
         {
             if (handedOff) return; handedOff=true;
             riichiVisual?.Settle(current);
-            GetComponent<GameAudio>()?.Landing(current.kind);
+            PlayLandingSound();
             if (animatedTile!=null) animatedTile.gameObject.SetActive(false);
             if (targetTile!=null) targetTile.gameObject.SetActive(true);
             if (targetStick!=null) targetStick.gameObject.SetActive(true);
@@ -339,7 +357,9 @@ namespace YunJian.Riichi
                 // The supplied sakura burst belongs to pointer clicks, not North.
             }
             else if (current.kind=="tsumo") {
-                float at=ValidationFreeze?Handoff:started+Handoff;
+                // ViewPlayer_Other._Hule releases the rig at keypoint[2], then
+                // calls ShowHuleEffect after .1s. Contact must not start it early.
+                float at=ValidationFreeze?tsumoPlan.release:started+tsumoPlan.release;
 #if UNITY_EDITOR
                 if(ValidationFreeze&&ValidationSequentialClock)at+=validationHandBegan;
 #endif
@@ -453,6 +473,7 @@ namespace YunJian.Riichi
             StartQueued();
             UpdateImpact(); UpdateNorthEffects(); UpdateWinEffects();
             float elapsed=HandAge;
+            if(current?.kind=="tsumo"&&elapsed>=tsumoPlan.cue&&!tsumoSoundPlayed)PlayLandingSound();
             if (current!=null && elapsed >= PlayLength) { CompleteHandoff(); Finish(); }
             if(cutInWin!=null && CallAge>=1.05f){
                 var view=GetComponent<RiichiClient>().State;bool banner=WinCutIn.Eligible(view,cutInWin.seat);
@@ -479,12 +500,11 @@ namespace YunJian.Riichi
             float frame=Mathf.Clamp01(elapsed/ClipLength)*(clip.data.frames-1);int a=(int)frame,b=Mathf.Min(a+1,clip.data.frames-1);float t=frame-a;
             for(int i=0;i<clip.data.vertices;i++) {clip.frameVertices[i]=Vector3.Lerp(clip.vertices[a][i],clip.vertices[b][i],t);clip.frameNormals[i]=Vector3.Lerp(clip.normals[a][i],clip.normals[b][i],t);}
             mesh.vertices=clip.frameVertices;mesh.normals=clip.frameNormals;mesh.RecalculateBounds();
-            if(animatedTile!=null)
+            if(animatedTile!=null&&(!handedOff||current.kind!="tsumo"))
             {
                 // A frame can cross the handoff time. Clamp every carried object
                 // to the contact keyframe before revealing its deposited counterpart.
                 Vector3 p=TilePoint(Mathf.Min(elapsed,SourceHandoff));
-                if(current.kind=="tsumo"){motion.GetComponentInChildren<MeshRenderer>().enabled=elapsed<clip.data.duration;}
                 PositionCarriedTile(p);
                 // A declared riichi tile lies sideways in the river, matching CreateTable.
                 bool stick=current.kind=="riichi-stick";
@@ -527,6 +547,9 @@ namespace YunJian.Riichi
         public string ValidationKind => current==null?null:current.kind;
         public float ValidationPlayLength => PlayLength;
         public float ValidationHandoff => Handoff;
+        public float ValidationTsumoCue=>tsumoPlan?.cue??0;
+        public float ValidationTsumoRelease=>tsumoPlan?.release??0;
+        public bool ValidationHandedOff=>handedOff;
         public float ValidationRiichiCue => RiichiEffectAt;
         public Transform ValidationAnimatedTile => animatedTile;
         public Transform ValidationImpact => impact;

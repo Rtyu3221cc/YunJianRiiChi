@@ -2,9 +2,9 @@
 
 ## 当前源码进展 · Lua 解码与 Fate 特效（2026-10-29）
 
-已定向恢复并校验 15 份原版 Lua。源码包含静态装扮扩展、按原版流程的拖动出牌／手内换序、满贯以上才显示和牌横幅，以及 Fate 联动「咒层界・恶念祝祭」的原始粒子、模型和材质动画。自摸放牌手适度放大约三分之一，保留牌的大小、落点与时序。
+已定向恢复并校验 15 份原版 Lua。源码包含静态装扮扩展、按原版流程的拖动出牌／手内换序、满贯以上才显示和牌横幅，以及 Fate 联动「咒层界・恶念祝祭」的原始粒子、模型和材质动画。自摸手保持适度放大约三分之一；牌在拍桌时即落稳，随后只让手收回，音效和特效按各手型的原版配置分别触发。
 
-[最新对话交接：Lua 解码与后续全部特效](docs/handoff-lua-effects-2026-10-29.md) · [特效候选与完成状态索引](docs/effects-restoration-index-r20.json) · [拖动流程视频](dist/previews/2026-10-29-original-input-r18/index.html) · [Fate 特效视频](dist/previews/2026-10-29-fate-r19/index.html) · [自摸手调整前后](dist/previews/2026-10-29-tsumo-r20/index.html)
+[最新对话交接：Lua 解码与后续全部特效](docs/handoff-lua-effects-2026-10-29.md) · [特效候选与完成状态索引](docs/effects-restoration-index-r20.json) · [拖动流程视频](dist/previews/2026-10-29-original-input-r18/index.html) · [Fate 特效视频](dist/previews/2026-10-29-fate-r19/index.html) · [自摸拍桌与收手修正](dist/previews/2026-10-29-tsumo-r21/index.html)
 
 此部分是源码与 Unity 实际预览更新，本轮未生成 APK、未建立新版 Release。最新本地测试包 0.6.17 尚不含后续 Lua 输入移植、Fate 与自摸手调整；下方 0.6.16 为既有公开发布。原资源参数还原、原版录像对照与 Android 实机验证分别记录，不将编辑器预览等同于手机验证。
 

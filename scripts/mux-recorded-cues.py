@@ -9,7 +9,10 @@ def mux(source_video,recording,target):
     for cue in recording['cues']:
         assert cue['cue'] and '/'not in cue['cue'] and '\\'not in cue['cue']
         pieces=[];resample=av.AudioResampler(format='fltp',layout='stereo',rate=rate)
-        with av.open(str(R/'unity/Assets/Resources/Majsoul/Audio'/(cue['cue']+'.mp3')))as source:
+        clips=[R/'unity/Assets/Resources/Majsoul/Audio'/(cue['cue']+ext)for ext in ['.mp3','.wav','.ogg']]
+        source_clip=next((p for p in clips if p.is_file()),None)
+        if source_clip is None:raise FileNotFoundError('Missing bundled audio cue '+cue['cue'])
+        with av.open(str(source_clip))as source:
             for frame in source.decode(audio=0):pieces.extend(f.to_ndarray()for f in resample.resample(frame))
             pieces.extend(f.to_ndarray()for f in resample.resample(None))
         signal=np.concatenate(pieces,axis=1);start=round(cue['time']*rate);count=min(signal.shape[1],audio.shape[1]-start);audio[:,start:start+count]+=signal[:,:count]*.85
