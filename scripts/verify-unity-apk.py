@@ -14,6 +14,8 @@ signature = import_module('verify-apk-signature').verify_signature(apk)
 with ZipFile(apk) as archive:
     assert archive.testzip() is None
     names = archive.namelist()
+    shared_shader_data=b''.join(archive.read(n) for n in sorted(names) if 'globalgamemanagers.assets' in n)
+    shared_shaders=None
     metadata=archive.read('assets/bin/Data/Managed/Metadata/global-metadata.dat')
     for cls in (b'WardrobeCatalog',b'WardrobeLoadout',b'WardrobeRuntime',b'WardrobeModelVisual',b'WardrobeMotionPreview',b'WardrobeResponseIndicator'):
         assert cls in metadata,'Missing wardrobe runtime: '+repr(cls)
@@ -21,6 +23,19 @@ with ZipFile(apk) as archive:
         if source.suffix not in ('.png','.json','.bytes','.mp3','.shader'):continue
         guid=re.search(r'guid: (\w+)',Path(str(source)+'.meta').read_text('utf8'))[1]
         entry='assets/bin/Data/'+guid
+        if source.suffix=='.shader' and entry not in names:
+            # Always Included shaders are stored in the shared Shader assets,
+            # rather than necessarily retaining an individual GUID file.
+            if shared_shaders is None:
+                sys.path.insert(0,str(root/'tools/asset-inspector'));import UnityPy
+                shared_shaders={}
+                for obj in UnityPy.load(shared_shader_data).objects:
+                    if obj.type.name=='Shader':
+                        data=obj.read_typetree();shared_shaders[data['m_ParsedForm']['m_Name']]=data
+            shader_name=re.search(r'Shader\s+"([^"]+)"',source.read_text('utf8'))[1]
+            assert shader_name in shared_shaders,'Missing compiled wardrobe shader: '+shader_name
+            assert shared_shaders[shader_name].get('platforms'),'No compiled Android shader programs: '+shader_name
+            continue
         assert entry in names,'Missing wardrobe resource: '+source.name
         if source.suffix in ('.json','.bytes'):assert source.read_bytes() in archive.read(entry),'Stale wardrobe resource: '+source.name
         if source.suffix=='.mp3':assert entry+'.resource' in names,'Missing wardrobe music stream: '+source.name

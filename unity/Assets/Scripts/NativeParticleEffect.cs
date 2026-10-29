@@ -20,7 +20,19 @@ namespace YunJian.Riichi {
   public Quaternion SurfaceMountRotation {get;private set;}=Quaternion.identity;
   NativeEffectMotion[] motions;
   Transform authoredSpace;NativeEffectCamera sourceCamera;
-  void SyncSpace(){if(authoredSpace!=null){authoredSpace.position=transform.position/TableTileGeometry.SourceUnits;authoredSpace.rotation=transform.rotation;authoredSpace.localScale=Vector3.one;var parent=transform.lossyScale;authoredSpace.localScale=new Vector3(1/parent.x,1/parent.y,1/parent.z);}}
+  bool luaNewWin;Transform rootMove,rootRot,rootAni,rootAniTsumo,rootStatic;
+  public bool UsesNewHuleBinding=>luaNewWin;
+  void SyncSpace(){if(authoredSpace!=null){authoredSpace.position=luaNewWin?Vector3.zero:transform.position/TableTileGeometry.SourceUnits;authoredSpace.rotation=luaNewWin?Quaternion.Euler(0,180,0):transform.rotation;authoredSpace.localScale=Vector3.one;var parent=transform.lossyScale;authoredSpace.localScale=new Vector3(1/parent.x,1/parent.y,1/parent.z);}}
+  // DesktopMgr.setNewHuleEffect: scene origin and winning-tile position are
+  // independent. The port's table faces the opposite world-Z direction.
+  void BindLuaRoots(){
+   if(!luaNewWin)return;var point=transform.position/TableTileGeometry.SourceUnits;
+   if(rootMove!=null)rootMove.position=point;
+   if(rootRot!=null){rootRot.position=point;rootRot.rotation=transform.rotation;}
+   if(rootAni!=null)rootAni.position=point;
+   if(rootAniTsumo!=null)rootAniTsumo.position=point;
+   if(rootStatic!=null)rootStatic.position=Vector3.zero;
+  }
   public void SetOverlay(bool enabled){
    foreach(var renderer in GetComponentsInChildren<ParticleSystemRenderer>(true)){
     var materials=renderer.sharedMaterials;
@@ -39,11 +51,13 @@ namespace YunJian.Riichi {
   public void Initialize(string name,uint seed=507,bool useApkShader=false,bool normalizeSurfaceOrigin=false){
    var prefab=Resources.Load<GameObject>("Majsoul/NativeReview/"+name);if(prefab==null)throw new InvalidOperationException("Missing imported APK prefab "+name);
    var clone=Instantiate(prefab,transform,false);particles=clone.GetComponentsInChildren<ParticleSystem>(true);
-   var table=GetComponentInParent<TableRenderer>();if(name.StartsWith("EffectsR11/")&&table!=null){authoredSpace=clone.transform;SyncSpace();foreach(var child in clone.GetComponentsInChildren<Transform>(true))child.gameObject.layer=NativeEffectCamera.Layer;sourceCamera=NativeEffectCamera.Ensure(table);sourceCamera.Register(this);}
+   luaNewWin=name.StartsWith("FateR19/");
+   var table=GetComponentInParent<TableRenderer>();if((name.StartsWith("EffectsR11/")||luaNewWin)&&table!=null){authoredSpace=clone.transform;SyncSpace();foreach(var child in clone.GetComponentsInChildren<Transform>(true))child.gameObject.layer=NativeEffectCamera.Layer;sourceCamera=NativeEffectCamera.Ensure(table);sourceCamera.Register(this);}
    motions=clone.GetComponentsInChildren<NativeEffectMotion>(true);
    // Imported prefabs have a neutral wrapper and an authored root. Some roots
    // already face the cloth; others retain the tile's original XY model plane.
    var authored=clone.transform.childCount>0?clone.transform.GetChild(0):clone.transform;
+   if(luaNewWin){rootMove=authored.Find("root_move");rootRot=authored.Find("root_rot");rootAni=authored.Find("root_ani");rootAniTsumo=authored.Find("root_ani_zimo");rootStatic=authored.Find("root_static");BindLuaRoots();}
    if(normalizeSurfaceOrigin)authored.localPosition=Vector3.zero;
    SurfaceMountRotation=Quaternion.FromToRotation(authored.localRotation*Vector3.forward,Vector3.up);
    for(int i=0;i<particles.Length;i++){particles[i].Stop(false,ParticleSystemStopBehavior.StopEmittingAndClear);particles[i].useAutoRandomSeed=false;particles[i].randomSeed=seed+(uint)i+1;}
@@ -56,19 +70,19 @@ namespace YunJian.Riichi {
    }
 #endif
    var descriptor=Resources.Load<TextAsset>("Majsoul/NativeReview/"+name+"-source");
-   if(descriptor!=null&&!name.StartsWith("EffectsR11/")){var sourceUv=JsonUtility.FromJson<NativeEffectSource>(descriptor.text);foreach(var node in sourceUv.nodes.Where(n=>n.uvScroll!=null&&n.uvScroll.Length==2&&(n.uvScroll[0]!=0||n.uvScroll[1]!=0))){
+   if(descriptor!=null&&!name.StartsWith("EffectsR11/")&&!luaNewWin){var sourceUv=JsonUtility.FromJson<NativeEffectSource>(descriptor.text);foreach(var node in sourceUv.nodes.Where(n=>n.uvScroll!=null&&n.uvScroll.Length==2&&(n.uvScroll[0]!=0||n.uvScroll[1]!=0))){
     var renderer=clone.GetComponentsInChildren<ParticleSystemRenderer>(true).FirstOrDefault(r=>r.name==node.name);if(renderer==null)continue;var material=new Material(renderer.sharedMaterial);copies.Add(material);renderer.sharedMaterial=material;scrolls.Add(new Scroll{material=material,origin=material.mainTextureOffset,speed=new Vector2(node.uvScroll[0],node.uvScroll[1])});
    }}
    Sample(-1);
   }
   public void Sample(float age){
-   SyncSpace();
+   SyncSpace();BindLuaRoots();
    foreach(var scroll in scrolls)scroll.material.mainTextureOffset=scroll.origin+scroll.speed*Mathf.Max(0,age);
    if(age<0){foreach(var p in particles)p.Clear(false);previous=-1;return;}
    if(motions!=null&&motions.Length>0){
-    if(previous<0||age<previous){foreach(var motion in motions)motion.Sample(0);foreach(var p in particles){p.Stop(false,ParticleSystemStopBehavior.StopEmittingAndClear);p.Simulate(0,false,true,false);}previous=0;}
-    while(previous<age-.000001f){float next=Mathf.Min(age,previous+1f/60);foreach(var motion in motions)motion.Sample(next);foreach(var p in particles)p.Simulate(next-previous,false,false,false);previous=next;}
-    foreach(var motion in motions)motion.Sample(age);return;
+    if(previous<0||age<previous){foreach(var motion in motions)motion.Sample(0);BindLuaRoots();foreach(var p in particles){p.Stop(false,ParticleSystemStopBehavior.StopEmittingAndClear);p.Simulate(0,false,true,false);}previous=0;}
+    while(previous<age-.000001f){float next=Mathf.Min(age,previous+1f/60);foreach(var motion in motions)motion.Sample(next);BindLuaRoots();foreach(var p in particles)p.Simulate(next-previous,false,false,false);previous=next;}
+    foreach(var motion in motions)motion.Sample(age);BindLuaRoots();return;
    }
    bool restart=previous<0 || age<previous;float dt=restart?age:age-previous;
    foreach(var p in particles)p.Simulate(dt,false,restart,false);previous=age;

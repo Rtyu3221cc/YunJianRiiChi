@@ -21,6 +21,14 @@ namespace YunJian.Riichi {
   readonly Dictionary<string,AnimationCurve> curves=new Dictionary<string,AnimationCurve>();
   GameObject canvas;CanvasGroup portrait;Camera camera;RenderTexture image;float began;
   public const float Duration=1.2f;
+  // Use the winner's limit, never points including honba, sticks or dealer bonus.
+  public static bool Eligible(WinDetail detail){
+   var score=detail?.score;
+   if(score!=null)return score.damanguan>0 || score.fanshu>=5 || (score.fanshu==4&&score.fu>=40) || (score.fanshu==3&&score.fu>=70);
+   var limit=detail?.limit;
+   return limit=="满贯"||limit=="跳满"||limit=="倍满"||limit=="三倍满"||limit=="累计役满"||(!string.IsNullOrEmpty(limit)&&limit.Contains("役满"));
+  }
+  public static bool Eligible(RoomView view,int seat)=>Eligible(System.Array.Find(view?.result?.details??new WinDetail[0],d=>d.seat==seat));
   public bool Freeze;public float FrozenAge;
   public float Age=>Freeze?FrozenAge:Time.unscaledTime-began;
   public bool Active=>canvas!=null && Age<Duration;

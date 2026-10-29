@@ -12,7 +12,7 @@ namespace YunJian.Riichi {
         [Serializable] class Node {public string name;public int parent;public float[] position,rotation,scale;public MeshData mesh;public MaterialData[] materials;}
         [Serializable] class Model {public Node[] nodes;}
         [Serializable] class HandData {public int vertices,frames,fps;public float duration;public float[] uv;public int[] body,nails;}
-        GameObject root;Camera camera;RenderTexture image;string key;NativeParticleEffect native;WinTileEffect effect;OriginalTiles previewTiles;HandData hand;Mesh handMesh;float[] handFrames;Vector3[] vertices,normals;
+        GameObject root;Camera camera;RenderTexture image;string key;NativeParticleEffect native;WinTileEffect effect;OriginalTiles previewTiles;WardrobeModelVisual modelVisual;HandData hand;Mesh handMesh;float[] handFrames;Vector3[] vertices,normals;
         readonly List<Material> materials=new List<Material>();readonly List<Mesh> meshes=new List<Mesh>();
         Material composite;
         public Texture Image=>image;
@@ -32,7 +32,7 @@ namespace YunJian.Riichi {
             if(item==null)return;if(key!=item.id){Build(item);key=item.id;}
             float sample=age%Mathf.Max(1,item.duration);
             if(hand!=null)HandFrame(Mathf.Min(hand.duration,Mathf.Max(0,sample-.15f)));
-            effect?.Sample(sample);native?.Sample(sample);
+            effect?.Sample(sample);native?.Sample(sample);modelVisual?.Sample(sample);
             var active=RenderTexture.active;camera.Render();RenderTexture.active=active;
         }
         void Build(WardrobeItem item){
@@ -40,7 +40,7 @@ namespace YunJian.Riichi {
             camera=new GameObject("Decoration model camera").AddComponent<Camera>();camera.transform.SetParent(root.transform,false);camera.enabled=false;camera.orthographic=true;camera.nearClipPlane=.001f;camera.farClipPlane=200;camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=Color.clear;camera.cullingMask=1<<27;camera.allowMSAA=true;
             image=new RenderTexture(1024,1024,24,RenderTextureFormat.ARGB32){name="Original animated decoration",antiAliasing=4};image.Create();camera.targetTexture=image;
             if(item.standardStick)BuildStandardStick();
-            else if(!string.IsNullOrEmpty(item.model))BuildModel(item);
+            else if(item.HasModel)BuildModel(item);
             else if(!string.IsNullOrEmpty(item.motion))BuildHand(item);
             else{
                 var go=new GameObject(item.id);go.transform.SetParent(root.transform,false);
@@ -63,7 +63,12 @@ namespace YunJian.Riichi {
                     }
                 }
             }
-            foreach(var renderer in root.GetComponentsInChildren<ParticleSystemRenderer>(true)){var material=new Material(renderer.sharedMaterial){shader=Resources.Load<Shader>("Majsoul/UiParticleBuffer")};materials.Add(material);renderer.sharedMaterial=material;}
+            foreach(var renderer in root.GetComponentsInChildren<ParticleSystemRenderer>(true)){
+                var material=new Material(renderer.sharedMaterial);
+                if(!string.IsNullOrEmpty(item.modelPrefab)){material.SetFloat("_PreviewBuffer",1);material.SetFloat("_RenderSrcBlend",1);}
+                else material.shader=Resources.Load<Shader>("Majsoul/UiParticleBuffer");
+                materials.Add(material);renderer.sharedMaterial=material;
+            }
             foreach(var t in root.GetComponentsInChildren<Transform>(true))t.gameObject.layer=27;
         }
         Material Material(string path,bool transparent){var m=new Material(Shader.Find(transparent?"Unlit/Transparent":"Unlit/Texture")){mainTexture=WardrobeCatalog.Texture(path)};materials.Add(m);return m;}
@@ -72,6 +77,9 @@ namespace YunJian.Riichi {
             camera.transform.position=root.transform.position+new Vector3(.3f,.7f,-1);camera.transform.LookAt(root.transform);camera.orthographicSize=.55f;
         }
         void BuildModel(WardrobeItem item){
+            if(!string.IsNullOrEmpty(item.modelPrefab)){
+                var go=new GameObject("Original stick preview");go.transform.SetParent(root.transform,false);modelVisual=go.AddComponent<WardrobeModelVisual>();modelVisual.Initialize(item,.74f);camera.transform.position=root.transform.position+new Vector3(.3f,.7f,-1);camera.transform.LookAt(root.transform.position+Vector3.up*.04f);camera.orthographicSize=.55f;return;
+            }
             var data=JsonUtility.FromJson<Model>(Resources.Load<TextAsset>(item.model).text);var nodes=new Transform[data.nodes.Length];
             for(int i=0;i<nodes.Length;i++){
                 var n=data.nodes[i];var t=nodes[i]=new GameObject(n.name).transform;t.SetParent(n.parent<0?root.transform:nodes[n.parent],false);t.localPosition=V(n.position);t.localRotation=new Quaternion(n.rotation[0],n.rotation[1],n.rotation[2],n.rotation[3]);t.localScale=V(n.scale);
@@ -88,7 +96,7 @@ namespace YunJian.Riichi {
         void HandFrame(float time){
             int f=Mathf.Clamp(Mathf.RoundToInt(time*hand.fps),0,hand.frames-1);for(int i=0;i<vertices.Length;i++){int p=(f*2*hand.vertices+i)*3,n=p+hand.vertices*3;vertices[i]=new Vector3(handFrames[p],handFrames[p+1],handFrames[p+2]);normals[i]=new Vector3(handFrames[n],handFrames[n+1],handFrames[n+2]);}handMesh.vertices=vertices;handMesh.normals=normals;handMesh.RecalculateBounds();
         }
-        public void Hide(){if(root!=null){root.SetActive(false);UnityEngine.Object.Destroy(root);}previewTiles?.Dispose();previewTiles=null;foreach(var m in materials)UnityEngine.Object.Destroy(m);foreach(var m in meshes)UnityEngine.Object.Destroy(m);materials.Clear();meshes.Clear();if(image!=null){image.Release();UnityEngine.Object.Destroy(image);}root=null;camera=null;image=null;key=null;effect=null;native=null;hand=null;handMesh=null;handFrames=null;vertices=null;normals=null;}
+        public void Hide(){if(root!=null){root.SetActive(false);UnityEngine.Object.Destroy(root);}previewTiles?.Dispose();previewTiles=null;foreach(var m in materials)UnityEngine.Object.Destroy(m);foreach(var m in meshes)UnityEngine.Object.Destroy(m);materials.Clear();meshes.Clear();if(image!=null){image.Release();UnityEngine.Object.Destroy(image);}root=null;camera=null;image=null;key=null;effect=null;native=null;modelVisual=null;hand=null;handMesh=null;handFrames=null;vertices=null;normals=null;}
         public void Dispose(){Hide();if(composite!=null)UnityEngine.Object.Destroy(composite);composite=null;}
     }
 }

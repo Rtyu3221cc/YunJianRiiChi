@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-29",
+  "sourceRevision": "recovered input Lua / R18 port",
+  "width": 1746,
+  "height": 810,
+  "fps": 30,
+  "frames": 762,
+  "durationSeconds": 25.4,
+  "silent": true,
+  "actualUnityRendering": true,
+  "newApk": false,
+  "uploaded": false,
+  "inputRuntimeChecks": 135,
+  "offlineHandOrderChecks": 1468,
+  "nodeTests": 185,
+  "videoChecks": 15,
+  "allVideoFramesDecoded": true,
+  "sourceMapping": {
+    "dragThreshold": "viewplayer_me.lua:1338-1342",
+    "handBoundary": "viewplayer_me.lua:57-69,1166-1211",
+    "release": "viewplayer_me.lua:1308-1329",
+    "manualOrdering": "viewplayer_me.lua:1356-1378",
+    "selectedLiftAndCollider": "handpaiplane.lua:51-64",
+    "slotSlide": "handpaiplane.lua:461-489"
+  },
+  "mediaSHA256": "a8f8ba748f66984f61142cfef5114e72756f319edcb909059ae86843bd9321de",
+  "limitations": [
+    "Not an Android recording or device test.",
+    "Video captions and touch ring are recording annotations.",
+    "Full-character editor unit validation is not reported as passing in the reduced project; its optional illustration assets are intentionally excluded."
+  ]
+}

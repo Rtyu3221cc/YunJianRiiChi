@@ -34,12 +34,17 @@ namespace YunJian.Riichi
         float sampledAge;
         bool looping;
         NativeParticleEffect native;
+        NativeWinningTileQueue winningTileQueue;
+        public PublicSound WinningEvent {get;set;}
+        public void BindWinningTile(Transform tile){if(!UsesNewHuleBinding)return;if(winningTileQueue==null)winningTileQueue=gameObject.AddComponent<NativeWinningTileQueue>();winningTileQueue.Bind(tile);}
         int nativeView;
         Quaternion nativeWorldRotation=Quaternion.identity;
         public bool HasFixedWorldRotation {get;private set;}
         public Quaternion TileMountRotation {get;private set;}
         public Quaternion TableRotation(Quaternion tileRotation)=>HasFixedWorldRotation?nativeWorldRotation:tileRotation*TileMountRotation;
         public bool UsesNativeSource=>native!=null;
+        public bool UsesNewHuleBinding=>native!=null&&native.UsesNewHuleBinding;
+        public bool FixedSourceLifetime=>UsesNewHuleBinding;
         public float StartedAt {get;private set;}
         public bool SoundTriggered {get;set;}
         public int ParticleCount=>systems.Sum(p=>p.particleCount);
@@ -110,6 +115,7 @@ namespace YunJian.Riichi
                     PlaybackDuration=Mathf.Max(PlaybackDuration,main.startDelay.constantMax+last+main.startLifetime.constantMax);
                 }
                 MeshLayerCount=native.GetComponentsInChildren<ParticleSystemRenderer>(true).Count(r=>r.renderMode==ParticleSystemRenderMode.Mesh)+native.GetComponentsInChildren<MeshRenderer>(true).Length;
+                if(native.UsesNewHuleBinding)PlaybackDuration=6; // ShowHuleEffect destroys its prefab after 2+4 seconds.
                 Sample(-1);return;
             }
             var plane=new Mesh{name="Native horizontal billboard",vertices=new[]{new Vector3(-.5f,0,-.5f),new Vector3(-.5f,0,.5f),new Vector3(.5f,0,.5f),new Vector3(.5f,0,-.5f)},uv=new[]{Vector2.zero,Vector2.up,Vector2.one,Vector2.right},triangles=new[]{0,1,2,0,2,3}};
@@ -183,6 +189,7 @@ namespace YunJian.Riichi
             Sample(-1);
         }
         public void Sample(float age){
+            winningTileQueue?.Sample(age);
             if(native!=null){native.Sample(age);return;}
             if(age<0){foreach(var p in systems)p.Clear();sampledAge=0;return;}
             age=Mathf.Max(.0001f,age);bool restart=sampledAge==0 || age<sampledAge;foreach(var p in systems)p.Simulate(restart?age:age-sampledAge,false,restart,false);sampledAge=age;

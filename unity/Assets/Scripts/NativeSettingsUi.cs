@@ -10,6 +10,7 @@ namespace YunJian.Riichi
     {
         readonly PlaylistAudio audio;
         readonly NativeScroll scroll = new NativeScroll();
+        readonly NativeScroll musicScroll = new NativeScroll();
         public int Tab;
         public string MusicGroup;
         bool dropdown,botDropdown;
@@ -28,7 +29,7 @@ namespace YunJian.Riichi
             return Hit(r);
         }
         void CloseMusic() { MusicGroup = null; audio.ApplyPlaylist(); }
-        public void OpenMusic(string group) { MusicGroup = group; musicOpened = Time.unscaledTime; }
+        public void OpenMusic(string group) { MusicGroup = group; musicOpened = Time.unscaledTime; musicScroll.Offset=0; }
         public void Draw(Action close) {
 #if UNITY_EDITOR
             ReviewTargets.Clear();
@@ -131,7 +132,12 @@ namespace YunJian.Riichi
             if(SettingsHit(new Rect(toggle.x+242,toggle.y,242,64),"preference-live-on"))AppPreferences.SetDynamicOutfits(true);
             Row(165,"电脑形象");var button=new Rect(607,179,484,64);Slice("official-config-setting_entry_btn",button,35,1,35,1);Label(AppPreferences.RandomBotAppearance?"从已下载雀士中随机":"一姬的初始形象",button.center.x-14,button.center.y,30,Text,0,TextAnchor.MiddleCenter,440,64);Image("official-config-setting_dropdown_tip",new Rect(1049,204,24,13));
             if(SettingsHit(button,"preference-bot-dropdown"))botDropdown=!botDropdown;
-            Label("电脑形象设置对之后新增的电脑生效",36,290,27,Muted);Label("关闭动态服饰后，大厅和宿舍显示静态立绘",36,337,27,Muted);
+            Row(260,"手牌理牌");var sort=new Rect(607,274,484,64);Slice("official-config-setting_entry_btn",sort,35,1,35,1);bool automatic=AppPreferences.AutoSortHand;
+            Slice("official-config-setting_entry_btn",new Rect(sort.x+(automatic?242:0),sort.y,242,64),35,1,35,1);
+            Label("手动",sort.x+121,sort.center.y,30,automatic?Muted:Text,0,TextAnchor.MiddleCenter,242,64);Label("自动",sort.x+363,sort.center.y,30,automatic?Text:Muted,0,TextAnchor.MiddleCenter,242,64);
+            if(SettingsHit(new Rect(sort.x,sort.y,242,64),"preference-hand-manual"))AppPreferences.SetAutoSortHand(false);
+            if(SettingsHit(new Rect(sort.x+242,sort.y,242,64),"preference-hand-auto"))AppPreferences.SetAutoSortHand(true);
+            Label("电脑形象设置对之后新增的电脑生效",36,385,27,Muted);Label("关闭动态服饰后，大厅和宿舍显示静态立绘",36,432,27,Muted);Label("手动理牌时，可在手牌区域内拖动换序",36,479,27,Muted);
             if(botDropdown){const float x=600,y=211.5f;Slice("official-config-setting_dropdown_base",new Rect(x,y,496,232),50,50,50,50);
                 for(int i=0;i<2;i++){bool random=i==0;float row=y+31+i*83;if(AppPreferences.RandomBotAppearance==random)Slice("official-config-setting_dropdown_tip_selected",new Rect(x+8,row+18,480,60),1,1,1,1);Label(random?"从已下载雀士中随机":"一姬的初始形象",x+247.5f,row+46,30,Text,0,TextAnchor.MiddleCenter,470,70);
                     if(SettingsHit(new Rect(x+8,row,480,83),random?"preference-bot-random":"preference-bot-ichihime")){AppPreferences.SetRandomBotAppearance(random);botDropdown=false;}}
@@ -146,17 +152,21 @@ namespace YunJian.Riichi
             Image("native-pop2_close", new Rect(ox + 1618, oy + 43, 44, 44));
             if (Hit(new Rect(ox + 1600, oy + 25, 80, 80))) { CloseMusic(); GUI.matrix = matrix; GUI.color = color; return; }
             var tracks = audio.Tracks.Where(t => t.group == MusicGroup).ToArray();
+            var listView=new Rect(ox+357,oy+121,1210,690);float listHeight=Mathf.CeilToInt(tracks.Length/2f)*110;
+            musicScroll.Input(listView,listHeight);GUI.BeginGroup(listView);
             for (int i = 0; i < tracks.Length; i++) {
-                var t = tracks[i]; float x = ox + 357 + i % 2 * 612, y = oy + 121 + i / 2 * 110;
+                var t = tracks[i]; float x = i % 2 * 612, y = i / 2 * 110-musicScroll.Offset;
+                if(y+99<0||y>listView.height)continue;
                 bool selected = audio.Selected(MusicGroup, t.id), playing = audio.AuditionId == t.id && audio.AuditionPlaying;
                 Slice("official-config-setting_voice_entry_base", new Rect(x, y, 592, 99), 12, 12, 12, 12);
                 Image("checkbox2", new Rect(x + 25, y + 26, 48, 47)); if (selected) Image("check_green", new Rect(x + 25, y + 26, 48, 48));
                 Label(t.name, x + 92, y + 48, 36, selected ? new Color(.553f, 1, .145f) : Muted);
-                if (Hit(new Rect(x + 4, y + 6, 450, 90))) audio.Toggle(MusicGroup, t.id);
+                if (SettingsHit(new Rect(x + 4, y + 6, 450, 90),"music-select-"+t.id)) audio.Toggle(MusicGroup, t.id);
                 if (playing) for (int j = 0; j < 4; j++) { float h = 12 + Mathf.Pow(Mathf.Sin(Time.unscaledTime * 9 + j * 1.7f), 2) * 19; Box(new Rect(x + 458 + j * 8, y + 48 - h / 2, 4, h), new Color(.65f, .68f, .78f)); }
                 Image("official-config-setting_song_" + (playing ? "pause" : "play") + "_btn", new Rect(x + 503, y + 17, 70, 70));
-                if (Hit(new Rect(x + 495, y + 8, 90, 90))) audio.Audition(t.id);
+                if (SettingsHit(new Rect(x + 495, y + 8, 90, 90),"music-audition-"+t.id)) audio.Audition(t.id);
             }
+            GUI.EndGroup();Scrollbar(listView.xMax+10,listView.y,listView.height,musicScroll.Offset,listHeight);
             float bx = ox + 1339, by = oy + 836; bool random = audio.RandomOrder(MusicGroup);
             Slice("official-config-setting_song_btn", new Rect(bx - 5, by - 6, 233, 65), 20, 1, 20, 1);
             Image("official-config-setting_song_" + (random ? "random" : "cycle") + "_icon", new Rect(bx + 16, by + 13, 28, random ? 24 : 26));
@@ -165,6 +175,7 @@ namespace YunJian.Riichi
             GUI.matrix = matrix; GUI.color = color;
         }
 #if UNITY_EDITOR
+        public float ReviewMusicOffset {get=>musicScroll.Offset;set=>musicScroll.Offset=value;}
         public void ValidationScrollToMusic() { scroll.Offset = 245; opened = musicOpened = Time.unscaledTime - 1; }
         public void ValidationDropdown(bool value) { Tab = 1; dropdown = value; opened = Time.unscaledTime - 1; }
 #endif

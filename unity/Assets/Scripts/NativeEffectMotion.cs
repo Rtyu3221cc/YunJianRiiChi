@@ -53,6 +53,7 @@ namespace YunJian.Riichi {
                     else if(curve.kind==1){int x=a*4,y=b*4;target.localRotation=Quaternion.SlerpUnclamped(new Quaternion(curve.values[x],curve.values[x+1],curve.values[x+2],curve.values[x+3]),new Quaternion(curve.values[y],curve.values[y+1],curve.values[y+2],curve.values[y+3]),blend);}
                     else if(curve.kind==2)target.localScale=new Vector3(v(0),v(1),v(2));
                     else if(curve.kind==6)target.gameObject.SetActive(v(0)>.5f);
+                    else if(curve.kind==7)renderers[curve.node].enabled=v(0)>.5f;
                     else {
                         var block=blocks[curve.node][curve.material];
                         if(curve.kind==3)block.SetColor(curve.property,new Color(v(0),v(1),v(2),v(3)));
@@ -61,7 +62,10 @@ namespace YunJian.Riichi {
                     }
                 }
             }
-            for(int i=0;i<renderers.Length;i++)if(renderers[i]!=null)for(int m=0;m<blocks[i].Length;m++)if(!blocks[i][m].isEmpty)renderers[i].SetPropertyBlock(blocks[i][m],m);
+            for(int i=0;i<renderers.Length;i++)if(renderers[i]!=null)for(int m=0;m<blocks[i].Length;m++){
+                if(renderers[i].sharedMaterials[m].HasProperty("_EffectAge"))blocks[i][m].SetFloat("_EffectAge",age);
+                if(!blocks[i][m].isEmpty)renderers[i].SetPropertyBlock(blocks[i][m],m);
+            }
         }
     }
 }

@@ -374,133 +374,149 @@
     {
       "id": "cloth-chigua",
       "category": "cloth",
-      "name": "桌布－吃瓜",
-      "icon": "Majsoul/Wardrobe/Icons/cloth-chigua",
+      "name": "桌布-吃瓜",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305046",
       "builtin": true,
-      "texture": "Majsoul/Table/cloth-chigua",
-      "preview": "Majsoul/Wardrobe/Preview/cloth-chigua"
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_chigua",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_chigua",
+      "sourceItemId": 305046
     },
     {
       "id": "cloth-default",
       "category": "cloth",
-      "name": "桌布－深蓝",
-      "icon": "Majsoul/Wardrobe/Icons/cloth-default",
+      "name": "藏青桌布",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305044",
       "builtin": true,
-      "texture": "Majsoul/Table/cloth",
-      "preview": "Majsoul/Wardrobe/Preview/cloth-default"
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_default",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_default",
+      "sourceItemId": 305044
     },
     {
       "id": "mjp_default",
       "category": "tileBack",
-      "name": "默认牌背",
-      "icon": "Majsoul/Wardrobe/Icons/mjp_default",
+      "name": "橘黄牌背",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305045",
       "builtin": true,
-      "hand": "Majsoul/Wardrobe/Items/mjp_default/hand",
-      "table": "Majsoul/Wardrobe/Items/mjp_default/table",
-      "preview": "Majsoul/Wardrobe/Items/mjp_default/preview"
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_default/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_default/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_default/preview",
+      "sourceItemId": 305045
     },
     {
       "id": "mjp_2308event",
       "category": "tileBack",
-      "name": "牌背－猫咪",
-      "icon": "Majsoul/Wardrobe/Icons/mjp_2308event",
+      "name": "牌背-猫咪雀圣",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305717",
       "builtin": true,
-      "hand": "Majsoul/Wardrobe/Items/mjp_2308event/hand",
-      "table": "Majsoul/Wardrobe/Items/mjp_2308event/table",
-      "preview": "Majsoul/Wardrobe/Items/mjp_2308event/preview"
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_2308event/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_2308event/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_2308event/preview",
+      "sourceItemId": 305717
     },
     {
       "id": "mjpface_default",
       "category": "tileFace",
-      "name": "默认牌面",
-      "icon": "Majsoul/Wardrobe/Icons/mjpface_default",
+      "name": "牌面-默认",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305725",
       "builtin": true,
-      "hand": "Majsoul/Wardrobe/Items/mjpface_default/hand",
-      "table": "Majsoul/Wardrobe/Items/mjpface_default/table",
-      "preview": "Majsoul/Wardrobe/Items/mjpface_default/preview"
+      "hand": "Majsoul/Wardrobe/R16/Items/mjpface_default/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjpface_default/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjpface_default/preview",
+      "sourceItemId": 305725
     },
     {
       "id": "mjpface_2308event",
       "category": "tileFace",
-      "name": "猫咪牌面",
-      "icon": "Majsoul/Wardrobe/Icons/mjpface_2308event",
+      "name": "牌面-猫咪雀圣",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305718",
       "builtin": true,
-      "hand": "Majsoul/Wardrobe/Items/mjpface_2308event/hand",
-      "table": "Majsoul/Wardrobe/Items/mjpface_2308event/table",
-      "preview": "Majsoul/Wardrobe/Items/mjpface_2308event/preview"
+      "hand": "Majsoul/Wardrobe/R16/Items/mjpface_2308event/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjpface_2308event/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjpface_2308event/preview",
+      "sourceItemId": 305718
     },
     {
       "id": "headframe_default",
       "category": "headFrame",
-      "name": "默认头像框",
-      "icon": "Majsoul/Wardrobe/Items/headframe_default/icon",
+      "name": "头像框-默认",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305501",
       "builtin": true,
-      "texture": "Majsoul/Wardrobe/Items/headframe_default/frame",
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_default",
       "avatarWindow": [
         0,
         0,
         1,
         1
-      ]
+      ],
+      "sourceItemId": 305501
     },
     {
       "id": "headframe_catear3",
       "category": "headFrame",
-      "name": "猫耳头像框",
-      "icon": "Majsoul/Wardrobe/Icons/headframe_catear3",
+      "name": "头像框-猫咪军团的身份",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305523",
       "builtin": true,
-      "texture": "Majsoul/Wardrobe/Items/headframe_catear3/native-frame",
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_catear3",
       "avatarWindow": [
         0.16875,
         0.16875,
         0.6625,
         0.6625
-      ]
+      ],
+      "sourceItemId": 305523
     },
     {
       "id": "background-yard",
       "category": "lobbyBackground",
       "name": "神社庭院·春樱",
-      "icon": "Majsoul/Wardrobe/Icons/background-yard",
+      "icon": "Majsoul/Wardrobe/R16/Icons/307001",
       "builtin": true,
-      "texture": "Majsoul/Lobby/yard",
-      "preview": "Majsoul/Wardrobe/Preview/spring"
+      "texture": "Majsoul/Wardrobe/R16/Background/beijing_chunying",
+      "preview": "Majsoul/Wardrobe/R16/Preview/beijing_chunying",
+      "sourceItemId": 307001
     },
     {
       "id": "background-autumn",
       "category": "lobbyBackground",
       "name": "神社庭院·秋深",
       "builtin": true,
-      "icon": "Majsoul/Wardrobe/Icons/background-autumn",
-      "texture": "Majsoul/Wardrobe/Background/autumn",
-      "preview": "Majsoul/Wardrobe/Preview/autumn"
+      "icon": "Majsoul/Wardrobe/R16/Icons/307006",
+      "texture": "Majsoul/Wardrobe/R16/Background/beijing_qiushen",
+      "preview": "Majsoul/Wardrobe/R16/Preview/beijing_qiushen",
+      "sourceItemId": 307006
     },
     {
       "id": "liqi_fish",
       "category": "stick",
       "name": "咸鱼立直棒",
       "builtin": true,
-      "icon": "Majsoul/Wardrobe/Icons/liqi_fish",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305001",
       "model": "Majsoul/Wardrobe/Models/liqi_fish",
-      "duration": 3
+      "duration": 4,
+      "sourceItemId": 305001,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_fish"
     },
     {
       "id": "liqi_scallion",
       "category": "stick",
       "name": "大葱立直棒",
       "builtin": true,
-      "icon": "Majsoul/Wardrobe/Icons/liqi_scallion",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305002",
       "model": "Majsoul/Wardrobe/Models/liqi_scallion",
-      "duration": 3
+      "duration": 4,
+      "sourceItemId": 305002,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_scallion"
     },
     {
       "id": "liqi_bone",
       "category": "stick",
       "name": "狗骨头立直棒",
       "builtin": true,
-      "icon": "Majsoul/Wardrobe/Icons/liqi_bone",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305003",
       "model": "Majsoul/Wardrobe/Models/liqi_bone",
-      "duration": 3
+      "duration": 4,
+      "sourceItemId": 305003,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_bone"
     },
     {
       "id": "mpzs_shandian",
@@ -605,20 +621,22 @@
     {
       "id": "music-riichi",
       "category": "music",
-      "name": "立直音乐－原曲",
+      "name": "真剑胜负",
       "builtin": true,
-      "icon": "Majsoul/Wardrobe/Icons/music-riichi",
-      "audio": "Majsoul/Wardrobe/Audio/music-riichi",
-      "duration": 8
+      "icon": "Majsoul/Wardrobe/R16/Icons/305025",
+      "audio": "Majsoul/Wardrobe/R16/Audio/305025",
+      "duration": 8,
+      "sourceItemId": 305025
     },
     {
       "id": "music-8bit",
       "category": "music",
-      "name": "立直音乐－八位音色",
+      "name": "真剑胜负8bit ver",
       "builtin": true,
-      "icon": "Majsoul/Wardrobe/Icons/music-8bit",
-      "audio": "Majsoul/Wardrobe/Audio/music-8bit",
-      "duration": 8
+      "icon": "Majsoul/Wardrobe/R16/Icons/305052",
+      "audio": "Majsoul/Wardrobe/R16/Audio/305052",
+      "duration": 8,
+      "sourceItemId": 305052
     },
     {
       "id": "riichi-ice",
@@ -1007,6 +1025,2488 @@
       "cue": "effect_liqi_23ex_xueqiu",
       "groundEffect": false,
       "icon": "Majsoul/NativeReview/EffectsR11/Icons/effect_liqi_23ex_xueqiu"
+    },
+    {
+      "id": "liqi_chocolate",
+      "category": "stick",
+      "name": "巧克力立直棒",
+      "builtin": true,
+      "sourceItemId": 305004,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_chocolate",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305004"
+    },
+    {
+      "id": "liqi_evil",
+      "category": "stick",
+      "name": "邪眼立直棒",
+      "builtin": true,
+      "sourceItemId": 305005,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_evil",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305005"
+    },
+    {
+      "id": "liqi_jade",
+      "category": "stick",
+      "name": "翡翠立直棒",
+      "builtin": true,
+      "sourceItemId": 305006,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_jade",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305006"
+    },
+    {
+      "id": "tablecloth_green",
+      "category": "cloth",
+      "name": "孔雀绿桌布",
+      "builtin": true,
+      "sourceItemId": 305012,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_green",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_green",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305012"
+    },
+    {
+      "id": "tablecloth_lotus",
+      "category": "cloth",
+      "name": "莲藕紫桌布",
+      "builtin": true,
+      "sourceItemId": 305013,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_lotus",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_lotus",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305013"
+    },
+    {
+      "id": "tablecloth_violet",
+      "category": "cloth",
+      "name": "紫罗兰桌布",
+      "builtin": true,
+      "sourceItemId": 305014,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_violet",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_violet",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305014"
+    },
+    {
+      "id": "mjp_green",
+      "category": "tileBack",
+      "name": "果绿牌背",
+      "builtin": true,
+      "sourceItemId": 305016,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_green/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_green/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_green/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305016"
+    },
+    {
+      "id": "mjp_rosered",
+      "category": "tileBack",
+      "name": "玫瑰红牌背",
+      "builtin": true,
+      "sourceItemId": 305017,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_rosered/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_rosered/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_rosered/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305017"
+    },
+    {
+      "id": "liqi_red",
+      "category": "stick",
+      "name": "猩红立直棒",
+      "builtin": true,
+      "sourceItemId": 305018,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_red",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305018"
+    },
+    {
+      "id": "liqi_goldbar",
+      "category": "stick",
+      "name": "24K金棒",
+      "builtin": true,
+      "sourceItemId": 305019,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_goldbar",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305019"
+    },
+    {
+      "id": "tablecloth_christmas",
+      "category": "cloth",
+      "name": "圣夜桌布",
+      "builtin": true,
+      "sourceItemId": 305020,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_christmas",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_christmas",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305020"
+    },
+    {
+      "id": "tablecloth_newyear",
+      "category": "cloth",
+      "name": "新春桌布",
+      "builtin": true,
+      "sourceItemId": 305024,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_newyear",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_newyear",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305024"
+    },
+    {
+      "id": "music-305026",
+      "category": "music",
+      "name": "激斗",
+      "builtin": true,
+      "sourceItemId": 305026,
+      "audio": "Majsoul/Wardrobe/R16/Audio/305026",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305026"
+    },
+    {
+      "id": "liqi_bianpao",
+      "category": "stick",
+      "name": "立直棒-爆竹",
+      "builtin": true,
+      "sourceItemId": 305027,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_bianpao",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305027"
+    },
+    {
+      "id": "liqi_jiaozi",
+      "category": "stick",
+      "name": "立直棒-饺子",
+      "builtin": true,
+      "sourceItemId": 305028,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_jiaozi",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305028"
+    },
+    {
+      "id": "liqi_duane",
+      "category": "stick",
+      "name": "立直棒-断恶",
+      "builtin": true,
+      "sourceItemId": 305041,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_duane",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305041"
+    },
+    {
+      "id": "liqi_xuegao",
+      "category": "stick",
+      "name": "立直棒-雪糕",
+      "builtin": true,
+      "sourceItemId": 305042,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_xuegao",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305042"
+    },
+    {
+      "id": "tablecloth_quehunji1",
+      "category": "cloth",
+      "name": "桌布-雀魂祭一周年",
+      "builtin": true,
+      "sourceItemId": 305048,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_quehunji1",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_quehunji1",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305048"
+    },
+    {
+      "id": "liqi_yijitiantong",
+      "category": "stick",
+      "name": "立直棒-炎夏型一姬甜筒",
+      "builtin": true,
+      "sourceItemId": 305049,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_yijitiantong",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305049"
+    },
+    {
+      "id": "music-305050",
+      "category": "music",
+      "name": "出阵",
+      "builtin": true,
+      "sourceItemId": 305050,
+      "audio": "Majsoul/Wardrobe/R16/Audio/305050",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305050"
+    },
+    {
+      "id": "music-305051",
+      "category": "music",
+      "name": "一触即发",
+      "builtin": true,
+      "sourceItemId": 305051,
+      "audio": "Majsoul/Wardrobe/R16/Audio/305051",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305051"
+    },
+    {
+      "id": "music-305053",
+      "category": "music",
+      "name": "所向披靡",
+      "builtin": true,
+      "sourceItemId": 305053,
+      "audio": "Majsoul/Wardrobe/R16/Audio/305053",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305053"
+    },
+    {
+      "id": "music-305054",
+      "category": "music",
+      "name": "炽热时刻",
+      "builtin": true,
+      "sourceItemId": 305054,
+      "audio": "Majsoul/Wardrobe/R16/Audio/305054",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305054"
+    },
+    {
+      "id": "music-305055",
+      "category": "music",
+      "name": "胜途",
+      "builtin": true,
+      "sourceItemId": 305055,
+      "audio": "Majsoul/Wardrobe/R16/Audio/305055",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305055"
+    },
+    {
+      "id": "music-305056",
+      "category": "music",
+      "name": "凌云",
+      "builtin": true,
+      "sourceItemId": 305056,
+      "audio": "Majsoul/Wardrobe/R16/Audio/305056",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305056"
+    },
+    {
+      "id": "music-30505001",
+      "category": "music",
+      "name": "处变不惊",
+      "builtin": true,
+      "sourceItemId": 30505001,
+      "audio": "Majsoul/Wardrobe/R16/Audio/30505001",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30505001"
+    },
+    {
+      "id": "music-30505002",
+      "category": "music",
+      "name": "舞之序曲",
+      "builtin": true,
+      "sourceItemId": 30505002,
+      "audio": "Majsoul/Wardrobe/R16/Audio/30505002",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30505002"
+    },
+    {
+      "id": "music-30505003",
+      "category": "music",
+      "name": "势如破竹",
+      "builtin": true,
+      "sourceItemId": 30505003,
+      "audio": "Majsoul/Wardrobe/R16/Audio/30505003",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30505003"
+    },
+    {
+      "id": "music-30505004",
+      "category": "music",
+      "name": "终结之战",
+      "builtin": true,
+      "sourceItemId": 30505004,
+      "audio": "Majsoul/Wardrobe/R16/Audio/30505004",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30505004"
+    },
+    {
+      "id": "music-30505005",
+      "category": "music",
+      "name": "名扬四海",
+      "builtin": true,
+      "sourceItemId": 30505005,
+      "audio": "Majsoul/Wardrobe/R16/Audio/30505005",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30505005"
+    },
+    {
+      "id": "music-30505006",
+      "category": "music",
+      "name": "终焉之时",
+      "builtin": true,
+      "sourceItemId": 30505006,
+      "audio": "Majsoul/Wardrobe/R16/Audio/30505006",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30505006"
+    },
+    {
+      "id": "music-30505007",
+      "category": "music",
+      "name": "未来之弦",
+      "builtin": true,
+      "sourceItemId": 30505007,
+      "audio": "Majsoul/Wardrobe/R16/Audio/30505007",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30505007"
+    },
+    {
+      "id": "headframe_douya",
+      "category": "headFrame",
+      "name": "头像框-豆芽测试用",
+      "builtin": true,
+      "sourceItemId": 305555,
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_douya",
+      "avatarWindow": [
+        0.16875,
+        0.16875,
+        0.6625,
+        0.6625
+      ],
+      "icon": "Majsoul/Wardrobe/R16/Icons/305555"
+    },
+    {
+      "id": "headframe_sxz",
+      "category": "headFrame",
+      "name": "头像框-四象战",
+      "builtin": true,
+      "sourceItemId": 30550041,
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_sxz",
+      "avatarWindow": [
+        0.16875,
+        0.16875,
+        0.6625,
+        0.6625
+      ],
+      "icon": "Majsoul/Wardrobe/R16/Icons/30550041"
+    },
+    {
+      "id": "headframe_trailc",
+      "category": "headFrame",
+      "name": "头像框-试炼强者",
+      "builtin": true,
+      "sourceItemId": 305520,
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_trailc",
+      "avatarWindow": [
+        0.16875,
+        0.16875,
+        0.6625,
+        0.6625
+      ],
+      "icon": "Majsoul/Wardrobe/R16/Icons/305520"
+    },
+    {
+      "id": "headframe_trailb",
+      "category": "headFrame",
+      "name": "头像框-试炼贤者",
+      "builtin": true,
+      "sourceItemId": 305521,
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_trailb",
+      "avatarWindow": [
+        0.16875,
+        0.16875,
+        0.6625,
+        0.6625
+      ],
+      "icon": "Majsoul/Wardrobe/R16/Icons/305521"
+    },
+    {
+      "id": "headframe_traila",
+      "category": "headFrame",
+      "name": "头像框-试炼霸者",
+      "builtin": true,
+      "sourceItemId": 305522,
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_traila",
+      "avatarWindow": [
+        0.16875,
+        0.16875,
+        0.6625,
+        0.6625
+      ],
+      "icon": "Majsoul/Wardrobe/R16/Icons/305522"
+    },
+    {
+      "id": "headframe_ssz",
+      "category": "headFrame",
+      "name": "双聖の眷属たち",
+      "builtin": true,
+      "sourceItemId": 30550040,
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_ssz",
+      "avatarWindow": [
+        0.16875,
+        0.16875,
+        0.6625,
+        0.6625
+      ],
+      "icon": "Majsoul/Wardrobe/R16/Icons/30550040"
+    },
+    {
+      "id": "headframe_team2109",
+      "category": "headFrame",
+      "name": "Team Championship Limited Portrait Frame",
+      "builtin": true,
+      "sourceItemId": 305526,
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_team2109",
+      "avatarWindow": [
+        0.16875,
+        0.16875,
+        0.6625,
+        0.6625
+      ],
+      "icon": "Majsoul/Wardrobe/R16/Icons/305526"
+    },
+    {
+      "id": "headframe_xiyuansi",
+      "category": "headFrame",
+      "name": "头像框-秋霜切玉",
+      "builtin": true,
+      "sourceItemId": 305529,
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_xiyuansi",
+      "avatarWindow": [
+        0.16875,
+        0.16875,
+        0.6625,
+        0.6625
+      ],
+      "icon": "Majsoul/Wardrobe/R16/Icons/305529"
+    },
+    {
+      "id": "headframe_beiyuan",
+      "category": "headFrame",
+      "name": "头像框-圣堂百合",
+      "builtin": true,
+      "sourceItemId": 305537,
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_beiyuan",
+      "avatarWindow": [
+        0.16875,
+        0.16875,
+        0.6625,
+        0.6625
+      ],
+      "icon": "Majsoul/Wardrobe/R16/Icons/305537"
+    },
+    {
+      "id": "headframe_22winter",
+      "category": "headFrame",
+      "name": "头像框-雪夜童话",
+      "builtin": true,
+      "sourceItemId": 305542,
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_22winter",
+      "avatarWindow": [
+        0.16875,
+        0.16875,
+        0.6625,
+        0.6625
+      ],
+      "icon": "Majsoul/Wardrobe/R16/Icons/305542"
+    },
+    {
+      "id": "headframe_23chunjie",
+      "category": "headFrame",
+      "name": "头像框-窗外",
+      "builtin": true,
+      "sourceItemId": 305545,
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_23chunjie",
+      "avatarWindow": [
+        0.16875,
+        0.16875,
+        0.6625,
+        0.6625
+      ],
+      "icon": "Majsoul/Wardrobe/R16/Icons/305545"
+    },
+    {
+      "id": "headframe_dongcheng",
+      "category": "headFrame",
+      "name": "头像框-丹心一寸",
+      "builtin": true,
+      "sourceItemId": 305551,
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_dongcheng",
+      "avatarWindow": [
+        0.16875,
+        0.16875,
+        0.6625,
+        0.6625
+      ],
+      "icon": "Majsoul/Wardrobe/R16/Icons/305551"
+    },
+    {
+      "id": "headframe_23summer",
+      "category": "headFrame",
+      "name": "头像框-大小姐发带",
+      "builtin": true,
+      "sourceItemId": 305552,
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_23summer",
+      "avatarWindow": [
+        0.16875,
+        0.16875,
+        0.6625,
+        0.6625
+      ],
+      "icon": "Majsoul/Wardrobe/R16/Icons/305552"
+    },
+    {
+      "id": "headframe_nanfenghua",
+      "category": "headFrame",
+      "name": "头像框-赤丹霞羽",
+      "builtin": true,
+      "sourceItemId": 30550012,
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_nanfenghua",
+      "avatarWindow": [
+        0.16875,
+        0.16875,
+        0.6625,
+        0.6625
+      ],
+      "icon": "Majsoul/Wardrobe/R16/Icons/30550012"
+    },
+    {
+      "id": "headframe_sanliou",
+      "category": "headFrame",
+      "name": "头像框-肉桂卷定位器",
+      "builtin": true,
+      "sourceItemId": 30550014,
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_sanliou",
+      "avatarWindow": [
+        0.16875,
+        0.16875,
+        0.6625,
+        0.6625
+      ],
+      "icon": "Majsoul/Wardrobe/R16/Icons/30550014"
+    },
+    {
+      "id": "headframe_wansheng",
+      "category": "headFrame",
+      "name": "头像框-一汪打尽",
+      "builtin": true,
+      "sourceItemId": 30550017,
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_wansheng",
+      "avatarWindow": [
+        0.16875,
+        0.16875,
+        0.6625,
+        0.6625
+      ],
+      "icon": "Majsoul/Wardrobe/R16/Icons/30550017"
+    },
+    {
+      "id": "headframe_25chunjie",
+      "category": "headFrame",
+      "name": "头像框-竹福滚滚",
+      "builtin": true,
+      "sourceItemId": 30550022,
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_25chunjie",
+      "avatarWindow": [
+        0.16875,
+        0.16875,
+        0.6625,
+        0.6625
+      ],
+      "icon": "Majsoul/Wardrobe/R16/Icons/30550022"
+    },
+    {
+      "id": "headframe_vip",
+      "category": "headFrame",
+      "name": "头像框-喵将军",
+      "builtin": true,
+      "sourceItemId": 30550023,
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_vip",
+      "avatarWindow": [
+        0.16875,
+        0.16875,
+        0.6625,
+        0.6625
+      ],
+      "icon": "Majsoul/Wardrobe/R16/Icons/30550023"
+    },
+    {
+      "id": "headframe_liyang",
+      "category": "headFrame",
+      "name": "头像框-星点鳞光",
+      "builtin": true,
+      "sourceItemId": 30550030,
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_liyang",
+      "avatarWindow": [
+        0.16875,
+        0.16875,
+        0.6625,
+        0.6625
+      ],
+      "icon": "Majsoul/Wardrobe/R16/Icons/30550030"
+    },
+    {
+      "id": "headframe_bingjing",
+      "category": "headFrame",
+      "name": "头像框-北风之诗",
+      "builtin": true,
+      "sourceItemId": 30550034,
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_bingjing",
+      "avatarWindow": [
+        0.16875,
+        0.16875,
+        0.6625,
+        0.6625
+      ],
+      "icon": "Majsoul/Wardrobe/R16/Icons/30550034"
+    },
+    {
+      "id": "liqi_xiaoemofanbian",
+      "category": "stick",
+      "name": "立直棒-小恶魔蝙蝠",
+      "builtin": true,
+      "sourceItemId": 305600,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_xiaoemofanbian",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305600"
+    },
+    {
+      "id": "liqi_mofabang",
+      "category": "stick",
+      "name": "立直棒-魔法棒",
+      "builtin": true,
+      "sourceItemId": 305601,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_mofabang",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305601"
+    },
+    {
+      "id": "liqi_jinlongyu",
+      "category": "stick",
+      "name": "立直棒-金龙鱼",
+      "builtin": true,
+      "sourceItemId": 305602,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_jinlongyu",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305602"
+    },
+    {
+      "id": "liqi_xhzy",
+      "category": "stick",
+      "name": "立直棒-绯月荆棘",
+      "builtin": true,
+      "sourceItemId": 305603,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_xhzy",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305603"
+    },
+    {
+      "id": "liqi_hl",
+      "category": "stick",
+      "name": "立直棒-乘风破浪",
+      "builtin": true,
+      "sourceItemId": 305604,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_hl",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305604"
+    },
+    {
+      "id": "liqi_music",
+      "category": "stick",
+      "name": "立直棒-应援棒",
+      "builtin": true,
+      "sourceItemId": 305605,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_music",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305605"
+    },
+    {
+      "id": "liqi_21chunjie",
+      "category": "stick",
+      "name": "立直棒-冰糖葫芦(咸)",
+      "builtin": true,
+      "sourceItemId": 305606,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_21chunjie",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305606"
+    },
+    {
+      "id": "liqi_21cyber",
+      "category": "stick",
+      "name": "立直棒-仿生喵",
+      "builtin": true,
+      "sourceItemId": 305607,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_21cyber",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305607"
+    },
+    {
+      "id": "liqi_21catball",
+      "category": "stick",
+      "name": "立直棒-夹心猫团子",
+      "builtin": true,
+      "sourceItemId": 305608,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_21catball",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305608"
+    },
+    {
+      "id": "liqi_21magic",
+      "category": "stick",
+      "name": "立直棒-虚无传送门",
+      "builtin": true,
+      "sourceItemId": 305609,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_21magic",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305609"
+    },
+    {
+      "id": "liqi_21zhounian",
+      "category": "stick",
+      "name": "立直棒-喵切丸",
+      "builtin": true,
+      "sourceItemId": 305610,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_21zhounian",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305610"
+    },
+    {
+      "id": "liqi_22chunjie",
+      "category": "stick",
+      "name": "立直棒-如意",
+      "builtin": true,
+      "sourceItemId": 305611,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_22chunjie",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305611"
+    },
+    {
+      "id": "liqi_22rpg",
+      "category": "stick",
+      "name": "立直棒-陨石法杖",
+      "builtin": true,
+      "sourceItemId": 305612,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_22rpg",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305612"
+    },
+    {
+      "id": "liqi_22summer",
+      "category": "stick",
+      "name": "立直棒-波子汽水",
+      "builtin": true,
+      "sourceItemId": 305613,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_22summer",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305613"
+    },
+    {
+      "id": "liqi_22winter",
+      "category": "stick",
+      "name": "立直棒-仙境密匙",
+      "builtin": true,
+      "sourceItemId": 305614,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_22winter",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305614"
+    },
+    {
+      "id": "liqi_xzw22121",
+      "category": "stick",
+      "name": "立直棒-柴犬团子",
+      "builtin": true,
+      "sourceItemId": 305615,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_xzw22121",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305615"
+    },
+    {
+      "id": "liqi_xzw22122",
+      "category": "stick",
+      "name": "立直棒-魔法扫帚",
+      "builtin": true,
+      "sourceItemId": 305616,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_xzw22122",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305616"
+    },
+    {
+      "id": "liqi_xzw22123",
+      "category": "stick",
+      "name": "立直棒-王者风范",
+      "builtin": true,
+      "sourceItemId": 305617,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_xzw22123",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305617"
+    },
+    {
+      "id": "liqi_xzw22124",
+      "category": "stick",
+      "name": "立直棒-猫神剑玉",
+      "builtin": true,
+      "sourceItemId": 305618,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_xzw22124",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305618"
+    },
+    {
+      "id": "liqi_23chunjie",
+      "category": "stick",
+      "name": "立直棒-可口喵乐",
+      "builtin": true,
+      "sourceItemId": 305619,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_23chunjie",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305619"
+    },
+    {
+      "id": "liqi_23rpg",
+      "category": "stick",
+      "name": "立直棒-秘传之卷",
+      "builtin": true,
+      "sourceItemId": 305620,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_23rpg",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305620"
+    },
+    {
+      "id": "liqi_23newface",
+      "category": "stick",
+      "name": "立直棒-盆栽",
+      "builtin": true,
+      "sourceItemId": 305621,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_23newface",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305621"
+    },
+    {
+      "id": "liqi_23summer",
+      "category": "stick",
+      "name": "立直棒-包甜好瓜",
+      "builtin": true,
+      "sourceItemId": 305622,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_23summer",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305622"
+    },
+    {
+      "id": "liqi_23ex_fagun",
+      "category": "stick",
+      "name": "立直棒-法棍面包",
+      "builtin": true,
+      "sourceItemId": 305623,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_23ex_fagun",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305623"
+    },
+    {
+      "id": "liqi_23ex_gaoguai",
+      "category": "stick",
+      "name": "立直棒-学霸眼镜",
+      "builtin": true,
+      "sourceItemId": 305624,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_23ex_gaoguai",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305624"
+    },
+    {
+      "id": "liqi_23ex_qiubang",
+      "category": "stick",
+      "name": "立直棒-棒球英杰",
+      "builtin": true,
+      "sourceItemId": 305625,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_23ex_qiubang",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305625"
+    },
+    {
+      "id": "liqi_23ex_yuanjihua",
+      "category": "stick",
+      "name": "立直棒-霓彩路标",
+      "builtin": true,
+      "sourceItemId": 305626,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_23ex_yuanjihua",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/305626"
+    },
+    {
+      "id": "liqi_23wansheng",
+      "category": "stick",
+      "name": "立直棒-喵星棒",
+      "builtin": true,
+      "sourceItemId": 30560001,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_23wansheng",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/30560001"
+    },
+    {
+      "id": "liqi_24chunjie",
+      "category": "stick",
+      "name": "立直棒-夺笋",
+      "builtin": true,
+      "sourceItemId": 30560002,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_24chunjie",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/30560002"
+    },
+    {
+      "id": "liqi_24summer",
+      "category": "stick",
+      "name": "立直棒-小鳄霸",
+      "builtin": true,
+      "sourceItemId": 30560003,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_24summer",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/30560003"
+    },
+    {
+      "id": "liqi_24sanliou",
+      "category": "stick",
+      "name": "立直棒-童话绘梦",
+      "builtin": true,
+      "sourceItemId": 30560004,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_24sanliou",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/30560004"
+    },
+    {
+      "id": "liqi_24imas",
+      "category": "stick",
+      "name": "立直棒-动听之源",
+      "builtin": true,
+      "sourceItemId": 30560005,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_24imas",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/30560005"
+    },
+    {
+      "id": "liqi_24winter",
+      "category": "stick",
+      "name": "立直棒-立奇棒",
+      "builtin": true,
+      "sourceItemId": 30560006,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_24winter",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/30560006"
+    },
+    {
+      "id": "liqi_25chunjie",
+      "category": "stick",
+      "name": "立直棒-青竹伞",
+      "builtin": true,
+      "sourceItemId": 30560007,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_25chunjie",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/30560007"
+    },
+    {
+      "id": "liqi_25xila",
+      "category": "stick",
+      "name": "立直棒-金枝神谕",
+      "builtin": true,
+      "sourceItemId": 30560008,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_25xila",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/30560008"
+    },
+    {
+      "id": "liqi_25dongri",
+      "category": "stick",
+      "name": "立直棒-祈愿之矢",
+      "builtin": true,
+      "sourceItemId": 30560010,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_25dongri",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/30560010"
+    },
+    {
+      "id": "mjp_tianrandaiyouling",
+      "category": "tileBack",
+      "name": "牌背-天然呆幽灵",
+      "builtin": true,
+      "sourceItemId": 305700,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_tianrandaiyouling/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_tianrandaiyouling/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_tianrandaiyouling/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305700"
+    },
+    {
+      "id": "mjp_20chunjie",
+      "category": "tileBack",
+      "name": "牌背-红包",
+      "builtin": true,
+      "sourceItemId": 305701,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_20chunjie/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_20chunjie/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_20chunjie/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305701"
+    },
+    {
+      "id": "mjp_hl",
+      "category": "tileBack",
+      "name": "牌背-浪花朵朵",
+      "builtin": true,
+      "sourceItemId": 305702,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_hl/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_hl/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_hl/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305702"
+    },
+    {
+      "id": "mjp_bj",
+      "category": "tileBack",
+      "name": "牌背-冰晶",
+      "builtin": true,
+      "sourceItemId": 305703,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_bj/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_bj/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_bj/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305703"
+    },
+    {
+      "id": "mjp_bow",
+      "category": "tileBack",
+      "name": "牌背-蝴蝶结",
+      "builtin": true,
+      "sourceItemId": 305704,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_bow/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_bow/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_bow/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305704"
+    },
+    {
+      "id": "mjp_21zhounian",
+      "category": "tileBack",
+      "name": "牌背-鬼煤球",
+      "builtin": true,
+      "sourceItemId": 305705,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_21zhounian/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_21zhounian/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_21zhounian/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305705"
+    },
+    {
+      "id": "mjp_21winter",
+      "category": "tileBack",
+      "name": "牌背-圣诞树",
+      "builtin": true,
+      "sourceItemId": 305706,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_21winter/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_21winter/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_21winter/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305706"
+    },
+    {
+      "id": "mjp_22chunjie",
+      "category": "tileBack",
+      "name": "牌背-花灯",
+      "builtin": true,
+      "sourceItemId": 305707,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_22chunjie/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_22chunjie/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_22chunjie/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305707"
+    },
+    {
+      "id": "mjp_22bd",
+      "category": "tileBack",
+      "name": "牌背-一索",
+      "builtin": true,
+      "sourceItemId": 305708,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_22bd/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_22bd/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_22bd/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305708"
+    },
+    {
+      "id": "mjp_22summer",
+      "category": "tileBack",
+      "name": "牌背-鸭鸭牌背",
+      "builtin": true,
+      "sourceItemId": 305709,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_22summer/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_22summer/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_22summer/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305709"
+    },
+    {
+      "id": "mjp_22winter",
+      "category": "tileBack",
+      "name": "牌背-三月兔",
+      "builtin": true,
+      "sourceItemId": 305710,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_22winter/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_22winter/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_22winter/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305710"
+    },
+    {
+      "id": "mjp_23chunjie",
+      "category": "tileBack",
+      "name": "牌背-祥云兔",
+      "builtin": true,
+      "sourceItemId": 305711,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_23chunjie/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_23chunjie/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_23chunjie/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305711"
+    },
+    {
+      "id": "mjp_23rml",
+      "category": "tileBack",
+      "name": "牌背-RML联赛",
+      "builtin": true,
+      "sourceItemId": 305712,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_23rml/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_23rml/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_23rml/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305712"
+    },
+    {
+      "id": "mjp_23wenquan",
+      "category": "tileBack",
+      "name": "牌背-魂之元件",
+      "builtin": true,
+      "sourceItemId": 305713,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_23wenquan/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_23wenquan/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_23wenquan/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305713"
+    },
+    {
+      "id": "mjp_23rpg",
+      "category": "tileBack",
+      "name": "牌背-手里剑",
+      "builtin": true,
+      "sourceItemId": 305714,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_23rpg/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_23rpg/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_23rpg/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305714"
+    },
+    {
+      "id": "mjp_23newface",
+      "category": "tileBack",
+      "name": "牌背-新手报到",
+      "builtin": true,
+      "sourceItemId": 305715,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_23newface/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_23newface/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_23newface/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305715"
+    },
+    {
+      "id": "mjp_23summer",
+      "category": "tileBack",
+      "name": "牌背-鸥气满满",
+      "builtin": true,
+      "sourceItemId": 305716,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_23summer/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_23summer/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_23summer/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305716"
+    },
+    {
+      "id": "mjp_23ex_beike",
+      "category": "tileBack",
+      "name": "牌背-珠贝流光",
+      "builtin": true,
+      "sourceItemId": 305719,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_23ex_beike/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_23ex_beike/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_23ex_beike/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305719"
+    },
+    {
+      "id": "mjp_23ex_juzi",
+      "category": "tileBack",
+      "name": "牌背-心想事橙",
+      "builtin": true,
+      "sourceItemId": 305720,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_23ex_juzi/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_23ex_juzi/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_23ex_juzi/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305720"
+    },
+    {
+      "id": "mjp_23ex_xianggu",
+      "category": "tileBack",
+      "name": "牌背-香菇",
+      "builtin": true,
+      "sourceItemId": 305721,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_23ex_xianggu/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_23ex_xianggu/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_23ex_xianggu/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305721"
+    },
+    {
+      "id": "mjp_23ex_xingqiu",
+      "category": "tileBack",
+      "name": "牌背-小宇宙",
+      "builtin": true,
+      "sourceItemId": 305722,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_23ex_xingqiu/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_23ex_xingqiu/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_23ex_xingqiu/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305722"
+    },
+    {
+      "id": "mjp_23ex_huise",
+      "category": "tileBack",
+      "name": "暮云灰牌背",
+      "builtin": true,
+      "sourceItemId": 305723,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_23ex_huise/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_23ex_huise/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_23ex_huise/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305723"
+    },
+    {
+      "id": "mjp_23ex_lanse",
+      "category": "tileBack",
+      "name": "天蓝牌背",
+      "builtin": true,
+      "sourceItemId": 305724,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_23ex_lanse/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_23ex_lanse/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_23ex_lanse/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305724"
+    },
+    {
+      "id": "mjp_23winter",
+      "category": "tileBack",
+      "name": "牌背-开运达摩",
+      "builtin": true,
+      "sourceItemId": 30570001,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_23winter/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_23winter/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_23winter/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30570001"
+    },
+    {
+      "id": "mjp_24chunjie",
+      "category": "tileBack",
+      "name": "牌背-萌滚滚",
+      "builtin": true,
+      "sourceItemId": 30570002,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_24chunjie/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_24chunjie/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_24chunjie/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30570002"
+    },
+    {
+      "id": "mjp_24anime",
+      "category": "tileBack",
+      "name": "牌背-喵呜TV",
+      "builtin": true,
+      "sourceItemId": 30570003,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_24anime/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_24anime/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_24anime/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30570003"
+    },
+    {
+      "id": "mjp_24haidao",
+      "category": "tileBack",
+      "name": "牌背-逢蝶",
+      "builtin": true,
+      "sourceItemId": 30570004,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_24haidao/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_24haidao/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_24haidao/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30570004"
+    },
+    {
+      "id": "mjp_24sanliou",
+      "category": "tileBack",
+      "name": "牌背-萌主驾到",
+      "builtin": true,
+      "sourceItemId": 30570005,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_24sanliou/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_24sanliou/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_24sanliou/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30570005"
+    },
+    {
+      "id": "mjp_24wansheng",
+      "category": "tileBack",
+      "name": "牌背-封印术",
+      "builtin": true,
+      "sourceItemId": 30570006,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_24wansheng/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_24wansheng/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_24wansheng/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30570006"
+    },
+    {
+      "id": "mjp_24imas",
+      "category": "tileBack",
+      "name": "牌背-静谧夜光",
+      "builtin": true,
+      "sourceItemId": 30570007,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_24imas/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_24imas/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_24imas/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30570007"
+    },
+    {
+      "id": "mjp_24winter",
+      "category": "tileBack",
+      "name": "牌背-圣夜雪人",
+      "builtin": true,
+      "sourceItemId": 30570008,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_24winter/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_24winter/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_24winter/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30570008"
+    },
+    {
+      "id": "mjp_25chunjie",
+      "category": "tileBack",
+      "name": "牌背-翠竹墨影",
+      "builtin": true,
+      "sourceItemId": 30570009,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_25chunjie/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_25chunjie/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_25chunjie/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30570009"
+    },
+    {
+      "id": "mjp_25xila1",
+      "category": "tileBack",
+      "name": "牌背-凯旋之环",
+      "builtin": true,
+      "sourceItemId": 30570010,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_25xila1/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_25xila1/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_25xila1/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30570010"
+    },
+    {
+      "id": "mjp_25xila2",
+      "category": "tileBack",
+      "name": "牌背-焦糖布丁",
+      "builtin": true,
+      "sourceItemId": 30570011,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_25xila2/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_25xila2/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_25xila2/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30570011"
+    },
+    {
+      "id": "mjp_25summer",
+      "category": "tileBack",
+      "name": "牌背-星幕绘卷",
+      "builtin": true,
+      "sourceItemId": 30570012,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_25summer/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_25summer/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_25summer/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30570012"
+    },
+    {
+      "id": "mjp_25achivement1",
+      "category": "tileBack",
+      "name": "牌背-青龙",
+      "builtin": true,
+      "sourceItemId": 30570013,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_25achivement1/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_25achivement1/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_25achivement1/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30570013"
+    },
+    {
+      "id": "mjp_25achivement2",
+      "category": "tileBack",
+      "name": "牌背-朱雀",
+      "builtin": true,
+      "sourceItemId": 30570014,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_25achivement2/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_25achivement2/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_25achivement2/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30570014"
+    },
+    {
+      "id": "mjp_25achivement3",
+      "category": "tileBack",
+      "name": "牌背-白虎",
+      "builtin": true,
+      "sourceItemId": 30570015,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_25achivement3/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_25achivement3/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_25achivement3/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30570015"
+    },
+    {
+      "id": "mjp_25achivement4",
+      "category": "tileBack",
+      "name": "牌背-玄武",
+      "builtin": true,
+      "sourceItemId": 30570016,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_25achivement4/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_25achivement4/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_25achivement4/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30570016"
+    },
+    {
+      "id": "mjp_26chunjie",
+      "category": "tileBack",
+      "name": "牌背-几度春",
+      "builtin": true,
+      "sourceItemId": 30570017,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_26chunjie/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_26chunjie/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_26chunjie/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30570017"
+    },
+    {
+      "id": "tablecloth_20chunjie",
+      "category": "cloth",
+      "name": "桌布-锦鲤游",
+      "builtin": true,
+      "sourceItemId": 305801,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_20chunjie",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_20chunjie",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305801"
+    },
+    {
+      "id": "tablecloth_hl",
+      "category": "cloth",
+      "name": "桌布-冲鸭！",
+      "builtin": true,
+      "sourceItemId": 305802,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_hl",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_hl",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305802"
+    },
+    {
+      "id": "tablecloth_dxr",
+      "category": "cloth",
+      "name": "桌布-堆雪人",
+      "builtin": true,
+      "sourceItemId": 305803,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_dxr",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_dxr",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305803"
+    },
+    {
+      "id": "tablecloth_21chunjie",
+      "category": "cloth",
+      "name": "桌布-贺华岁",
+      "builtin": true,
+      "sourceItemId": 305804,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_21chunjie",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_21chunjie",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305804"
+    },
+    {
+      "id": "tablecloth_21zhounian",
+      "category": "cloth",
+      "name": "桌布-勇喵传说",
+      "builtin": true,
+      "sourceItemId": 305806,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_21zhounian",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_21zhounian",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305806"
+    },
+    {
+      "id": "tablecloth_21winter",
+      "category": "cloth",
+      "name": "桌布-暖屋圣夜",
+      "builtin": true,
+      "sourceItemId": 305807,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_21winter",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_21winter",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305807"
+    },
+    {
+      "id": "tablecloth_22chunjie",
+      "category": "cloth",
+      "name": "桌布-乾坤福袋",
+      "builtin": true,
+      "sourceItemId": 305808,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_22chunjie",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_22chunjie",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305808"
+    },
+    {
+      "id": "tablecloth_22bd",
+      "category": "cloth",
+      "name": "桌布-中光波——————！",
+      "builtin": true,
+      "sourceItemId": 305810,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_22bd",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_22bd",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305810"
+    },
+    {
+      "id": "tablecloth_22summer",
+      "category": "cloth",
+      "name": "桌布-小黄鸭冲浪里",
+      "builtin": true,
+      "sourceItemId": 305811,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_22summer",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_22summer",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305811"
+    },
+    {
+      "id": "tablecloth_22winter",
+      "category": "cloth",
+      "name": "桌布-仙境茶话会",
+      "builtin": true,
+      "sourceItemId": 305812,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_22winter",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_22winter",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305812"
+    },
+    {
+      "id": "tablecloth_23rml",
+      "category": "cloth",
+      "name": "桌布-RML联赛",
+      "builtin": true,
+      "sourceItemId": 305813,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_23rml",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_23rml",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305813"
+    },
+    {
+      "id": "tablecloth_23summer",
+      "category": "cloth",
+      "name": "桌布-去海边",
+      "builtin": true,
+      "sourceItemId": 305814,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_23summer",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_23summer",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305814"
+    },
+    {
+      "id": "tablecloth_23ex_doumiao",
+      "category": "cloth",
+      "name": "桌布-萌芽地",
+      "builtin": true,
+      "sourceItemId": 305815,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_23ex_doumiao",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_23ex_doumiao",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305815"
+    },
+    {
+      "id": "tablecloth_23ex_huaniao",
+      "category": "cloth",
+      "name": "桌布-花月夜",
+      "builtin": true,
+      "sourceItemId": 305816,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_23ex_huaniao",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_23ex_huaniao",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305816"
+    },
+    {
+      "id": "tablecloth_23ex_yinghuochong",
+      "category": "cloth",
+      "name": "桌布-萤火之森",
+      "builtin": true,
+      "sourceItemId": 305817,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_23ex_yinghuochong",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_23ex_yinghuochong",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305817"
+    },
+    {
+      "id": "tablecloth_23ex_ziteng",
+      "category": "cloth",
+      "name": "桌布-藤萝悦色",
+      "builtin": true,
+      "sourceItemId": 305818,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_23ex_ziteng",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_23ex_ziteng",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305818"
+    },
+    {
+      "id": "tablecloth_23ex_anhong",
+      "category": "cloth",
+      "name": "酒红桌布",
+      "builtin": true,
+      "sourceItemId": 305819,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_23ex_anhong",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_23ex_anhong",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305819"
+    },
+    {
+      "id": "tablecloth_23ex_anhui",
+      "category": "cloth",
+      "name": "炭灰桌布",
+      "builtin": true,
+      "sourceItemId": 305820,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_23ex_anhui",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_23ex_anhui",
+      "icon": "Majsoul/Wardrobe/R16/Icons/305820"
+    },
+    {
+      "id": "tablecloth_23wansheng",
+      "category": "cloth",
+      "name": "桌布-月圆传说",
+      "builtin": true,
+      "sourceItemId": 30580001,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_23wansheng",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_23wansheng",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580001"
+    },
+    {
+      "id": "tablecloth_23winter",
+      "category": "cloth",
+      "name": "桌布-一番祥瑞录",
+      "builtin": true,
+      "sourceItemId": 30580002,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_23winter",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_23winter",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580002"
+    },
+    {
+      "id": "tablecloth_24chunjie",
+      "category": "cloth",
+      "name": "桌布-熊猫观月",
+      "builtin": true,
+      "sourceItemId": 30580003,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_24chunjie",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_24chunjie",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580003"
+    },
+    {
+      "id": "tablecloth_24douyu",
+      "category": "cloth",
+      "name": "桌布-斗鱼纪念",
+      "builtin": true,
+      "sourceItemId": 30580004,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_24douyu",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_24douyu",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580004"
+    },
+    {
+      "id": "tablecloth_24anime",
+      "category": "cloth",
+      "name": "桌布-预热开场",
+      "builtin": true,
+      "sourceItemId": 30580005,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_24anime",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_24anime",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580005"
+    },
+    {
+      "id": "tablecloth_24haidao",
+      "category": "cloth",
+      "name": "桌布-破茧",
+      "builtin": true,
+      "sourceItemId": 30580006,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_24haidao",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_24haidao",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580006"
+    },
+    {
+      "id": "tablecloth_24sanliou",
+      "category": "cloth",
+      "name": "桌布-小恶魔日记",
+      "builtin": true,
+      "sourceItemId": 30580008,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_24sanliou",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_24sanliou",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580008"
+    },
+    {
+      "id": "tablecloth_24wansheng",
+      "category": "cloth",
+      "name": "桌布-禁锢之武",
+      "builtin": true,
+      "sourceItemId": 30580009,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_24wansheng",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_24wansheng",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580009"
+    },
+    {
+      "id": "tablecloth_24qilinzhan",
+      "category": "cloth",
+      "name": "桌布-官方赛事麒麟战",
+      "builtin": true,
+      "sourceItemId": 30580010,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_24qilinzhan",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_24qilinzhan",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580010"
+    },
+    {
+      "id": "tablecloth_24imas",
+      "category": "cloth",
+      "name": "桌布-闪耀吧！",
+      "builtin": true,
+      "sourceItemId": 30580011,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_24imas",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_24imas",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580011"
+    },
+    {
+      "id": "tablecloth_24winter",
+      "category": "cloth",
+      "name": "桌布-瑞雪祈狐",
+      "builtin": true,
+      "sourceItemId": 30580012,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_24winter",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_24winter",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580012"
+    },
+    {
+      "id": "tablecloth_25catfoodbowl",
+      "category": "cloth",
+      "name": "Tablecloth - Catfood Bowl",
+      "builtin": true,
+      "sourceItemId": 30580013,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_25catfoodbowl",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_25catfoodbowl",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580013"
+    },
+    {
+      "id": "tablecloth_25mkc",
+      "category": "cloth",
+      "name": "작탁: MKC 2025",
+      "builtin": true,
+      "sourceItemId": 30580014,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_25mkc",
+      "preview": "Majsoul/Wardrobe/R16/Cloth/tablecloth_25mkc",
+      "icon": "Majsoul/Wardrobe/R16/Cloth/tablecloth_25mkc"
+    },
+    {
+      "id": "tablecloth_25chunjie1",
+      "category": "cloth",
+      "name": "桌布-清辉竹影",
+      "builtin": true,
+      "sourceItemId": 30580015,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_25chunjie1",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_25chunjie1",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580015"
+    },
+    {
+      "id": "tablecloth_25chunjie2",
+      "category": "cloth",
+      "name": "桌布-锦绣余年",
+      "builtin": true,
+      "sourceItemId": 30580016,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_25chunjie2",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_25chunjie2",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580016"
+    },
+    {
+      "id": "tablecloth_25krsaishi",
+      "category": "cloth",
+      "name": "작탁: 리치 마작",
+      "builtin": true,
+      "sourceItemId": 30580017,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_25krsaishi",
+      "preview": "Majsoul/Wardrobe/R16/Cloth/tablecloth_25krsaishi",
+      "icon": "Majsoul/Wardrobe/R16/Cloth/tablecloth_25krsaishi"
+    },
+    {
+      "id": "tablecloth_25sanyuanbei",
+      "category": "cloth",
+      "name": "桌布-三垣杯",
+      "builtin": true,
+      "sourceItemId": 30580018,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_25sanyuanbei",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_25sanyuanbei",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580018"
+    },
+    {
+      "id": "tablecloth_25xila",
+      "category": "cloth",
+      "name": "桌布-天穹星幕",
+      "builtin": true,
+      "sourceItemId": 30580019,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_25xila",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_25xila",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580019"
+    },
+    {
+      "id": "tablecloth_25summer",
+      "category": "cloth",
+      "name": "桌布-星月夜",
+      "builtin": true,
+      "sourceItemId": 30580020,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_25summer",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_25summer",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580020"
+    },
+    {
+      "id": "tablecloth_25achivement1",
+      "category": "cloth",
+      "name": "桌布-春木化龙",
+      "builtin": true,
+      "sourceItemId": 30580021,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_25achivement1",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_25achivement1",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580021"
+    },
+    {
+      "id": "tablecloth_25achivement2",
+      "category": "cloth",
+      "name": "桌布-赤焰流风",
+      "builtin": true,
+      "sourceItemId": 30580022,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_25achivement2",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_25achivement2",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580022"
+    },
+    {
+      "id": "tablecloth_25achivement3",
+      "category": "cloth",
+      "name": "桌布-虎啸八荒",
+      "builtin": true,
+      "sourceItemId": 30580023,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_25achivement3",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_25achivement3",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580023"
+    },
+    {
+      "id": "tablecloth_25achivement4",
+      "category": "cloth",
+      "name": "桌布-玄镇四海",
+      "builtin": true,
+      "sourceItemId": 30580024,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_25achivement4",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_25achivement4",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580024"
+    },
+    {
+      "id": "tablecloth_26mkc",
+      "category": "cloth",
+      "name": "작탁: MKC 2026",
+      "builtin": true,
+      "sourceItemId": 30580025,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_26mkc",
+      "preview": "Majsoul/Wardrobe/R16/Cloth/tablecloth_26mkc",
+      "icon": "Majsoul/Wardrobe/R16/Cloth/tablecloth_26mkc"
+    },
+    {
+      "id": "tablecloth_26chunjie1",
+      "category": "cloth",
+      "name": "桌布-月满楼",
+      "builtin": true,
+      "sourceItemId": 30580027,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_26chunjie1",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_26chunjie1",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580027"
+    },
+    {
+      "id": "tablecloth_26chunjie2",
+      "category": "cloth",
+      "name": "桌布-沧溟水府",
+      "builtin": true,
+      "sourceItemId": 30580028,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_26chunjie2",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_26chunjie2",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30580028"
+    },
+    {
+      "id": "music-306201",
+      "category": "music",
+      "name": "锦绣梦",
+      "builtin": true,
+      "sourceItemId": 306201,
+      "audio": "Majsoul/Wardrobe/R16/Audio/306201",
+      "icon": "Majsoul/Wardrobe/R16/Icons/306201"
+    },
+    {
+      "id": "beijing_zhongxia",
+      "category": "lobbyBackground",
+      "name": "神社庭院·仲夏",
+      "builtin": true,
+      "sourceItemId": 307002,
+      "texture": "Majsoul/Wardrobe/R16/Background/beijing_zhongxia",
+      "preview": "Majsoul/Wardrobe/R16/Preview/beijing_zhongxia",
+      "icon": "Majsoul/Wardrobe/R16/Icons/307002"
+    },
+    {
+      "id": "beijing_aiai",
+      "category": "lobbyBackground",
+      "name": "神社庭院·皑皑",
+      "builtin": true,
+      "sourceItemId": 307003,
+      "texture": "Majsoul/Wardrobe/R16/Background/beijing_aiai",
+      "preview": "Majsoul/Wardrobe/R16/Preview/beijing_aiai",
+      "icon": "Majsoul/Wardrobe/R16/Icons/307003"
+    },
+    {
+      "id": "beijing_xiaripaidui",
+      "category": "lobbyBackground",
+      "name": "海滩派对",
+      "builtin": true,
+      "sourceItemId": 307005,
+      "texture": "Majsoul/Wardrobe/R16/Background/beijing_xiaripaidui",
+      "preview": "Majsoul/Wardrobe/R16/Preview/beijing_xiaripaidui",
+      "icon": "Majsoul/Wardrobe/R16/Icons/307005"
+    },
+    {
+      "id": "beijing_chuyi",
+      "category": "lobbyBackground",
+      "name": "神社庭院·初诣",
+      "builtin": true,
+      "sourceItemId": 307007,
+      "texture": "Majsoul/Wardrobe/R16/Background/beijing_chuyi",
+      "preview": "Majsoul/Wardrobe/R16/Preview/beijing_chuyi",
+      "icon": "Majsoul/Wardrobe/R16/Icons/307007"
+    },
+    {
+      "id": "beijing_22summer",
+      "category": "lobbyBackground",
+      "name": "林间流水",
+      "builtin": true,
+      "sourceItemId": 307008,
+      "texture": "Majsoul/Wardrobe/R16/Background/beijing_22summer",
+      "preview": "Majsoul/Wardrobe/R16/Preview/beijing_22summer",
+      "icon": "Majsoul/Wardrobe/R16/Icons/307008"
+    },
+    {
+      "id": "beijing_qifu",
+      "category": "lobbyBackground",
+      "name": "祈福之夜",
+      "builtin": true,
+      "sourceItemId": 307009,
+      "texture": "Majsoul/Wardrobe/R16/Background/beijing_qifu",
+      "preview": "Majsoul/Wardrobe/R16/Preview/beijing_qifu",
+      "icon": "Majsoul/Wardrobe/R16/Icons/307009"
+    },
+    {
+      "id": "beijing_yinghuo",
+      "category": "lobbyBackground",
+      "name": "萤火谧语",
+      "builtin": true,
+      "sourceItemId": 307010,
+      "texture": "Majsoul/Wardrobe/R16/Background/beijing_yinghuo",
+      "preview": "Majsoul/Wardrobe/R16/Preview/beijing_yinghuo",
+      "icon": "Majsoul/Wardrobe/R16/Icons/307010"
+    },
+    {
+      "id": "beijing_shengye",
+      "category": "lobbyBackground",
+      "name": "圣夜惊喜",
+      "builtin": true,
+      "sourceItemId": 307011,
+      "texture": "Majsoul/Wardrobe/R16/Background/beijing_shengye",
+      "preview": "Majsoul/Wardrobe/R16/Preview/beijing_shengye",
+      "icon": "Majsoul/Wardrobe/R16/Icons/307011"
+    },
+    {
+      "id": "beijing_wuhui",
+      "category": "lobbyBackground",
+      "name": "舞会邀约",
+      "builtin": true,
+      "sourceItemId": 307012,
+      "texture": "Majsoul/Wardrobe/R16/Background/beijing_wuhui",
+      "preview": "Majsoul/Wardrobe/R16/Preview/beijing_wuhui",
+      "icon": "Majsoul/Wardrobe/R16/Icons/307012"
+    },
+    {
+      "id": "beijing_hongguang",
+      "category": "lobbyBackground",
+      "name": "虹光枫道",
+      "builtin": true,
+      "sourceItemId": 307013,
+      "texture": "Majsoul/Wardrobe/R16/Background/beijing_hongguang",
+      "preview": "Majsoul/Wardrobe/R16/Preview/beijing_hongguang",
+      "icon": "Majsoul/Wardrobe/R16/Icons/307013"
+    },
+    {
+      "id": "beijing_wuan",
+      "category": "lobbyBackground",
+      "name": "午安盛夏",
+      "builtin": true,
+      "sourceItemId": 307014,
+      "texture": "Majsoul/Wardrobe/R16/Background/beijing_wuan",
+      "preview": "Majsoul/Wardrobe/R16/Preview/beijing_wuan",
+      "icon": "Majsoul/Wardrobe/R16/Icons/307014"
+    },
+    {
+      "id": "beijing_jiuba",
+      "category": "lobbyBackground",
+      "name": "醇香微醺",
+      "builtin": true,
+      "sourceItemId": 30700001,
+      "texture": "Majsoul/Wardrobe/R16/Background/beijing_jiuba",
+      "preview": "Majsoul/Wardrobe/R16/Preview/beijing_jiuba",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30700001"
+    },
+    {
+      "id": "beijing_fenwoshi",
+      "category": "lobbyBackground",
+      "name": "纯真梦乡",
+      "builtin": true,
+      "sourceItemId": 30700002,
+      "texture": "Majsoul/Wardrobe/R16/Background/beijing_fenwoshi",
+      "preview": "Majsoul/Wardrobe/R16/Preview/beijing_fenwoshi",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30700002"
+    },
+    {
+      "id": "beijing_gufengwoshi",
+      "category": "lobbyBackground",
+      "name": "在野小筑",
+      "builtin": true,
+      "sourceItemId": 30700003,
+      "texture": "Majsoul/Wardrobe/R16/Background/beijing_gufengwoshi",
+      "preview": "Majsoul/Wardrobe/R16/Preview/beijing_gufengwoshi",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30700003"
+    },
+    {
+      "id": "beijing_tangquan",
+      "category": "lobbyBackground",
+      "name": "汤泉物语",
+      "builtin": true,
+      "sourceItemId": 30700004,
+      "texture": "Majsoul/Wardrobe/R16/Background/beijing_tangquan",
+      "preview": "Majsoul/Wardrobe/R16/Preview/beijing_tangquan",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30700004"
+    },
+    {
+      "id": "beijing_dongmudaqiao",
+      "category": "lobbyBackground",
+      "name": "Fate/stay night 联动纪念",
+      "builtin": true,
+      "sourceItemId": 30700005,
+      "texture": "Majsoul/Wardrobe/R16/Background/beijing_dongmudaqiao",
+      "preview": "Majsoul/Wardrobe/R16/Preview/beijing_dongmudaqiao",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30700005"
+    },
+    {
+      "id": "beijing_shamo",
+      "category": "lobbyBackground",
+      "name": "千沙奇旅",
+      "builtin": true,
+      "sourceItemId": 30700006,
+      "texture": "Majsoul/Wardrobe/R16/Background/beijing_shamo",
+      "preview": "Majsoul/Wardrobe/R16/Preview/beijing_shamo",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30700006"
+    },
+    {
+      "id": "beijing_yuanlin",
+      "category": "lobbyBackground",
+      "name": "听竹别苑",
+      "builtin": true,
+      "sourceItemId": 30700007,
+      "texture": "Majsoul/Wardrobe/R16/Background/beijing_yuanlin",
+      "preview": "Majsoul/Wardrobe/R16/Preview/beijing_yuanlin",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30700007"
+    },
+    {
+      "id": "mjpface_25summer",
+      "category": "tileFace",
+      "name": "牌面-飞鸟与鱼",
+      "builtin": true,
+      "sourceItemId": 30710001,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjpface_25summer/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjpface_25summer/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjpface_25summer/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/30710001"
+    },
+    {
+      "id": "liqi_saki",
+      "category": "stick",
+      "name": "立直棒-墨西哥卷饼",
+      "builtin": true,
+      "sourceItemId": 308003,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_saki",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/308003"
+    },
+    {
+      "id": "tablecloth_saki",
+      "category": "cloth",
+      "name": "桌布-赛间小憩",
+      "builtin": true,
+      "sourceItemId": 308004,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_saki",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_saki",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308004"
+    },
+    {
+      "id": "mjp_saki",
+      "category": "tileBack",
+      "name": "牌背-艾托企鹅",
+      "builtin": true,
+      "sourceItemId": 308005,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_saki/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_saki/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_saki/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308005"
+    },
+    {
+      "id": "liqi_kuangdu",
+      "category": "stick",
+      "name": "立直棒-生死之剑",
+      "builtin": true,
+      "sourceItemId": 308008,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_kuangdu",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/308008"
+    },
+    {
+      "id": "tablecloth_kuangdu",
+      "category": "cloth",
+      "name": "桌布-无双之花",
+      "builtin": true,
+      "sourceItemId": 308009,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_kuangdu",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_kuangdu",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308009"
+    },
+    {
+      "id": "mjp_kuangdu",
+      "category": "tileBack",
+      "name": "牌背-百花境界",
+      "builtin": true,
+      "sourceItemId": 308010,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_kuangdu/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_kuangdu/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_kuangdu/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308010"
+    },
+    {
+      "id": "liqi_akagi",
+      "category": "stick",
+      "name": "立直棒-命悬一线",
+      "builtin": true,
+      "sourceItemId": 308013,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_akagi",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/308013"
+    },
+    {
+      "id": "tablecloth_akagi",
+      "category": "cloth",
+      "name": "桌布-传说之夜",
+      "builtin": true,
+      "sourceItemId": 308014,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_akagi",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_akagi",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308014"
+    },
+    {
+      "id": "mjp_akagi",
+      "category": "tileBack",
+      "name": "牌背-双鹫纹章",
+      "builtin": true,
+      "sourceItemId": 308015,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_akagi/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_akagi/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_akagi/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308015"
+    },
+    {
+      "id": "liqi_kaguya",
+      "category": "stick",
+      "name": "立直棒-恋之反省",
+      "builtin": true,
+      "sourceItemId": 308018,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_kaguya",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/308018"
+    },
+    {
+      "id": "tablecloth_kaguya",
+      "category": "cloth",
+      "name": "桌布-恋之见证",
+      "builtin": true,
+      "sourceItemId": 308019,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_kaguya",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_kaguya",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308019"
+    },
+    {
+      "id": "mjp_kaguya",
+      "category": "tileBack",
+      "name": "牌背-恋之背影",
+      "builtin": true,
+      "sourceItemId": 308020,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_kaguya/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_kaguya/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_kaguya/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308020"
+    },
+    {
+      "id": "liqi_2211saki",
+      "category": "stick",
+      "name": "立直棒-爱心便当",
+      "builtin": true,
+      "sourceItemId": 308023,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_2211saki",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/308023"
+    },
+    {
+      "id": "tablecloth_2211saki",
+      "category": "cloth",
+      "name": "桌布-清凉假日",
+      "builtin": true,
+      "sourceItemId": 308024,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_2211saki",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_2211saki",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308024"
+    },
+    {
+      "id": "mjp_2211saki",
+      "category": "tileBack",
+      "name": "牌背-摇曳彩球",
+      "builtin": true,
+      "sourceItemId": 308025,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_2211saki/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_2211saki/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_2211saki/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308025"
+    },
+    {
+      "id": "liqi_llx",
+      "category": "stick",
+      "name": "立直棒-骑士的钥匙",
+      "builtin": true,
+      "sourceItemId": 308028,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_llx",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/308028"
+    },
+    {
+      "id": "tablecloth_llx",
+      "category": "cloth",
+      "name": "桌布-魔女的契约",
+      "builtin": true,
+      "sourceItemId": 308029,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_llx",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_llx",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308029"
+    },
+    {
+      "id": "mjp_llx",
+      "category": "tileBack",
+      "name": "牌背-假面的裁决",
+      "builtin": true,
+      "sourceItemId": 308030,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_llx/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_llx/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_llx/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308030"
+    },
+    {
+      "id": "liqi_yly",
+      "category": "stick",
+      "name": "立直棒-红晖的魔杖",
+      "builtin": true,
+      "sourceItemId": 308033,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_yly",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/308033"
+    },
+    {
+      "id": "tablecloth_yly",
+      "category": "cloth",
+      "name": "桌布-星夜的羁绊",
+      "builtin": true,
+      "sourceItemId": 308034,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_yly",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_yly",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308034"
+    },
+    {
+      "id": "mjp_yly",
+      "category": "tileBack",
+      "name": "牌背-苍蓝的星辰",
+      "builtin": true,
+      "sourceItemId": 308035,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_yly/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_yly/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_yly/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308035"
+    },
+    {
+      "id": "liqi_24ba",
+      "category": "stick",
+      "name": "立直棒-大蛇比纳",
+      "builtin": true,
+      "sourceItemId": 308038,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_24ba",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/308038"
+    },
+    {
+      "id": "tablecloth_24ba",
+      "category": "cloth",
+      "name": "桌布-什亭青空",
+      "builtin": true,
+      "sourceItemId": 308039,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_24ba",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_24ba",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308039"
+    },
+    {
+      "id": "mjp_24ba",
+      "category": "tileBack",
+      "name": "牌背-佩洛之星",
+      "builtin": true,
+      "sourceItemId": 308040,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_24ba/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_24ba/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_24ba/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308040"
+    },
+    {
+      "id": "liqi_25hf",
+      "category": "stick",
+      "name": "立直棒-胜利誓约",
+      "builtin": true,
+      "sourceItemId": 308043,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_25hf",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/308043"
+    },
+    {
+      "id": "tablecloth_25hf",
+      "category": "cloth",
+      "name": "桌布-剑之丘",
+      "builtin": true,
+      "sourceItemId": 308044,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_25hf",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_25hf",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308044"
+    },
+    {
+      "id": "mjp_25hf",
+      "category": "tileBack",
+      "name": "牌背-噬光之剑",
+      "builtin": true,
+      "sourceItemId": 308045,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_25hf/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_25hf/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_25hf/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308045"
+    },
+    {
+      "id": "liqi_25yh",
+      "category": "stick",
+      "name": "立直棒-志村新八",
+      "builtin": true,
+      "sourceItemId": 308048,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_25yh",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/308048"
+    },
+    {
+      "id": "tablecloth_25yh",
+      "category": "cloth",
+      "name": "桌布-骑摩托的银时",
+      "builtin": true,
+      "sourceItemId": 308049,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_25yh",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_25yh",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308049"
+    },
+    {
+      "id": "mjp_25yh",
+      "category": "tileBack",
+      "name": "牌背-Just a way",
+      "builtin": true,
+      "sourceItemId": 308050,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_25yh/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_25yh/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_25yh/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308050"
+    },
+    {
+      "id": "headframe_25yh",
+      "category": "headFrame",
+      "name": "头像框-伊丽莎白框",
+      "builtin": true,
+      "sourceItemId": 308051,
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_25yh",
+      "avatarWindow": [
+        0.16875,
+        0.16875,
+        0.6625,
+        0.6625
+      ],
+      "icon": "Majsoul/Wardrobe/R16/Icons/308051"
+    },
+    {
+      "id": "liqi_26dj",
+      "category": "stick",
+      "name": "立直棒-黑与白",
+      "builtin": true,
+      "sourceItemId": 308054,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_26dj",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/308054"
+    },
+    {
+      "id": "tablecloth_26dj",
+      "category": "cloth",
+      "name": "桌布-浮游城",
+      "builtin": true,
+      "sourceItemId": 308055,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_26dj",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_26dj",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308055"
+    },
+    {
+      "id": "mjp_26dj",
+      "category": "tileBack",
+      "name": "牌背-澄澈之心",
+      "builtin": true,
+      "sourceItemId": 308056,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_26dj/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_26dj/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_26dj/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308056"
+    },
+    {
+      "id": "headframe_26dj",
+      "category": "headFrame",
+      "name": "头像框-战斗视界",
+      "builtin": true,
+      "sourceItemId": 308057,
+      "texture": "Majsoul/Wardrobe/R16/Frames/headframe_26dj",
+      "avatarWindow": [
+        0.16875,
+        0.16875,
+        0.6625,
+        0.6625
+      ],
+      "icon": "Majsoul/Wardrobe/R16/Icons/308057"
+    },
+    {
+      "id": "mjp_official",
+      "category": "tileBack",
+      "name": "牌背-官方赛事",
+      "builtin": true,
+      "sourceItemId": 308996,
+      "hand": "Majsoul/Wardrobe/R16/Items/mjp_official/hand",
+      "table": "Majsoul/Wardrobe/R16/Items/mjp_official/table",
+      "preview": "Majsoul/Wardrobe/R16/Items/mjp_official/preview",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308996"
+    },
+    {
+      "id": "tablecloth_official_qlz",
+      "category": "cloth",
+      "name": "桌布-官方赛事麒麟战",
+      "builtin": true,
+      "sourceItemId": 308997,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_official_qlz",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_official_qlz",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308997"
+    },
+    {
+      "id": "tablecloth_official_sxz",
+      "category": "cloth",
+      "name": "桌布-官方赛事四象战",
+      "builtin": true,
+      "sourceItemId": 308998,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_official_sxz",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_official_sxz",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308998"
+    },
+    {
+      "id": "tablecloth_official",
+      "category": "cloth",
+      "name": "桌布-官方赛事",
+      "builtin": true,
+      "sourceItemId": 308999,
+      "texture": "Majsoul/Wardrobe/R16/Cloth/tablecloth_official",
+      "preview": "Majsoul/Wardrobe/R16/Preview/tablecloth_official",
+      "icon": "Majsoul/Wardrobe/R16/Icons/308999"
+    },
+    {
+      "id": "liqi_25summer",
+      "category": "stick",
+      "name": "立直棒-绚烂烟花",
+      "builtin": true,
+      "sourceItemId": 30560009,
+      "modelPrefab": "Majsoul/NativeReview/StaticR16/liqi_25summer",
+      "duration": 4,
+      "icon": "Majsoul/Wardrobe/R16/Icons/30560009"
+    },
+    {
+      "id": "ron-fate-hf",
+      "category": "winEffect",
+      "name": "和牌-咒层界・恶念祝祭",
+      "builtin": true,
+      "icon": "Majsoul/NativeReview/FateR19/Icons/ron_25hf",
+      "effect": "Majsoul/Actions/native-ron_25hf",
+      "nativeEffect": "FateR19/ron_25hf",
+      "duration": 6,
+      "cue": "ron_25hf",
+      "groundEffect": false
     }
   ]
 }

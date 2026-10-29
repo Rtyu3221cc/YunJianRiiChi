@@ -10,6 +10,8 @@ R = Path(__file__).resolve().parent.parent
 REF = R/'dist/previews/2026-10-27-effects-reference'
 NATIVE = R/'unity/Assets/Resources/Majsoul/NativeReview'
 OUT = NATIVE/'EffectsR11'
+BATCH = 'EffectsR11'
+AUDIT = REF/'source'
 sys.path.insert(0, str(R/'tools/asset-inspector'))
 import UnityPy
 from UnityPy.helpers.MeshHelper import MeshHandler
@@ -56,7 +58,7 @@ def main():
     with ThreadPoolExecutor(max_workers=4) as pool:
         acquired = list(pool.map(collect['fetch'], requested))
     failed = [v for v in acquired if 'error' in v]
-    dump(REF/'source/effect-bundles.json', acquired)
+    dump(AUDIT/'effect-bundles.json', acquired)
     if failed:
         raise RuntimeError('Source bundles failed: '+str([r['file'] for r in failed]))
     files = {r['file'] for r in source_index+acquired if r['file'].endswith('.majset') and 'error' not in r}
@@ -87,6 +89,8 @@ def main():
             return None
         if ptr['m_FileID']:
             name = Path(file.externals[ptr['m_FileID']-1].path).name
+            if name=='unity default resources' and ptr['m_PathID']==10210:
+                return dict(builtin='Quad',pathID=10210)
             if name not in cab:
                 raise ValueError('Missing native dependency '+name)
             file = cab[name]
@@ -127,13 +131,14 @@ def main():
         name = sd['m_ParsedForm']['m_Name']
         floats, colors, texenv = dict(props['m_Floats']), dict(props['m_Colors']), dict(props['m_TexEnvs'])
         main = texenv.get('_MainTex')
-        if not main or not main['m_Texture']['m_PathID']:
+        if (not main or not main['m_Texture']['m_PathID']) and BATCH!='FateR19':
             raise ValueError('Missing main texture '+md['m_Name'])
-        tex = resolve(obj.assets_file,main['m_Texture'])
-        texdata = tex.read_typetree()
-        texfile = f'EffectsR11/Textures/{tex.assets_file.name}-{tex.path_id}'
+        tex = resolve(obj.assets_file,main['m_Texture']) if main else None
+        texdata = tex.read_typetree() if tex else {}
+        texfile = f'{BATCH}/Textures/{tex.assets_file.name}-{tex.path_id}' if tex else f'{BATCH}/Textures/builtin-white'
         if not (NATIVE/(texfile+'.png')).exists():
-            buf = io.BytesIO(); tex.read().image.save(buf,format='PNG');save(texfile+'.png',buf.getvalue(),tex)
+            from PIL import Image
+            buf = io.BytesIO(); (tex.read().image if tex else Image.new('RGBA',(2,2),'white')).save(buf,format='PNG');save(texfile+'.png',buf.getvalue(),tex)
         state = sd['m_ParsedForm']['m_SubShaders'][0]['m_Passes'][0]['m_State']
         blend = state['rtBlend0']
         src,dst = blend['srcBlend']['val'],blend['destBlend']['val']
@@ -152,7 +157,7 @@ def main():
         extra=[]
         for prop,value in texenv.items():
             if not value['m_Texture']['m_PathID'] or prop=='_MainTex':continue
-            image=resolve(obj.assets_file,value['m_Texture']);file=f'EffectsR11/Textures/{image.assets_file.name}-{image.path_id}'
+            image=resolve(obj.assets_file,value['m_Texture']);file=f'{BATCH}/Textures/{image.assets_file.name}-{image.path_id}'
             if not (NATIVE/(file+'.png')).exists():
                 buf=io.BytesIO();image.read().image.save(buf,format='PNG');save(file+'.png',buf.getvalue(),image)
             es=image.read_typetree().get('m_TextureSettings',{})
@@ -169,8 +174,12 @@ def main():
                     zTest=state_value('zTest'),zWrite=state_value('zWrite'),cull=state_value('culling'))
 
     def mesh_data(mesh,relative):
+        if isinstance(mesh,dict) and mesh.get('builtin')=='Quad':
+            return js(relative,dict(builtin='Quad',sourcePathID=10210))
         helper=MeshHandler(mesh.read());helper.process()
-        return js(relative,dict(vertices=[n for v in helper.m_Vertices for n in v],uv=[n for v in helper.m_UV0 for n in v[:2]],indices=[i for sm in helper.get_triangles() for tri in sm for i in tri]),mesh)
+        data=dict(vertices=[n for v in helper.m_Vertices for n in v],uv=[n for v in helper.m_UV0 for n in v[:2]],indices=[i for sm in helper.get_triangles() for tri in sm for i in tri])
+        if BATCH=='FateR19' and helper.m_Colors:data['colors']=[n for v in helper.m_Colors for n in v]
+        return js(relative,data,mesh)
 
     jobs=[]
     for target in targets:
@@ -179,7 +188,7 @@ def main():
         exact=next((p for p in paths if Path(p).stem==sourcekey),None)
         if exact:paths=[exact]
         elif len(paths)>1:
-            target['nativeVariants']=['EffectsR11/'+sourcekey]+['EffectsR11/'+Path(p).stem for p in paths[1:]]
+            target['nativeVariants']=[BATCH+'/'+sourcekey]+[BATCH+'/'+Path(p).stem for p in paths[1:]]
         target['allPrefabs']=paths
         jobs.append((target,paths[0],sourcekey))
         for p in paths[1:]:jobs.append((dict(target),p,Path(p).stem))
@@ -197,20 +206,20 @@ def main():
                     ad=c.read_typetree();controller=resolve(c.assets_file,ad['m_Controller'])
                     if controller:
                         cd=controller.read_typetree()
-                        js(f'EffectsR11/Animations/{key}-{c.path_id}-controller.json',cd,controller)
+                        js(f'{BATCH}/Animations/{key}-{c.path_id}-controller.json',cd,controller)
                         node['animations']=[]
                         for clipref in cd.get('m_AnimationClips',[]):
                             clip=resolve(controller.assets_file,clipref)
                             if clip:
                                 clipdata=clip.read_typetree()
-                                relative=f'EffectsR11/Animations/{key}-{clip.path_id}'
+                                relative=f'{BATCH}/Animations/{key}-{clip.path_id}'
                                 node['animations'].append(js(relative+'.json',{'AnimationClip':clipdata},clip))
                                 animation_sources.append(dict(bundle=str(clip.assets_file.parent.name),name=clipdata['m_Name'],output=relative+'.anim',effect=key,node=node['name']))
             particle=next((c for c in components if c.type.name=='ParticleSystem'),None)
             renderer=next((c for c in components if c.type.name=='ParticleSystemRenderer'),None)
             if particle and renderer:
                 data=particle.read_typetree();data.pop('m_GameObject',None)
-                relative=f'EffectsR11/Data/{key}-{particle.path_id}'
+                relative=f'{BATCH}/Data/{key}-{particle.path_id}'
                 node['particle']=js(relative+'.json',schema['editor_json']('ParticleSystem',data),particle)
                 rd=renderer.read_typetree()
                 renderer_data={k:v for k,v in rd.items() if k not in ['m_GameObject','m_Materials','m_Mesh','m_Mesh1','m_Mesh2','m_Mesh3']}
@@ -230,26 +239,31 @@ def main():
             static_renderer=next((c for c in components if c.type.name=='MeshRenderer'),None)
             if meshfilter and static_renderer:
                 mesh=resolve(meshfilter.assets_file,meshfilter.read_typetree()['m_Mesh']);rd=static_renderer.read_typetree()
-                node['mesh']=mesh_data(mesh,f'EffectsR11/Data/{key}-{mesh.path_id}-static-mesh.json');node['staticMesh']=True
+                mesh_id=mesh.get('pathID') if isinstance(mesh,dict) else mesh.path_id
+                node['mesh']=mesh_data(mesh,f'{BATCH}/Data/{key}-{mesh_id}-static-mesh.json');node['staticMesh']=True
                 node['materials']=[material(resolve(static_renderer.assets_file,p))for p in rd['m_Materials']if p['m_PathID']]
                 node['sortingOrder']=rd.get('m_SortingOrder',0)
             nodes.append(node)
         target['prefab']=main
         target['allPrefabs']=paths
-        target['nativeEffect']='EffectsR11/'+key
+        target['nativeEffect']=BATCH+'/'+key
         if key==target['sourceKey']:
             icons=[p for p in container if p.startswith(f'myassets/deco/{"effect_hupai"if key in WIN else"effect_lizhi"}/{key}/pic/common/')and p.endswith(('.png','.jpg'))]
             if icons:
                 iconptr=container[sorted(icons)[0]];iconobj=iconptr.assetsfile.objects[iconptr.path_id]
-                buf=io.BytesIO();iconobj.read().image.save(buf,format='PNG');save(f'EffectsR11/Icons/{key}.png',buf.getvalue(),iconobj)
-                target['icon']='Majsoul/NativeReview/EffectsR11/Icons/'+key
-        js(f'EffectsR11/{key}-source.json',dict(nodes=nodes,sourceVersion='4.0.51',preserveActiveState=True),root)
+                buf=io.BytesIO();iconobj.read().image.save(buf,format='PNG');save(f'{BATCH}/Icons/{key}.png',buf.getvalue(),iconobj)
+                target['icon']='Majsoul/NativeReview/'+BATCH+'/Icons/'+key
+        js(f'{BATCH}/{key}-source.json',dict(nodes=nodes,sourceVersion='4.0.51',preserveActiveState=True),root)
         print('EXPORTED',key,target.get('particleLayers',0),'layers',flush=True)
     dump(OUT/'manifest.json',dict(clientVersion='4.0.51',resourceVersion='0.16.289',effects=targets,records=records,unsupported=unsupported))
-    dump(REF/'source/materials.json',material_audit)
-    dump(REF/'source/animation-sources.json',animation_sources)
-    dump(REF/'source/import-audit.json',dict(effects=targets,unsupported=unsupported))
+    dump(AUDIT/'materials.json',material_audit)
+    dump(AUDIT/'animation-sources.json',animation_sources)
+    dump(AUDIT/'import-audit.json',dict(effects=targets,unsupported=unsupported))
     print('NATIVE EXPORT COMPLETE',len(targets),'effects;',len(unsupported),'items require review',flush=True)
 
 
-if __name__=='__main__':main()
+if __name__=='__main__':
+    if '--fate-r19' in sys.argv:
+        WIN=['ron_25hf'];RIICHI=[];EXISTING={'ron_25hf':'ron-fate-hf'}
+        BATCH='FateR19';OUT=NATIVE/BATCH;AUDIT=R/'build/fate-r19/source';AUDIT.mkdir(parents=True,exist_ok=True)
+    main()

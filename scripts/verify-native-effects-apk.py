@@ -31,6 +31,9 @@ else:
         base=runpy.run_path(str(R/'scripts/verify-unity-apk.py'),run_name='__main__')
     finally:sys.argv=previous_args
     apk=base['output'];signature=base['signature']
+    evidence=B/'base-package-gate.json'
+    evidence.write_text(json.dumps(dict(version=version,signature=signature,completeBaseGatePassed=True),sort_keys=True,indent=2)+'\n','utf8')
+    cache.write_text(json.dumps(dict(sourceStamp=source_stamp(),signature=signature,evidence=evidence.relative_to(R).as_posix(),evidenceSHA256=hashlib.sha256(evidence.read_bytes()).hexdigest()),indent=2)+'\n','utf8')
 badging=subprocess.run([str(R/'tools/sdk/android-15/aapt2.exe'),'dump','badging',str(apk)],capture_output=True,text=True,encoding='utf8',errors='replace',check=True).stdout
 for expected in ["package: name='com.yunjian.riichi.unity'",f"versionCode='{code}'",f"versionName='{version}'","minSdkVersion:'26'","targetSdkVersion:'32'"]:
     assert expected in badging,'Unexpected Android package metadata: '+expected
@@ -79,7 +82,7 @@ with ZipFile(apk)as archive:
 assert hashlib.sha256(built.read_bytes()).hexdigest()==signature['sha256'],'Signed build and distribution differ'
 tests=(B/'node-tests.log').read_text('utf8');node_match=re.search(r'pass\s+(\d+)\b',tests)
 node_count=int(node_match[1])if node_match else 0
-assert node_count==({'0.6.15':173,'0.6.16':181}[version])and re.search(r'fail\s+0\b',tests)
+assert node_count==({'0.6.15':173,'0.6.16':181,'0.6.17':185}[version])and re.search(r'fail\s+0\b',tests)
 geometry=json.loads((R/'dist/previews/2026-10-27-effects-reference/source/r13/blade-geometry.json').read_text('utf8'));assert geometry['checks']==13
 regression=(R/'build/effects-r13-regression.log').read_text('utf8',errors='replace');assert 'REVIEW PASS 620 checks'in regression
 report=dict(version=version,versionCode=code,package='com.yunjian.riichi.unity',date=datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).date().isoformat(),apk=signature,apkBuilt=True,githubUploaded=False,androidDeviceTested=False,nodeTests=node_count,nativeEffects=24,nativePrefabs=prefabs,nativeParticleLayers=layers,scytheGeometryChecks=13,allEffectsPreviewChecks=620,effects=records,limitations=['Physical Android installation, input, audio, GPU rendering, performance and LAN await the user device test.','The existing North-tile gap assertion remains reproducible with baseline outfits; this task did not change that layout.','The 620 all-effects and 13 scythe checks are prior R13 evidence, not a fresh full-game runtime run.'])
@@ -100,6 +103,43 @@ if version=='0.6.16':
         for symbol in [b'ResolveHand',b'ObserveWaitState',b'Avatar']:
             assert symbol in metadata,'Missing current release behavior: '+repr(symbol)
     report.update(unityUnitChecks=sum(unit_counts),unityUnitBreakdown=dict(zip(['session','calloutAtlas','character','roleUi'],unit_counts)),pythonTests=python_tests,wardrobeRuntimeChecks=58,handChoices=2,backgroundTakeoverGraceSeconds=120)
+if version=='0.6.17':
+    model_manifest=json.loads((N/'StaticR16/manifest.json').read_text('utf8'))
+    assert len(model_manifest['effects'])==61
+    model_records=[]
+    with ZipFile(apk)as archive:
+        for symbol in [b'HandDiscardGesture',b'RefreshHandDragVisual',b'modelPrefab']:
+            assert symbol in metadata,'Missing 0.6.17 input/wardrobe runtime: '+repr(symbol)
+        for shader in [b'YunJian/StaticDecoration',b'YunJian/WardrobeParticle']:
+            assert shader in shader_data,'Decoration shader was stripped: '+repr(shader)
+        for source in (N/'StaticR16').rglob('*'):
+            if source.suffix in ['.png','.json','.prefab','.mat','.asset']:entry(source)
+        for model in model_manifest['effects']:
+            native=model['nativeEffect'];source=json.loads((N/(native+'-source.json')).read_text('utf8'))
+            env=UnityPy.load(archive.read(entry(N/(native+'.prefab'))))
+            expected=Counter(n['name']for n in source['nodes']if n.get('particle'))
+            particles=[o for o in env.objects if o.type.name=='ParticleSystem']
+            actual=Counter(o.assets_file.objects[o.read_typetree()['m_GameObject']['m_PathID']].peek_name()for o in particles)
+            assert actual==expected,'Incomplete stick particle graph '+native
+            mesh_count=sum(o.type.name=='MeshRenderer'for o in env.objects)
+            assert mesh_count==sum(bool(n.get('staticMesh'))for n in source['nodes']),'Incomplete stick meshes '+native
+            for renderer in [o for o in env.objects if o.type.name in ['MeshRenderer','ParticleSystemRenderer']]:
+                materials=renderer.read_typetree()['m_Materials'];assert materials and all(m['m_PathID']for m in materials),'Missing stick materials '+native
+            motion=N/(native+'-motion.json')
+            if motion.exists():assert motion.read_bytes()in archive.read(entry(motion)),'Stale stick motion '+native
+            model_records.append(dict(native=native,meshes=mesh_count,particles=len(particles),motion=motion.exists()))
+        for name in ['Majsoul/Wardrobe/catalog.json','Majsoul/Settings/music.json']:
+            source=R/'unity/Assets/Resources'/name;assert source.read_bytes()in archive.read(entry(source)),'Stale 0.6.17 catalog '+name
+    expected_counts=dict(stick=62,cloth=66,tileBack=56,tileFace=3,headFrame=24,lobbyBackground=20,music=17)
+    for category,count in expected_counts.items():assert sum(i['category']==category and not i.get('hiddenFromSelection')for i in catalog['items'])==count
+    assert len(json.loads((R/'unity/Assets/Resources/Majsoul/Settings/music.json').read_text('utf8'))['tracks'])==22
+    unit_log=(B/'unity-unit.log').read_text('utf8',errors='replace');assert 'RIICHI UNITY VALIDATION PASS'in unit_log
+    unit_counts=[int(re.search(pattern,unit_log)[1])for pattern in [r'RELEASE 0545 UNIT PASS:\s*(\d+)',r'RELEASE 063 UNIT PASS:\s*(\d+)',r'RELEASE 064 CHARACTER UNIT PASS:\s*(\d+)',r'RELEASE 065 ROLE UI UNIT PASS:\s*(\d+)']]
+    assert unit_counts==[62,87,385,37]
+    drag_log=(R/'build/drag-discard-r17/preview-final.log').read_text('utf8',errors='replace')
+    drag_count=int(re.search(r'DRAG DISCARD R17 PASS (\d+)',drag_log)[1]);assert drag_count==177
+    old_runtime=(B/'wardrobe-runtime.log').read_text('utf8',errors='replace');assert 'WARDROBE R15 SCREENSHOTS PASS 58'in old_runtime
+    report.update(staticWardrobeCounts=expected_counts,newSelectableDecorations=232,backgroundMusicTracks=22,stickPrefabs=61,stickModels=model_records,dragRuntimeChecks=drag_count,unityUnitChecks=571,wardrobeCarryoverChecks=58,priorWardrobeR16RuntimeChecks=1045,dragLogicProvenance='APK contains protected input Lua; thresholds are a project implementation of the requested behavior, not recovered original source.',handChoices=2,backgroundTakeoverGraceSeconds=120)
 (R/f'dist/unity-{version}-verification.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n','utf8')
 (R/f'dist/SHA256-unity-{version}.txt').write_text(signature['sha256'].upper()+'  '+apk.name+'\n','utf8')
 print('NATIVE EFFECT APK PASS',version,'effects=24 prefabs=27 particleLayers=312',signature['bytes'],signature['sha256'],flush=True)

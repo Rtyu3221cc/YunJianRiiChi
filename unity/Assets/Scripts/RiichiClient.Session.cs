@@ -62,7 +62,7 @@ namespace YunJian.Riichi
             // Release references to the old table before Render replaces its tiles.
             if(handChanged){effects.Reset();voice.Reset();settlementAudio.Reset();gameAudio.ClearHandEffects();resultDisplay.Reset();ClearSelection();RiichiMode=false;choosingKind=null;}
             bool changed=handChanged||State==null||State.version!=view.version||State.phase!=view.phase;
-            State=view;SettlementAudio.BindCharacters(view);ObserveWaitState();yakuman.Observe(State);
+            State=view;ObserveHandDrag();SettlementAudio.BindCharacters(view);ObserveWaitState();yakuman.Observe(State);
             introduction.Observe(State,validationSession);voice.Observe(State);gameAudio.SetScene(State);allLast.Observe(State);
             if(State.phase=="empty"||State.phase=="join"){active=false;page="home";table.Clear();return;}
             active=true;if(returning)page="home";

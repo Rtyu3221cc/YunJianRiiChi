@@ -1,0 +1,94 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ron_25hf-22-0
+  m_Shader: {fileID: 4800000, guid: 3fc588f9a562748438a3ae5c31b464ea, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _AMBlightTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DMaskTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DissolveTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DistortionTex:
+        m_Texture: {fileID: 2800000, guid: db749308ee51a5843acda6e3b353810b, type: 3}
+        m_Scale: {x: 3, y: 3}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 4bb5384a3dad8e645b4ce7f54dc285cf, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: -0.05, y: 0}
+    - _MaskTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AMBReverse: 0
+    - _AMBlightLerp: 0
+    - _AMBlightTexDistortion: 0
+    - _Alpha: 0
+    - _DMaskReverse: 0
+    - _DissMode: 0
+    - _Dissolve: 0
+    - _DissolveReverse: 0
+    - _DistortionReverse: 0
+    - _DstBlend: 10
+    - _EdgeColorMulti: 1
+    - _EdgeDistortion: 0
+    - _EdgeWidth: 0
+    - _EffectAge: -1
+    - _InsideEdge: 0
+    - _MainColorMulti: 1
+    - _MainReverse: 0
+    - _MainTexDistortion: 0.2
+    - _MaskReverse: 0
+    - _MaskTexDistortion: 0
+    - _OutsideEdge: 0
+    - _SourceCull: 2
+    - _SourceZWrite: 0
+    - _SpineAnimAlpha: 1
+    - _SrcBlend: 5
+    - _UseAMBlightTex: 0
+    - _UseDMaskTex: 0
+    - _UseDissolveTex: 0
+    - _UseDistortionTex: 1
+    - _UseMainTex: 1
+    - _UseMaskTex: 0
+    - _ZTest: 0
+    m_Colors:
+    - _AMBlightAnim: {r: 0, g: 0, b: 0, a: 0}
+    - _DMaskAnim: {r: 0, g: 0, b: 0, a: 0}
+    - _DissolveAnim: {r: 0, g: 0, b: 0, a: 0}
+    - _DistortionAnim: {r: 0, g: 1, b: 0, a: 0}
+    - _EdgeColor: {r: 1, g: 1, b: 1, a: 1}
+    - _MainAnim: {r: 0, g: 0, b: 0, a: 0}
+    - _MainColor: {r: 0.25, g: 0.033088237, b: 0.033088237, a: 1}
+    - _MaskAnim: {r: 0, g: 0, b: 0, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

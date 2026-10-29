@@ -50,7 +50,7 @@ namespace YunJian.Riichi {
 #if UNITY_EDITOR
             if(dressReviewAge>=0)age=dressReviewAge;
 #endif
-            if(item.standardStick||!string.IsNullOrEmpty(item.model)||!string.IsNullOrEmpty(item.effect)||!string.IsNullOrEmpty(item.nativeEffect)||!string.IsNullOrEmpty(item.motion))dressMotion.Tick(item,age);
+            if(item.standardStick||item.HasModel||!string.IsNullOrEmpty(item.effect)||!string.IsNullOrEmpty(item.nativeEffect)||!string.IsNullOrEmpty(item.motion))dressMotion.Tick(item,age);
         }
         void SelectDressCategory(string key){
             StopDressPreview();dressCategory=key;dressEye=false;dressItemScroll=Vector2.zero;dressItemDrag.Reset();dressItemRailDragging=false;int i=Array.FindIndex(dressCategories,c=>c.key==key);

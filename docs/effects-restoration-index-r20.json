@@ -1,0 +1,4272 @@
+{
+  "date": "2026-10-29",
+  "publicTableVersion": "0.11.252.w",
+  "nativeManifestVersion": "4.0.51 / 0.16.289",
+  "definitionCounts": {
+    "winEffect": 60,
+    "riichiEffect": 57,
+    "callout": 3
+  },
+  "definitions": [
+    {
+      "sourceId": 305007,
+      "name": "和牌-烈焰",
+      "category": "winEffect",
+      "sourceKey": "effect_hupai_fire",
+      "iconKey": "ron_fire",
+      "currentIds": [
+        "ron-flame"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305007,
+        "res_name": "effect_hupai_fire",
+        "audio_id": 230,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305008,
+      "name": "和牌-旋风",
+      "category": "winEffect",
+      "sourceKey": "effect_hupai_feng",
+      "iconKey": "ron_wind",
+      "currentIds": [
+        "ron-wind"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305008,
+        "res_name": "effect_hupai_feng",
+        "audio_id": 231,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305009,
+      "name": "和牌-樱花",
+      "category": "winEffect",
+      "sourceKey": "effect_hupai_sakura",
+      "iconKey": "ron_sakura",
+      "currentIds": [
+        "ron-sakura"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305009,
+        "res_name": "effect_hupai_sakura",
+        "audio_id": 232,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305010,
+      "name": "立直-苍火",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_bao",
+      "iconKey": "effect_liqi_bao",
+      "currentIds": [
+        "riichi-blue"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305010,
+        "res_name": "effect_liqi_bao",
+        "audio_id": 0,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305021,
+      "name": "立直-碎冰",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_ice",
+      "iconKey": "effect_liqi_ice",
+      "currentIds": [
+        "riichi-ice"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305021,
+        "res_name": "effect_liqi_ice",
+        "audio_id": 235,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305022,
+      "name": "立直-火焰",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_fire",
+      "iconKey": "effect_liqi_fire",
+      "currentIds": [
+        "riichi-fire"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305022,
+        "res_name": "effect_liqi_fire",
+        "audio_id": 236,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305023,
+      "name": "和牌-黑炎",
+      "category": "winEffect",
+      "sourceKey": "effect_hupai_heihuo",
+      "iconKey": "ron_heihuo",
+      "currentIds": [
+        "ron-blackfire"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305023,
+        "res_name": "effect_hupai_heihuo",
+        "audio_id": 237,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305029,
+      "name": "和牌-烟花",
+      "category": "winEffect",
+      "sourceKey": "effect_hupai_yanhua",
+      "iconKey": "ron_yanhua",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305029,
+        "res_name": "effect_hupai_yanhua",
+        "audio_id": 238,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305032,
+      "name": "立直-幻影",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_canying",
+      "iconKey": "effect_liqi_canying",
+      "currentIds": [
+        "riichi-afterimage"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305032,
+        "res_name": "effect_liqi_canying",
+        "audio_id": 305032,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305033,
+      "name": "立直-飞羽",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_feiyu",
+      "iconKey": "effect_liqi_feiyu",
+      "currentIds": [
+        "riichi-feather"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305033,
+        "res_name": "effect_liqi_feiyu",
+        "audio_id": 305033,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305034,
+      "name": "和牌-爆炎龙卷",
+      "category": "winEffect",
+      "sourceKey": "ron_huolongjuan",
+      "iconKey": "ron_huolongjuan",
+      "currentIds": [
+        "ron-tornado"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305034,
+        "res_name": "ron_huolongjuan",
+        "audio_id": 305034,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305035,
+      "name": "和牌-方舟反应堆",
+      "category": "winEffect",
+      "sourceKey": "ron_keji",
+      "iconKey": "ron_keji",
+      "currentIds": [
+        "ron-reactor"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305035,
+        "res_name": "ron_keji",
+        "audio_id": 305035,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305036,
+      "name": "和牌-红玫瑰",
+      "category": "winEffect",
+      "sourceKey": "ron_meiguihua",
+      "iconKey": "ron_meiguihua",
+      "currentIds": [
+        "ron-meiguihua"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305036,
+        "res_name": "ron_meiguihua",
+        "audio_id": 305036,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305037,
+      "name": "立直-叮～",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_ding",
+      "iconKey": "effect_liqi_ding",
+      "currentIds": [
+        "effect-liqi-ding"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305037,
+        "res_name": "effect_liqi_ding",
+        "audio_id": 305037,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305038,
+      "name": "立直-龙腾",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_longteng",
+      "iconKey": "effect_liqi_longteng",
+      "currentIds": [
+        "effect-liqi-longteng"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305038,
+        "res_name": "effect_liqi_longteng",
+        "audio_id": 305038,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305039,
+      "name": "和牌-K.O.",
+      "category": "winEffect",
+      "sourceKey": "ron_ko",
+      "iconKey": "ron_ko",
+      "currentIds": [
+        "ron-ko"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305039,
+        "res_name": "ron_ko",
+        "audio_id": 305039,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305040,
+      "name": "和牌-逆鳞",
+      "category": "winEffect",
+      "sourceKey": "ron_nilin",
+      "iconKey": "ron_nilin",
+      "currentIds": [
+        "ron-nilin"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305040,
+        "res_name": "ron_nilin",
+        "audio_id": 305040,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305200,
+      "name": "和牌-幽灵嗷嗷",
+      "category": "winEffect",
+      "sourceKey": "ron_youling",
+      "iconKey": "ron_youlingaoao",
+      "currentIds": [
+        "ron-youlingaoao"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305200,
+        "res_name": "ron_youling",
+        "audio_id": 305200,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305201,
+      "name": "和牌-歌剧魅影",
+      "category": "winEffect",
+      "sourceKey": "ron_gejumeiying",
+      "iconKey": "ron_gejumeiying",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305201,
+        "res_name": "ron_gejumeiying",
+        "audio_id": 305201,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305202,
+      "name": "和牌-魔法少女",
+      "category": "winEffect",
+      "sourceKey": "ron_mofashaonv",
+      "iconKey": "ron_mofashaonv",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305202,
+        "res_name": "ron_mofashaonv",
+        "audio_id": 305202,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305203,
+      "name": "和牌-阖家欢",
+      "category": "winEffect",
+      "sourceKey": "ron_20chunjie",
+      "iconKey": "ron_20chunjie",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305203,
+        "res_name": "ron_20chunjie",
+        "audio_id": 305203,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305204,
+      "name": "和牌-群星之寂",
+      "category": "winEffect",
+      "sourceKey": "ron_szx",
+      "iconKey": "ron_szx",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305204,
+        "res_name": "ron_szx",
+        "audio_id": 305204,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305205,
+      "name": "和牌-厄里斯之瞳",
+      "category": "winEffect",
+      "sourceKey": "ron_xhzy",
+      "iconKey": "ron_xhzy",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305205,
+        "res_name": "ron_xhzy",
+        "audio_id": 305205,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305206,
+      "name": "和牌-天降正义",
+      "category": "winEffect",
+      "sourceKey": "ron_nws",
+      "iconKey": "ron_nws",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305206,
+        "res_name": "ron_nws",
+        "audio_id": 305206,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305207,
+      "name": "和牌-黄金之蝶",
+      "category": "winEffect",
+      "sourceKey": "ron_jd",
+      "iconKey": "ron_jd",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305207,
+        "res_name": "ron_jd",
+        "audio_id": 305207,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305208,
+      "name": "和牌-海浪的馈赠",
+      "category": "winEffect",
+      "sourceKey": "ron_hl",
+      "iconKey": "ron_hl",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305208,
+        "res_name": "ron_hl",
+        "audio_id": 305208,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305209,
+      "name": "和牌-安可",
+      "category": "winEffect",
+      "sourceKey": "ron_music",
+      "iconKey": "ron_music",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305209,
+        "res_name": "ron_music",
+        "audio_id": 305209,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305210,
+      "name": "和牌-鸿运开年",
+      "category": "winEffect",
+      "sourceKey": "ron_21chunjie",
+      "iconKey": "ron_21chunjie",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305210,
+        "res_name": "ron_21chunjie",
+        "audio_id": 305210,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305211,
+      "name": "和牌-核心裂变",
+      "category": "winEffect",
+      "sourceKey": "ron_21cyber",
+      "iconKey": "ron_21cyber",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305211,
+        "res_name": "ron_21cyber",
+        "audio_id": 305211,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305212,
+      "name": "和牌-无间契印",
+      "category": "winEffect",
+      "sourceKey": "ron_21magic",
+      "iconKey": "ron_21magic",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305212,
+        "res_name": "ron_21magic",
+        "audio_id": 305212,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305213,
+      "name": "和牌-疾月斩",
+      "category": "winEffect",
+      "sourceKey": "ron_21zhounian",
+      "iconKey": "ron_21zhounian",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305213,
+        "res_name": "ron_21zhounian",
+        "audio_id": 305213,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305214,
+      "name": "(已过期)",
+      "category": "winEffect",
+      "sourceKey": "ron_4gr_nan",
+      "iconKey": "",
+      "currentIds": [],
+      "expired": true,
+      "sourceView": {
+        "id": 305214,
+        "res_name": "ron_4gr_nan",
+        "audio_id": 305214,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305215,
+      "name": "和牌-剑吟虎啸",
+      "category": "winEffect",
+      "sourceKey": "ron_xiyuansi",
+      "iconKey": "ron_xiyuansi",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305215,
+        "res_name": "ron_xiyuansi",
+        "audio_id": 305215,
+        "character_id": 0,
+        "sargs": [
+          "2600",
+          "1",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305216,
+      "name": "和牌-槲寄生下",
+      "category": "winEffect",
+      "sourceKey": "ron_21winter",
+      "iconKey": "ron_21winter",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305216,
+        "res_name": "ron_21winter",
+        "audio_id": 305216,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305217,
+      "name": "和牌-金屏春色",
+      "category": "winEffect",
+      "sourceKey": "ron_22chunjie",
+      "iconKey": "ron_22chunjie",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305217,
+        "res_name": "ron_22chunjie",
+        "audio_id": 305217,
+        "character_id": 0,
+        "sargs": [
+          "1800",
+          "1",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305218,
+      "name": "和牌-天罚",
+      "category": "winEffect",
+      "sourceKey": "ron_22rpg",
+      "iconKey": "ron_22rpg",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305218,
+        "res_name": "ron_22rpg",
+        "audio_id": 305218,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305219,
+      "name": "和牌-银链飞雪",
+      "category": "winEffect",
+      "sourceKey": "ron_beiyuan",
+      "iconKey": "ron_beiyuan",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305219,
+        "res_name": "ron_beiyuan",
+        "audio_id": 305219,
+        "character_id": 0,
+        "sargs": [
+          "1800",
+          "1",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305220,
+      "name": "和牌-泰山鸭顶",
+      "category": "winEffect",
+      "sourceKey": "ron_22summer",
+      "iconKey": "ron_22summer",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305220,
+        "res_name": "ron_22summer",
+        "audio_id": 305220,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305221,
+      "name": "和牌-机械哲学",
+      "category": "winEffect",
+      "sourceKey": "ron_23wenquan",
+      "iconKey": "ron_23wenquan",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305221,
+        "res_name": "ron_23wenquan",
+        "audio_id": 305221,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305222,
+      "name": "和牌-天地无用",
+      "category": "winEffect",
+      "sourceKey": "ron_23rpg",
+      "iconKey": "ron_23rpg",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305222,
+        "res_name": "ron_23rpg",
+        "audio_id": 305222,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305223,
+      "name": "和牌-衔环结草",
+      "category": "winEffect",
+      "sourceKey": "ron_dongcheng",
+      "iconKey": "ron_dongcheng",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305223,
+        "res_name": "ron_dongcheng",
+        "audio_id": 305223,
+        "character_id": 0,
+        "sargs": [
+          "2100",
+          "1",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305224,
+      "name": "和牌-黑洞",
+      "category": "winEffect",
+      "sourceKey": "ron_23ex_heidong",
+      "iconKey": "ron_23ex_heidong",
+      "currentIds": [
+        "ron-23ex-heidong"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305224,
+        "res_name": "ron_23ex_heidong",
+        "audio_id": 305224,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305225,
+      "name": "和牌-收割时刻",
+      "category": "winEffect",
+      "sourceKey": "ron_23ex_liandao",
+      "iconKey": "ron_23ex_liandao",
+      "currentIds": [
+        "ron-23ex-liandao"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305225,
+        "res_name": "ron_23ex_liandao",
+        "audio_id": 305225,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305226,
+      "name": "和牌-水之道",
+      "category": "winEffect",
+      "sourceKey": "ron_23ex_shuizhu",
+      "iconKey": "ron_23ex_shuizhu",
+      "currentIds": [
+        "ron-23ex-shuizhu"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305226,
+        "res_name": "ron_23ex_shuizhu",
+        "audio_id": 305226,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 30520001,
+      "name": "和牌-杰克的恶作剧",
+      "category": "winEffect",
+      "sourceKey": "ron_23wansheng",
+      "iconKey": "ron_23wansheng",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30520001,
+        "res_name": "ron_23wansheng",
+        "audio_id": 30520001,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 30520002,
+      "name": "和牌-虚空结界",
+      "category": "winEffect",
+      "sourceKey": "ron_23winter",
+      "iconKey": "ron_23winter",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30520002,
+        "res_name": "ron_23winter",
+        "audio_id": 30520002,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 30520003,
+      "name": "和牌-墨韵",
+      "category": "winEffect",
+      "sourceKey": "ron_24chunjie",
+      "iconKey": "ron_24chunjie",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30520003,
+        "res_name": "ron_24chunjie",
+        "audio_id": 30520003,
+        "character_id": 0,
+        "sargs": [
+          "0",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 30520004,
+      "name": "和牌-伺机而动",
+      "category": "winEffect",
+      "sourceKey": "ron_24haidao",
+      "iconKey": "ron_24haidao",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30520004,
+        "res_name": "ron_24haidao",
+        "audio_id": 30520004,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 30520005,
+      "name": "和牌-喵——呜！",
+      "category": "winEffect",
+      "sourceKey": "ron_24summer",
+      "iconKey": "ron_24summer",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30520005,
+        "res_name": "ron_24summer",
+        "audio_id": 30520005,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 30520006,
+      "name": "和牌-落羽涅槃",
+      "category": "winEffect",
+      "sourceKey": "ron_nanfenghua",
+      "iconKey": "ron_nanfenghua",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30520006,
+        "res_name": "ron_nanfenghua",
+        "audio_id": 30520006,
+        "character_id": 0,
+        "sargs": [
+          "1800",
+          "1",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 30520007,
+      "name": "和牌-涟漪之空",
+      "category": "winEffect",
+      "sourceKey": "ron_24imas",
+      "iconKey": "ron_24imas",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30520007,
+        "res_name": "ron_24imas",
+        "audio_id": 30520007,
+        "character_id": 0,
+        "sargs": [
+          "1500",
+          "2",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 30520008,
+      "name": "和牌-得胜达摩",
+      "category": "winEffect",
+      "sourceKey": "ron_24winter",
+      "iconKey": "ron_24winter",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30520008,
+        "res_name": "ron_24winter",
+        "audio_id": 30520008,
+        "character_id": 0,
+        "sargs": [
+          "400",
+          "1",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 30520009,
+      "name": "和牌-静伏蛰影",
+      "category": "winEffect",
+      "sourceKey": "ron_liyang",
+      "iconKey": "ron_liyang",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30520009,
+        "res_name": "ron_liyang",
+        "audio_id": 30520009,
+        "character_id": 0,
+        "sargs": [
+          "1900",
+          "2",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 30520010,
+      "name": "和牌-一击必鲨",
+      "category": "winEffect",
+      "sourceKey": "ron_25summer",
+      "iconKey": "ron_25summer",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30520010,
+        "res_name": "ron_25summer",
+        "audio_id": 30520010,
+        "character_id": 0,
+        "sargs": [
+          "900",
+          "1",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 30520011,
+      "name": "和牌-惊澜",
+      "category": "winEffect",
+      "sourceKey": "ron_25dongri",
+      "iconKey": "ron_25dongri",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30520011,
+        "res_name": "ron_25dongri",
+        "audio_id": 30520011,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 30520012,
+      "name": "和牌-清波跃金",
+      "category": "winEffect",
+      "sourceKey": "ron_26chunjie",
+      "iconKey": "ron_26chunjie",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30520012,
+        "res_name": "ron_26chunjie",
+        "audio_id": 30520012,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "1",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305300,
+      "name": "立直-蝙蝠桀桀",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_bianfu",
+      "iconKey": "effect_liqi_bianfujiejie",
+      "currentIds": [
+        "riichi-bat"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305300,
+        "res_name": "effect_liqi_bianfu",
+        "audio_id": 305300,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305301,
+      "name": "立直-非常事态",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_feichangshitai",
+      "iconKey": "effect_liqi_feichangshitai",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305301,
+        "res_name": "effect_liqi_feichangshitai",
+        "audio_id": 305301,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305302,
+      "name": "立直-魔法少女",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_mofashaonv",
+      "iconKey": "effect_liqi_mofashaonv",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305302,
+        "res_name": "effect_liqi_mofashaonv",
+        "audio_id": 305302,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305303,
+      "name": "立直-鼠生威",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_20chunjie",
+      "iconKey": "effect_liqi_20chunjie",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305303,
+        "res_name": "effect_liqi_20chunjie",
+        "audio_id": 305303,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305304,
+      "name": "立直-星陨",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_szx",
+      "iconKey": "effect_liqi_szx",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305304,
+        "res_name": "effect_liqi_szx",
+        "audio_id": 305304,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305305,
+      "name": "立直-血·朗基努斯枪",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_xhzy",
+      "iconKey": "effect_liqi_xhzy",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305305,
+        "res_name": "effect_liqi_xhzy",
+        "audio_id": 305305,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305306,
+      "name": "立直-断罪",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_nws",
+      "iconKey": "effect_liqi_nws",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305306,
+        "res_name": "effect_liqi_nws",
+        "audio_id": 305306,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305307,
+      "name": "立直-蝶惑",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_jd",
+      "iconKey": "effect_liqi_jd",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305307,
+        "res_name": "effect_liqi_jd",
+        "audio_id": 305307,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305308,
+      "name": "立直-浪之声",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_hl",
+      "iconKey": "effect_liqi_hl",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305308,
+        "res_name": "effect_liqi_hl",
+        "audio_id": 305308,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305309,
+      "name": "立直-开场曲",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_music",
+      "iconKey": "effect_liqi_music",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305309,
+        "res_name": "effect_liqi_music",
+        "audio_id": 305309,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305310,
+      "name": "立直-生财有道",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_21chunjie",
+      "iconKey": "effect_liqi_21chunjie",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305310,
+        "res_name": "effect_liqi_21chunjie",
+        "audio_id": 305310,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305311,
+      "name": "立直-虚拟导航",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_21cyber",
+      "iconKey": "effect_liqi_21cyber",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305311,
+        "res_name": "effect_liqi_21cyber",
+        "audio_id": 305311,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305312,
+      "name": "立直-灵魂契约",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_21magic",
+      "iconKey": "effect_liqi_21magic",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305312,
+        "res_name": "effect_liqi_21magic",
+        "audio_id": 305312,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305313,
+      "name": "立直-风华斩",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_21zhounian",
+      "iconKey": "effect_liqi_21zhounian",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305313,
+        "res_name": "effect_liqi_21zhounian",
+        "audio_id": 305313,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305314,
+      "name": "(已过期)",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_4gr_nan",
+      "iconKey": "",
+      "currentIds": [],
+      "expired": true,
+      "sourceView": {
+        "id": 305314,
+        "res_name": "effect_liqi_4gr_nan",
+        "audio_id": 305314,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305315,
+      "name": "立直-虎啸长风",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_xiyuansi",
+      "iconKey": "effect_liqi_xiyuansi",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305315,
+        "res_name": "effect_liqi_xiyuansi",
+        "audio_id": 305315,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305316,
+      "name": "立直-鹿雪冬至",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_21winter",
+      "iconKey": "effect_liqi_21winter",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305316,
+        "res_name": "effect_liqi_21winter",
+        "audio_id": 305316,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305317,
+      "name": "立直-暗香梅影",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_22chunjie",
+      "iconKey": "effect_liqi_22chunjie",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305317,
+        "res_name": "effect_liqi_22chunjie",
+        "audio_id": 305317,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305318,
+      "name": "立直-雷电环索",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_22rpg",
+      "iconKey": "effect_liqi_22rpg",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305318,
+        "res_name": "effect_liqi_22rpg",
+        "audio_id": 305318,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305319,
+      "name": "立直-蛇行诡道",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_beiyuan",
+      "iconKey": "effect_liqi_beiyuan",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305319,
+        "res_name": "effect_liqi_beiyuan",
+        "audio_id": 305319,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305320,
+      "name": "立直-立直鸭",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_22summer",
+      "iconKey": "effect_liqi_22summer",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305320,
+        "res_name": "effect_liqi_22summer",
+        "audio_id": 305320,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305321,
+      "name": "立直-量子智能",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_23wenquan",
+      "iconKey": "effect_liqi_23wenquan",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305321,
+        "res_name": "effect_liqi_23wenquan",
+        "audio_id": 305321,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305322,
+      "name": "立直-毒烟玉",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_23rpg",
+      "iconKey": "effect_liqi_23rpg",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305322,
+        "res_name": "effect_liqi_23rpg",
+        "audio_id": 305322,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305323,
+      "name": "立直-狐缘之绊",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_dongcheng",
+      "iconKey": "effect_liqi_dongcheng",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 305323,
+        "res_name": "effect_liqi_dongcheng",
+        "audio_id": 305323,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305324,
+      "name": "立直-猫过留痕",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_23ex_maozhua",
+      "iconKey": "effect_liqi_23ex_maozhua",
+      "currentIds": [
+        "effect-liqi-23ex-maozhua"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305324,
+        "res_name": "effect_liqi_23ex_maozhua",
+        "audio_id": 305324,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305325,
+      "name": "立直-问心之镰",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_23ex_liandao",
+      "iconKey": "effect_liqi_23ex_liandao",
+      "currentIds": [
+        "effect-liqi-23ex-liandao"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305325,
+        "res_name": "effect_liqi_23ex_liandao",
+        "audio_id": 305325,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305326,
+      "name": "立直-滚雪球效应",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_23ex_xueqiu",
+      "iconKey": "effect_liqi_23ex_xueqiu",
+      "currentIds": [
+        "effect-liqi-23ex-xueqiu"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305326,
+        "res_name": "effect_liqi_23ex_xueqiu",
+        "audio_id": 305326,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 30530001,
+      "name": "立直-南瓜夜行",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_23wansheng",
+      "iconKey": "effect_liqi_23wansheng",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30530001,
+        "res_name": "effect_liqi_23wansheng",
+        "audio_id": 30530001,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "1",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 30530002,
+      "name": "立直-星河入梦",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_23winter",
+      "iconKey": "effect_liqi_23winter",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30530002,
+        "res_name": "effect_liqi_23winter",
+        "audio_id": 30530002,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 30530003,
+      "name": "立直-挥毫",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_24chunjie",
+      "iconKey": "effect_liqi_24chunjie",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30530003,
+        "res_name": "effect_liqi_24chunjie",
+        "audio_id": 30530003,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 30530004,
+      "name": "立直-一步之遥",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_24haidao",
+      "iconKey": "effect_liqi_24haidao",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30530004,
+        "res_name": "effect_liqi_24haidao",
+        "audio_id": 30530004,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 30530005,
+      "name": "立直-萌爪狂欢",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_24summer",
+      "iconKey": "effect_liqi_24summer",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30530005,
+        "res_name": "effect_liqi_24summer",
+        "audio_id": 30530005,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 30530006,
+      "name": "立直-有凤来仪",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_nanfenghua",
+      "iconKey": "effect_liqi_nanfenghua",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30530006,
+        "res_name": "effect_liqi_nanfenghua",
+        "audio_id": 30530006,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 30530007,
+      "name": "立直-水漾星光",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_24imas",
+      "iconKey": "effect_liqi_24imas",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30530007,
+        "res_name": "effect_liqi_24imas",
+        "audio_id": 30530007,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "1",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 30530008,
+      "name": "立直-一锤定音",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_24winter",
+      "iconKey": "effect_liqi_24winter",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30530008,
+        "res_name": "effect_liqi_24winter",
+        "audio_id": 30530008,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 30530009,
+      "name": "立直-曲径通幽",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_liyang",
+      "iconKey": "effect_liqi_liyang",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30530009,
+        "res_name": "effect_liqi_liyang",
+        "audio_id": 30530009,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "1",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 1
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 30530010,
+      "name": "立直-暗藏鲨机",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_25summer",
+      "iconKey": "effect_liqi_25summer",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30530010,
+        "res_name": "effect_liqi_25summer",
+        "audio_id": 30530010,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "1",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 1
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 30530011,
+      "name": "立直-行云",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_25dongri",
+      "iconKey": "effect_liqi_25dongri",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30530011,
+        "res_name": "effect_liqi_25dongri",
+        "audio_id": 30530011,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "1",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 30530012,
+      "name": "立直-荷间戏",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_26chunjie",
+      "iconKey": "effect_liqi_26chunjie",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 30530012,
+        "res_name": "effect_liqi_26chunjie",
+        "audio_id": 30530012,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "1",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 305901,
+      "name": "鸣牌指示-雷驰电掣",
+      "category": "callout",
+      "sourceKey": "mpzs_shandian",
+      "iconKey": "mpzs_shandian",
+      "currentIds": [
+        "mpzs_shandian"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305901,
+        "res_name": "mpzs_shandian",
+        "audio_id": 0,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 305902,
+      "name": "鸣牌指示-咕噜咕噜",
+      "category": "callout",
+      "sourceKey": "mpzs_22event",
+      "iconKey": "mpzs_22event",
+      "currentIds": [
+        "mpzs_22event"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 305902,
+        "res_name": "mpzs_22event",
+        "audio_id": 0,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 30590001,
+      "name": "鸣牌指示-众星捧月",
+      "category": "callout",
+      "sourceKey": "mpzs_23winter",
+      "iconKey": "mpzs_23winter",
+      "currentIds": [
+        "mpzs_23winter"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 30590001,
+        "res_name": "mpzs_23winter",
+        "audio_id": 0,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 308001,
+      "name": "和牌-龙卷雷霆",
+      "category": "winEffect",
+      "sourceKey": "ron_saki",
+      "iconKey": "saki_ron",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 308001,
+        "res_name": "ron_saki",
+        "audio_id": 308001,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 308002,
+      "name": "立直-花天月地",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_saki",
+      "iconKey": "saki_liqi_effect",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 308002,
+        "res_name": "effect_liqi_saki",
+        "audio_id": 308002,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 308006,
+      "name": "和牌-命运之轮",
+      "category": "winEffect",
+      "sourceKey": "ron_kuangdu",
+      "iconKey": "kuangdu_ron",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 308006,
+        "res_name": "ron_kuangdu",
+        "audio_id": 308006,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 308007,
+      "name": "立直-纸牌花火",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_kuangdu",
+      "iconKey": "kuangdu_liqi_effect",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 308007,
+        "res_name": "effect_liqi_kuangdu",
+        "audio_id": 308007,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 308011,
+      "name": "和牌-地狱低语",
+      "category": "winEffect",
+      "sourceKey": "ron_akagi",
+      "iconKey": "akagi_ron",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 308011,
+        "res_name": "ron_akagi",
+        "audio_id": 308011,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "1",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 308012,
+      "name": "立直-幽冥之焰",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_akagi",
+      "iconKey": "akagi_liqi_effect",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 308012,
+        "res_name": "effect_liqi_akagi",
+        "audio_id": 308012,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 308016,
+      "name": "和牌-恋之降临",
+      "category": "winEffect",
+      "sourceKey": "ron_kaguya",
+      "iconKey": "huiye_ron",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 308016,
+        "res_name": "ron_kaguya",
+        "audio_id": 308016,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 308017,
+      "name": "立直-恋之箭矢",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_kaguya",
+      "iconKey": "huiye_liqi_effect",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 308017,
+        "res_name": "effect_liqi_kaguya",
+        "audio_id": 308017,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 308021,
+      "name": "和牌-高岭之花",
+      "category": "winEffect",
+      "sourceKey": "ron_2211saki",
+      "iconKey": "2211saki_ron",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 308021,
+        "res_name": "ron_2211saki",
+        "audio_id": 308021,
+        "character_id": 0,
+        "sargs": [
+          "2000",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 308022,
+      "name": "立直-未来视",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_2211saki",
+      "iconKey": "2211saki_liqi_effect",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 308022,
+        "res_name": "effect_liqi_2211saki",
+        "audio_id": 308022,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 308026,
+      "name": "和牌-绝对的命令",
+      "category": "winEffect",
+      "sourceKey": "ron_llx",
+      "iconKey": "23llx_ron",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 308026,
+        "res_name": "ron_llx",
+        "audio_id": 308026,
+        "character_id": 0,
+        "sargs": [
+          "2000",
+          "1",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 308027,
+      "name": "立直-王者的决意",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_llx",
+      "iconKey": "23llx_liqi_effect",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 308027,
+        "res_name": "effect_liqi_llx",
+        "audio_id": 308027,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 308031,
+      "name": "和牌-魔力的迸发",
+      "category": "winEffect",
+      "sourceKey": "ron_yly",
+      "iconKey": "23yly_ron",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 308031,
+        "res_name": "ron_yly",
+        "audio_id": 308031,
+        "character_id": 0,
+        "sargs": [
+          "1000",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 308032,
+      "name": "立直-英灵的典仪",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_yly",
+      "iconKey": "23yly_liqi_effect",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 308032,
+        "res_name": "effect_liqi_yly",
+        "audio_id": 308032,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 308036,
+      "name": "和牌-冷血射击",
+      "category": "winEffect",
+      "sourceKey": "ron_24ba",
+      "iconKey": "24ba_ron",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 308036,
+        "res_name": "ron_24ba",
+        "audio_id": 308036,
+        "character_id": 0,
+        "sargs": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 308037,
+      "name": "立直-虹色轨迹",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_24ba",
+      "iconKey": "24ba_liqi_effect",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 308037,
+        "res_name": "effect_liqi_24ba",
+        "audio_id": 308037,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 1,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 308041,
+      "name": "和牌-咒层界・恶念祝祭",
+      "category": "winEffect",
+      "sourceKey": "ron_25hf",
+      "iconKey": "25hf_ron",
+      "currentIds": [
+        "ron-fate-hf"
+      ],
+      "expired": false,
+      "sourceView": {
+        "id": 308041,
+        "res_name": "ron_25hf",
+        "audio_id": 308041,
+        "character_id": 0,
+        "sargs": [
+          "3300",
+          "1",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": true
+    },
+    {
+      "sourceId": 308042,
+      "name": "立直-虚影祝祷",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_25hf",
+      "iconKey": "25hf_liqi_effect",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 308042,
+        "res_name": "effect_liqi_25hf",
+        "audio_id": 308042,
+        "character_id": 0,
+        "sargs": [
+          "shu",
+          "2",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 308046,
+      "name": "和牌-谢幕的Just a way",
+      "category": "winEffect",
+      "sourceKey": "ron_25yh",
+      "iconKey": "ron_25yh",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 308046,
+        "res_name": "ron_25yh",
+        "audio_id": 308046,
+        "character_id": 0,
+        "sargs": [
+          "1700",
+          "",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 308047,
+      "name": "立直-伊丽莎白",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_25yh",
+      "iconKey": "effect_liqi_25yh",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 308047,
+        "res_name": "effect_liqi_25yh",
+        "audio_id": 308047,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "1",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 1
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 308052,
+      "name": "和牌-百斩缭乱",
+      "category": "winEffect",
+      "sourceKey": "ron_26dj",
+      "iconKey": "ron_26dj",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 308052,
+        "res_name": "ron_26dj",
+        "audio_id": 308048,
+        "character_id": 0,
+        "sargs": [
+          "1500",
+          "1",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 0
+      },
+      "implemented": false
+    },
+    {
+      "sourceId": 308053,
+      "name": "立直-决战宣言",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_26dj",
+      "iconKey": "effect_liqi_26dj",
+      "currentIds": [],
+      "expired": false,
+      "sourceView": {
+        "id": 308053,
+        "res_name": "effect_liqi_26dj",
+        "audio_id": 308049,
+        "character_id": 0,
+        "sargs": [
+          "heng",
+          "1",
+          "",
+          ""
+        ],
+        "old_effect_mark": 0,
+        "hand_version": 0,
+        "seat_related": 1
+      },
+      "implemented": false
+    }
+  ],
+  "remainingFrom0616": [
+    {
+      "id": 305029,
+      "name": "和牌-烟花",
+      "type": 1,
+      "sourceKey": "effect_hupai_yanhua",
+      "groups": [],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305201,
+      "name": "和牌-歌剧魅影",
+      "type": 1,
+      "sourceKey": "ron_gejumeiying",
+      "groups": [
+        "deco/effect_hupai/ron_gejumeiying/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305202,
+      "name": "和牌-魔法少女",
+      "type": 1,
+      "sourceKey": "ron_mofashaonv",
+      "groups": [
+        "deco/effect_hupai/ron_mofashaonv/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305203,
+      "name": "和牌-阖家欢",
+      "type": 1,
+      "sourceKey": "ron_20chunjie",
+      "groups": [
+        "deco/effect_hupai/ron_20chunjie/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305204,
+      "name": "和牌-群星之寂",
+      "type": 1,
+      "sourceKey": "ron_szx",
+      "groups": [
+        "deco/effect_hupai/ron_szx/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305205,
+      "name": "和牌-厄里斯之瞳",
+      "type": 1,
+      "sourceKey": "ron_xhzy",
+      "groups": [
+        "deco/effect_hupai/ron_xhzy/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305206,
+      "name": "和牌-天降正义",
+      "type": 1,
+      "sourceKey": "ron_nws",
+      "groups": [
+        "deco/effect_hupai/ron_nws/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305207,
+      "name": "和牌-黄金之蝶",
+      "type": 1,
+      "sourceKey": "ron_jd",
+      "groups": [
+        "deco/effect_hupai/ron_jd/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305208,
+      "name": "和牌-海浪的馈赠",
+      "type": 1,
+      "sourceKey": "ron_hl",
+      "groups": [
+        "deco/effect_hupai/ron_hl/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305209,
+      "name": "和牌-安可",
+      "type": 1,
+      "sourceKey": "ron_music",
+      "groups": [
+        "deco/effect_hupai/ron_music/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305210,
+      "name": "和牌-鸿运开年",
+      "type": 1,
+      "sourceKey": "ron_21chunjie",
+      "groups": [
+        "deco/effect_hupai/ron_21chunjie/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305211,
+      "name": "和牌-核心裂变",
+      "type": 1,
+      "sourceKey": "ron_21cyber",
+      "groups": [
+        "deco/effect_hupai/ron_21cyber/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305212,
+      "name": "和牌-无间契印",
+      "type": 1,
+      "sourceKey": "ron_21magic",
+      "groups": [
+        "deco/effect_hupai/ron_21magic/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305213,
+      "name": "和牌-疾月斩",
+      "type": 1,
+      "sourceKey": "ron_21zhounian",
+      "groups": [
+        "deco/effect_hupai/ron_21zhounian/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305214,
+      "name": "(已过期)",
+      "type": 1,
+      "sourceKey": "ron_4gr_nan",
+      "groups": [],
+      "expired": true,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305215,
+      "name": "和牌-剑吟虎啸",
+      "type": 1,
+      "sourceKey": "ron_xiyuansi",
+      "groups": [
+        "deco/effect_hupai/ron_xiyuansi/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305216,
+      "name": "和牌-槲寄生下",
+      "type": 1,
+      "sourceKey": "ron_21winter",
+      "groups": [
+        "deco/effect_hupai/ron_21winter/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305217,
+      "name": "和牌-金屏春色",
+      "type": 1,
+      "sourceKey": "ron_22chunjie",
+      "groups": [
+        "deco/effect_hupai/ron_22chunjie/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305218,
+      "name": "和牌-天罚",
+      "type": 1,
+      "sourceKey": "ron_22rpg",
+      "groups": [
+        "deco/effect_hupai/ron_22rpg/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305219,
+      "name": "和牌-银链飞雪",
+      "type": 1,
+      "sourceKey": "ron_beiyuan",
+      "groups": [
+        "deco/effect_hupai/ron_beiyuan/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305220,
+      "name": "和牌-泰山鸭顶",
+      "type": 1,
+      "sourceKey": "ron_22summer",
+      "groups": [
+        "deco/effect_hupai/ron_22summer/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305221,
+      "name": "和牌-机械哲学",
+      "type": 1,
+      "sourceKey": "ron_23wenquan",
+      "groups": [
+        "deco/effect_hupai/ron_23wenquan/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305222,
+      "name": "和牌-天地无用",
+      "type": 1,
+      "sourceKey": "ron_23rpg",
+      "groups": [
+        "deco/effect_hupai/ron_23rpg/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305223,
+      "name": "和牌-衔环结草",
+      "type": 1,
+      "sourceKey": "ron_dongcheng",
+      "groups": [
+        "deco/effect_hupai/ron_dongcheng/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30520001,
+      "name": "和牌-杰克的恶作剧",
+      "type": 1,
+      "sourceKey": "ron_23wansheng",
+      "groups": [
+        "deco/effect_hupai/ron_23wansheng/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30520002,
+      "name": "和牌-虚空结界",
+      "type": 1,
+      "sourceKey": "ron_23winter",
+      "groups": [
+        "deco/effect_hupai/ron_23winter/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30520003,
+      "name": "和牌-墨韵",
+      "type": 1,
+      "sourceKey": "ron_24chunjie",
+      "groups": [
+        "deco/effect_hupai/ron_24chunjie/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30520004,
+      "name": "和牌-伺机而动",
+      "type": 1,
+      "sourceKey": "ron_24haidao",
+      "groups": [
+        "deco/effect_hupai/ron_24haidao/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30520005,
+      "name": "和牌-喵——呜！",
+      "type": 1,
+      "sourceKey": "ron_24summer",
+      "groups": [
+        "deco/effect_hupai/ron_24summer/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30520006,
+      "name": "和牌-落羽涅槃",
+      "type": 1,
+      "sourceKey": "ron_nanfenghua",
+      "groups": [
+        "deco/effect_hupai/ron_nanfenghua/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30520007,
+      "name": "和牌-涟漪之空",
+      "type": 1,
+      "sourceKey": "ron_24imas",
+      "groups": [
+        "deco/effect_hupai/ron_24imas/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30520008,
+      "name": "和牌-得胜达摩",
+      "type": 1,
+      "sourceKey": "ron_24winter",
+      "groups": [
+        "deco/effect_hupai/ron_24winter/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30520009,
+      "name": "和牌-静伏蛰影",
+      "type": 1,
+      "sourceKey": "ron_liyang",
+      "groups": [
+        "deco/effect_hupai/ron_liyang/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30520010,
+      "name": "和牌-一击必鲨",
+      "type": 1,
+      "sourceKey": "ron_25summer",
+      "groups": [
+        "deco/effect_hupai/ron_25summer/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30520011,
+      "name": "和牌-惊澜",
+      "type": 1,
+      "sourceKey": "ron_25dongri",
+      "groups": [
+        "deco/effect_hupai/ron_25dongri/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30520012,
+      "name": "和牌-清波跃金",
+      "type": 1,
+      "sourceKey": "ron_26chunjie",
+      "groups": [
+        "deco/effect_hupai/ron_26chunjie/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305301,
+      "name": "立直-非常事态",
+      "type": 2,
+      "sourceKey": "effect_liqi_feichangshitai",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_feichangshitai/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305302,
+      "name": "立直-魔法少女",
+      "type": 2,
+      "sourceKey": "effect_liqi_mofashaonv",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_mofashaonv/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305303,
+      "name": "立直-鼠生威",
+      "type": 2,
+      "sourceKey": "effect_liqi_20chunjie",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_20chunjie/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305304,
+      "name": "立直-星陨",
+      "type": 2,
+      "sourceKey": "effect_liqi_szx",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_szx/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305305,
+      "name": "立直-血·朗基努斯枪",
+      "type": 2,
+      "sourceKey": "effect_liqi_xhzy",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_xhzy/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305306,
+      "name": "立直-断罪",
+      "type": 2,
+      "sourceKey": "effect_liqi_nws",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_nws/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305307,
+      "name": "立直-蝶惑",
+      "type": 2,
+      "sourceKey": "effect_liqi_jd",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_jd/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305308,
+      "name": "立直-浪之声",
+      "type": 2,
+      "sourceKey": "effect_liqi_hl",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_hl/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305309,
+      "name": "立直-开场曲",
+      "type": 2,
+      "sourceKey": "effect_liqi_music",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_music/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305310,
+      "name": "立直-生财有道",
+      "type": 2,
+      "sourceKey": "effect_liqi_21chunjie",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_21chunjie/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305311,
+      "name": "立直-虚拟导航",
+      "type": 2,
+      "sourceKey": "effect_liqi_21cyber",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_21cyber/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305312,
+      "name": "立直-灵魂契约",
+      "type": 2,
+      "sourceKey": "effect_liqi_21magic",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_21magic/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305313,
+      "name": "立直-风华斩",
+      "type": 2,
+      "sourceKey": "effect_liqi_21zhounian",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_21zhounian/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305314,
+      "name": "(已过期)",
+      "type": 2,
+      "sourceKey": "effect_liqi_4gr_nan",
+      "groups": [],
+      "expired": true,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305315,
+      "name": "立直-虎啸长风",
+      "type": 2,
+      "sourceKey": "effect_liqi_xiyuansi",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_xiyuansi/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305316,
+      "name": "立直-鹿雪冬至",
+      "type": 2,
+      "sourceKey": "effect_liqi_21winter",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_21winter/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305317,
+      "name": "立直-暗香梅影",
+      "type": 2,
+      "sourceKey": "effect_liqi_22chunjie",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_22chunjie/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305318,
+      "name": "立直-雷电环索",
+      "type": 2,
+      "sourceKey": "effect_liqi_22rpg",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_22rpg/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305319,
+      "name": "立直-蛇行诡道",
+      "type": 2,
+      "sourceKey": "effect_liqi_beiyuan",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_beiyuan/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305320,
+      "name": "立直-立直鸭",
+      "type": 2,
+      "sourceKey": "effect_liqi_22summer",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_22summer/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305321,
+      "name": "立直-量子智能",
+      "type": 2,
+      "sourceKey": "effect_liqi_23wenquan",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_23wenquan/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305322,
+      "name": "立直-毒烟玉",
+      "type": 2,
+      "sourceKey": "effect_liqi_23rpg",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_23rpg/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 305323,
+      "name": "立直-狐缘之绊",
+      "type": 2,
+      "sourceKey": "effect_liqi_dongcheng",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_dongcheng/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30530001,
+      "name": "立直-南瓜夜行",
+      "type": 2,
+      "sourceKey": "effect_liqi_23wansheng",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_23wansheng/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30530002,
+      "name": "立直-星河入梦",
+      "type": 2,
+      "sourceKey": "effect_liqi_23winter",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_23winter/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30530003,
+      "name": "立直-挥毫",
+      "type": 2,
+      "sourceKey": "effect_liqi_24chunjie",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_24chunjie/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30530004,
+      "name": "立直-一步之遥",
+      "type": 2,
+      "sourceKey": "effect_liqi_24haidao",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_24haidao/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30530005,
+      "name": "立直-萌爪狂欢",
+      "type": 2,
+      "sourceKey": "effect_liqi_24summer",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_24summer/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30530006,
+      "name": "立直-有凤来仪",
+      "type": 2,
+      "sourceKey": "effect_liqi_nanfenghua",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_nanfenghua/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30530007,
+      "name": "立直-水漾星光",
+      "type": 2,
+      "sourceKey": "effect_liqi_24imas",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_24imas/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30530008,
+      "name": "立直-一锤定音",
+      "type": 2,
+      "sourceKey": "effect_liqi_24winter",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_24winter/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30530009,
+      "name": "立直-曲径通幽",
+      "type": 2,
+      "sourceKey": "effect_liqi_liyang",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_liyang/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30530010,
+      "name": "立直-暗藏鲨机",
+      "type": 2,
+      "sourceKey": "effect_liqi_25summer",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_25summer/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30530011,
+      "name": "立直-行云",
+      "type": 2,
+      "sourceKey": "effect_liqi_25dongri",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_25dongri/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 30530012,
+      "name": "立直-荷间戏",
+      "type": 2,
+      "sourceKey": "effect_liqi_26chunjie",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_26chunjie/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 308001,
+      "name": "和牌-龙卷雷霆",
+      "type": 1,
+      "sourceKey": "ron_saki",
+      "groups": [
+        "deco/effect_hupai/ron_saki/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 308002,
+      "name": "立直-花天月地",
+      "type": 2,
+      "sourceKey": "effect_liqi_saki",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_saki/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 308006,
+      "name": "和牌-命运之轮",
+      "type": 1,
+      "sourceKey": "ron_kuangdu",
+      "groups": [
+        "deco/effect_hupai/ron_kuangdu/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 308007,
+      "name": "立直-纸牌花火",
+      "type": 2,
+      "sourceKey": "effect_liqi_kuangdu",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_kuangdu/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 308011,
+      "name": "和牌-地狱低语",
+      "type": 1,
+      "sourceKey": "ron_akagi",
+      "groups": [
+        "deco/effect_hupai/ron_akagi/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 308012,
+      "name": "立直-幽冥之焰",
+      "type": 2,
+      "sourceKey": "effect_liqi_akagi",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_akagi/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 308016,
+      "name": "和牌-恋之降临",
+      "type": 1,
+      "sourceKey": "ron_kaguya",
+      "groups": [
+        "deco/effect_hupai/ron_kaguya/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 308017,
+      "name": "立直-恋之箭矢",
+      "type": 2,
+      "sourceKey": "effect_liqi_kaguya",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_kaguya/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 308021,
+      "name": "和牌-高岭之花",
+      "type": 1,
+      "sourceKey": "ron_2211saki",
+      "groups": [
+        "deco/effect_hupai/ron_2211saki/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 308022,
+      "name": "立直-未来视",
+      "type": 2,
+      "sourceKey": "effect_liqi_2211saki",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_2211saki/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 308026,
+      "name": "和牌-绝对的命令",
+      "type": 1,
+      "sourceKey": "ron_llx",
+      "groups": [
+        "deco/effect_hupai/ron_llx/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 308027,
+      "name": "立直-王者的决意",
+      "type": 2,
+      "sourceKey": "effect_liqi_llx",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_llx/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 308031,
+      "name": "和牌-魔力的迸发",
+      "type": 1,
+      "sourceKey": "ron_yly",
+      "groups": [
+        "deco/effect_hupai/ron_yly/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 308032,
+      "name": "立直-英灵的典仪",
+      "type": 2,
+      "sourceKey": "effect_liqi_yly",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_yly/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 308036,
+      "name": "和牌-冷血射击",
+      "type": 1,
+      "sourceKey": "ron_24ba",
+      "groups": [
+        "deco/effect_hupai/ron_24ba/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 308037,
+      "name": "立直-虹色轨迹",
+      "type": 2,
+      "sourceKey": "effect_liqi_24ba",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_24ba/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 308042,
+      "name": "立直-虚影祝祷",
+      "type": 2,
+      "sourceKey": "effect_liqi_25hf",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_25hf/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 308046,
+      "name": "和牌-谢幕的Just a way",
+      "type": 1,
+      "sourceKey": "ron_25yh",
+      "groups": [
+        "deco/effect_hupai/ron_25yh/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 308047,
+      "name": "立直-伊丽莎白",
+      "type": 2,
+      "sourceKey": "effect_liqi_25yh",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_25yh/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 308052,
+      "name": "和牌-百斩缭乱",
+      "type": 1,
+      "sourceKey": "ron_26dj",
+      "groups": [
+        "deco/effect_hupai/ron_26dj/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    },
+    {
+      "id": 308053,
+      "name": "立直-决战宣言",
+      "type": 2,
+      "sourceKey": "effect_liqi_26dj",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_26dj/3d"
+      ],
+      "expired": false,
+      "status": "manifest-found-not-imported",
+      "previewAvailability": "not-checked"
+    }
+  ],
+  "remainingFrom0616Count": 92,
+  "nativeOnlyCandidates": [
+    {
+      "category": "effect_hupai",
+      "sourceKey": "effect_hupai_default",
+      "groups": [
+        "deco/effect_hupai/effect_hupai_default/3d"
+      ],
+      "status": "native-group-not-mapped-to-public-definition"
+    },
+    {
+      "category": "effect_hupai",
+      "sourceKey": "ron_26shuiyi",
+      "groups": [
+        "deco/effect_hupai/ron_26shuiyi/3d",
+        "deco/effect_hupai/ron_26shuiyi/pic"
+      ],
+      "status": "native-group-not-mapped-to-public-definition"
+    },
+    {
+      "category": "effect_hupai",
+      "sourceKey": "ron_26summer",
+      "groups": [
+        "deco/effect_hupai/ron_26summer/3d",
+        "deco/effect_hupai/ron_26summer/pic"
+      ],
+      "status": "native-group-not-mapped-to-public-definition"
+    },
+    {
+      "category": "effect_hupai",
+      "sourceKey": "ron_chilin",
+      "groups": [
+        "deco/effect_hupai/ron_chilin/3d",
+        "deco/effect_hupai/ron_chilin/pic"
+      ],
+      "status": "native-group-not-mapped-to-public-definition"
+    },
+    {
+      "category": "effect_hupai",
+      "sourceKey": "ron_lightening",
+      "groups": [
+        "deco/effect_hupai/ron_lightening/pic"
+      ],
+      "status": "native-group-not-mapped-to-public-definition"
+    },
+    {
+      "category": "effect_lizhi",
+      "sourceKey": "effect_liqi_26shuiyi",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_26shuiyi/3d",
+        "deco/effect_lizhi/effect_liqi_26shuiyi/pic"
+      ],
+      "status": "native-group-not-mapped-to-public-definition"
+    },
+    {
+      "category": "effect_lizhi",
+      "sourceKey": "effect_liqi_26summer",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_26summer/3d",
+        "deco/effect_lizhi/effect_liqi_26summer/pic"
+      ],
+      "status": "native-group-not-mapped-to-public-definition"
+    },
+    {
+      "category": "effect_lizhi",
+      "sourceKey": "effect_liqi_chilin",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_chilin/3d",
+        "deco/effect_lizhi/effect_liqi_chilin/pic"
+      ],
+      "status": "native-group-not-mapped-to-public-definition"
+    },
+    {
+      "category": "effect_lizhi",
+      "sourceKey": "effect_liqi_wind",
+      "groups": [
+        "deco/effect_lizhi/effect_liqi_wind/pic"
+      ],
+      "status": "native-group-not-mapped-to-public-definition"
+    },
+    {
+      "category": "effect_mingpaizhishi",
+      "sourceKey": "effect_zhishi",
+      "groups": [
+        "deco/effect_mingpaizhishi/effect_zhishi/3d"
+      ],
+      "status": "native-group-not-mapped-to-public-definition"
+    },
+    {
+      "category": "effect_mingpaizhishi",
+      "sourceKey": "mpzs_26summer",
+      "groups": [
+        "deco/effect_mingpaizhishi/mpzs_26summer/3d",
+        "deco/effect_mingpaizhishi/mpzs_26summer/pic"
+      ],
+      "status": "native-group-not-mapped-to-public-definition"
+    }
+  ],
+  "notes": [
+    "Definitions include expired or internal entries and are not a current shop list.",
+    "Matches identify an implemented source binding, not original-video visual approval.",
+    "The old 93-entry queue now has 92 pending entries after Fate; missing groups remain visible.",
+    "Custom cross-category callout trials are not additional official callout definitions."
+  ]
+}

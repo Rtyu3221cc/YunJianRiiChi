@@ -13,12 +13,13 @@ namespace YunJian.Riichi.Editor {
         const string Key="WardrobeR15Preview";
         static WardrobeR15Preview(){EditorApplication.playModeStateChanged+=s=>{if(s==PlayModeStateChange.EnteredPlayMode&&SessionState.GetBool(Key,false)){SessionState.SetBool(Key,false);UnityEngine.Object.FindAnyObjectByType<RiichiClient>().gameObject.AddComponent<WardrobeR15Capture>();}};}
         public static void Run(){AssetDatabase.Refresh();EditorSceneManager.OpenScene("Assets/Scenes/Table.unity");SessionState.SetBool(Key,true);EditorApplication.isPlaying=true;}
+        public static void RunForR16(){SessionState.SetString("WardrobeR15.Output","../build/wardrobe-r16/r15-regression");Run();}
     }
     public sealed class WardrobeR15Capture:MonoBehaviour {
         string output;RiichiClient client;LobbyController lobby;bool dynamic;float inset;
         readonly List<string> checks=new List<string>();
         IEnumerator Start(){
-            output=Path.GetFullPath("../dist/previews/2026-10-28-wardrobe-r15");Directory.CreateDirectory(output);
+            output=Path.GetFullPath(SessionState.GetString("WardrobeR15.Output","../dist/previews/2026-10-28-wardrobe-r15"));SessionState.EraseString("WardrobeR15.Output");Directory.CreateDirectory(output);
             dynamic=AppPreferences.DynamicOutfits;inset=AppPreferences.ScreenInset;AppPreferences.SetDynamicOutfits(false);AppPreferences.SetInset(0);CharacterRoster.BeginPreview();WardrobeSelection.BeginPreview();AudioListener.pause=true;
             client=GetComponent<RiichiClient>();client.BeginLobbyValidation("wardrobe-r15");client.SessionPreviewOnly=true;GetComponent<ResourceRoomCoordinator>().enabled=false;lobby=client.Lobby;
             var work=new Stack<IEnumerator>();work.Push(Run());

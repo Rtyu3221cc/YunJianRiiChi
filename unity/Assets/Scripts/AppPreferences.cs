@@ -11,7 +11,8 @@ namespace YunJian.Riichi
         public static int Fps { get; private set; }
         public static float ScreenInset { get; private set; }
         public static int Revision { get; private set; }
-        static bool dynamicOutfits=true,randomBotAppearance=true;
+        static bool dynamicOutfits=true,randomBotAppearance=true,autoSortHand;
+        public static bool AutoSortHand {get{Load();return autoSortHand;}}
         public static bool DynamicOutfits {get{Load();return dynamicOutfits;}}
         public static bool RandomBotAppearance {get{Load();return randomBotAppearance;}}
         static bool loaded;
@@ -32,6 +33,7 @@ namespace YunJian.Riichi
             if (Fps != 30 && Fps != 60 && Fps != 120) Fps = 60;
             ScreenInset = Mathf.Clamp01(PlayerPrefs.GetFloat("riichi.setting.inset", 0));
             dynamicOutfits=PlayerPrefs.GetInt("riichi.setting.dynamicOutfits",1)!=0;
+            autoSortHand=PlayerPrefs.GetInt("riichi.setting.autoSortHand",0)!=0;
             // Upgrade the former OFF default once; subsequent explicit choices persist.
             randomBotAppearance=PlayerPrefs.GetInt("riichi.setting.randomBotDefaultVersion",0)<1||PlayerPrefs.GetInt("riichi.setting.randomBotAppearance",1)!=0;
             Application.targetFrameRate = Fps;
@@ -45,6 +47,7 @@ namespace YunJian.Riichi
         public static void SetInset(float value) { ScreenInset = Mathf.Clamp01(value); Save(); }
         public static void SetDynamicOutfits(bool enabled){Load();dynamicOutfits=enabled;Save();}
         public static void SetRandomBotAppearance(bool enabled){Load();randomBotAppearance=enabled;Save();}
+        public static void SetAutoSortHand(bool enabled){Load();autoSortHand=enabled;Save();}
         static void Save() {
             if(CharacterRoster.PreviewOnly){Revision++;return;}
             for (int i = 0; i < 5; i++) {
@@ -53,6 +56,7 @@ namespace YunJian.Riichi
             }
             PlayerPrefs.SetInt("riichi.setting.fps", Fps); PlayerPrefs.SetFloat("riichi.setting.inset", ScreenInset);
             PlayerPrefs.SetInt("riichi.setting.dynamicOutfits",dynamicOutfits?1:0);PlayerPrefs.SetInt("riichi.setting.randomBotAppearance",randomBotAppearance?1:0);PlayerPrefs.SetInt("riichi.setting.randomBotDefaultVersion",1);
+            PlayerPrefs.SetInt("riichi.setting.autoSortHand",autoSortHand?1:0);
             PlayerPrefs.Save(); Revision++;
         }
     }

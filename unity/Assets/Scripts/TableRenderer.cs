@@ -13,6 +13,13 @@ namespace YunJian.Riichi
         public Camera HandCamera { get; private set; }
         OriginalTiles original;
         string wardrobeTileKey;
+        Transform clothSurface;
+#if UNITY_EDITOR
+        public Texture ValidationCloth=>felt.mainTexture;
+        public string ValidationTileWardrobeKey=>wardrobeTileKey;
+        public bool ValidationHandVisible(int index)=>handTiles[index].gameObject.activeSelf;
+        public float ReviewHandDelta=-1;
+#endif
         public TableTileGeometry Geometry => original.Geometry;
         readonly ReferenceScoreHub scoreHub = new ReferenceScoreHub();
         // Outside OnGUI this also re-renders a shining preview; inside it only reads.
@@ -39,6 +46,9 @@ namespace YunJian.Riichi
         readonly Dictionary<string, Material> faces = new Dictionary<string, Material>();
         readonly Dictionary<string, Texture2D> portraits = new Dictionary<string, Texture2D>();
         readonly List<Transform> handTiles = new List<Transform>();
+        readonly List<int> handTileIds=new List<int>();
+        readonly HashSet<int> submittedHidden=new HashSet<int>();
+        bool handDrawGap;
         readonly List<Vector3> handBase = new List<Vector3>();
         readonly HandOpening opening = new HandOpening();
         public bool ArrangingHand => opening.Active;
@@ -172,7 +182,7 @@ namespace YunJian.Riichi
             // The original texture was forced onto a rectangle; keep its source aspect.
             Cube("Wood frame", baseRoot, new Vector3(0, -.22f, 0), new Vector3(15.8f, .3f, 15.8f), frame);
             float clothAspect = texture != null ? texture.width / (float)texture.height : 1;
-            Cube("Cloth", baseRoot, new Vector3(0, -.045f, 0), new Vector3(15.8f, .09f, 15.8f / clothAspect), felt);
+            clothSurface=Cube("Cloth", baseRoot, new Vector3(0, -.045f, 0), new Vector3(15.8f, .09f, 15.8f / clothAspect), felt).transform;
             font = Resources.Load<Font>("Majsoul/Font/game") ?? Font.CreateDynamicFontFromOSFont(new[] { "Microsoft YaHei", "Noto Sans CJK SC", "sans-serif" }, 32);
             content = new GameObject("PublicTableState").transform;
         }
@@ -211,7 +221,7 @@ namespace YunJian.Riichi
             if(resetOpening){opening.Reset();foreach(var standing in standingHands.Values)if(standing!=null){standing.gameObject.SetActive(false);Destroy(standing.gameObject);}standingHands.Clear();}
             opponentRows.RemoveAll(row=>row.root==null || !standingHands.Values.Contains(row.root));
             foreach (Transform t in content) { if(keepHand && t==cameraHand || standingHands.Values.Contains(t))continue;t.gameObject.SetActive(false); Destroy(t.gameObject); }
-            exposedTiles.Clear();exposedGroups.Clear();selectedTile=null;if(!keepHand){handTiles.Clear();handBase.Clear();cameraHand=null;}drawTiles.Clear();winningRows.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); northTiles.Clear(); winningTiles.Clear(); responseTarget = null; selfMelds = null; state = null;
+            exposedTiles.Clear();exposedGroups.Clear();selectedTile=null;if(!keepHand){handTiles.Clear();handTileIds.Clear();submittedHidden.Clear();handBase.Clear();cameraHand=null;}drawTiles.Clear();winningRows.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); northTiles.Clear(); winningTiles.Clear(); responseTarget = null; selfMelds = null; state = null;
         }
         public int RelativeSeat(int i) => (i - state.you + state.n) % state.n;
         float Angle(int i)
@@ -246,7 +256,7 @@ namespace YunJian.Riichi
         public Transform CreateEffectStick(int seat=-1)
         {
             var root = new GameObject("Carried riichi stick").transform;
-            var choice=WardrobeRuntime.Item(Client.State,seat,"stick");if(!string.IsNullOrEmpty(choice?.model)){root.gameObject.AddComponent<WardrobeModelVisual>().Initialize(choice,.74f);return root;}
+            var choice=WardrobeRuntime.Item(Client.State,seat,"stick");if(choice?.HasModel==true){root.gameObject.AddComponent<WardrobeModelVisual>().Initialize(choice,.74f);return root;}
             Cube("Riichi 1000", root, Vector3.zero, new Vector3(.74f, .045f, .075f), ivory);
             Cube("Red dot", root, new Vector3(0, .024f, 0), new Vector3(.045f, .004f, .045f), red);
             return root;
@@ -335,7 +345,7 @@ namespace YunJian.Riichi
             var local = i == state.you ? new Vector3(-3.8f, .15f, -2.8f) : new Vector3(-2.9f, .15f, -3.7f);
             return Quaternion.Euler(0, angle, 0) * local;
         }
-        void LateUpdate() { opening.Apply(handTiles,handBase,GetComponent<GameAudio>());UpdateDrawReveal();ApplyDeferredDraw();RefreshHandChoices();FitCamera(Screen.width / (float)Screen.height);RefreshDoraPreviews();if(responseGlow!=null)responseGlow.gameObject.SetActive(ResponseTarget!=null); }
+        void LateUpdate() {ReflowHandOrder(); opening.Apply(handTiles,handBase,GetComponent<GameAudio>());UpdateDrawReveal();ApplyDeferredDraw();TickHandLayout();RefreshHandChoices();FitCamera(Screen.width / (float)Screen.height);Client?.RefreshHandDragVisual();RefreshDoraPreviews();if(responseGlow!=null)responseGlow.gameObject.SetActive(ResponseTarget!=null); }
         public bool DrawDeferred {get;private set;}
         public bool RevealingDraw {get;private set;}
         string ownDrawKey;float ownDrawAt=-1;
@@ -349,8 +359,9 @@ namespace YunJian.Riichi
             if(opening.Active){ownDrawAt=Time.unscaledTime-.16f;return;}
             if(DrawDeferred)ownDrawAt=-1;else if(ownDrawAt<0)ownDrawAt=Time.unscaledTime;
             float t=DrawDeferred?0:Mathf.Clamp01((Time.unscaledTime-ownDrawAt)/.16f);RevealingDraw=DrawDeferred || t<1;
-            var tile=handTiles[handTiles.Count-1];var renderer=tile.GetComponent<MeshRenderer>();var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block);block.SetFloat("_Opacity",t);renderer.SetPropertyBlock(block);
-            var pos=tile.localPosition;pos.x=handBase[handBase.Count-1].x+.4f*(1-Mathf.SmoothStep(0,1,t));tile.localPosition=pos;
+            int drawnIndex=Client.LocalDrawnIndex;if(drawnIndex<0||drawnIndex>=handTiles.Count)return;
+            var tile=handTiles[drawnIndex];var renderer=tile.GetComponent<MeshRenderer>();var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block);block.SetFloat("_Opacity",t);renderer.SetPropertyBlock(block);
+            if(!Client.IsDraggingHandId(handTileIds[drawnIndex])){var pos=tile.localPosition;pos.x=handBase[drawnIndex].x+.4f*(1-Mathf.SmoothStep(0,1,t));tile.localPosition=pos;}
         }
         public static Choice HandChoice(RoomView view,string face,bool drawn,bool riichiMode){
             var options=view.options??new Choice[0];bool riichi=riichiMode && options.Any(o=>o.kind=="riichi");
@@ -365,11 +376,11 @@ namespace YunJian.Riichi
             var view=Client.State??state;bool choosing=(view.options??new Choice[0]).Any(o=>o.kind==(Client.RiichiMode && view.options.Any(a=>a.kind=="riichi")?"riichi":"discard"));
             bool ready=!opening.Active && !GetComponent<TableEffects>().HasPendingActions && !RevealingDraw;
             for(int i=0;i<handTiles.Count;i++){
-                bool drawn=!string.IsNullOrEmpty(view.drawn) && i==handTiles.Count-1;string face=HandFace(i);var choice=HandChoice(view,face,drawn,Client.RiichiMode);
+                bool drawn=Client.LocalHandIsDrawn(i);string face=HandFace(i);var choice=HandChoice(view,face,drawn,Client.RiichiMode);
                 bool special=view.players[view.you].riichi>0 && (drawn || view.options.Any(o=>(o.kind=="kan" && (o.meld??"").Skip(1).Any(d=>char.IsDigit(d)&&TileKind(o.meld[0].ToString()+d)==TileKind(face))) || (o.kind=="nuki" && face=="z4")));
                 var renderer=handTiles[i].GetComponent<MeshRenderer>();var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block);block.SetFloat("_Dim",ready && choosing && choice==null && !special?1:0);renderer.SetPropertyBlock(block);
-                var target=handTiles[i].GetComponent<TileTarget>();if(target==null && (choice!=null || !choosing))target=handTiles[i].gameObject.AddComponent<TileTarget>();if(target!=null){target.Index=i;target.Action=choice?.id;}
-                foreach(var collider in handTiles[i].GetComponentsInChildren<Collider>())collider.enabled=ready && (choice!=null || !choosing);
+                var target=handTiles[i].GetComponent<TileTarget>();if(target==null)target=handTiles[i].gameObject.AddComponent<TileTarget>();target.Index=i;target.Action=choice?.id;
+                foreach(var collider in handTiles[i].GetComponentsInChildren<Collider>())collider.enabled=ready;
             }
         }
         public void FitCamera(float aspect)
@@ -561,9 +572,11 @@ namespace YunJian.Riichi
             bool keepHand=view.phase=="result" && view.result!=null && !view.result.draw && cameraHand!=null && handTiles.Count>0;
             Clear(false,keepHand);state=view;opening.Observe(view,GetComponent<RiichiClient>()?.IntroRemaining??0);
             if(!keepHand){
-                string key=WardrobeSelection.Get("tileFace").id+"/"+WardrobeSelection.Get("tileBack").id;
-                if(key!=wardrobeTileKey){original.Dispose();original=new OriginalTiles();original.HandTexture(null);foreach(var face in AllFaces)original.HandTexture(face);wardrobeTileKey=key;}
-                felt.mainTexture=WardrobeCatalog.Texture(WardrobeSelection.Get("cloth")?.texture);
+                var faceChoice=WardrobeRuntime.Item(view,view.you,"tileFace");var backChoice=WardrobeRuntime.Item(view,view.you,"tileBack");
+                string key=faceChoice.id+"/"+backChoice.id;
+                if(key!=wardrobeTileKey){original.Dispose();original=new OriginalTiles(faceChoice,backChoice);original.HandTexture(null);foreach(var face in AllFaces)original.HandTexture(face);wardrobeTileKey=key;}
+                var cloth=WardrobeCatalog.Texture(WardrobeRuntime.Item(view,view.you,"cloth")?.texture);
+                felt.mainTexture=cloth;if(cloth!=null&&clothSurface!=null)clothSurface.localScale=new Vector3(15.8f,.09f,15.8f*cloth.height/cloth.width);
             }
             bool exhausted=state.phase=="result" && state.result!=null && state.result.draw && !state.result.abort && (state.result.drawDetails?.Length??0)>0;
             bool terminals=state.result!=null && state.result.abort && (state.result.abortHand?.tiles?.Length??0)>0;
@@ -760,29 +773,72 @@ namespace YunJian.Riichi
             return hand;
         }
         public string HandFace(int index)=>index>=0 && index<handTiles.Count?handTiles[index].name.Substring(5):null;
+        public Rect HandSafeArea {
+            get {
+#if UNITY_EDITOR
+                if(ValidationSafeArea.HasValue)return ValidationSafeArea.Value;
+#endif
+                return Screen.safeArea;
+            }
+        }
+        public Vector2 HandTileScreenPoint(int index)=>HandCamera.WorldToScreenPoint(handTiles[index].position);
+        public HandPointerGeometry HandInputGeometry(){
+            if(cameraHand==null||handBase.Count==0)return new HandPointerGeometry{Pitch=1};
+            var origin=HandCamera.WorldToScreenPoint(cameraHand.TransformPoint(new Vector3(handBase[0].x,0,0)));
+            var upper=HandCamera.WorldToScreenPoint(cameraHand.TransformPoint(new Vector3(handBase[0].x,3.75f,0)));
+            var lower=HandCamera.WorldToScreenPoint(cameraHand.TransformPoint(new Vector3(handBase[0].x,-1.25f,0)));
+            var next=HandCamera.WorldToScreenPoint(cameraHand.TransformPoint(new Vector3(handBase[0].x+OriginalTiles.HandWidth,0,0)));
+            return new HandPointerGeometry{OriginX=origin.x,Pitch=next.x-origin.x,BoundaryY=OriginalHandInputRules.Boundary(origin.y,upper.y,lower.y),Count=handTiles.Count};
+        }
+        public void DragHandTile(int index,Vector2 screen){if(index<0||index>=handTiles.Count)return;var tile=handTiles[index];var p=HandCamera.ScreenToWorldPoint(new Vector3(screen.x,screen.y,.5f));p.z=-10;tile.position=p;}
+        public void RefreshSubmittedHand(){for(int i=0;i<handTiles.Count;i++){int id=handTileIds[i];if(id==Client.PendingHandDiscard){handTiles[i].gameObject.SetActive(false);submittedHidden.Add(id);}else if(submittedHidden.Remove(id))handTiles[i].gameObject.SetActive(true);}}
+        public void ReflowHandOrder(){
+            if(cameraHand==null||Client==null||state==null||state!=Client.State||(state.phase!="play"&&state.phase!="reaction"))return;
+            var slots=Client.OrderedHand(state);if(slots.Count!=handTiles.Count||slots.Any(t=>!handTileIds.Contains(t.Id)))return;
+            bool gap=Client.LocalDrawGap;
+            if(handTileIds.SequenceEqual(slots.Select(t=>t.Id))&&gap==handDrawGap)return;
+            var byId=handTileIds.Select((id,i)=>(id,tile:handTiles[i])).ToDictionary(p=>p.id,p=>p.tile);
+            handTiles.Clear();handTileIds.Clear();handBase.Clear();handDrawGap=gap;
+            float width=(slots.Count-1)*OriginalTiles.HandWidth+(gap ? .4f : 0);
+            for(int i=0;i<slots.Count;i++){var slot=slots[i];handTiles.Add(byId[slot.Id]);handTileIds.Add(slot.Id);handBase.Add(new Vector3(-width/2+i*OriginalTiles.HandWidth+(gap&&slot.Drawn ? .4f : 0),0,0));}
+            Client.RefreshLocalHandSelection();SelectHand(Client.SelectedIndex,true);
+        }
+        void TickHandLayout(){
+            if(cameraHand==null||Client==null||opening.Active)return;
+            float delta=Time.unscaledDeltaTime;
+#if UNITY_EDITOR
+            if(ReviewHandDelta>=0)delta=ReviewHandDelta;
+#endif
+            float step=OriginalTiles.HandWidth/2.55f*(2.5f*25)*delta;
+            for(int i=0;i<handTiles.Count;i++){
+                if(Client.IsDraggingHandId(handTileIds[i])||RevealingDraw&&Client.LocalDrawnIndex==i)continue;
+                var target=handBase[i]+(Client.SelectedIndex==i?Vector3.up*OriginalHandInputRules.SelectedLift:Vector3.zero);var pos=handTiles[i].localPosition;
+                pos.x=Mathf.MoveTowards(pos.x,target.x,step);pos.y=target.y;pos.z=target.z;handTiles[i].localPosition=pos;
+            }
+        }
         void DrawHand()
         {
             cameraHand = new GameObject("Camera-facing hand").transform; cameraHand.SetParent(content, false);
-            var hand = state.hand.ToList();
-            var winner=SelfDrawWinner(state.you);if(winner!=null){int winAt=hand.LastIndexOf(winner.tile);if(winAt>=0)hand.RemoveAt(winAt);}
-            if (!string.IsNullOrEmpty(state.drawn)) { int at = hand.LastIndexOf(state.drawn); if (at >= 0) { hand.RemoveAt(at); hand.Add(state.drawn); } }
+            var slots=Client.OrderedHand(state).ToList();
+            var winner=SelfDrawWinner(state.you);if(winner!=null){int winAt=slots.FindLastIndex(t=>t.Face==winner.tile);if(winAt>=0)slots.RemoveAt(winAt);}
+            var hand=slots.Select(t=>t.Face).ToList();
             const float pitch = OriginalTiles.HandWidth;
-            float width = (hand.Count - 1) * pitch + (!string.IsNullOrEmpty(state.drawn) ? .4f : 0);
+            handDrawGap=Client.LocalDrawGap;float width = (hand.Count - 1) * pitch + (handDrawGap ? .4f : 0);
             var choices = state.options.Where(x => x.kind == (Client.RiichiMode && state.options.Any(o=>o.kind=="riichi") ? "riichi" : "discard")).ToArray();
             // Only a seat that actually has a discard decision dims the tiles it cannot
             // play; while another seat is acting every tile keeps its normal look.
             bool choosing = choices.Length > 0;
             for (int i = 0; i < hand.Count; i++)
             {
-                bool drawn = winner==null && !string.IsNullOrEmpty(state.drawn) && i == hand.Count - 1;
+                bool drawn = winner==null && slots[i].Drawn;
                 var choice = HandChoice(state,hand[i],drawn,Client.RiichiMode);
-                Vector3 pos = new Vector3(-width / 2 + i * pitch + (drawn ? .4f : 0), 0, 0);
+                Vector3 pos = new Vector3(-width / 2 + i * pitch + (drawn&&handDrawGap ? .4f : 0), 0, 0);
                 var tile = original.CreateHand(cameraHand, hand[i], pos);
                 if(IsDora(hand[i]))OriginalTiles.AddShine(tile,true);
                 // A presentation hand must not cast a giant floating shadow onto the table.
                 foreach (var renderer in tile.GetComponentsInChildren<Renderer>()) { renderer.shadowCastingMode = ShadowCastingMode.Off; renderer.receiveShadows = false; }
-                handTiles.Add(tile); handBase.Add(pos);
-                if (choice != null || !choosing && (state.phase=="play" || state.phase=="reaction")) { var target = tile.gameObject.AddComponent<TileTarget>(); target.Index = i; target.Action = choice?.id; }
+                handTiles.Add(tile);handTileIds.Add(slots[i].Id); handBase.Add(pos);
+                if (state.phase=="play" || state.phase=="reaction") { var target = tile.gameObject.AddComponent<TileTarget>(); target.Index = i; target.Action = choice?.id; }
                 else
                 {
                     // The action target is unavailable; LateUpdate applies colour only
@@ -792,13 +848,16 @@ namespace YunJian.Riichi
             }
             SelectHand(Client.SelectedIndex);
             FitCamera(Camera.aspect);
+            RefreshSubmittedHand();
         }
-        public void SelectHand(int index)
+        public void SelectHand(int index,bool animate=false)
         {
             if(opening.Active){opening.Apply(handTiles,handBase,GetComponent<GameAudio>());return;}
             selectedTile=index>=0 && index<handTiles.Count?TileKind(handTiles[index].name.Substring(5)):null;
             for (int i = 0; i < handTiles.Count; i++){
-                handTiles[i].localPosition = handBase[i] + (i == index ? new Vector3(0, .30f, 0) : Vector3.zero);
+                var target=handBase[i]+(i==index?Vector3.up*OriginalHandInputRules.SelectedLift:Vector3.zero);
+                if(!Client.IsDraggingHandId(handTileIds[i])){if(animate){var pos=handTiles[i].localPosition;pos.y=target.y;pos.z=target.z;handTiles[i].localPosition=pos;}else handTiles[i].localPosition=target;}
+                var collider=handTiles[i].GetComponent<BoxCollider>();if(collider!=null){collider.center=i==index?new Vector3(0,-.4f,0):Vector3.zero;collider.size=new Vector3(OriginalTiles.HandWidth,i==index?3.4f:OriginalTiles.HandHeight,.04f);}
             }
             foreach(var entry in exposedTiles){
                 OriginalTiles.MatchModel(entry.Item1,IsMatchingTile(entry.Item2));

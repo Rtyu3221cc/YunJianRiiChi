@@ -5,7 +5,9 @@ using UnityEngine;
 
 namespace YunJian.Riichi {
     [Serializable] public sealed class WardrobeItem {
-        public string id,category,name,icon,texture,hand,table,preview,model,effect,nativeEffect,motion,motionSet,nailTexture,audio,cue;
+        public string id,category,name,icon,texture,hand,table,preview,model,modelPrefab,effect,nativeEffect,motion,motionSet,nailTexture,audio,cue;
+        public int sourceItemId;
+        public bool HasModel=>!string.IsNullOrEmpty(model)||!string.IsNullOrEmpty(modelPrefab);
         public float effectScale;
         public string animationType;
         public float calloutIntensity,calloutFaceOpacity;
