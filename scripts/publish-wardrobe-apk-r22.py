@@ -16,7 +16,8 @@ def main():
  try:release=api(g.BASE+'/releases/tags/'+TAG)
  except urllib.error.HTTPError as error:
   if error.code!=404:raise
-  release=api(g.BASE+'/releases','POST',dict(tag_name=TAG,target_commitish=commit,name='云间日麻 Unity 0.6.18 · 装扮下载与和牌特效',draft=True,prerelease=True,body=f"基础 APK 约 {v['apk']['bytes']/1000000:.2f} MB。基础每类 3 款，手部 2 款可选；其他装扮按需下载，支持资源页按类别批量管理、装扮页单件下载、续传校验和局域网接收／中转。接入 59 款已定位原生和牌特效＋默认款，按原版 Lua 处理动画牌、层级、结算等待与回收。\n\n装扮资源：https://github.com/Rtyu3221cc/YunJianRiiChi/releases/tag/wardrobe-resources-v1\n\n192 项 Node、480 个四座位荣和／自摸场景、48 个补充 Lua 场景及实际下载流程通过；原包名、原证书、ARM64／ARMv7、v1／v2、独立 API23 v1 和 16KiB 对齐已核验。Android 真机 GPU、触摸、覆盖安装和多手机热点仍待实测。源码 ZIP 只作本地备份，不作为附件发布。"))
+  matches=[r for r in api(g.BASE+'/releases?per_page=100')if r['tag_name']==TAG];release=max(matches,key=lambda r:len(r['assets']))if matches else None
+  if release is None:release=api(g.BASE+'/releases','POST',dict(tag_name=TAG,target_commitish=commit,name='云间日麻 Unity 0.6.18 · 装扮下载与和牌特效',draft=True,prerelease=True,body=f"基础 APK 约 {v['apk']['bytes']/1000000:.2f} MB。基础每类 3 款，手部 2 款可选；其他装扮按需下载，支持资源页按类别批量管理、装扮页单件下载、续传校验和局域网接收／中转。接入 59 款已定位原生和牌特效＋默认款，按原版 Lua 处理动画牌、层级、结算等待与回收。\n\n装扮资源：https://github.com/Rtyu3221cc/YunJianRiiChi/releases/tag/wardrobe-resources-v1\n\n192 项 Node、480 个四座位荣和／自摸场景、48 个补充 Lua 场景及实际下载流程通过；原包名、原证书、ARM64／ARMv7、v1／v2、独立 API23 v1 和 16KiB 对齐已核验。Android 真机 GPU、触摸、覆盖安装和多手机热点仍待实测。源码 ZIP 只作本地备份，不作为附件发布。"))
  files=[R/'dist/yunjian-riichi-unity-0.6.18.apk',R/'dist/yunjian-riichi-unity-release-0.6.18.zip',R/'dist/SHA256-unity-0.6.18.txt',R/'dist/unity-0.6.18-verification.json',R/'dist/README-unity-0.6.18.md',R/'dist/previews/2026-11-01-wardrobe-r22/all-wins-r22-2x.mp4']
  existing={a['name']:a for a in api(release['url'])['assets']};rows=[]
  for p in files:

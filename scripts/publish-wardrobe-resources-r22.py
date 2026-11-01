@@ -40,9 +40,15 @@ def finalize():
  assert len(rows)==762 and len({x['name']for x in rows})==762
  save(B/'publish-assets.json',rows);print('WARDROBE UPLOAD MANIFEST PASS',len(rows),sum(x['bytes']for x in rows),'bytes',flush=True)
 def release():
+ state=B/'uploaded-draft.json'
+ if state.exists():
+  saved=json.loads(state.read_text('utf8'));rel=api(g.BASE+'/releases/'+str(saved['id']));assert rel['tag_name']==TAG;return rel
  try:return api(g.BASE+'/releases/tags/'+TAG)
  except urllib.error.HTTPError as error:
   if error.code!=404:raise
+ # GitHub's tag endpoint may omit draft releases. Reuse one from the authenticated list.
+ matches=[r for r in api(g.BASE+'/releases?per_page=100')if r['tag_name']==TAG]
+ if matches:return max(matches,key=lambda r:len(r['assets']))
  return api(g.BASE+'/releases','POST',dict(tag_name=TAG,target_commitish='main',name='云间日麻 · 装扮资源 v1',draft=True,prerelease=True,body='适配 Unity 0.6.18 及后续兼容客户端。基础款离线内置，其他装扮支持单件、按种类下载和局域网接收。覆盖 59 款已定位原生和牌特效（客户端另含默认款）、既有立直与鸣牌装扮、静态装扮及音乐。Android 与 Windows 资源分别构建，共享依赖按需下载。文件名含内容指纹，目录提供大小与 SHA-256。未完成原版视频逐像素比对和 Android 真机多手机热点测试。'))
 def draft():
  g.authenticate();assert api(g.BASE)['permissions']['push'];rel=release();remote=assets(rel);rows=json.loads((B/'publish-assets.json').read_text('utf8'));completed=0
