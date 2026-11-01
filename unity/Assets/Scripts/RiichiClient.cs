@@ -126,6 +126,7 @@ namespace YunJian.Riichi
             playlistAudio = gameObject.AddComponent<PlaylistAudio>(); playlistAudio.Initialize(this);
             nativeSettings = new NativeSettingsUi(playlistAudio);
             gameObject.AddComponent<CharacterPackService>();CharacterResourceUi.Current=new CharacterResourceUi();
+            gameObject.AddComponent<WardrobePackService>();WardrobeResourceUi.Current=new WardrobeResourceUi();gameObject.AddComponent<WardrobeResourceOverlay>();
             gameObject.AddComponent<ResourceRoomCoordinator>();
             tap = gameObject.AddComponent<ScreenTapEffect>();
             lobby=gameObject.AddComponent<LobbyController>();lobby.Initialize(this);
@@ -370,7 +371,7 @@ namespace YunJian.Riichi
         public LobbyController Lobby => lobby;
         public bool LobbyActive => active;
         public bool LobbyPlaying => active && State!=null && State.phase!="lobby";
-        public bool LobbyOverlayVisible => showRoom || page=="settings" || CharacterResourceUi.Current?.ModalOpen==true || State?.resourceSetup!=null;
+        public bool LobbyOverlayVisible => showRoom || page=="settings" || CharacterResourceUi.Current?.ModalOpen==true || WardrobeResourceUi.Current?.ModalOpen==true || State?.resourceSetup!=null;
         public bool LobbyCloseSettings(){if(page!="settings")return false;if(nativeSettings.Back())page="home";return true;}
         public string LobbyNickname { get=>nickname;set{nickname=value;PlayerPrefs.SetString("riichi.name",value);PlayerPrefs.Save();} }
         public string LobbyEndpoint => endpoint;
@@ -502,7 +503,7 @@ namespace YunJian.Riichi
             bool playing = active && State != null && (State.phase == "play" || State.phase == "reaction" || (State.phase == "result" && effects.ShowWinPresentation));
             viewport = TableViewport.Fit(Screen.width, Screen.height, Screen.safeArea, playing);
             GUI.matrix = viewport.Matrix;
-            bool beforeSettings = GUI.enabled; GUI.enabled &= page != "settings" && CharacterResourceUi.Current?.ModalOpen!=true && State?.resourceSetup==null;
+            bool beforeSettings = GUI.enabled; GUI.enabled &= page != "settings" && CharacterResourceUi.Current?.ModalOpen!=true && WardrobeResourceUi.Current?.ModalOpen!=true && State?.resourceSetup==null;
             if (State == null || !active) DrawHome();
             else if (State.phase == "lobby") DrawLobby();
             else if (State.phase == "result" && !effects.ShowWinPresentation) {bool enabled=GUI.enabled;GUI.enabled&=!lobby.OverlayActive;DrawResult();GUI.enabled=enabled;}
@@ -706,7 +707,7 @@ namespace YunJian.Riichi
         }
         void DrawSettings()
         {
-            bool enabled=GUI.enabled;GUI.enabled&=CharacterResourceUi.Current?.ModalOpen!=true&&State?.resourceSetup==null;nativeSettings.Draw(()=>page="home");GUI.enabled=enabled;
+            bool enabled=GUI.enabled;GUI.enabled&=CharacterResourceUi.Current?.ModalOpen!=true&&WardrobeResourceUi.Current?.ModalOpen!=true&&State?.resourceSetup==null;nativeSettings.Draw(()=>page="home");GUI.enabled=enabled;
         }
         void ApplyAudioSettings() {
             if(audioSettingsRevision==AppPreferences.Revision)return;audioSettingsRevision=AppPreferences.Revision;

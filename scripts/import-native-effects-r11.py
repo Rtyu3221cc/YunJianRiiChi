@@ -89,8 +89,10 @@ def main():
             return None
         if ptr['m_FileID']:
             name = Path(file.externals[ptr['m_FileID']-1].path).name
-            if name=='unity default resources' and ptr['m_PathID']==10210:
-                return dict(builtin='Quad',pathID=10210)
+            if name=='unity default resources':
+                builtin={10202:'Cube',10206:'Cylinder',10207:'Sphere',10208:'Capsule',10209:'Plane',10210:'Quad'}.get(ptr['m_PathID'])
+                if builtin:return dict(builtin=builtin,pathID=ptr['m_PathID'])
+                raise ValueError('Unknown Unity builtin resource '+str(ptr['m_PathID']))
             if name not in cab:
                 raise ValueError('Missing native dependency '+name)
             file = cab[name]
@@ -131,7 +133,7 @@ def main():
         name = sd['m_ParsedForm']['m_Name']
         floats, colors, texenv = dict(props['m_Floats']), dict(props['m_Colors']), dict(props['m_TexEnvs'])
         main = texenv.get('_MainTex')
-        if (not main or not main['m_Texture']['m_PathID']) and BATCH!='FateR19':
+        if (not main or not main['m_Texture']['m_PathID']) and BATCH not in ['FateR19','WinsR22']:
             raise ValueError('Missing main texture '+md['m_Name'])
         tex = resolve(obj.assets_file,main['m_Texture']) if main else None
         texdata = tex.read_typetree() if tex else {}
@@ -174,11 +176,16 @@ def main():
                     zTest=state_value('zTest'),zWrite=state_value('zWrite'),cull=state_value('culling'))
 
     def mesh_data(mesh,relative):
-        if isinstance(mesh,dict) and mesh.get('builtin')=='Quad':
-            return js(relative,dict(builtin='Quad',sourcePathID=10210))
+        if isinstance(mesh,dict) and mesh.get('builtin'):
+            return js(relative,dict(builtin=mesh['builtin'],sourcePathID=mesh['pathID']))
         helper=MeshHandler(mesh.read());helper.process()
         data=dict(vertices=[n for v in helper.m_Vertices for n in v],uv=[n for v in helper.m_UV0 for n in v[:2]],indices=[i for sm in helper.get_triangles() for tri in sm for i in tri])
-        if BATCH=='FateR19' and helper.m_Colors:data['colors']=[n for v in helper.m_Colors for n in v]
+        if BATCH in ['FateR19','WinsR22'] and helper.m_Colors:data['colors']=[n for v in helper.m_Colors for n in v]
+        if BATCH=='WinsR22':
+            raw=mesh.read_typetree()
+            if helper.m_BoneWeights and helper.m_BoneIndices:
+                data['weights']=[n for v in helper.m_BoneWeights for n in v];data['boneIndices']=[int(n)for v in helper.m_BoneIndices for n in v]
+                data['bindposes']=[matrix['e'+str(i)+str(j)]for matrix in raw['m_BindPose']for i in range(4)for j in range(4)]
         return js(relative,data,mesh)
 
     jobs=[]
@@ -186,7 +193,8 @@ def main():
         category='effect_hupai'if target['sourceKey']in WIN else'effect_lizhi';sourcekey=target['sourceKey']
         paths=sorted(p for p in container if p.startswith(f'myassets/deco/{category}/{sourcekey}/3d/prefab/')and p.endswith('.prefab'))
         exact=next((p for p in paths if Path(p).stem==sourcekey),None)
-        if exact:paths=[exact]
+        if exact:
+            paths=[exact]+([p for p in paths if p!=exact]if BATCH=='WinsR22' else [])
         elif len(paths)>1:
             target['nativeVariants']=[BATCH+'/'+sourcekey]+[BATCH+'/'+Path(p).stem for p in paths[1:]]
         target['allPrefabs']=paths
@@ -195,12 +203,14 @@ def main():
 
     for target,main,key in jobs:
         paths=target['allPrefabs']
-        ptr=container[main];root=ptr.assetsfile.objects[ptr.path_id]
-        nodes=[]
-        for go,td,components,parent in graph(root):
+        ptr=container[main];root=resolve(ptr.assetsfile,dict(m_FileID=ptr.m_FileID,m_PathID=ptr.path_id))
+        hierarchy=graph(root)
+        transform_indices={(go.assets_file.name,next(c for c in components if c.type.name in ['Transform','RectTransform']).path_id):i for i,(go,td,components,parent)in enumerate(hierarchy)}
+        nodes=[];extra_materials={}
+        for go,td,components,parent in hierarchy:
             node=dict(name=go.peek_name(),parent=parent,position=vec(td['m_LocalPosition']),rotation=vec(td['m_LocalRotation']),scale=vec(td['m_LocalScale']),active=bool(go.read_typetree()['m_IsActive']))
             for c in components:
-                if c.type.name not in ['Transform','ParticleSystem','ParticleSystemRenderer','Animator','MeshFilter','MeshRenderer']:
+                if c.type.name not in ['Transform','ParticleSystem','ParticleSystemRenderer','Animator','MeshFilter','MeshRenderer','SkinnedMeshRenderer']:
                     unsupported.append(dict(kind='component',effect=key,node=node['name'],type=c.type.name))
                 if c.type.name=='Animator':
                     ad=c.read_typetree();controller=resolve(c.assets_file,ad['m_Controller'])
@@ -215,6 +225,16 @@ def main():
                                 relative=f'{BATCH}/Animations/{key}-{clip.path_id}'
                                 node['animations'].append(js(relative+'.json',{'AnimationClip':clipdata},clip))
                                 animation_sources.append(dict(bundle=str(clip.assets_file.parent.name),name=clipdata['m_Name'],output=relative+'.anim',effect=key,node=node['name']))
+                                if BATCH=='WinsR22':
+                                    bindings=clipdata.get('m_ClipBindingConstant',{}).get('genericBindings',[])
+                                    if any(b.get('isPPtrCurve')for b in bindings):unsupported.append(dict(kind='animation-pointer-curves',effect=key,node=node['name'],clip=clipdata['m_Name'],bindings=[b for b in bindings if b.get('isPPtrCurve')]))
+                                    for pointer in clipdata.get('m_ClipBindingConstant',{}).get('pptrCurveMapping',[]):
+                                        value=resolve(clip.assets_file,pointer)
+                                        if value is None:continue
+                                        if value.type.name=='Material':
+                                            relative=f'{BATCH}/Materials/{key}-{value.path_id}'
+                                            extra_materials[value.peek_name()]=dict(name=value.peek_name(),source=js(relative+'-source.json',material(value),value),asset=relative+'.mat')
+                                        else:unsupported.append(dict(kind='unmapped-animation-object',effect=key,type=value.type.name,name=value.peek_name()))
             particle=next((c for c in components if c.type.name=='ParticleSystem'),None)
             renderer=next((c for c in components if c.type.name=='ParticleSystemRenderer'),None)
             if particle and renderer:
@@ -232,7 +252,8 @@ def main():
                     for field in ['m_Mesh','m_Mesh1','m_Mesh2','m_Mesh3']:
                         mesh=resolve(renderer.assets_file,rd.get(field))
                         if mesh is None:continue
-                        meshes.append(mesh_data(mesh,relative+'-'+str(mesh.path_id)+'-mesh.json'))
+                        mesh_id=mesh.get('pathID')if isinstance(mesh,dict)else mesh.path_id
+                        meshes.append(mesh_data(mesh,relative+'-'+str(mesh_id)+'-mesh.json'))
                     node['mesh']=meshes[0];node['meshes']=meshes
                 target.setdefault('particleLayers',0);target['particleLayers']+=1
             meshfilter=next((c for c in components if c.type.name=='MeshFilter'),None)
@@ -243,6 +264,13 @@ def main():
                 node['mesh']=mesh_data(mesh,f'{BATCH}/Data/{key}-{mesh_id}-static-mesh.json');node['staticMesh']=True
                 node['materials']=[material(resolve(static_renderer.assets_file,p))for p in rd['m_Materials']if p['m_PathID']]
                 node['sortingOrder']=rd.get('m_SortingOrder',0)
+            skin=next((c for c in components if c.type.name=='SkinnedMeshRenderer'),None)
+            if skin:
+                rd=skin.read_typetree();mesh=resolve(skin.assets_file,rd['m_Mesh']);node['mesh']=mesh_data(mesh,f'{BATCH}/Data/{key}-{mesh.path_id}-skinned-mesh.json');node['skinnedMesh']=True
+                def bone_index(ptr):
+                    transform=resolve(skin.assets_file,ptr)
+                    return transform_indices[(transform.assets_file.name,transform.path_id)] if transform else -1
+                node['bones']=[bone_index(p)for p in rd['m_Bones']];node['rootBone']=bone_index(rd['m_RootBone']);node['materials']=[material(resolve(skin.assets_file,p))for p in rd['m_Materials']if p['m_PathID']];node['sortingOrder']=rd.get('m_SortingOrder',0)
             nodes.append(node)
         target['prefab']=main
         target['allPrefabs']=paths
@@ -253,7 +281,7 @@ def main():
                 iconptr=container[sorted(icons)[0]];iconobj=iconptr.assetsfile.objects[iconptr.path_id]
                 buf=io.BytesIO();iconobj.read().image.save(buf,format='PNG');save(f'{BATCH}/Icons/{key}.png',buf.getvalue(),iconobj)
                 target['icon']='Majsoul/NativeReview/'+BATCH+'/Icons/'+key
-        js(f'{BATCH}/{key}-source.json',dict(nodes=nodes,sourceVersion='4.0.51',preserveActiveState=True),root)
+        js(f'{BATCH}/{key}-source.json',dict(nodes=nodes,sourceVersion='4.0.51',preserveActiveState=True,extraMaterials=list(extra_materials.values())),root)
         print('EXPORTED',key,target.get('particleLayers',0),'layers',flush=True)
     dump(OUT/'manifest.json',dict(clientVersion='4.0.51',resourceVersion='0.16.289',effects=targets,records=records,unsupported=unsupported))
     dump(AUDIT/'materials.json',material_audit)
@@ -266,4 +294,13 @@ if __name__=='__main__':
     if '--fate-r19' in sys.argv:
         WIN=['ron_25hf'];RIICHI=[];EXISTING={'ron_25hf':'ron-fate-hf'}
         BATCH='FateR19';OUT=NATIVE/BATCH;AUDIT=R/'build/fate-r19/source';AUDIT.mkdir(parents=True,exist_ok=True)
+    if '--wins-r22' in sys.argv:
+        inventory=json.loads((R/'build/wardrobe-r22/source-inventory.json').read_text('utf8'))
+        current=json.loads((R/'unity/Assets/Resources/Majsoul/Wardrobe/catalog.json').read_text('utf8'))
+        existing={i['nativeEffect'].split('/')[-1]for i in current['items']if i.get('nativeEffect')and i['category']=='winEffect'and not i['nativeEffect'].startswith('WinsR22/')}
+        WIN=sorted({r['sourceKey']for r in inventory['definitions']if r['sourceKey']and not r['expired']} - existing);RIICHI=[];EXISTING={}
+        BATCH='WinsR22';OUT=NATIVE/BATCH;AUDIT=R/'build/wardrobe-r22/source';AUDIT.mkdir(parents=True,exist_ok=True)
+        if (R/'docs/wardrobe-resource-layout-r22.json').exists():
+            NATIVE=R/'build/wardrobe-r22/reexport/NativeReview';OUT=NATIVE/BATCH
+            print('Split layout detected; exporting to isolated reexport folder, without replacing approved runtime assets:',OUT,flush=True)
     main()

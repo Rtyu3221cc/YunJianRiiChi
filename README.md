@@ -1,12 +1,22 @@
 # 云间日麻
 
+## Unity 0.6.18 · 装扮按需下载与全量和牌迁移（2026-11-01）
+
+基础 APK 约 241 MB，每类保留 3 款，手部仍为默认／橘猫手 2 款可选。其余装扮支持资源页按类别批量下载、装扮选择页单件下载、取消续传、校验安装和删除；开局支持局域网接收、房主中转和基础替代。重资源已经移出 Resources，共享依赖按需安装。
+
+可选和牌达到 60 款（59 款已定位原生定义＋默认）。依据原版 Lua 处理新旧根节点、动画牌、渲染层级、配置覆盖值、声音、结算等待及回收；保留满贯以上横幅、原版拖动出牌和自摸直接拍桌。
+
+[基础 APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.6.18/yunjian-riichi-unity-0.6.18.apk) · [程序发布页](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/tag/unity-0.6.18) · [装扮资源](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/tag/wardrobe-resources-v1) · [全和牌视频与下载界面](dist/previews/2026-11-01-wardrobe-r22/index.html) · [本轮交接](docs/handoff-unity-0.6.18.md)
+
+192 项 Node、480 个四座位荣和／自摸场景、48 个补充 Lua 场景、实际 HTTP 续传／损坏包拒绝／删除保护／中转和 60 款视频可见像素检查通过。versionCode 66，原包名、原证书、ARM64／ARMv7。APK 体积、资源排除及签名验证见同版 verification.json。尚未完成 Android 真机 GPU／触摸、覆盖安装、多手机热点与原版视频逐像素对照。
+
 ## 当前源码进展 · Lua 解码与 Fate 特效（2026-10-29）
 
 已定向恢复并校验 15 份原版 Lua。源码包含静态装扮扩展、按原版流程的拖动出牌／手内换序、满贯以上才显示和牌横幅，以及 Fate 联动「咒层界・恶念祝祭」的原始粒子、模型和材质动画。自摸手保持适度放大约三分之一；牌在拍桌时即落稳，随后只让手收回，音效和特效按各手型的原版配置分别触发。
 
 [最新对话交接：Lua 解码与后续全部特效](docs/handoff-lua-effects-2026-10-29.md) · [特效候选与完成状态索引](docs/effects-restoration-index-r20.json) · [拖动流程视频](dist/previews/2026-10-29-original-input-r18/index.html) · [Fate 特效视频](dist/previews/2026-10-29-fate-r19/index.html) · [自摸拍桌与收手修正](dist/previews/2026-10-29-tsumo-r21/index.html)
 
-此部分是源码与 Unity 实际预览更新，本轮未生成 APK、未建立新版 Release。最新本地测试包 0.6.17 尚不含后续 Lua 输入移植、Fate 与自摸手调整；下方 0.6.16 为既有公开发布。原资源参数还原、原版录像对照与 Android 实机验证分别记录，不将编辑器预览等同于手机验证。
+以下为 2026-10-29 的历史源码进展；当时未生成 APK。相关 Lua 输入、Fate 与自摸手调整现已纳入上方 0.6.18；0.6.17 为历史本地测试包。原资源参数还原、原版录像对照与 Android 实机验证分别记录，不将编辑器预览等同于手机验证。
 
 ## Unity 0.6.16 · 原生装扮特效与结算修正（2026-10-28）
 

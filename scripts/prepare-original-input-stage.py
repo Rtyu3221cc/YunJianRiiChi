@@ -2,7 +2,7 @@
 from pathlib import Path
 import argparse,hashlib,json,os,shutil,uuid
 R=Path(__file__).resolve().parent.parent
-p=argparse.ArgumentParser();p.add_argument('--batch',choices=['original-input-r18','fate-r19','tsumo-r20','tsumo-r21'],default='original-input-r18');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--batch',choices=['original-input-r18','fate-r19','tsumo-r20','tsumo-r21','wardrobe-r22'],default='original-input-r18');a=p.parse_args()
 STAGE=R/'build'/a.batch/'stage';U=STAGE/'unity';U.mkdir(parents=True,exist_ok=True)
 immutable={'.png','.jpg','.jpeg','.mp3','.wav','.ttf','.bytes'}
 rows=[]
@@ -14,6 +14,7 @@ for folder in ['Assets','Packages','ProjectSettings']:
         target=U/rel;target.parent.mkdir(parents=True,exist_ok=True)
         if target.exists():
             if source.suffix.lower() in immutable and os.path.samefile(source,target):continue
+            if source.stat().st_size==target.stat().st_size and source.stat().st_mtime_ns==target.stat().st_mtime_ns:continue
             if target.read_bytes()==source.read_bytes():continue
             target.unlink()
         if source.suffix.lower() in immutable:os.link(source,target);kind='hardlink-immutable-media'

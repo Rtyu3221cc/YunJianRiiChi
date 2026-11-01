@@ -1,6 +1,6 @@
 Shader "YunJian/OriginalTileOutline"
 {
-    Properties { _Color ("Original outline color", Color) = (.283,.283,.283,1) _Match ("Same visible tile", Range(0,1)) = 0 }
+    Properties { _ZTest ("Depth comparison",Float)=4 _Color ("Original outline color", Color) = (.283,.283,.283,1) _Match ("Same visible tile", Range(0,1)) = 0 }
     SubShader
     {
         Tags { "RenderType"="Opaque" "Queue"="Geometry-10" }
@@ -8,6 +8,7 @@ Shader "YunJian/OriginalTileOutline"
         {
             Cull Front
             ZWrite On
+            ZTest [_ZTest]
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag

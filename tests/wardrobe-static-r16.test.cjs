@@ -1,5 +1,6 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const root=path.resolve(__dirname,'..'),read=p=>JSON.parse(fs.readFileSync(path.join(root,p),'utf8'));
+const {sourceFile}=require('./wardrobe-source.cjs');
 const catalog=read('unity/Assets/Resources/Majsoul/Wardrobe/catalog.json'),audit=read('unity/Assets/Resources/Majsoul/Wardrobe/provenance-r16.json');
 globalThis.Majiang=require('../app/src/main/assets/core.js');const {Room}=require('../app/src/main/assets/engine.js');
 test('static decoration source records reconcile without advertising incomplete resources',()=>{
@@ -16,12 +17,12 @@ test('static decoration source records reconcile without advertising incomplete 
   }
  }
 });
-test('all 22 background tracks and 17 riichi tracks resolve to local offline audio',()=>{
+test('all 22 background tracks and 17 riichi tracks retain complete local source audio',()=>{
  const tracks=read('unity/Assets/Resources/Majsoul/Settings/music.json').tracks;assert.equal(tracks.length,22);assert.equal(new Set(tracks.map(t=>t.id)).size,22);
  assert.equal(tracks.filter(t=>t.group==='lobby').length,9);assert.equal(tracks.filter(t=>t.group==='mj').length,13);
  assert.equal(catalog.items.filter(i=>i.category==='music').length,17);
  for(const resource of [...tracks.map(t=>t.resource),...catalog.items.filter(i=>i.category==='music').map(i=>i.audio)]){
-  const file=path.join(root,'unity/Assets/Resources',resource+'.mp3');assert.ok(fs.statSync(file).size>10000,file);
+  const file=sourceFile(path.join(root,'unity/Assets/Resources',resource+'.mp3'));assert.ok(fs.statSync(file).size>10000,file);
  }
 });
 test('new static loadouts survive match freezing, guest polling, recovery and identifier rejection',()=>{
@@ -35,5 +36,5 @@ test('new static loadouts survive match freezing, guest polling, recovery and id
 });
 test('exported R16 resource bytes retain their recorded source hashes',()=>{
  const seen=new Map();for(const row of audit.records)seen.set(row.output,row);
- for(const [relative,row] of seen){const file=path.resolve(root,relative);assert.ok(file.startsWith(root+path.sep));assert.equal(crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'),row.sha256,relative);}
+ for(const [relative,row] of seen){const file=sourceFile(relative);assert.ok(file.startsWith(root+path.sep));assert.equal(crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'),row.sha256,relative);}
 });

@@ -1,15 +1,16 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 globalThis.Majiang=require('../app/src/main/assets/core.js');
 const {Room}=require('../app/src/main/assets/engine.js');
+const {sourceFile}=require('./wardrobe-source.cjs');
 const catalog=JSON.parse(fs.readFileSync(path.join(__dirname,'../unity/Assets/Resources/Majsoul/Wardrobe/catalog.json'),'utf8'));
 function ok(reply){assert.equal(reply.ok,true,reply.error);return reply;}
 function send(r,token,op,extra={}){return r.dispatch({op,token,version:r.s.version,...extra});}
-test('every category has two valid bundled choices and all resources resolve',()=>{
+test('every category has offline defaults and every bundled or downloadable source resolves',()=>{
  const code=fs.readFileSync(path.join(__dirname,'../app/src/main/assets/engine.js'),'utf8'),registry=JSON.parse(code.match(/const WARDROBE_CATALOG=(\{[^\r\n]+\});/)[1]);
  const expected={};for(const item of catalog.items)(expected[item.category]??=[]).push(item.id);assert.deepEqual(registry,expected);
  const categories=new Map();for(const item of catalog.items){categories.set(item.category,(categories.get(item.category)||0)+1);
   for(const key of ['icon','texture','hand','table','preview','model','motion','audio','effect'])if(item[key]){
-   const stem=path.join(__dirname,'../unity/Assets/Resources',item[key]);assert.ok(['.png','.jpg','.json','.mp3'].some(ext=>fs.existsSync(stem+ext)),`${item.id}: ${key}`);
+   const stem=path.join(__dirname,'../unity/Assets/Resources',item[key]);assert.ok(['.png','.jpg','.json','.mp3'].some(ext=>fs.existsSync(sourceFile(stem+ext))),`${item.id}: ${key}`);
   }
  }
  assert.equal(categories.size,11);for(const [category,count] of categories)assert.ok(count>=2,category);

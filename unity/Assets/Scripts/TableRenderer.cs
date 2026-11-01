@@ -571,6 +571,10 @@ namespace YunJian.Riichi
             }
             bool keepHand=view.phase=="result" && view.result!=null && !view.result.draw && cameraHand!=null && handTiles.Count>0;
             Clear(false,keepHand);state=view;opening.Observe(view,GetComponent<RiichiClient>()?.IntroRemaining??0);
+            var wardrobeLease=new GameObject("Table wardrobe resource lifetime");wardrobeLease.transform.SetParent(content,false);
+            var lease=wardrobeLease.AddComponent<WardrobePackLease>();foreach(var player in view.players)if(player.wardrobe!=null)foreach(var field in typeof(WardrobeLoadout).GetFields()){
+                string id=field.GetValue(player.wardrobe)as string;if(!string.IsNullOrEmpty(id)&&WardrobePackService.Installed(id)){var pack=WardrobePackService.ForItem(id);if(pack!=null)lease.Add(WardrobePackService.Closure(pack.key));}
+            }
             if(!keepHand){
                 var faceChoice=WardrobeRuntime.Item(view,view.you,"tileFace");var backChoice=WardrobeRuntime.Item(view,view.you,"tileBack");
                 string key=faceChoice.id+"/"+backChoice.id;

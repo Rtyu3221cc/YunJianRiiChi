@@ -30,18 +30,18 @@ namespace YunJian.Riichi {
         readonly CharacterPaneDrag dressDrag=new CharacterPaneDrag();
         readonly CharacterPaneDrag dressItemDrag=new CharacterPaneDrag();
         Vector2 dressItemScroll;bool dressItemRailDragging;float dressItemRailGrab;
-        Vector2 dressScroll;Rect dressSliceClip;bool dressEye;string dressCategory="stick";float dressPreviewBegan;AudioSource dressAudio;
+        Vector2 dressScroll;Rect dressSliceClip;bool dressEye;string dressCategory="stick";float dressPreviewBegan;AudioSource dressAudio;GameObject dressResourceLease;
 #if UNITY_EDITOR
         float dressReviewAge=-1;
 #endif
         bool DressDirty=>dressDraft.Any(p=>WardrobeSelection.Get(p.Key)?.id!=p.Value);
         static bool DressCanPreview(string category)=>category!="winEffect"&&category!="riichiEffect"&&category!="callout";
-        WardrobeItem Draft(string key)=>dressDraft.TryGetValue(key,out var id)?WardrobeCatalog.Find(id):WardrobeSelection.Get(key);
+        WardrobeItem Draft(string key){var item=dressDraft.TryGetValue(key,out var id)?WardrobeCatalog.Find(id):WardrobeSelection.Get(key);return item!=null&&WardrobePackService.Installed(item.id)?item:WardrobePackService.Fallback(key);}
         void OpenWardrobe(){
             StopDressPreview();dressDraft.Clear();foreach(var i in WardrobeCatalog.Data.items)if(!dressDraft.ContainsKey(i.category))dressDraft[i.category]=WardrobeSelection.Get(i.category).id;
             dressEye=false;dressCategory="stick";dressScroll=dressItemScroll=Vector2.zero;dressItemDrag.Reset();dressItemRailDragging=false;SetDormPage(DormView.Wardrobe);
         }
-        void StopDressPreview(){dressTable.Hide();dressMotion.Hide();if(dressAudio!=null)dressAudio.Stop();if(PlaylistAudio.Active!=null)PlaylistAudio.Active.ExternalAudition=false;}
+        void StopDressPreview(){dressTable.Hide();dressMotion.Hide();if(dressAudio!=null)dressAudio.Stop();if(dressResourceLease!=null)Destroy(dressResourceLease);dressResourceLease=null;if(PlaylistAudio.Active!=null)PlaylistAudio.Active.ExternalAudition=false;}
         void DisposeWardrobe(){StopDressPreview();dressMotion.Dispose();foreach(var m in dressSlices.Values)Destroy(m);dressSlices.Clear();}
         void TickWardrobePreview(){
             if(!dressEye)return;
@@ -65,7 +65,7 @@ namespace YunJian.Riichi {
 #endif
             var item=Draft(dressCategory);if(dressEye&&!string.IsNullOrEmpty(item?.audio)){
                 if(dressAudio==null){dressAudio=gameObject.AddComponent<AudioSource>();dressAudio.playOnAwake=false;dressAudio.spatialBlend=0;}
-                dressAudio.clip=Resources.Load<AudioClip>(item.audio);dressAudio.volume=AppPreferences.Gain(1);dressAudio.loop=true;dressAudio.Play();if(PlaylistAudio.Active!=null)PlaylistAudio.Active.ExternalAudition=true;
+                dressResourceLease=new GameObject("Wardrobe music preview lifetime");WardrobePackService.Lease(item.audio,dressResourceLease);dressAudio.clip=WardrobePackService.Asset<AudioClip>(item.audio);dressAudio.volume=AppPreferences.Gain(1);dressAudio.loop=true;dressAudio.Play();if(PlaylistAudio.Active!=null)PlaylistAudio.Active.ExternalAudition=true;
             }
         }
         void DressImage(Rect r,string path,ScaleMode mode=ScaleMode.ScaleToFit){var t=WardrobeCatalog.Texture(path);if(t!=null)GUI.DrawTexture(r,t,mode,true);}
@@ -142,7 +142,12 @@ namespace YunJian.Riichi {
             for(int i=0;i<entries.Length;i++){
                 var item=entries[i];var card=new Rect(33+i%4*178,11+i/4*182-dressItemScroll.y,143,143);if(card.yMax<0||card.y>itemView.height)continue;CImage(card,"kuangbg");DressImage(new Rect(card.x+3,card.y+3,card.width-6,card.height-6),item.icon,ScaleMode.ScaleAndCrop);CImage(card,"kuangbound");
                 if(Draft(dressCategory)?.id==item.id)DressCorners(new Rect(card.x-5,card.y-5,card.width+10,card.height+10));
-                if(Hit(new Rect(card.x-5,card.y-5,card.width+10,card.height+10),"dress-item-"+item.id)){dressDraft[dressCategory]=item.id;StopDressPreview();}
+                bool installed=WardrobePackService.Installed(item.id);
+                if(!installed){var band=new Rect(card.x+4,card.yMax-43,card.width-8,38);NativePanel.Box(band,new Color(0,0,0,.7f));string status=WardrobePackService.Instance.ItemQueued(item.id)?"下载中":"下载 "+CharacterResourceUi.Size(WardrobePackService.DownloadBytes(new[]{item.id}));Label(band,status,CText(21,TextAnchor.MiddleCenter,true),CharacterGold);}
+                if(Hit(new Rect(card.x-5,card.y-5,card.width+10,card.height+10),"dress-item-"+item.id)){
+                    if(installed){dressDraft[dressCategory]=item.id;StopDressPreview();}
+                    else{string categoryKey=dressCategory;WardrobeResourceUi.Current.Ask(item.id,id=>{dressDraft[categoryKey]=id;StopDressPreview();});}
+                }
                 if(dressCategory=="hand")Label(new Rect(card.x-15,card.yMax+6,card.width+30,38),item.name,CText(25,TextAnchor.MiddleCenter,true),CharacterGold);
             }
             targetOffset=offset;GUI.EndGroup();

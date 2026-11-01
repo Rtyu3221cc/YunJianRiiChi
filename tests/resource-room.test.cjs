@@ -13,3 +13,33 @@ test('LAN offers accept only bounded public resource capabilities, not arbitrary
 test('resource state survives a room snapshot without changing frozen identities',()=>{const {r,h,g}=setup();ok(send(r,h,'prepareResources'));ok(ack(r,h));const saved=JSON.stringify(r.s);const recovered=new Room('resource-test',null,saved);assert.deepEqual(recovered.s.resourceSetup.choices,r.s.resourceSetup.choices);assert.equal(recovered.s.players[0].matchSkin,r.s.players[0].matchSkin)});
 test('host recovery resets acknowledgements while retaining frozen choices',()=>{const {r,h,g}=setup();ok(send(r,h,'prepareResources'));ok(ack(r,h));ok(ack(r,g));const old=r.s.resourceSetup.revision;const recovered=new Room('resource-test',null,JSON.stringify(r.s));assert(recovered.s.resourceSetup.revision>old);assert(!recovered.resourcesReady());assert(!send(recovered,h,'resourceAck',{setupRevision:old,resourceStatus:'ready'}).ok);assert.deepEqual(recovered.s.resourceSetup.choices,r.s.resourceSetup.choices)});
 test('an abandoned resource preparation expires without dealing a hand',()=>{const {r,h}=setup();ok(send(r,h,'prepareResources'));r.s.resourceSetup.createdAt=Date.now()-180001;r.tick();assert(!r.s.resourceSetup);assert.equal(r.s.phase,'lobby');assert(!r.s.players[0].hand)});
+
+test('preparation freezes wardrobes and validates per-client basic-outfit fallback',()=>{
+ const {r,h,g}=setup(),wardrobe={winEffect:'ron-26dj',cloth:'tablecloth_25xila'};
+ ok(send(r,h,'character',{character:'bamuwei',skin:400701,wardrobe}));
+ const prepared=ok(send(r,h,'prepareResources')).state.resourceSetup;
+ assert.deepEqual(prepared.wardrobes[0],wardrobe);
+ const before=JSON.stringify(r.s);
+ assert.equal(send(r,g,'resourceAck',{setupRevision:prepared.revision,resourceStatus:'fallback',fallbackWardrobes:['ron-flame']}).ok,false);
+ assert.equal(JSON.stringify(r.s),before);
+ ok(send(r,g,'resourceAck',{setupRevision:prepared.revision,resourceStatus:'fallback',fallbackWardrobes:['ron-26dj','ron-26dj']}));
+ assert.deepEqual(r.view(0).resourceSetup.players[1].fallbackWardrobes,['ron-26dj']);
+ ok(ack(r,h));ok(send(r,h,'start',{setupRevision:prepared.revision}));
+ assert.equal(r.s.players[0].matchWardrobe.winEffect,'ron-26dj');
+});
+
+test('download heartbeats retain preparation while abandoned downloads still expire',()=>{
+ const {r,h}=setup();ok(send(r,h,'prepareResources'));r.s.resourceSetup.createdAt=Date.now()-240000;
+ ok(ack(r,h,'downloading'));r.tick();assert.ok(r.s.resourceSetup);
+ r.s.resourceSetup.updatedAt=Date.now()-180001;r.tick();assert.ok(!r.s.resourceSetup);
+});
+
+test('LAN capability accommodates wardrobe dependencies with a finite hash limit',()=>{
+ const {r,g}=setup(),hashes=Array.from({length:1024},(_,i)=>i.toString(16).padStart(64,'0'));
+ const share={port:8767,ticket:'c'.repeat(32),hashes};
+ ok(send(r,g,'resourceOffer',{peerAddress:'192.168.43.2',resourceShare:share}));
+ assert.equal(r.view(0).resourcePeers[0].hashes.length,1024);
+ const before=JSON.stringify(r.s);
+ assert.equal(send(r,g,'resourceOffer',{resourceShare:{...share,hashes:[...hashes,'f'.repeat(64)]}}).ok,false);
+ assert.equal(JSON.stringify(r.s),before);
+});

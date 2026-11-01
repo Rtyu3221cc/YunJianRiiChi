@@ -17,14 +17,14 @@ namespace YunJian.Riichi {
         static Vector3 V(float[] a)=>new Vector3(a[0],a[1],a[2]);
         public void Initialize(WardrobeItem item,float length){
             if(!string.IsNullOrEmpty(item.modelPrefab)){
-                var prefab=Resources.Load<GameObject>(item.modelPrefab);if(prefab==null)throw new InvalidOperationException("Missing wardrobe model "+item.id);
+                var prefab=WardrobePackService.Asset<GameObject>(item.modelPrefab);if(prefab==null)throw new InvalidOperationException("Missing wardrobe model "+item.id);WardrobePackService.Lease(item.modelPrefab,gameObject);
                 var instance=Instantiate(prefab,transform,false).transform;
                 foreach(var r in instance.GetComponentsInChildren<MeshRenderer>(true))if(r.name.ToLowerInvariant().Contains("shadow"))r.gameObject.SetActive(false);
                 Normalize(instance,length);motions=instance.GetComponentsInChildren<NativeEffectMotion>(true);began=Time.unscaledTime;
                 foreach(var ps in instance.GetComponentsInChildren<ParticleSystem>(true)){var main=ps.main;main.scalingMode=ParticleSystemScalingMode.Hierarchy;ps.Play(false);}
                 return;
             }
-            var data=JsonUtility.FromJson<Model>(Resources.Load<TextAsset>(item.model).text);
+            WardrobePackService.Lease(item.model,gameObject);var data=JsonUtility.FromJson<Model>(WardrobePackService.Asset<TextAsset>(item.model).text);
             var content=new GameObject(item.id).transform;content.SetParent(transform,false);var nodes=new Transform[data.nodes.Length];
             for(int i=0;i<nodes.Length;i++){
                 var n=data.nodes[i];var t=nodes[i]=new GameObject(n.name).transform;t.SetParent(n.parent<0?content:nodes[n.parent],false);t.localPosition=V(n.position);t.localRotation=new Quaternion(n.rotation[0],n.rotation[1],n.rotation[2],n.rotation[3]);t.localScale=V(n.scale);

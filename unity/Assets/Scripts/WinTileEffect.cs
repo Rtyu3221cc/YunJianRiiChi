@@ -25,9 +25,10 @@ namespace YunJian.Riichi
             public bool randomFrame;public Key[] alpha,size,sizeX,sizeY,sizeZ,frames;public Burst[] bursts;public MeshData mesh;
             public Key[] velocityX,velocityY,velocityZ;
         }
-        [Serializable] public class Config { public int schema;public Node[] nodes;public Layer[] layers;public string nativeEffect;public string[] nativeVariants;public float[] nativeTileEuler,nativeWorldEuler; }
+        [Serializable] public class Config { public int schema;public Node[] nodes;public Layer[] layers;public string nativeEffect;public string[] nativeVariants;public float[] nativeTileEuler,nativeWorldEuler;public NativeWinContract playback; }
         public const float Lifetime=1.8f;
         public float PlaybackDuration {get;private set;}=Lifetime;
+        public float? SourceResultDelay {get;private set;}
         readonly List<ParticleSystem> systems=new List<ParticleSystem>();
         readonly List<Material> materials=new List<Material>();
         readonly List<Mesh> meshes=new List<Mesh>();
@@ -36,7 +37,7 @@ namespace YunJian.Riichi
         NativeParticleEffect native;
         NativeWinningTileQueue winningTileQueue;
         public PublicSound WinningEvent {get;set;}
-        public void BindWinningTile(Transform tile){if(!UsesNewHuleBinding)return;if(winningTileQueue==null)winningTileQueue=gameObject.AddComponent<NativeWinningTileQueue>();winningTileQueue.Bind(tile);}
+        public void BindWinningTile(Transform tile){if(native?.Playback!=null){native.Playback.Bind(tile,WinningEvent);return;}if(!UsesNewHuleBinding)return;if(winningTileQueue==null)winningTileQueue=gameObject.AddComponent<NativeWinningTileQueue>();winningTileQueue.Bind(tile);}
         int nativeView;
         Quaternion nativeWorldRotation=Quaternion.identity;
         public bool HasFixedWorldRotation {get;private set;}
@@ -44,7 +45,8 @@ namespace YunJian.Riichi
         public Quaternion TableRotation(Quaternion tileRotation)=>HasFixedWorldRotation?nativeWorldRotation:tileRotation*TileMountRotation;
         public bool UsesNativeSource=>native!=null;
         public bool UsesNewHuleBinding=>native!=null&&native.UsesNewHuleBinding;
-        public bool FixedSourceLifetime=>UsesNewHuleBinding;
+        public bool NeedsWinningTileBinding=>UsesNewHuleBinding||native?.Playback!=null;
+        public bool FixedSourceLifetime=>UsesNewHuleBinding||native?.Playback!=null;
         public float StartedAt {get;private set;}
         public bool SoundTriggered {get;set;}
         public int ParticleCount=>systems.Sum(p=>p.particleCount);
@@ -52,7 +54,7 @@ namespace YunJian.Riichi
         public int MeshLayerCount {get;private set;}
         public void SetOverlay(bool enabled){foreach(var material in materials){material.SetFloat("_ZTest",enabled?8:4);material.renderQueue=enabled?3100:3000;}}
         public void SetTileReadability(Transform tile,float intensity,float faceOpacity,bool enabled){CalloutReadability.Apply(materials,tile,intensity,faceOpacity,enabled);}
-        public static int SourceLayerCount=>JsonUtility.FromJson<Config>(Resources.Load<TextAsset>("Majsoul/Actions/fire-effect").text).layers.Length;
+        public static int SourceLayerCount=>JsonUtility.FromJson<Config>(WardrobePackService.Asset<TextAsset>("Majsoul/Actions/fire-effect").text).layers.Length;
         static Vector3 V(float[] v)=>new Vector3(v[0],v[1],v[2]);
         static Color C(float[] c)=>new Color(c[0],c[1],c[2],c[3]);
         // Laya gives emission its own random stream. Its float burst count is
@@ -97,14 +99,15 @@ namespace YunJian.Riichi
         }
         void Build(string path,string textures,uint seed)
         {
-            var config=JsonUtility.FromJson<Config>(Resources.Load<TextAsset>(path).text);
+            WardrobePackService.Lease(path,gameObject);var config=JsonUtility.FromJson<Config>(WardrobePackService.Asset<TextAsset>(path).text);
             TileMountRotation=SourcePlaybackContracts.TileMount;
             if(!string.IsNullOrEmpty(config.nativeEffect)){
                 TileMountRotation=config.nativeTileEuler?.Length==3?Quaternion.Euler(V(config.nativeTileEuler)):SourcePlaybackContracts.NativeTileMount;
                 HasFixedWorldRotation=config.nativeWorldEuler?.Length==3;
                 nativeWorldRotation=HasFixedWorldRotation?Quaternion.Euler(V(config.nativeWorldEuler)):Quaternion.identity;
                 string source=config.nativeVariants!=null&&config.nativeVariants.Length==4?config.nativeVariants[(nativeView%4+4)%4]:config.nativeEffect;
-                native=gameObject.AddComponent<NativeParticleEffect>();native.Initialize(source,seed);
+                native=gameObject.AddComponent<NativeParticleEffect>();native.Initialize(source,seed,false,false,config.playback);
+                SourceResultDelay=config.playback!=null?config.playback.resultDelay:native.UsesNewHuleBinding?3.3f:(float?)null;
                 systems.AddRange(native.GetComponentsInChildren<ParticleSystem>(true));
                 foreach(var renderer in native.GetComponentsInChildren<Renderer>(true)){
                     var local=renderer.sharedMaterials.Select(m=>new Material(m)).ToArray();renderer.sharedMaterials=local;materials.AddRange(local);
@@ -114,8 +117,9 @@ namespace YunJian.Riichi
                     for(int i=0;i<emission.burstCount;i++){var burst=emission.GetBurst(i);last=Mathf.Max(last,burst.time+Mathf.Max(0,burst.cycleCount-1)*burst.repeatInterval);}
                     PlaybackDuration=Mathf.Max(PlaybackDuration,main.startDelay.constantMax+last+main.startLifetime.constantMax);
                 }
-                MeshLayerCount=native.GetComponentsInChildren<ParticleSystemRenderer>(true).Count(r=>r.renderMode==ParticleSystemRenderMode.Mesh)+native.GetComponentsInChildren<MeshRenderer>(true).Length;
+                MeshLayerCount=native.GetComponentsInChildren<ParticleSystemRenderer>(true).Count(r=>r.renderMode==ParticleSystemRenderMode.Mesh)+native.GetComponentsInChildren<MeshRenderer>(true).Length+native.GetComponentsInChildren<SkinnedMeshRenderer>(true).Length;
                 if(native.UsesNewHuleBinding)PlaybackDuration=6; // ShowHuleEffect destroys its prefab after 2+4 seconds.
+                if(config.playback!=null)PlaybackDuration=config.playback.lifetime;
                 Sample(-1);return;
             }
             var plane=new Mesh{name="Native horizontal billboard",vertices=new[]{new Vector3(-.5f,0,-.5f),new Vector3(-.5f,0,.5f),new Vector3(.5f,0,.5f),new Vector3(.5f,0,-.5f)},uv=new[]{Vector2.zero,Vector2.up,Vector2.one,Vector2.right},triangles=new[]{0,1,2,0,2,3}};
@@ -184,7 +188,7 @@ namespace YunJian.Riichi
                 // anchor and texture-U long axis. Keep its zero pivot and UVs.
                 renderer.lengthScale=l.stretch;renderer.velocityScale=0;renderer.cameraVelocityScale=0;renderer.SetActiveVertexStreams(new List<ParticleSystemVertexStream>{ParticleSystemVertexStream.Position,ParticleSystemVertexStream.Color,ParticleSystemVertexStream.UV});
                 // A name with a folder ("Actions/win-shanguang") reuses a texture from another Majsoul folder.
-                var material=new Material(Shader.Find("YunJian/WinParticle")){mainTexture=Resources.Load<Texture2D>(l.texture.Contains("/")?"Majsoul/"+l.texture:textures+l.texture)};material.SetColor("_TintColor",C(l.tint));material.SetFloat("_SrcBlend",l.blendSrc==1?1:5);material.SetFloat("_DstBlend",l.blendDst==1?1:10);renderer.sharedMaterial=material;materials.Add(material);systems.Add(p);
+                var material=new Material(Shader.Find("YunJian/WinParticle")){mainTexture=WardrobePackService.Asset<Texture2D>(l.texture.Contains("/")?"Majsoul/"+l.texture:textures+l.texture)};material.SetColor("_TintColor",C(l.tint));material.SetFloat("_SrcBlend",l.blendSrc==1?1:5);material.SetFloat("_DstBlend",l.blendDst==1?1:10);renderer.sharedMaterial=material;materials.Add(material);systems.Add(p);
             }
             Sample(-1);
         }

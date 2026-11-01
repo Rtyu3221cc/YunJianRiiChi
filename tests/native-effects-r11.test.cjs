@@ -2,7 +2,9 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 globalThis.Majiang=require('../app/src/main/assets/core.js');
 const {Room}=require('../app/src/main/assets/engine.js');
 const root=path.join(__dirname,'../unity/Assets/Resources/Majsoul');
-const read=file=>JSON.parse(fs.readFileSync(path.join(root,file),'utf8'));
+const {sourceFile}=require('./wardrobe-source.cjs');
+const assetFile=(...parts)=>sourceFile(path.join(root,...parts));
+const read=file=>JSON.parse(fs.readFileSync(assetFile(file),'utf8'));
 const manifest=read('NativeReview/EffectsR11/manifest.json'),catalog=read('Wardrobe/catalog.json');
 
 test('all 24 source outfits include native prefabs, original particle modules and usable source textures',()=>{
@@ -11,19 +13,19 @@ test('all 24 source outfits include native prefabs, original particle modules an
  assert.equal(manifest.effects.filter(e=>e.category==='riichiEffect').length,11);
  for(const entry of manifest.effects){
   const item=catalog.items.find(i=>i.id===entry.id);assert.ok(item,entry.id);
-  const wrapper=JSON.parse(fs.readFileSync(path.join(root,'../',item.effect+'.json'),'utf8'));assert.equal(wrapper.nativeEffect,entry.nativeEffect);
+  const wrapper=JSON.parse(fs.readFileSync(assetFile('../',item.effect+'.json'),'utf8'));assert.equal(wrapper.nativeEffect,entry.nativeEffect);
   for(const native of wrapper.nativeVariants??[wrapper.nativeEffect]){
-   assert.ok(fs.existsSync(path.join(root,'NativeReview',native+'.prefab')),native);
+   assert.ok(fs.existsSync(assetFile('NativeReview',native+'.prefab')),native);
    const source=read('NativeReview/'+native+'-source.json'),layers=source.nodes.filter(n=>n.particle);
    assert.equal(layers.length,entry.particleLayers);
    for(const node of layers){
     // EditorJsonUtility's serialized curves can contain nonfinite sentinels in
     // inactive curve branches. The imported files remain byte-for-byte intact;
     // normalize those scalar tokens only for this structural JSON scan.
-    const serialized=fs.readFileSync(path.join(root,'NativeReview',node.particle),'utf8');
+    const serialized=fs.readFileSync(assetFile('NativeReview',node.particle),'utf8');
     const modules=JSON.parse(serialized.replace(/:\s*(?:NaN|-?Infinity)(?=\s*[,}])/g,': null')).ParticleSystem;
     for(const module of ['InitialModule','EmissionModule','ShapeModule','ColorModule','SizeModule','RotationModule','UVModule'])assert.ok(module in modules,entry.id+'/'+module);
-    for(const material of node.materials){const image=fs.readFileSync(path.join(root,'NativeReview',material.texture+'.png'));assert.deepEqual([...image.subarray(0,8)],[137,80,78,71,13,10,26,10]);}
+    for(const material of node.materials){const image=fs.readFileSync(assetFile('NativeReview',material.texture+'.png'));assert.deepEqual([...image.subarray(0,8)],[137,80,78,71,13,10,26,10]);}
    }
   }
  }

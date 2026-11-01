@@ -31,6 +31,7 @@ namespace YunJian.Riichi {
             var loadout=view!=null&&seat>=0&&seat<view.players.Length?view.players[seat].wardrobe:null;
             var item=WardrobeCatalog.Find(loadout?.Id(category));
             if(item==null||item.category!=category)item=view!=null&&seat==view.you?WardrobeSelection.Get(category):WardrobeCatalog.Items(category).FirstOrDefault();
+            if(item!=null&&(!WardrobePackService.Installed(item.id)||WardrobePackService.RemoteFallbackIds.Contains(item.id)))item=WardrobePackService.Fallback(category);
             return category=="hand"?ResolveHand(item,view!=null&&seat>=0&&seat<view.players.Length?view.players[seat].character:CharacterRoster.Active.character):item;
         }
         public static WardrobeItem ResolveHand(WardrobeItem item,string character){
@@ -54,7 +55,7 @@ namespace YunJian.Riichi {
         public static WardrobeItem[] Items(string category)=>Data.items.Where(i=>i.category==category&&!i.hiddenFromSelection).ToArray();
         public static WardrobeItem Find(string id)=>Data.items.FirstOrDefault(i=>i.id==id);
         public static string CanonicalHand(string id)=>id=="hand-cat"?"hand-cat-orange":id=="hand-man"||id=="hand-dog"?"hand-human":id;
-        public static Texture2D Texture(string path){if(string.IsNullOrEmpty(path))return null;if(!textures.TryGetValue(path,out var t))textures[path]=t=Resources.Load<Texture2D>(path);return t;}
+        public static Texture2D Texture(string path){if(string.IsNullOrEmpty(path))return null;if(WardrobePackService.Managed(path))return WardrobePackService.Asset<Texture2D>(path);if(!textures.TryGetValue(path,out var t)||t==null)textures[path]=t=Resources.Load<Texture2D>(path);return t;}
         public static WardrobeUi Ui(string key)=>Data.ui.FirstOrDefault(i=>i.key==key);
         public static Rect AvatarFrameRect(Rect portrait,WardrobeItem item){
             var w=item.avatarWindow;if(w==null||w.Length!=4)return portrait;
@@ -69,10 +70,13 @@ namespace YunJian.Riichi {
             var items=WardrobeCatalog.Items(category);if(items.Length==0)return null;
             if(!selected.TryGetValue(category,out var id))selected[category]=id=PlayerPrefs.GetString(Prefix+category,items[0].id);
             if(category=="hand")selected[category]=id=WardrobeCatalog.CanonicalHand(id);
-            return items.FirstOrDefault(i=>i.id==id)??items[0];
+            var item=items.FirstOrDefault(i=>i.id==id)??items[0];return WardrobePackService.Installed(item.id)?item:WardrobePackService.Fallback(category)??item;
+        }
+        public static void ReconcileAvailability(){
+            var reset=new List<KeyValuePair<string,string>>();foreach(var pair in selected.ToArray())if(!WardrobePackService.Installed(pair.Value)){var item=WardrobePackService.Fallback(pair.Key);if(item!=null)reset.Add(new KeyValuePair<string,string>(pair.Key,item.id));}if(reset.Count>0)Save(reset);
         }
         public static void Save(IEnumerable<KeyValuePair<string,string>> choices){
-            foreach(var pair in choices){var item=WardrobeCatalog.Find(pair.Key=="hand"?WardrobeCatalog.CanonicalHand(pair.Value):pair.Value);if(item==null||item.category!=pair.Key)continue;selected[pair.Key]=item.id;
+            foreach(var pair in choices){var item=WardrobeCatalog.Find(pair.Key=="hand"?WardrobeCatalog.CanonicalHand(pair.Value):pair.Value);if(item==null||item.category!=pair.Key||!WardrobePackService.Installed(item.id))continue;selected[pair.Key]=item.id;
 #if UNITY_EDITOR
                 if(preview)continue;
 #endif

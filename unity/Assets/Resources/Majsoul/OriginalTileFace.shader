@@ -2,6 +2,7 @@ Shader "YunJian/OriginalTileFace"
 {
     Properties
     {
+        _ZTest ("Depth comparison",Float)=4
         _MainTex ("Original table face", 2D) = "white" {}
         _Match ("Same visible tile", Range(0,1)) = 0
         _SplitThreshold ("Split Threshold", Range(-1,1)) = .08
@@ -13,6 +14,7 @@ Shader "YunJian/OriginalTileFace"
         Tags { "RenderType"="Opaque" "Queue"="Geometry" }
         Pass
         {
+            ZTest [_ZTest]
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag

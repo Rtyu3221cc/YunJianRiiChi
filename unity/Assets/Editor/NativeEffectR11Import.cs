@@ -11,10 +11,20 @@ using UnityEngine.Rendering;
 namespace YunJian.Riichi.Editor {
     public static class NativeEffectR11Import {
         const string Folder="Assets/Resources/Majsoul/NativeReview/";
+        [Serializable] class Layout {public Relocation[] moves;}
+        [Serializable] class Relocation {public string from,to;}
+        static Dictionary<string,string> relocated;
+        static string Physical(string path){
+            if(!path.StartsWith("Assets/Resources/",StringComparison.Ordinal)||File.Exists(path))return path;
+            if(relocated==null){string repo=Environment.GetEnvironmentVariable("YUNJIAN_R22_REPO")??Path.GetFullPath(".."),file=repo+"/docs/wardrobe-resource-layout-r22.json";relocated=File.Exists(file)?JsonUtility.FromJson<Layout>(File.ReadAllText(file)).moves.ToDictionary(m=>m.from,m=>m.to):new Dictionary<string,string>();}
+            return relocated.TryGetValue(path,out var target)?target:path;
+        }
+        static string ReadSource(string path)=>File.ReadAllText(Physical(path));
+        static string LogicalAddress(string path){string prefix=path.StartsWith("Assets/WardrobePacks/Source/")?"Assets/WardrobePacks/Source/":"Assets/Resources/";return Path.ChangeExtension(path.Substring(prefix.Length),null);}
         [Serializable] class Manifest {public Entry[] effects;}
         [Serializable] class Entry {public string sourceKey,nativeEffect;public string[] nativeVariants;}
         [Serializable] class MeshGroup {public int[] indices;}
-        [Serializable] class MeshData {public string builtin;public float[] vertices,uv,colors;public int[] indices;public MeshGroup[] groups;}
+        [Serializable] class MeshData {public string builtin;public float[] vertices,uv,colors,weights,bindposes;public int[] indices,boneIndices;public MeshGroup[] groups;}
         [Serializable] class AnimationSources {public NativeR11AnimationStudy.Row[] rows;}
         static readonly Dictionary<string,AssetBundle> bundles=new Dictionary<string,AssetBundle>();
         static readonly List<string> checks=new List<string>();
@@ -23,13 +33,14 @@ namespace YunJian.Riichi.Editor {
         static Vector3 V(float[] p)=>new Vector3(p[0],p[1],p[2]);
         static Color C(float[] p)=>new Color(p[0],p[1],p[2],p[3]);
         static void TextureSettings(string path,int filter,int wrapU,int wrapV){
+            path=Physical(path);
             var importer=AssetImporter.GetAtPath(path)as TextureImporter;if(importer==null)return;
             if(importer.filterMode==(FilterMode)filter&&importer.wrapModeU==(TextureWrapMode)wrapU&&importer.wrapModeV==(TextureWrapMode)wrapV&&importer.textureCompression==TextureImporterCompression.Uncompressed)return;
             importer.filterMode=(FilterMode)filter;importer.wrapModeU=(TextureWrapMode)wrapU;importer.wrapModeV=(TextureWrapMode)wrapV;importer.textureCompression=TextureImporterCompression.Uncompressed;importer.SaveAndReimport();
         }
         public static void Run(){
             AssetDatabase.Refresh();
-            var manifest=JsonUtility.FromJson<Manifest>(File.ReadAllText(Folder+"EffectsR11/manifest.json"));
+            var manifest=JsonUtility.FromJson<Manifest>(ReadSource(Folder+"EffectsR11/manifest.json"));
             var animationSources=JsonUtility.FromJson<AnimationSources>("{\"rows\":"+File.ReadAllText(Reference+"animation-sources.json")+"}").rows;
             foreach(string name in manifest.effects.SelectMany(e=>e.nativeVariants??new[]{e.nativeEffect}).Distinct())Import(name,animationSources);
             foreach(var bundle in bundles.Values)bundle.Unload(false);bundles.Clear();AssetDatabase.SaveAssets();
@@ -39,7 +50,7 @@ namespace YunJian.Riichi.Editor {
         // An explicit separate batch protects the approved action effects.
         public static void RunWardrobeR16(){
             referenceOverride=Path.GetFullPath("../build/wardrobe-r16/");checks.Clear();AssetDatabase.Refresh();
-            var manifest=JsonUtility.FromJson<Manifest>(File.ReadAllText(Folder+"StaticR16/manifest.json"));
+            var manifest=JsonUtility.FromJson<Manifest>(ReadSource(Folder+"StaticR16/manifest.json"));
             var sources=JsonUtility.FromJson<AnimationSources>("{\"rows\":"+File.ReadAllText(Reference+"animation-sources.json")+"}").rows;
             // Original clips are kept as local inputs, never runtime bundle downloads.
             referenceOverride=Path.GetFullPath("../build/wardrobe-r16/source/");
@@ -58,16 +69,31 @@ namespace YunJian.Riichi.Editor {
             File.WriteAllLines(repo+"/build/fate-r19/native-import-checks.txt",checks);
             Debug.Log("FATE R19 IMPORT PASS "+checks.Count);EditorApplication.Exit(0);
         }
+        public static void RunWinsR22(){
+            checks.Clear();AssetDatabase.Refresh();string repo=Environment.GetEnvironmentVariable("YUNJIAN_R22_REPO")??Path.GetFullPath("..");
+            var sources=JsonUtility.FromJson<AnimationSources>("{\"rows\":"+File.ReadAllText(repo+"/build/wardrobe-r22/source/animation-sources.json")+"}").rows;
+            referenceOverride=repo+"/dist/previews/2026-10-27-effects-reference/source/";
+            var manifest=JsonUtility.FromJson<Manifest>(ReadSource(Folder+"WinsR22/manifest.json"));var failures=new List<string>();
+            foreach(var entry in manifest.effects)foreach(string key in entry.nativeVariants??new[]{entry.nativeEffect}){
+                try{Import(key,sources);}catch(Exception e){failures.Add(key+" "+e.Message);Debug.LogException(e);foreach(var go in UnityEngine.Object.FindObjectsByType<GameObject>(FindObjectsSortMode.None).Where(g=>g!=null&&g.name==Path.GetFileName(key)).ToArray())if(go!=null)UnityEngine.Object.DestroyImmediate(go);}
+                if(entry.sourceKey=="ron_yanhua"&&File.Exists(Physical(Folder+"WinsR22/delay_boom-source.json")))Import("WinsR22/delay_boom",sources);
+            }
+            foreach(var bundle in bundles.Values)bundle.Unload(false);bundles.Clear();AssetDatabase.SaveAssets();
+            File.WriteAllLines(repo+"/build/wardrobe-r22/native-import-checks.txt",checks);File.WriteAllLines(repo+"/build/wardrobe-r22/native-import-failures.txt",failures);
+            Debug.Log("WIN R22 IMPORT "+(failures.Count==0?"PASS":"INCOMPLETE")+" checks="+checks.Count+" failures="+failures.Count);EditorApplication.Exit(failures.Count==0?0:1);
+        }
         static Mesh Mesh(string path,string output){
-            var data=JsonUtility.FromJson<MeshData>(File.ReadAllText(Folder+path));
+            output=Physical(output);
+            var data=JsonUtility.FromJson<MeshData>(ReadSource(Folder+path));
             var mesh=new Mesh{name=Path.GetFileNameWithoutExtension(path)};
-            if(data.builtin=="Quad"){
-                var primitive=GameObject.CreatePrimitive(PrimitiveType.Quad);UnityEngine.Object.DestroyImmediate(mesh);mesh=UnityEngine.Object.Instantiate(primitive.GetComponent<MeshFilter>().sharedMesh);UnityEngine.Object.DestroyImmediate(primitive);
+            if(!string.IsNullOrEmpty(data.builtin)){
+                var primitive=GameObject.CreatePrimitive((PrimitiveType)Enum.Parse(typeof(PrimitiveType),data.builtin));UnityEngine.Object.DestroyImmediate(mesh);mesh=UnityEngine.Object.Instantiate(primitive.GetComponent<MeshFilter>().sharedMesh);UnityEngine.Object.DestroyImmediate(primitive);
                 if(AssetDatabase.LoadAssetAtPath<Mesh>(output)!=null)AssetDatabase.DeleteAsset(output);AssetDatabase.CreateAsset(mesh,output);return mesh;
             }
             mesh.vertices=Enumerable.Range(0,data.vertices.Length/3).Select(i=>new Vector3(data.vertices[i*3],data.vertices[i*3+1],data.vertices[i*3+2])).ToArray();
             mesh.uv=Enumerable.Range(0,data.uv.Length/2).Select(i=>new Vector2(data.uv[i*2],data.uv[i*2+1])).ToArray();
             if(data.colors?.Length==mesh.vertexCount*4)mesh.colors=Enumerable.Range(0,mesh.vertexCount).Select(i=>new Color(data.colors[i*4],data.colors[i*4+1],data.colors[i*4+2],data.colors[i*4+3])).ToArray();
+            if(data.weights?.Length==mesh.vertexCount*4){mesh.boneWeights=Enumerable.Range(0,mesh.vertexCount).Select(i=>new BoneWeight{weight0=data.weights[i*4],weight1=data.weights[i*4+1],weight2=data.weights[i*4+2],weight3=data.weights[i*4+3],boneIndex0=data.boneIndices[i*4],boneIndex1=data.boneIndices[i*4+1],boneIndex2=data.boneIndices[i*4+2],boneIndex3=data.boneIndices[i*4+3]}).ToArray();mesh.bindposes=Enumerable.Range(0,data.bindposes.Length/16).Select(n=>{var m=new Matrix4x4();for(int i=0;i<4;i++)for(int j=0;j<4;j++)m[i,j]=data.bindposes[n*16+i*4+j];return m;}).ToArray();}
             if(mesh.vertexCount>65535)mesh.indexFormat=IndexFormat.UInt32;
             if(data.groups!=null&&data.groups.Length>0){mesh.subMeshCount=data.groups.Length;for(int i=0;i<data.groups.Length;i++)mesh.SetTriangles(data.groups[i].indices,i);}
             else mesh.triangles=data.indices;
@@ -76,15 +102,17 @@ namespace YunJian.Riichi.Editor {
             AssetDatabase.CreateAsset(mesh,output);return mesh;
         }
         static Material Material(NativeMaterialSource source,string output){
+            output=Physical(output);
             var shader=Shader.Find("YunJian/NativeEffectParticle");if(shader==null)throw new Exception("Native effect shader did not compile");
             bool decoration=output.Contains("/StaticR16/");
             bool fate=output.Contains("/FateR19/");if(fate)shader=Resources.Load<Shader>("Majsoul/NativeReview/FateR19/FateParticle");
+            bool win=output.Contains("/WinsR22/");if(win)shader=Resources.Load<Shader>("Majsoul/NativeReview/WinsR22/WardrobeEffectParticle");
             if(decoration)shader=Resources.Load<Shader>("Majsoul/Wardrobe/WardrobeParticle");
             if(decoration&&(source.shaderName.StartsWith("Catfood/")||source.shaderName.StartsWith("Unlit/")))shader=Resources.Load<Shader>("Majsoul/Wardrobe/StaticDecoration");
             var material=new Material(shader){name=source.materialName};
             foreach(var value in source.floats??new NativeNamedFloat[0])if(material.HasProperty(value.name))material.SetFloat(value.name,value.value);
             foreach(var value in source.colors??new NativeNamedColor[0])if(material.HasProperty(value.name))material.SetColor(value.name,C(value.value));
-            string texturePath=Folder+source.texture+".png";
+            string texturePath=Physical(Folder+source.texture+".png");
             var importer=AssetImporter.GetAtPath(texturePath)as TextureImporter;
             if(importer!=null){
                 bool changed=importer.filterMode!=(FilterMode)source.filterMode||importer.wrapModeU!=(TextureWrapMode)source.wrapU||importer.wrapModeV!=(TextureWrapMode)source.wrapV||importer.textureCompression!=TextureImporterCompression.Uncompressed;
@@ -94,13 +122,17 @@ namespace YunJian.Riichi.Editor {
             material.mainTextureScale=new Vector2(source.textureScale[0],source.textureScale[1]);material.mainTextureOffset=new Vector2(source.textureOffset[0],source.textureOffset[1]);
             foreach(var extra in source.extraTextures??new NativeNamedTexture[0]){
                 TextureSettings(Folder+extra.texture+".png",extra.filterMode,extra.wrapU,extra.wrapV);
-                material.SetTexture(extra.name,AssetDatabase.LoadAssetAtPath<Texture2D>(Folder+extra.texture+".png"));
+                material.SetTexture(extra.name,AssetDatabase.LoadAssetAtPath<Texture2D>(Physical(Folder+extra.texture+".png")));
                 material.SetTextureScale(extra.name,new Vector2(extra.scale[0],extra.scale[1]));material.SetTextureOffset(extra.name,new Vector2(extra.offset[0],extra.offset[1]));
             }
             if(material.HasProperty("_SourceFamily"))material.SetFloat("_SourceFamily",source.shaderName=="FizzFX/Normal"?2:source.shaderName=="Mobile/Particles/Additive"?1:0);
             if(material.HasProperty("_UseMask"))material.SetFloat("_UseMask",source.extraTextures!=null&&source.extraTextures.Any(t=>t.name=="_MaskTex")?1:0);
             if(material.HasProperty("_UseDissolve"))material.SetFloat("_UseDissolve",source.extraTextures!=null&&source.extraTextures.Any(t=>t.name=="_DissolveTex")?1:0);
             if(fate)foreach(string feature in new[]{"MainTex","MaskTex","DissolveTex","DistortionTex","DMaskTex","AMBlightTex"})material.SetFloat("_Use"+feature,(source.keywords??new string[0]).Contains("DEF_"+feature)?1:0);
+            if(win){
+                material.SetFloat("_SourceFamily",source.shaderName=="FizzFX/Normal"?2:source.shaderName=="FizzFX/Standard"?3:source.shaderName=="Catfood/Additive Transparent"?4:source.shaderName=="Mobile/Particles/Additive"?1:0);
+                foreach(string feature in new[]{"MainTex","MaskTex","DissolveTex","DistortionTex","DMaskTex","AMBlightTex"})material.SetFloat("_Use"+feature,(source.keywords??new string[0]).Contains("DEF_"+feature)||(feature=="MaskTex"&&(source.keywords??new string[0]).Contains("_MASKENABLE_ON"))?1:0);
+            }
             material.SetFloat("_SrcBlend",source.srcBlend);material.SetFloat("_DstBlend",source.dstBlend);
             if(decoration&&material.HasProperty("_RenderSrcBlend"))material.SetFloat("_RenderSrcBlend",source.srcBlend);
             material.SetFloat("_ZTest",source.zTest);material.SetFloat("_SourceZWrite",source.zWrite);material.SetFloat("_SourceCull",source.cull);
@@ -109,7 +141,8 @@ namespace YunJian.Riichi.Editor {
             AssetDatabase.CreateAsset(material,output);return material;
         }
         static void Import(string name,NativeR11AnimationStudy.Row[] animations){
-            var config=JsonUtility.FromJson<NativeEffectSource>(File.ReadAllText(Folder+name+"-source.json"));
+            var config=JsonUtility.FromJson<NativeEffectSource>(ReadSource(Folder+name+"-source.json"));
+            var swaps=new Dictionary<string,string>();foreach(var extra in config.extraMaterials??new NativeExtraMaterial[0]){Material(JsonUtility.FromJson<NativeMaterialSource>(ReadSource(Folder+extra.source)),Folder+extra.asset);swaps[extra.name]=Physical(Folder+extra.asset);}
             var root=new GameObject(Path.GetFileName(name));var nodes=new Transform[config.nodes.Length];
             for(int i=0;i<nodes.Length;i++){
                 var n=config.nodes[i];var node=new GameObject(n.name).transform;node.SetParent(n.parent<0?root.transform:nodes[n.parent],false);
@@ -117,26 +150,28 @@ namespace YunJian.Riichi.Editor {
                 Renderer renderer=null;
                 if(!string.IsNullOrEmpty(n.particle)){
                     var ps=node.gameObject.AddComponent<ParticleSystem>();ps.Stop(false,ParticleSystemStopBehavior.StopEmittingAndClear);
-                    EditorJsonUtility.FromJsonOverwrite(File.ReadAllText(Folder+n.particle),ps);
-                    renderer=ps.GetComponent<ParticleSystemRenderer>();EditorJsonUtility.FromJsonOverwrite(File.ReadAllText(Folder+n.renderer),renderer);
+                    EditorJsonUtility.FromJsonOverwrite(ReadSource(Folder+n.particle),ps);
+                    renderer=ps.GetComponent<ParticleSystemRenderer>();EditorJsonUtility.FromJsonOverwrite(ReadSource(Folder+n.renderer),renderer);
                     if((int)((ParticleSystemRenderer)renderer).renderMode!=n.renderMode)throw new Exception("Native renderer module was not restored "+n.name);
                     var main=ps.main;main.playOnAwake=false;
                     if(n.renderMode==4){var meshes=(n.meshes??new[]{n.mesh}).Select((p,j)=>Mesh(p,Folder+name+"-"+i+"-"+j+".asset")).ToArray();((ParticleSystemRenderer)renderer).SetMeshes(meshes);}
                 }else if(n.staticMesh){node.gameObject.AddComponent<MeshFilter>().sharedMesh=Mesh(n.mesh,Folder+name+"-"+i+"-model.asset");renderer=node.gameObject.AddComponent<MeshRenderer>();renderer.sortingOrder=n.sortingOrder;}
+                else if(n.skinnedMesh){var skin=node.gameObject.AddComponent<SkinnedMeshRenderer>();skin.sharedMesh=Mesh(n.mesh,Folder+name+"-"+i+"-skin.asset");skin.updateWhenOffscreen=true;skin.localBounds=skin.sharedMesh.bounds;renderer=skin;renderer.sortingOrder=n.sortingOrder;}
                 if(renderer!=null){renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;renderer.sharedMaterials=n.materials.Select((m,j)=>Material(m,Folder+name+"-"+i+"-"+j+".mat")).ToArray();}
                 if(config.preserveActiveState)node.gameObject.SetActive(n.active);
             }
+            for(int i=0;i<nodes.Length;i++)if(config.nodes[i].skinnedMesh){var skin=nodes[i].GetComponent<SkinnedMeshRenderer>();skin.bones=config.nodes[i].bones.Select(b=>b>=0?nodes[b]:null).ToArray();skin.rootBone=config.nodes[i].rootBone>=0?nodes[config.nodes[i].rootBone]:null;}
             var tracks=new List<NativeMotionTrack>();
             for(int index=0;index<nodes.Length;index++)foreach(string path in config.nodes[index].animations??new string[0]){
                 var row=animations.First(a=>a.output==Path.ChangeExtension(path,".anim"));
-                var track=Bake(root,nodes,index,row,name.StartsWith("FateR19/"));tracks.Add(track);
+                var track=Bake(root,nodes,index,row,name.StartsWith("FateR19/")||name.StartsWith("WinsR22/"),swaps);tracks.Add(track);
                 string emptyAsset=Folder+row.output;if(AssetDatabase.LoadAssetAtPath<AnimationClip>(emptyAsset)!=null)AssetDatabase.DeleteAsset(emptyAsset);
             }
             if(tracks.Count>0){
-                string motionPath=Folder+name+"-motion.json";File.WriteAllText(motionPath,JsonUtility.ToJson(new NativeMotionData{tracks=tracks.ToArray()}));AssetDatabase.ImportAsset(motionPath);
+                string motionPath=Physical(Folder+name+"-motion.json");File.WriteAllText(motionPath,JsonUtility.ToJson(new NativeMotionData{tracks=tracks.ToArray()}));AssetDatabase.ImportAsset(motionPath);
                 var motion=root.AddComponent<NativeEffectMotion>();motion.nodes=nodes;motion.source=AssetDatabase.LoadAssetAtPath<TextAsset>(motionPath);
             }
-            PrefabUtility.SaveAsPrefabAsset(root,Folder+name+".prefab");
+            PrefabUtility.SaveAsPrefabAsset(root,Physical(Folder+name+".prefab"));
             checks.Add(name+" particles="+root.GetComponentsInChildren<ParticleSystem>(true).Length+" models="+root.GetComponentsInChildren<MeshRenderer>(true).Length+" animationTracks="+tracks.Count);
             UnityEngine.Object.DestroyImmediate(root);Debug.Log("Native imported "+name);
         }
@@ -144,7 +179,7 @@ namespace YunJian.Riichi.Editor {
             public NativeMotionCurve curve;public Func<float[]> read;public float[] baseline;public List<float> samples=new List<float>();
         }
         static void AnimatedBlock(Renderer renderer,MaterialPropertyBlock block,int material,int property){renderer.GetPropertyBlock(block,material);if(!block.HasProperty(property))renderer.GetPropertyBlock(block);}
-        static NativeMotionTrack Bake(GameObject root,Transform[] nodes,int owner,NativeR11AnimationStudy.Row row,bool includeRendererVisibility=false){
+        static NativeMotionTrack Bake(GameObject root,Transform[] nodes,int owner,NativeR11AnimationStudy.Row row,bool includeRendererVisibility=false,Dictionary<string,string> swaps=null){
             if(!bundles.TryGetValue(row.bundle,out var bundle)){
                 bundle=AssetBundle.LoadFromFile(Reference+"bundles/"+row.bundle);if(bundle==null)throw new Exception("Could not load original clip bundle");bundles[row.bundle]=bundle;
             }
@@ -152,6 +187,7 @@ namespace YunJian.Riichi.Editor {
             var channels=new List<Channel>();
             Action<int,int,int,string,int,Func<float[]>> add=(node,kind,mat,property,components,read)=>channels.Add(new Channel{curve=new NativeMotionCurve{node=node,kind=kind,material=mat,property=property,components=components},read=read,baseline=read()});
             var initial=nodes.Select(t=>(t.localPosition,t.localRotation,t.localScale,t.gameObject.activeSelf)).ToArray();
+            var initialMaterials=nodes.Select(t=>{var renderer=t.GetComponent<Renderer>();return renderer!=null?renderer.sharedMaterials:null;}).ToArray();
             for(int index=0;index<nodes.Length;index++){
                 int i=index;var t=nodes[i];
                 add(i,0,0,"",3,()=>new[]{t.localPosition.x,t.localPosition.y,t.localPosition.z});
@@ -162,6 +198,10 @@ namespace YunJian.Riichi.Editor {
                 if(includeRendererVisibility)add(i,7,0,"",1,()=>new[]{renderer.enabled?1f:0f});
                 for(int materialIndex=0;materialIndex<renderer.sharedMaterials.Length;materialIndex++){
                     int mi=materialIndex;var material=renderer.sharedMaterials[mi];var shader=material.shader;
+                    if(swaps?.Count>0){
+                        var assets=new List<string>();Func<float[]> read=()=>{var m=renderer.sharedMaterials[mi];string path=AssetDatabase.GetAssetPath(m);if(!(path.StartsWith("Assets/Resources/",StringComparison.Ordinal)||path.StartsWith("Assets/WardrobePacks/Source/",StringComparison.Ordinal))&&!swaps.TryGetValue(m.name,out path))throw new Exception("Unmapped animated material "+m.name);string address=LogicalAddress(path);int at=assets.IndexOf(address);if(at<0){at=assets.Count;assets.Add(address);}return new[]{(float)at};};
+                        add(i,8,mi,"",1,read);channels.Last().curve.assets=assets.ToArray();var channel=channels.Last();channel.read=()=>{var value=read();channel.curve.assets=assets.ToArray();return value;};
+                    }
                     for(int propertyIndex=0;propertyIndex<shader.GetPropertyCount();propertyIndex++){
                         string property=shader.GetPropertyName(propertyIndex);int id=Shader.PropertyToID(property);var block=new MaterialPropertyBlock();
                         var type=shader.GetPropertyType(propertyIndex);
@@ -183,12 +223,12 @@ namespace YunJian.Riichi.Editor {
             const float fps=60;int frames=Mathf.CeilToInt(clip.length*fps)+1;
             for(int frame=0;frame<frames;frame++){playable.SetTime(Mathf.Min(frame/fps,clip.length));graph.Evaluate(0);foreach(var channel in channels)channel.samples.AddRange(channel.read());}
             graph.Destroy();UnityEngine.Object.DestroyImmediate(animator);
-            for(int i=0;i<nodes.Length;i++){nodes[i].localPosition=initial[i].Item1;nodes[i].localRotation=initial[i].Item2;nodes[i].localScale=initial[i].Item3;if(referenceOverride!=null)nodes[i].gameObject.SetActive(initial[i].Item4);var renderer=nodes[i].GetComponent<Renderer>();if(renderer!=null){renderer.SetPropertyBlock(null);for(int m=0;m<renderer.sharedMaterials.Length;m++)renderer.SetPropertyBlock(null,m);}}
+            for(int i=0;i<nodes.Length;i++){nodes[i].localPosition=initial[i].Item1;nodes[i].localRotation=initial[i].Item2;nodes[i].localScale=initial[i].Item3;if(referenceOverride!=null)nodes[i].gameObject.SetActive(initial[i].Item4);var renderer=nodes[i].GetComponent<Renderer>();if(renderer!=null){renderer.sharedMaterials=initialMaterials[i];renderer.SetPropertyBlock(null);for(int m=0;m<renderer.sharedMaterials.Length;m++)renderer.SetPropertyBlock(null,m);}}
             var changed=channels.Where(c=>c.samples.Where((v,i)=>Mathf.Abs(v-c.baseline[i%c.curve.components])>0.000001f).Any()).ToArray();
             foreach(var channel in changed)channel.curve.values=channel.samples.ToArray();
             checks.Add("Original clip "+row.effect+" / "+row.name+" duration="+clip.length+" sampled="+frames+" changedChannels="+changed.Length);
             if(changed.Length==0)throw new Exception("Original animation produced no supported channels: "+row.effect+" / "+row.name);
-            return new NativeMotionTrack{duration=clip.length,fps=fps,loop=referenceOverride!=null&&clip.isLooping,curves=changed.Select(c=>c.curve).ToArray()};
+            return new NativeMotionTrack{duration=clip.length,fps=fps,owner=owner,loop=referenceOverride!=null&&clip.isLooping,curves=changed.Select(c=>c.curve).ToArray()};
         }
     }
 }

@@ -40,11 +40,12 @@ namespace YunJian.Riichi
         readonly HashSet<string> winningBursts = new HashSet<string>();
         readonly HashSet<string> riichiCalls=new HashSet<string>();
         readonly WinCutIn winCutIn=new WinCutIn();
+        float winResultReadyAt;
         readonly NativeCallouts nativeCallouts=new NativeCallouts();
         public WinCutIn CutIn=>winCutIn;
         public int SpawnedWinEffects { get; private set; }
         static bool IsWin(PublicSound e) => e!=null && (e.kind=="ron" || e.kind=="tsumo");
-        public bool ShowWinPresentation => IsWin(current) || IsWin(call) || cutInWin!=null || handEvents.Any(IsWin) || callEvents.Any(IsWin) || winEffects.Count>0 || winCutIn.Active;
+        public bool ShowWinPresentation => IsWin(current) || IsWin(call) || cutInWin!=null || handEvents.Any(IsWin) || callEvents.Any(IsWin) || (ValidationFreeze?ValidationTime:Time.unscaledTime)<winResultReadyAt || winCutIn.Active;
         public bool WinActionStarted=>IsWin(current) || call?.kind=="ron";
         readonly List<NorthPetals> northEffects = new List<NorthPetals>();
         bool handedOff,impactQueued;
@@ -376,16 +377,19 @@ namespace YunJian.Riichi
             var choice=WardrobeRuntime.Item(table.Client.State,item.seat,"winEffect");
             effect.Initialize(table.WinningPoint(item),table.SeatAngle(item.kind=="ron"?item.from:item.seat),now+.10f,(uint)(item.id+1),choice.effect,choice.effectScale>0?choice.effectScale:1);effect.SoundCue=choice.cue;
             effect.WinningEvent=item;effect.BindWinningTile(table.WinningTarget(item));
+            // ActionHule waits 2+RonDelay for ron; tsumo waits 2.8+RonDelay
+            // from the hand's start. Prefab destruction (six seconds) is separate.
+            float hold=effect.PlaybackDuration;if(effect.SourceResultDelay.HasValue){float lead=2;if(item.kind=="tsumo"){var hand=WardrobeRuntime.Item(table.Client.State,item.seat,"hand");lead=2.8f-SourcePlaybackContracts.HandAction(hand,"Zimo").release-.1f;}hold=Mathf.Max(0,lead)+effect.SourceResultDelay.Value;}winResultReadyAt=Mathf.Max(winResultReadyAt,effect.StartedAt+hold);
             winEffects.Add(effect);SpawnedWinEffects++;
         }
-        void EndWinEffects(){foreach(var e in winEffects)if(e!=null){e.gameObject.SetActive(false);Destroy(e.gameObject);}winEffects.Clear();}
+        void EndWinEffects(){foreach(var e in winEffects)if(e!=null){e.gameObject.SetActive(false);Destroy(e.gameObject);}winEffects.Clear();winResultReadyAt=0;}
         void UpdateWinEffects()
         {
             float now=ValidationFreeze?ValidationTime:Time.unscaledTime;
             for(int i=winEffects.Count-1;i>=0;i--){
                 var e=winEffects[i];if(e==null){winEffects.RemoveAt(i);continue;}
                 float age=now-e.StartedAt;
-                if(e.UsesNewHuleBinding)e.BindWinningTile(table.WinningTarget(e.WinningEvent));
+                if(e.NeedsWinningTileBinding)e.BindWinningTile(table.WinningTarget(e.WinningEvent));
                 if(age>=0&&!e.SoundTriggered){e.SoundTriggered=true;GetComponent<GameAudio>()?.Cue(e.SoundCue);}
                 e.Sample(age);
                 // Continuous emitters have a particle tail beyond the old 1.8 s

@@ -11,6 +11,7 @@ namespace YunJian.Riichi {
         readonly List<bool> enabledBefore=new List<bool>();readonly List<Material> materials=new List<Material>();
         public bool Active {get;private set;}
         public int Queue=>3090;
+        public float Begin,End=5.3f;public int DepthTest=4;public bool LegacyQueues;
         public void Bind(Transform tile){
             if(tile==target)return;Restore();ClearCopies();target=tile;
             if(tile==null)return;var model=tile.Find("Original tile");if(model==null)return;
@@ -19,14 +20,14 @@ namespace YunJian.Riichi {
                 var filter=source.GetComponent<MeshFilter>();if(filter==null)continue;
                 var part=new GameObject(source.name).transform;part.gameObject.layer=NativeEffectCamera.Layer;part.SetParent(root,false);part.gameObject.AddComponent<MeshFilter>().sharedMesh=filter.sharedMesh;
                 var renderer=part.gameObject.AddComponent<MeshRenderer>();var copies=new List<Material>();
-                foreach(var material in source.sharedMaterials){var copy=new Material(material){renderQueue=3090};materials.Add(copy);copies.Add(copy);}
+                foreach(var material in source.sharedMaterials){int q=LegacyQueues?(source.name.Contains("outline")?3004:copies.Count==0?3005:3006):3090;var copy=new Material(material){renderQueue=q};if(copy.HasProperty("_ZTest"))copy.SetFloat("_ZTest",DepthTest);materials.Add(copy);copies.Add(copy);}
                 renderer.sharedMaterials=copies.ToArray();renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;
                 var block=new MaterialPropertyBlock();source.GetPropertyBlock(block);renderer.SetPropertyBlock(block);
                 originals.Add(source);enabledBefore.Add(source.enabled);clones.Add(renderer);
             }
         }
         public void Sample(float age){
-            bool active=age>=0&&age<5.3f&&root!=null; // 3300ms RonDelay + 2s, from item view sargs.
+            bool active=age>=Begin&&age<End&&root!=null;
             Active=active;if(root==null)return;root.gameObject.SetActive(active);
             var scale=transform.lossyScale;root.position=Vector3.zero;root.rotation=Quaternion.identity;root.localScale=new Vector3(1/scale.x,1/scale.y,1/scale.z);
             for(int i=0;i<originals.Count;i++){

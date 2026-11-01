@@ -2,6 +2,7 @@ Shader "YunJian/OriginalTileBody"
 {
     Properties
     {
+        _ZTest ("Depth comparison",Float)=4
         _MainTex ("Original back atlas", 2D) = "white" {}
         _TileTex ("Original face atlas (body column)", 2D) = "white" {}
         _Match ("Same visible tile", Range(0,1)) = 0
@@ -14,6 +15,7 @@ Shader "YunJian/OriginalTileBody"
         Tags { "RenderType"="Opaque" }
         Pass
         {
+            ZTest [_ZTest]
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag

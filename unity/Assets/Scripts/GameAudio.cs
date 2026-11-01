@@ -26,7 +26,7 @@ namespace YunJian.Riichi
             music.clip=Resources.Load<AudioClip>("Majsoul/Audio/game");music.loop=true;music.volume=0;
             deal=Load("newround_pais");discard=Load("discard_tile");meld=Load("fulu");stick=Load("put_liqi");tsumo=Load("zimo");
         }
-        static AudioClip Load(string key)=>Resources.Load<AudioClip>("Majsoul/Audio/"+key);
+        static AudioClip Load(string key)=>WardrobePackService.Asset<AudioClip>("Majsoul/Audio/"+key);
         public void Configure(bool bgm,float bgmVolume,bool sfx,float sfxVolume)
         {
             musicEnabled=bgm;effectsEnabled=sfx;musicVolume=Mathf.Clamp01(bgmVolume);effects.volume=Mathf.Clamp01(sfxVolume);
@@ -60,8 +60,8 @@ namespace YunJian.Riichi
         }
         public bool Cue(string name,float gain=1){
             if(!inTable || suspended || string.IsNullOrEmpty(name))return false;
-            if(!cues.TryGetValue(name,out var clip))cues[name]=clip=Load(name);
-            if(clip==null)return false;PlayedCues.Add(name);if(effectsEnabled)effects.PlayOneShot(clip,gain);return true;
+            if(!cues.TryGetValue(name,out var clip)||clip==null)cues[name]=clip=Load(name);
+            if(clip==null)return false;PlayedCues.Add(name);if(effectsEnabled){WardrobePackService.HoldAsset("Majsoul/Audio/"+name,clip.length+.1f);effects.PlayOneShot(clip,gain);}return true;
         }
         public void DrawReveal(string next){if(next==drawKey)return;drawKey=next;Cue("showtile");}
         public void PreviewDiscard(){Play(discard);}

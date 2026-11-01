@@ -19,10 +19,11 @@ namespace YunJian.Riichi {
     [Serializable] public class NativeMotionCurve {
         public int node,kind,material,components;
         public string property;
+        public string[] assets;
         public float[] values;
     }
     [Serializable] public class NativeMotionTrack {
-        public float duration,fps;
+        public float duration,fps;public int owner=-1;
         public bool loop;
         public NativeMotionCurve[] curves;
     }
@@ -35,14 +36,18 @@ namespace YunJian.Riichi {
         NativeMotionData data;
         Renderer[] renderers;
         MaterialPropertyBlock[][] blocks;
+        Material[][] swappedMaterials;
         void Ensure(){
             if(data!=null)return;
             data=JsonUtility.FromJson<NativeMotionData>(source.text);
             renderers=nodes.Select(t=>t.GetComponent<Renderer>()).ToArray();
             blocks=renderers.Select(r=>r==null?null:r.sharedMaterials.Select(m=>new MaterialPropertyBlock()).ToArray()).ToArray();
+            swappedMaterials=data.tracks.SelectMany(t=>t.curves).Where(c=>c.kind==8).Select(c=>c.assets.Select(p=>WardrobePackService.Asset<Material>(p)).ToArray()).ToArray();
         }
+        public float DurationFor(Transform target){Ensure();int index=Array.IndexOf(nodes,target);return data.tracks.Where(t=>t.owner==index).Select(t=>t.duration).DefaultIfEmpty(1.9f).First();}
         public void Sample(float age){
             Ensure();
+            int swap=0;
             foreach(var track in data.tracks){
                 float frame=(track.loop&&age>track.duration?Mathf.Repeat(age,track.duration):Mathf.Clamp(age,0,track.duration))*track.fps;
                 foreach(var curve in track.curves){
@@ -54,6 +59,7 @@ namespace YunJian.Riichi {
                     else if(curve.kind==2)target.localScale=new Vector3(v(0),v(1),v(2));
                     else if(curve.kind==6)target.gameObject.SetActive(v(0)>.5f);
                     else if(curve.kind==7)renderers[curve.node].enabled=v(0)>.5f;
+                    else if(curve.kind==8){var materials=renderers[curve.node].sharedMaterials;if(materials.Length<=curve.material)Array.Resize(ref materials,curve.material+1);materials[curve.material]=swappedMaterials[swap++][Mathf.Clamp(Mathf.RoundToInt(curve.values[a]),0,curve.assets.Length-1)];renderers[curve.node].sharedMaterials=materials;if(blocks[curve.node].Length<materials.Length){int old=blocks[curve.node].Length;Array.Resize(ref blocks[curve.node],materials.Length);for(int m=old;m<materials.Length;m++)blocks[curve.node][m]=new MaterialPropertyBlock();}}
                     else {
                         var block=blocks[curve.node][curve.material];
                         if(curve.kind==3)block.SetColor(curve.property,new Color(v(0),v(1),v(2),v(3)));
@@ -63,7 +69,7 @@ namespace YunJian.Riichi {
                 }
             }
             for(int i=0;i<renderers.Length;i++)if(renderers[i]!=null)for(int m=0;m<blocks[i].Length;m++){
-                if(renderers[i].sharedMaterials[m].HasProperty("_EffectAge"))blocks[i][m].SetFloat("_EffectAge",age);
+                if(renderers[i].sharedMaterials[m]!=null&&renderers[i].sharedMaterials[m].HasProperty("_EffectAge"))blocks[i][m].SetFloat("_EffectAge",age);
                 if(!blocks[i][m].isEmpty)renderers[i].SetPropertyBlock(blocks[i][m],m);
             }
         }

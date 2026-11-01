@@ -14,6 +14,7 @@ namespace YunJian.Riichi
         public int Tab;
         public string MusicGroup;
         bool dropdown,botDropdown;
+        bool wardrobeResources;
         float opened, musicOpened;
 #if UNITY_EDITOR
         public Rect DesignPreviewSafeArea;
@@ -67,10 +68,17 @@ namespace YunJian.Riichi
                 scroll.Input(view, 875); GUI.BeginGroup(view);
                 DrawSound(-scroll.Offset);
                 GUI.EndGroup(); Scrollbar(vx + 1155, vy, 630, scroll.Offset, 875);
-            } else { GUI.BeginGroup(view);if(Tab==1)DrawGraphics();else if(Tab==3)DrawPreferences();else CharacterResourceUi.Current.DrawSettings(view); GUI.EndGroup(); }
+            } else { GUI.BeginGroup(view);if(Tab==1)DrawGraphics();else if(Tab==3)DrawPreferences();else DrawResourcePages(view); GUI.EndGroup(); }
             GUI.enabled = enabled; GUI.matrix = baseMatrix; GUI.color = Color.white;
             if (MusicGroup != null) DrawMusic(width);
             GUI.matrix = matrix; GUI.color = color;
+        }
+        void DrawResourcePages(Rect view){
+            foreach(bool wardrobe in new[]{false,true}){
+                var r=new Rect(18+(wardrobe?310:0),0,292,56);NativeUiChrome.Button(r,wardrobeResources==wardrobe);Label(wardrobe?"装扮资源":"角色资源",r.center.x,r.center.y,31,wardrobeResources==wardrobe?new Color(.16f,.09f,.03f):Gold,1,TextAnchor.MiddleCenter);
+                if(SettingsHit(r,wardrobe?"resource-page-wardrobe":"resource-page-character")){wardrobeResources=wardrobe;CharacterResourceUi.Current?.ClearFocus();}
+            }
+            var inner=new Rect(0,66,view.width,view.height-66);GUI.BeginGroup(inner);if(wardrobeResources)WardrobeResourceUi.Current.DrawSettings(new Rect(0,0,inner.width,inner.height));else CharacterResourceUi.Current.DrawSettings(new Rect(0,0,inner.width,inner.height));GUI.EndGroup();
         }
         static void Section(string title, float y, float textOffset = 0) { Slice("official-config-setting_title_base", new Rect(0, y, 1120, 60), 10, 1, 310, 1); Label(title, 16, y + 30 + textOffset, 40, Gold, 1); }
         static void Row(float y, string title) { Slice("official-config-setting_entry_base", new Rect(10, y, 1100, 90), 20, 20, 20, 20); Label(title, 36, y + 43); }
@@ -161,10 +169,14 @@ namespace YunJian.Riichi
                 Slice("official-config-setting_voice_entry_base", new Rect(x, y, 592, 99), 12, 12, 12, 12);
                 Image("checkbox2", new Rect(x + 25, y + 26, 48, 47)); if (selected) Image("check_green", new Rect(x + 25, y + 26, 48, 48));
                 Label(t.name, x + 92, y + 48, 36, selected ? new Color(.553f, 1, .145f) : Muted);
-                if (SettingsHit(new Rect(x + 4, y + 6, 450, 90),"music-select-"+t.id)) audio.Toggle(MusicGroup, t.id);
+                if (SettingsHit(new Rect(x + 4, y + 6, 450, 90),"music-select-"+t.id)){
+                    if(WardrobePackService.AssetAvailable(t.resource)||selected)audio.Toggle(MusicGroup,t.id);
+                    else{string group=MusicGroup;var id=WardrobePackService.ForAddress(t.resource)?.items.FirstOrDefault();if(id!=null)WardrobeResourceUi.Current.Ask(id,_=>{if(!audio.Selected(group,t.id))audio.Toggle(group,t.id);});}
+                }
                 if (playing) for (int j = 0; j < 4; j++) { float h = 12 + Mathf.Pow(Mathf.Sin(Time.unscaledTime * 9 + j * 1.7f), 2) * 19; Box(new Rect(x + 458 + j * 8, y + 48 - h / 2, 4, h), new Color(.65f, .68f, .78f)); }
                 Image("official-config-setting_song_" + (playing ? "pause" : "play") + "_btn", new Rect(x + 503, y + 17, 70, 70));
-                if (SettingsHit(new Rect(x + 495, y + 8, 90, 90),"music-audition-"+t.id)) audio.Audition(t.id);
+                if(!WardrobePackService.AssetAvailable(t.resource))Label("下载",x+537,y+53,24,Gold,0,TextAnchor.MiddleCenter);
+                if (SettingsHit(new Rect(x + 495, y + 8, 90, 90),"music-audition-"+t.id)){if(WardrobePackService.AssetAvailable(t.resource))audio.Audition(t.id);else{var id=WardrobePackService.ForAddress(t.resource)?.items.FirstOrDefault();if(id!=null)WardrobeResourceUi.Current.Ask(id,_=>audio.Audition(t.id));}}
             }
             GUI.EndGroup();Scrollbar(listView.xMax+10,listView.y,listView.height,musicScroll.Offset,listHeight);
             float bx = ox + 1339, by = oy + 836; bool random = audio.RandomOrder(MusicGroup);

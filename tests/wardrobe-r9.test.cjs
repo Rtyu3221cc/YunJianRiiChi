@@ -2,9 +2,10 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 globalThis.Majiang=require('../app/src/main/assets/core.js');
 const {Room}=require('../app/src/main/assets/engine.js');
 const root=path.join(__dirname,'../unity/Assets/Resources/Majsoul/Actions');
+const {sourceFile}=require('./wardrobe-source.cjs');
 
 test('sakura river trial retains the complete authored layer and texture set',()=>{
- const base=JSON.parse(fs.readFileSync(path.join(root,'sakura-win-effect.json'))),trial=JSON.parse(fs.readFileSync(path.join(root,'callout-sakura.json')));
+ const base=JSON.parse(fs.readFileSync(sourceFile(path.join(root,'sakura-win-effect.json')))),trial=JSON.parse(fs.readFileSync(sourceFile(path.join(root,'callout-sakura.json'))));
  assert.equal(base.layers.length,8);
  assert.deepEqual(trial.layers.map(l=>[l.node,l.name,l.texture]),base.layers.map(l=>[l.node,l.name,l.texture]));
  assert.deepEqual(trial.nodes,base.nodes);

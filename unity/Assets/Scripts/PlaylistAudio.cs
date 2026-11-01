@@ -63,9 +63,9 @@ namespace YunJian.Riichi
         public void ToggleMode(string group) { random[group] = !random[group]; Save(group); }
         void Save(string group) { PlayerPrefs.SetString("riichi.playlist." + group, string.Join(",", selected[group])); PlayerPrefs.SetInt("riichi.playlist.random." + group, random[group] ? 1 : 0); PlayerPrefs.Save(); }
         public string CurrentName(string group) { var t = Tracks.FirstOrDefault(x => x.id == CurrentId && x.group == group && Selected(group, x.id)) ?? Tracks.FirstOrDefault(x => x.group == group && Selected(group, x.id)); return t?.name ?? "未选择曲目"; }
-        AudioClip Clip(int id) { if (!clips.TryGetValue(id, out var c)) { var t = Tracks.FirstOrDefault(x => x.id == id); clips[id] = c = t == null ? null : Resources.Load<AudioClip>(t.resource); } return c; }
+        AudioClip Clip(int id) { if (!clips.TryGetValue(id, out var c)||c==null) { var t = Tracks.FirstOrDefault(x => x.id == id); clips[id] = c = t == null ? null : WardrobePackService.Asset<AudioClip>(t.resource); } return c; }
         int Next(string group) {
-            var list = selected[group]; if (list.Count == 0) return 0;
+            var list = selected[group].Where(id=>WardrobePackService.AssetAvailable(Tracks.First(t=>t.id==id).resource)).ToList(); if (list.Count == 0) return 0;
             if (random[group] && list.Count > 1) { var other = list.Where(x => x != CurrentId).ToArray(); return other[UnityEngine.Random.Range(0, other.Length)]; }
             return list[(list.IndexOf(CurrentId) + 1) % list.Count];
         }
@@ -77,14 +77,18 @@ namespace YunJian.Riichi
             string nextGroup = client.LobbyPlaying ? "mj" : "lobby";
             if (!started || nextGroup != Group) { started = true; Group = nextGroup; ApplyPlaylist(); }
             UpdateRiichi();RefreshVolumes();
+            foreach(var channel in channels)if(channel.clip!=null){var track=Tracks.FirstOrDefault(t=>clips.TryGetValue(t.id,out var clip)&&clip==channel.clip);if(track!=null)WardrobePackService.Touch(track.resource);}
+            if(audition.clip!=null&&AuditionId!=0)WardrobePackService.Touch(Tracks.First(t=>t.id==AuditionId).resource);
+            if(riichi.clip!=null&&client.State!=null)WardrobePackService.Touch(WardrobeRuntime.Item(client.State,client.State.you,"music").audio);
             var source = channels[activeChannel];
+            if(!loading&&!fading&&!roundPaused&&(source.clip==null||!WardrobePackService.AssetAvailable(Tracks.FirstOrDefault(t=>t.id==CurrentId)?.resource??""))){int next=Next(Group);if(next!=0||CurrentId!=0)SwitchTo(next);}
             if (!loading && !fading && source.clip != null && source.isPlaying && source.clip.length - source.time <= FadeSeconds) SwitchTo(Next(Group));
         }
         void UpdateRiichi(){
             var view=client.State;bool play=client.LobbyPlaying&&view!=null&&(view.phase=="play"||view.phase=="reaction")&&view.you>=0&&view.you<view.players.Length&&view.players[view.you].riichi>0;
             string next=play?view.audioRoom+":"+view.handSeq+":"+WardrobeRuntime.Item(view,view.you,"music").id:null;
             if(roundEnvelope.Held&&RoundMusicGain>0&&riichiKey!=null)next=riichiKey;
-            if(next!=riichiKey){riichi.Stop();riichiKey=next;if(play){riichi.clip=Resources.Load<AudioClip>(WardrobeRuntime.Item(view,view.you,"music").audio);if(riichi.clip!=null)riichi.Play();}}
+            if(next!=riichiKey){riichi.Stop();riichiKey=next;if(play){riichi.clip=WardrobePackService.Asset<AudioClip>(WardrobeRuntime.Item(view,view.you,"music").audio);if(riichi.clip!=null)riichi.Play();}}
             riichi.volume=AppPreferences.Gain(1)*RoundMusicGain;
         }
         public void ApplyPlaylist() {

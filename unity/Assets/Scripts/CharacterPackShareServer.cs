@@ -9,7 +9,7 @@ using System.Threading;
 namespace YunJian.Riichi {
     // A separate streaming service: no room RPC workers or Unity objects on these threads.
     public sealed class CharacterPackShareServer:IDisposable {
-        public sealed class Entry {public string hash,key,path,url;public long bytes;}
+        public sealed class Entry {public string hash,key,path,url;public long bytes;public bool wardrobe;}
         readonly object gate=new object();readonly SemaphoreSlim transfers=new SemaphoreSlim(3);Dictionary<string,Entry> entries=new Dictionary<string,Entry>();TcpListener listener;volatile bool running;
         public string Ticket {get;private set;}=Guid.NewGuid().ToString("N");public int Port {get;private set;}public bool Enabled;
         public int RangeRequests,Requests;public int ReviewChunkDelayMs;
@@ -23,10 +23,10 @@ namespace YunJian.Riichi {
                 var uri=new Uri("http://localhost"+first[1]);string hash=uri.AbsolutePath.StartsWith("/packs/")?uri.AbsolutePath.Substring(7):"";if(!Enabled||uri.Query!="?ticket="+Ticket){Header(stream,403,0);return;}if(!System.Text.RegularExpressions.Regex.IsMatch(hash,"^[a-f0-9]{64}$")){Header(stream,404,0);return;}lock(gate)entries.TryGetValue(hash,out item);if(item==null){Header(stream,404,0);return;}if(!transfers.Wait(0)){Header(stream,503,0);return;}acquired=true;
                 Interlocked.Increment(ref Requests);long start=0;if(range!=null&&(!range.StartsWith("bytes=")||!range.EndsWith("-")||!long.TryParse(range.Substring(6,range.Length-7),out start)||start<0||start>=item.bytes)){Header(stream,416,0);return;}if(start>0)Interlocked.Increment(ref RangeRequests);
                 Stream input;WebResponse response=null;
-                if(item.path!=null){CharacterPackService.Pin(item.key);pinned=true;input=new FileStream(item.path,FileMode.Open,FileAccess.Read,FileShare.Read);input.Position=start;}
+                if(item.path!=null){if(item.wardrobe)WardrobePackService.Pin(item.key);else CharacterPackService.Pin(item.key);pinned=true;input=new FileStream(item.path,FileMode.Open,FileAccess.Read,FileShare.Read);input.Position=start;}
                 else{var request=(HttpWebRequest)WebRequest.Create(item.url);request.Timeout=15000;request.ReadWriteTimeout=15000;if(start>0)request.AddRange(start);response=request.GetResponse();if(start>0&&((HttpWebResponse)response).StatusCode!=HttpStatusCode.PartialContent){response.Dispose();Header(stream,502,0);return;}input=response.GetResponseStream();}
                 using(response)using(input){Header(stream,start>0?206:200,item.bytes-start,start>0?"Content-Range: bytes "+start+"-"+(item.bytes-1)+"/"+item.bytes+"\r\n":"");var buffer=new byte[65536];long remaining=item.bytes-start;while(running&&remaining>0){int n=input.Read(buffer,0,(int)Math.Min(remaining,buffer.Length));if(n<=0)break;stream.Write(buffer,0,n);remaining-=n;if(ReviewChunkDelayMs>0)Thread.Sleep(ReviewChunkDelayMs);}}
-            }}}catch(Exception){/* Receiver retries or chooses fallback; a transfer never stops the room. */}finally{if(pinned)CharacterPackService.Unpin(item.key);if(acquired)transfers.Release();}}
+            }}}catch(Exception){/* Receiver retries or chooses fallback; a transfer never stops the room. */}finally{if(pinned){if(item.wardrobe)WardrobePackService.Unpin(item.key);else CharacterPackService.Unpin(item.key);}if(acquired)transfers.Release();}}
         public void Dispose(){running=false;Enabled=false;listener?.Stop();}
     }
 }
