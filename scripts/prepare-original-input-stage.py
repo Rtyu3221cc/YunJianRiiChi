@@ -2,7 +2,7 @@
 from pathlib import Path
 import argparse,hashlib,json,os,shutil,uuid
 R=Path(__file__).resolve().parent.parent
-p=argparse.ArgumentParser();p.add_argument('--batch',choices=['original-input-r18','fate-r19','tsumo-r20','tsumo-r21','wardrobe-r22'],default='original-input-r18');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--batch',choices=['original-input-r18','fate-r19','tsumo-r20','tsumo-r21','wardrobe-r22','resource-ui-r23','phone-test-r24'],default='original-input-r18');a=p.parse_args()
 STAGE=R/'build'/a.batch/'stage';U=STAGE/'unity';U.mkdir(parents=True,exist_ok=True)
 immutable={'.png','.jpg','.jpeg','.mp3','.wav','.ttf','.bytes'}
 rows=[]
@@ -11,6 +11,7 @@ for folder in ['Assets','Packages','ProjectSettings']:
         if not source.is_file():continue
         rel=source.relative_to(R/'unity')
         if rel.as_posix().startswith('Assets/CharacterPacks/Source/'):continue
+        if a.batch in ['resource-ui-r23','phone-test-r24'] and (rel.as_posix().startswith('Assets/WardrobePacks/') or rel.as_posix()=='Assets/WardrobePacks.meta'):continue
         target=U/rel;target.parent.mkdir(parents=True,exist_ok=True)
         if target.exists():
             if source.suffix.lower() in immutable and os.path.samefile(source,target):continue

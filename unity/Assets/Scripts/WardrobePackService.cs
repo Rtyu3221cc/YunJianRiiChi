@@ -36,6 +36,7 @@ namespace YunJian.Riichi {
         static readonly HashSet<string> verified=new HashSet<string>();static readonly object pinGate=new object();
         const long CacheBudget=160L*1024*1024;const int BundleLimit=24;
         readonly Queue<string> queue=new Queue<string>();readonly HashSet<string> queued=new HashSet<string>();readonly Dictionary<string,string> sources=new Dictionary<string,string>();
+        readonly HashSet<string> requestedRoots=new HashSet<string>();
         public readonly Dictionary<string,string> Results=new Dictionary<string,string>();public string DownloadKey,Stage="",Error="";public float Progress;public bool Busy=>DownloadKey!=null;
         public Func<string,string> OverrideUrl;bool cancel,processing;UnityWebRequest request;
         public static string Platform=>Application.platform==RuntimePlatform.Android?"android":"windows";
@@ -133,12 +134,12 @@ namespace YunJian.Riichi {
         }
         static void Notify(){installedMemo.Clear();Revision++;WardrobeSelection.ReconcileAvailability();Changed?.Invoke();}
         public bool Queued(string key)=>queued.Contains(key);
-        public bool ItemQueued(string id){var p=ForItem(id);return p!=null&&Closure(p.key).Any(k=>k==DownloadKey||queued.Contains(k));}
+        public bool ItemQueued(string id){var p=ForItem(id);return p!=null&&requestedRoots.Contains(p.key)&&!InstalledPack(p.key)&&Closure(p.key).Any(k=>k==DownloadKey||queued.Contains(k));}
         public void DownloadItem(string id,string source=null){var p=ForItem(id);if(p!=null)Download(p.key,source);}
-        public void Download(string key,string source=null){var p=Find(key);if(p==null||p.builtin||!p.available)return;if(source!=null)sources[key]=source;foreach(string k in Closure(key)){var d=Find(k);if(d.builtin||RawInstalled(d)||!d.available||!queued.Add(k))continue;queue.Enqueue(k);}if(!processing&&queue.Count>0)StartCoroutine(Process());}
+        public void Download(string key,string source=null){var p=Find(key);if(p==null||p.builtin||!p.available||InstalledPack(key))return;if(!p.hidden)requestedRoots.Add(key);if(source!=null)sources[key]=source;foreach(string k in Closure(key)){var d=Find(k);if(d.builtin||RawInstalled(d)||!d.available||!queued.Add(k))continue;queue.Enqueue(k);}if(!processing&&queue.Count>0)StartCoroutine(Process());}
         public void DownloadCategory(string category){foreach(var row in Directory.items.Where(x=>category==null||x.category==category))DownloadItem(row.id);}
-        public void Cancel(){queue.Clear();queued.Clear();sources.Clear();cancel=true;request?.Abort();}
-        IEnumerator Process(){processing=true;while(queue.Count>0){string key=queue.Dequeue();cancel=false;Error="";DownloadKey=key;Progress=0;Stage="准备下载";yield return Guard(DownloadOne(Find(key)));Results[key]=cancel?"已取消，可继续":string.IsNullOrEmpty(Error)?"已安装":"失败，可重试";queued.Remove(key);DownloadKey=null;}processing=false;}
+        public void Cancel(){queue.Clear();queued.Clear();sources.Clear();requestedRoots.Clear();cancel=true;request?.Abort();}
+        IEnumerator Process(){processing=true;while(queue.Count>0){string key=queue.Dequeue();cancel=false;Error="";DownloadKey=key;Progress=0;Stage="准备下载";yield return Guard(DownloadOne(Find(key)));Results[key]=cancel?"已取消，可继续":string.IsNullOrEmpty(Error)?"已安装":"失败，可重试";queued.Remove(key);DownloadKey=null;requestedRoots.RemoveWhere(root=>!Closure(root).Any(k=>queued.Contains(k)));}processing=false;requestedRoots.Clear();}
         IEnumerator Guard(IEnumerator task){var work=new Stack<IEnumerator>();work.Push(task);while(work.Count>0){object next=null;bool failed=false;try{var top=work.Peek();if(!top.MoveNext()){work.Pop();continue;}next=top.Current;if(next is IEnumerator child){work.Push(child);continue;}}catch(Exception e){Error="装扮资源操作失败："+e.Message;Stage="失败，可重试";request?.Abort();request?.Dispose();request=null;failed=true;}if(failed)yield break;yield return next;}}
         IEnumerator DownloadOne(WardrobePackRecord p){
             string final=FilePath(p),part=final+".part",url=sources.TryGetValue(p.key,out var source)?source:OverrideUrl?.Invoke(p.key)??p.url;sources.Remove(p.key);System.IO.Directory.CreateDirectory(Path.GetDirectoryName(final));

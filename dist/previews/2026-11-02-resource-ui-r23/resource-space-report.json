@@ -1,0 +1,93 @@
+{
+ "platform": "android",
+ "wardrobeDefinitions": 332,
+ "backgroundTracks": 22,
+ "visibleItems": 347,
+ "optionalItems": 316,
+ "optionalPacks": 380,
+ "wardrobeBytes": 428560231,
+ "characterBytes": 2363202402,
+ "combinedOptionalBytes": 2791762633,
+ "categories": [
+  {
+   "category": "stick",
+   "visibleItems": 62,
+   "baseItems": 3,
+   "downloadBytes": 5562102
+  },
+  {
+   "category": "cloth",
+   "visibleItems": 66,
+   "baseItems": 3,
+   "downloadBytes": 237789385
+  },
+  {
+   "category": "tileBack",
+   "visibleItems": 56,
+   "baseItems": 3,
+   "downloadBytes": 2256908
+  },
+  {
+   "category": "tileFace",
+   "visibleItems": 3,
+   "baseItems": 3,
+   "downloadBytes": 0
+  },
+  {
+   "category": "headFrame",
+   "visibleItems": 24,
+   "baseItems": 3,
+   "downloadBytes": 892131
+  },
+  {
+   "category": "lobbyBackground",
+   "visibleItems": 20,
+   "baseItems": 3,
+   "downloadBytes": 28133289
+  },
+  {
+   "category": "callout",
+   "visibleItems": 4,
+   "baseItems": 3,
+   "downloadBytes": 1260701
+  },
+  {
+   "category": "riichiEffect",
+   "visibleItems": 11,
+   "baseItems": 3,
+   "downloadBytes": 5237719
+  },
+  {
+   "category": "winEffect",
+   "visibleItems": 60,
+   "baseItems": 3,
+   "downloadBytes": 110396456
+  },
+  {
+   "category": "hand",
+   "visibleItems": 2,
+   "baseItems": 2,
+   "downloadBytes": 0
+  },
+  {
+   "category": "music",
+   "visibleItems": 17,
+   "baseItems": 3,
+   "downloadBytes": 12105440
+  },
+  {
+   "category": "bgm",
+   "visibleItems": 22,
+   "baseItems": 3,
+   "downloadBytes": 25107282
+  }
+ ],
+ "categoryTotalsOverlapSharedDependencies": true,
+ "coverage": "All currently integrated items are bundled or downloadable; original-game catalog is not fully ported",
+ "notPorted": [
+  "Three multi-layer dynamic tablecloths",
+  "One expired win definition without located source",
+  "Five native win keys without current public-definition mapping",
+  "Remaining original riichi/callout/hand effects beyond the integrated catalog"
+ ]
+}

@@ -133,14 +133,17 @@ namespace YunJian.Riichi {
         }
         float IllustrationAspect(CharacterSkin skin){if(skin.artWidth>0&&skin.artHeight>0)return (float)skin.artWidth/skin.artHeight;var t=CharacterRoster.Texture("Skins/"+skin.id+"/full");return t==null?.7f:(float)t.width/t.height;}
         void DrawDormCards(bool shell=true){
-            float x=width-1016;var panel=new Rect(x,146.8f,766,892);
+            float x=width-1016;var panel=new Rect(x,DormPanelTop,766,DormPanelHeight);
+#if UNITY_EDITOR
+            ReviewDormFrame=panel;
+#endif
             if(shell){Tint(new Rect(x+17.5f,164.3f,731,857),new Color(.008f,.006f,.02f,.72f));CSlice(panel,"bg_bound");DressTabs(panel.xMax,false);}
             var roles=CharacterRoster.Ordered(dormStars);var cardView=new Rect(x+30,190,700,720);DragCharacterPane(dormRoleDrag,cardView,new Vector2(700,Mathf.CeilToInt(roles.Length/3f)*198+30),ref dormRoleScroll,false);GUI.BeginGroup(cardView);var previousOffset=targetOffset;targetOffset+=cardView.position;for(int i=0;i<roles.Length;i++){
                 // The opaque sorting panel covers these portraits after its
                 // transition. Avoid keeping hidden cards alive in the cache.
                 if(sortOpen&&!sortClosing&&Now-sortBegan>=.18f)continue;
                 var r=new Rect(16.05f+i%3*220,18.3f+i/3*198-dormRoleScroll.y,204,192);if(r.yMax<0||r.y>cardView.height)continue;var role=roles[i];bool available=CharacterRoster.Available(role.key),selected=available&&role.key==CurrentCharacter.key;DrawCharacterCard(r,role,CharacterRoster.Outfit(role.key),selected,true);
-                if(!available){Tint(r,new Color(0,0,0,.66f));Label(new Rect(r.x+45,r.y+140,140,42),"未下载",CText(25,TextAnchor.MiddleCenter,true),new Color(.85f,.85f,.85f));if(Hit(r,"dorm-character-"+role.key))CharacterResourceUi.Current.Ask(role.key);continue;}
+                if(!available){var pack=CharacterPackService.Find(role.key);bool downloading=CharacterPackService.Instance.DownloadKey==role.key||CharacterPackService.Instance.Queued(role.key);DownloadCardBand(r,downloading?"下载中":"下载 "+CharacterResourceUi.Size(pack?.bytes??0));if(Hit(r,"dorm-character-"+role.key))CharacterResourceUi.Current.Ask(role.key,false,id=>SelectDorm(CharacterRoster.Find(id)));continue;}
                 var star=new Rect(r.x+.15f,r.y+147,40,40);if((selected||CharacterRoster.Favorite(role.key))&&Hit(star,"dorm-star-"+role.key)){CharacterRoster.Star(role.key);continue;}if(Hit(r,"dorm-character-"+role.key))SelectDorm(role);
             }
             targetOffset=previousOffset;GUI.EndGroup();

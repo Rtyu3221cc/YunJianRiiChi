@@ -133,24 +133,17 @@ namespace YunJian.Riichi
         }
         void DrawPreferences(){
             Section("使用偏好",0);Row(70,"动态服饰");
-            var toggle=new Rect(607,84,484,64);var old=GUI.color;GUI.color*=new Color(.58f,.58f,.68f,1);Slice("official-config-setting_entry_btn",toggle,35,1,35,1);GUI.color=old;
-            bool live=AppPreferences.DynamicOutfits;var selected=new Rect(toggle.x+(live?toggle.width/2:0),toggle.y,toggle.width/2,toggle.height);Slice("official-config-setting_entry_btn",selected,35,1,35,1);
-            Label("关闭",toggle.x+121,toggle.center.y,30,live?Muted:Text,0,TextAnchor.MiddleCenter,242,64);Label("开启",toggle.x+363,toggle.center.y,30,live?Text:Muted,0,TextAnchor.MiddleCenter,242,64);
-            if(SettingsHit(new Rect(toggle.x,toggle.y,242,64),"preference-live-off"))AppPreferences.SetDynamicOutfits(false);
-            if(SettingsHit(new Rect(toggle.x+242,toggle.y,242,64),"preference-live-on"))AppPreferences.SetDynamicOutfits(true);
+            Segmented(new Rect(607,84,484,64),AppPreferences.DynamicOutfits,"关闭","开启","preference-live-off","preference-live-on",AppPreferences.SetDynamicOutfits);
             Row(165,"电脑形象");var button=new Rect(607,179,484,64);Slice("official-config-setting_entry_btn",button,35,1,35,1);Label(AppPreferences.RandomBotAppearance?"从已下载雀士中随机":"一姬的初始形象",button.center.x-14,button.center.y,30,Text,0,TextAnchor.MiddleCenter,440,64);Image("official-config-setting_dropdown_tip",new Rect(1049,204,24,13));
             if(SettingsHit(button,"preference-bot-dropdown"))botDropdown=!botDropdown;
-            Row(260,"手牌理牌");var sort=new Rect(607,274,484,64);Slice("official-config-setting_entry_btn",sort,35,1,35,1);bool automatic=AppPreferences.AutoSortHand;
-            Slice("official-config-setting_entry_btn",new Rect(sort.x+(automatic?242:0),sort.y,242,64),35,1,35,1);
-            Label("手动",sort.x+121,sort.center.y,30,automatic?Muted:Text,0,TextAnchor.MiddleCenter,242,64);Label("自动",sort.x+363,sort.center.y,30,automatic?Text:Muted,0,TextAnchor.MiddleCenter,242,64);
-            if(SettingsHit(new Rect(sort.x,sort.y,242,64),"preference-hand-manual"))AppPreferences.SetAutoSortHand(false);
-            if(SettingsHit(new Rect(sort.x+242,sort.y,242,64),"preference-hand-auto"))AppPreferences.SetAutoSortHand(true);
+            Row(260,"手牌理牌");Segmented(new Rect(607,274,484,64),AppPreferences.AutoSortHand,"手动","自动","preference-hand-manual","preference-hand-auto",AppPreferences.SetAutoSortHand);
             Label("电脑形象设置对之后新增的电脑生效",36,385,27,Muted);Label("关闭动态服饰后，大厅和宿舍显示静态立绘",36,432,27,Muted);Label("手动理牌时，可在手牌区域内拖动换序",36,479,27,Muted);
             if(botDropdown){const float x=600,y=211.5f;Slice("official-config-setting_dropdown_base",new Rect(x,y,496,232),50,50,50,50);
                 for(int i=0;i<2;i++){bool random=i==0;float row=y+31+i*83;if(AppPreferences.RandomBotAppearance==random)Slice("official-config-setting_dropdown_tip_selected",new Rect(x+8,row+18,480,60),1,1,1,1);Label(random?"从已下载雀士中随机":"一姬的初始形象",x+247.5f,row+46,30,Text,0,TextAnchor.MiddleCenter,470,70);
                     if(SettingsHit(new Rect(x+8,row,480,83),random?"preference-bot-random":"preference-bot-ichihime")){AppPreferences.SetRandomBotAppearance(random);botDropdown=false;}}
             }
         }
+        void Segmented(Rect rect,bool right,string leftLabel,string rightLabel,string leftId,string rightId,Action<bool> select){var old=GUI.color;GUI.color*=new Color(.58f,.58f,.68f,1);Slice("official-config-setting_entry_btn",rect,35,1,35,1);GUI.color=old;float half=rect.width/2;Slice("official-config-setting_entry_btn",new Rect(rect.x+(right?half:0),rect.y,half,rect.height),35,1,35,1);Label(leftLabel,rect.x+half/2,rect.center.y,30,right?Muted:Text,0,TextAnchor.MiddleCenter,half,rect.height);Label(rightLabel,rect.x+half*1.5f,rect.center.y,30,right?Text:Muted,0,TextAnchor.MiddleCenter,half,rect.height);if(SettingsHit(new Rect(rect.x,rect.y,half,rect.height),leftId))select(false);if(SettingsHit(new Rect(rect.x+half,rect.y,half,rect.height),rightId))select(true);}
         void DrawMusic(float width) {
             ScreenShade(new Color(0, 0, 0, .5f));
             var matrix = GUI.matrix; var color = GUI.color; Popup(width, musicOpened);
