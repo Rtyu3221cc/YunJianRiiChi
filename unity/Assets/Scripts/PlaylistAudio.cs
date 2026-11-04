@@ -22,6 +22,7 @@ namespace YunJian.Riichi
         AudioSource[] channels; AudioSource audition,riichi;string riichiKey;
         public bool RiichiPlaying=>riichi!=null&&riichi.isPlaying;
         public bool ExternalAudition {get;set;}
+        public bool CharacterVoicePreview {get;set;}
         RiichiClient client; int activeChannel, request; bool fading, loading, suspended, started;
         float fadeAt, fromGain = 1;
         readonly RoundMusicEnvelope roundEnvelope=new RoundMusicEnvelope();
@@ -118,6 +119,7 @@ namespace YunJian.Riichi
         }
         void RefreshVolumes() {
             float gain = AppPreferences.Gain(1) * RoundMusicGain * (AuditionPlaying || RiichiPlaying || ExternalAudition ? 0 : 1);
+            if(CharacterVoicePreview)gain=Mathf.Min(gain,.1f);
             audition.volume = AppPreferences.Gain(1);
             if (fading) {
                 float t = Mathf.Clamp01((Time.unscaledTime - fadeAt) / FadeSeconds);

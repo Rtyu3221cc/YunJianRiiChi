@@ -5,13 +5,13 @@ using UnityEngine;
 using UnityEngine.Rendering;
 namespace YunJian.Riichi {
     [Serializable] public sealed class NativeWinContract {
-        public int sourceId,tileQueueMode;public string sourceKey,auxiliary;public bool newStyle;
+        public int sourceId,tileQueueMode;public string sourceKey,auxiliary;public bool newStyle,riichi;
         public float lifetime=6,resultDelay,queueBegin,queueEnd,auxiliaryAt=.6f,auxiliaryLifetime=2;
     }
     // DesktopMgr.ShowHuleEffect / setNewHuleEffect / setOldHuleEffect. Source
     // scene origin and tile origin remain independent, in authored units.
     public sealed class NativeWinPlayback:MonoBehaviour {
-        NativeParticleEffect native;NativeWinContract plan;Transform root,space,target,move,rot,ani,aniTsumo,stationary,fly,flyPosition,flyMove,legacyPai;
+        NativeParticleEffect native;NativeWinContract plan;Transform root,space,target,move,rot,ani,aniTsumo,stationary,fly,flyPosition,flyMove,legacyPai,riichiMaque;
         TableRenderer table;PublicSound sound;NativeWinningTileQueue queue;NativeWinTileModel rig;NativeParticleEffect extra;GameObject extraRoot;float rigEnd=1.9f;int relative;
         public bool SceneOrigin=>plan.newStyle;
         public NativeWinContract Contract=>plan;
@@ -19,12 +19,20 @@ namespace YunJian.Riichi {
         public void Initialize(NativeParticleEffect owner,Transform authored,Transform container,NativeWinContract contract){
             native=owner;root=authored;space=container;plan=contract;table=GetComponentInParent<TableRenderer>();
             move=root.Find("root_move");rot=root.Find("root_rot");ani=root.Find("root_ani");aniTsumo=root.Find("root_ani_zimo");stationary=root.Find("root_static");fly=root.Find("root_fly");flyMove=fly?.Find("move");flyPosition=fly?.Find("positon");legacyPai=root.Find("pai_container/pai");
+            if(plan.riichi)riichiMaque=root.Find("root_maque");
             if(plan.queueEnd>plan.queueBegin){queue=gameObject.AddComponent<NativeWinningTileQueue>();queue.Begin=plan.queueBegin;queue.End=plan.queueEnd;queue.DepthTest=plan.tileQueueMode==2?8:4;queue.LegacyQueues=plan.tileQueueMode==3;}
         }
         public void Bind(Transform tile,PublicSound item){
+            bool first=target==null;
             native.SynchronizeSourceSpace();
             sound=item;if(table!=null&&item!=null)relative=table.RelativeSeat(item.kind=="ron"?item.from:item.seat);
             target=tile;queue?.Bind(tile);if(tile==null||sound==null)return;
+            if(first&&riichiMaque!=null){
+                var point=table==null?transform.position:table.DiscardPoint(item.seat,item.tile,item.riverIndex);
+                riichiMaque.position=point/TableTileGeometry.SourceUnits;
+                var localization=riichiMaque.GetComponentsInChildren<Transform>(true).FirstOrDefault(t=>t.name=="localization");
+                if(localization!=null){var preferred=localization.Find("chs")??localization.Find("common");foreach(Transform child in localization)child.gameObject.SetActive(child==preferred);}
+            }
             PositionNewRoots();
             Transform anchor=null;
             if(plan.newStyle){var owner=sound.kind=="tsumo"&&aniTsumo!=null?aniTsumo:ani;var motion=root.GetComponentInParent<NativeEffectMotion>();if(owner!=null&&owner.childCount>0&&motion!=null){anchor=owner.GetChild(0);rigEnd=motion.DurationFor(owner);}}

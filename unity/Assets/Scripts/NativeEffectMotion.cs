@@ -68,9 +68,14 @@ namespace YunJian.Riichi {
                     }
                 }
             }
-            for(int i=0;i<renderers.Length;i++)if(renderers[i]!=null)for(int m=0;m<blocks[i].Length;m++){
-                if(renderers[i].sharedMaterials[m]!=null&&renderers[i].sharedMaterials[m].HasProperty("_EffectAge"))blocks[i][m].SetFloat("_EffectAge",age);
-                if(!blocks[i][m].isEmpty)renderers[i].SetPropertyBlock(blocks[i][m],m);
+            for(int i=0;i<renderers.Length;i++)if(renderers[i]!=null){
+                // Compiled material-reference curves can change a renderer's slot
+                // count. Keep cached blocks, but apply only currently present slots.
+                var current=renderers[i].sharedMaterials;
+                for(int m=0;m<Mathf.Min(blocks[i].Length,current.Length);m++){
+                    if(current[m]!=null&&current[m].HasProperty("_EffectAge"))blocks[i][m].SetFloat("_EffectAge",age);
+                    if(!blocks[i][m].isEmpty)renderers[i].SetPropertyBlock(blocks[i][m],m);
+                }
             }
         }
     }

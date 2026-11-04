@@ -52,16 +52,20 @@ namespace YunJian.Riichi {
         public void DrawOverlay(){
             if(pending!=null&&WardrobePackService.Installed(pending)){var id=pending;var action=pendingEquip;pending=null;pendingEquip=null;action?.Invoke(id);}
             if(!ModalOpen)return;Targets.Clear();var matrix=GUI.matrix;var color=GUI.color;float scale=Mathf.Min(Screen.width/1920f,Screen.height/1080f);GUI.matrix=Matrix4x4.TRS(new Vector3((Screen.width-1920*scale)/2,(Screen.height-1080*scale)/2),Quaternion.identity,new Vector3(scale,scale,1));GUI.color=Color.white;
+            var outsideBounds=batch.Visible||prompt!=null||picker||deleteAll?new Rect(380,200,1160,680):new Rect(100,40,1720,1000);
+            if(DismissOutside(outsideBounds,()=>{if(batch.Visible)batch.Close();else if(prompt!=null){prompt=null;equip=null;}else if(picker)picker=false;else if(deleteAll)deleteAll=false;else Close();})){GUI.matrix=matrix;GUI.color=color;return;}
+            bool parentEnabled=GUI.enabled;GUI.enabled&=prompt==null&&!picker&&!deleteAll&&!batch.Visible;
             if(open){ScreenShade(new Color(0,0,0,.55f));Slice("official-panel-bg",new Rect(120,60,1680,960),30,30,30,30);Slice("official-panel-frame",new Rect(100,40,1720,1000),90,90,90,90);GUI.BeginGroup(new Rect(180,100,1560,920));DrawList(new Rect(0,0,1560,920),true);GUI.EndGroup();if(ResourceDownloadUi.Close(new Rect(1660,90,44,44),Control,"deco-resources-close"))Close();}
+            GUI.enabled=parentEnabled;
             if(prompt!=null||picker||deleteAll){ScreenShade(new Color(0,0,0,.62f));Slice("official-panel-bg",new Rect(400,220,1120,640),30,30,30,30);Slice("official-panel-frame",new Rect(380,200,1160,680),90,90,90,90);
                 if(picker){Label("选择装扮种类",960,285,44,Gold,1,TextAnchor.MiddleCenter);var keys=new[]{""}.Concat(Categories).ToArray();for(int i=0;i<keys.Length;i++){string key=keys[i];if(Button(new Rect(455+i%3*345,350+i/3*88,320,66),CategoryName(key),"deco-category-"+key,(key==""?null:key)==category,30)){category=key==""?null:key;picker=false;scroll.Offset=0;if(pickerDownload)AskGroup(category);}}if(ResourceDownloadUi.Close(new Rect(1420,250,44,44),Control,"deco-picker-close"))picker=false;}
                 else if(deleteAll){Label("删除可选装扮资源",960,305,44,Gold,1,TextAnchor.MiddleCenter);Label("基础装扮保留。\n对局、预览或传输中使用的资源会保留。\n已删除装扮将恢复为对应的基础款。",960,485,31,Text,0,TextAnchor.MiddleCenter,980,175,true);if(Button(new Rect(600,700,300,70),"取消","deco-delete-cancel"))deleteAll=false;if(Button(new Rect(1020,700,300,70),"确认删除","deco-delete-confirm",true)){WardrobePackService.DeleteAll();notice="已删除可清理的可选装扮，基础和正在使用的资源保留。";deleteAll=false;}}
                 else{
                     var p=WardrobePackService.ForItem(prompt);Label("下载装扮资源",960,305,44,Gold,1,TextAnchor.MiddleCenter);var art=WardrobeCatalog.Texture(WardrobeCatalog.Find(prompt)?.icon);if(art!=null)GUI.DrawTexture(new Rect(530,390,150,150),art,ScaleMode.ScaleToFit);Label(Name(prompt),730,425,34,Gold,0,TextAnchor.MiddleLeft,690,70);var estimate=ResourceDownloadUi.Wardrobes(new[]{prompt});Label("需要下载 "+ResourceDownloadUi.Size(estimate.remainingBytes)+" · 完成后可离线使用",730,510,28,Muted,0,TextAnchor.MiddleLeft,690,90,true);Label(ResourceDownloadUi.NetworkText,960,620,28,ResourceDownloadUi.Network==NetworkReachability.ReachableViaCarrierDataNetwork?Gold:Muted,0,TextAnchor.MiddleCenter,980,60,true);
-                    if(Button(new Rect(470,700,300,70),"取消","deco-prompt-cancel")){prompt=null;equip=null;}
+                    if(Button(new Rect(470,700,300,84),"取消","deco-prompt-cancel",false,36)){prompt=null;equip=null;}
                     bool enabled=GUI.enabled;GUI.enabled&=p!=null&&WardrobePackService.Available(prompt);
-                    if(Button(new Rect(810,700,300,70),"下载","deco-prompt-download",true)){WardrobePackService.Instance.DownloadItem(prompt);prompt=null;equip=null;}
-                    GUI.enabled&=equip!=null;if(Button(new Rect(1150,700,300,70),"下载并选用","deco-prompt-equip",true)){pending=prompt;pendingEquip=equip;WardrobePackService.Instance.DownloadItem(prompt);prompt=null;equip=null;}GUI.enabled=enabled;
+                    if(Button(new Rect(810,700,300,84),"下载","deco-prompt-download",true,36)){WardrobePackService.Instance.DownloadItem(prompt);prompt=null;equip=null;}
+                    GUI.enabled&=equip!=null;if(Button(new Rect(1150,700,300,84),"下载并选用","deco-prompt-equip",true,36)){pending=prompt;pendingEquip=equip;WardrobePackService.Instance.DownloadItem(prompt);prompt=null;equip=null;}GUI.enabled=enabled;
                 }
             }
             batch.Draw((r,label,id,primary)=>Button(r,label,id,primary),Control,"deco-batch");

@@ -12,9 +12,16 @@ namespace YunJian.Riichi {
         static SourceTileFrameData Frame=>frame??(frame=JsonUtility.FromJson<SourceTileFrameData>(Resources.Load<TextAsset>("Majsoul/Actions/source-tile-frame").text));
         public static SourceEffectBinding Binding(WardrobeItem item)=>Data.bindings.FirstOrDefault(b=>b.id==item.id);
         public static SourceHandAction HandAction(WardrobeItem hand,string action){var type=string.IsNullOrEmpty(hand?.animationType)?"hand_human":hand.animationType;return Data.rows.First(r=>r.type==type&&r.action==action);}
-        public static SourceHandAction Declaration(WardrobeItem hand,WardrobeItem effect){var binding=Binding(effect);if(binding==null||binding.controller!="legacy")throw new InvalidOperationException("Missing verified declaration binding: "+effect.id);var type=string.IsNullOrEmpty(hand.animationType)?"hand_human":hand.animationType;return Data.rows.First(r=>r.type==type&&r.action==binding.action);}
+        public static SourceHandAction Declaration(WardrobeItem hand,WardrobeItem effect){var binding=Binding(effect);if(binding==null||(binding.controller!="legacy"&&binding.controller!="native-new"))throw new InvalidOperationException("Missing verified declaration binding: "+effect.id);var type=string.IsNullOrEmpty(hand.animationType)?"hand_human":hand.animationType;return Data.rows.First(r=>r.type==type&&r.action==binding.action);}
         public static Quaternion TileMount=>new Quaternion(Frame.mount[0],Frame.mount[1],Frame.mount[2],Frame.mount[3]);
+        // Callable particles use +Z for rising sparks/bubbles and -Z for the
+        // base below the tile face. The UV-front frame reverses this height.
+        public static Quaternion CallableTileMount=>NativeTileMount;
         public static Quaternion NativeTileMount=>new Quaternion(0,.7071067811865475f,.7071067811865475f,0);
         public static float TileWidth=>Frame.sourceWidth;
+        // OriginalTiles changes the native model frame into the flat table frame.
+        // Lua mounts children at the model origin, not at the visible top surface.
+        public static Vector3 TileModelOrigin(Transform tile){var box=tile.GetComponent<BoxCollider>();return box!=null?tile.TransformPoint(box.center):tile.position;}
+        public static Vector3 LegacyRiichiPoint(Transform tile){var box=tile.GetComponent<BoxCollider>();return TileModelOrigin(tile)-(box!=null?tile.TransformVector(Vector3.up*box.size.y*.44f):Vector3.zero);}
     }
 }

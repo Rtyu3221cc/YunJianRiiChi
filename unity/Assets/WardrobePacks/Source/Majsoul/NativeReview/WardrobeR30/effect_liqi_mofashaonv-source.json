@@ -1,0 +1,2453 @@
+{
+ "nodes": [
+  {
+   "name": "effect_liqi_mofashaonv",
+   "parent": -1,
+   "position": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotation": [
+    -0.0,
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "active": true
+  },
+  {
+   "name": "guang",
+   "parent": 0,
+   "position": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotation": [
+    -0.0,
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "scale": [
+    1.0000003576278687,
+    1.0000005960464478,
+    1.0000003576278687
+   ],
+   "active": true,
+   "particle": "WardrobeR30/Data/effect_liqi_mofashaonv--8695192392352649115.json",
+   "renderer": "WardrobeR30/Data/effect_liqi_mofashaonv--8695192392352649115-renderer.json",
+   "texture": "WardrobeR30/Textures/CAB-ea60ed51e99e84ad8c082bd234caff13-2754484929229908054",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "srcBlend": 5.0,
+   "dstBlend": 1.0,
+   "shaderName": "Legacy Shaders/Particles/Additive",
+   "sourceMaterialState": true,
+   "materialName": "yuanqiu2_add",
+   "materialBundle": "4wvy-axbjxxzb4k@kc9h88@0_fcc98c238ccf12f7b14e.majset",
+   "keywords": [],
+   "floats": [
+    {
+     "name": "_AlbedoIntensity",
+     "value": 1.0
+    },
+    {
+     "name": "_AlphaBlend",
+     "value": 1.0
+    },
+    {
+     "name": "_AlphaTest",
+     "value": 0.0
+    },
+    {
+     "name": "_BumpScale",
+     "value": 1.0
+    },
+    {
+     "name": "_Cull",
+     "value": 2.0
+    },
+    {
+     "name": "_Cutoff",
+     "value": 0.5
+    },
+    {
+     "name": "_DetailNormalMapScale",
+     "value": 1.0
+    },
+    {
+     "name": "_DstBlend",
+     "value": 10.0
+    },
+    {
+     "name": "_GlossMapScale",
+     "value": 1.0
+    },
+    {
+     "name": "_Glossiness",
+     "value": 0.5
+    },
+    {
+     "name": "_GlossyReflections",
+     "value": 1.0
+    },
+    {
+     "name": "_InvFade",
+     "value": 1.0
+    },
+    {
+     "name": "_Lighting",
+     "value": 1.0
+    },
+    {
+     "name": "_Metallic",
+     "value": 0.0
+    },
+    {
+     "name": "_Mode",
+     "value": 3.0
+    },
+    {
+     "name": "_OcclusionStrength",
+     "value": 1.0
+    },
+    {
+     "name": "_Parallax",
+     "value": 0.019999999552965164
+    },
+    {
+     "name": "_RenderQueue",
+     "value": 2.0
+    },
+    {
+     "name": "_Shininess",
+     "value": 0.23999999463558197
+    },
+    {
+     "name": "_SmoothnessTextureChannel",
+     "value": 0.0
+    },
+    {
+     "name": "_SpecularHighlights",
+     "value": 1.0
+    },
+    {
+     "name": "_SpecularSource",
+     "value": 0.0
+    },
+    {
+     "name": "_SrcBlend",
+     "value": 5.0
+    },
+    {
+     "name": "_UVSec",
+     "value": 0.0
+    },
+    {
+     "name": "_ZTest",
+     "value": 2.0
+    },
+    {
+     "name": "_ZWrite",
+     "value": 0.0
+    }
+   ],
+   "colors": [
+    {
+     "name": "_Color",
+     "value": [
+      0.18977075815200806,
+      0.793312132358551,
+      0.9926470518112183,
+      1.0
+     ]
+    },
+    {
+     "name": "_EmissionColor",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_SpecColor",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      1.0
+     ]
+    },
+    {
+     "name": "_TintColor",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    }
+   ],
+   "extraTextures": [],
+   "textureScale": [
+    1.0,
+    1.0
+   ],
+   "textureOffset": [
+    0.0,
+    0.0
+   ],
+   "uvScroll": [
+    0,
+    0
+   ],
+   "filterMode": 1,
+   "wrapU": 0,
+   "wrapV": 0,
+   "zTest": 4.0,
+   "zWrite": 0.0,
+   "cull": 0.0,
+   "materials": [
+    {
+     "texture": "WardrobeR30/Textures/CAB-ea60ed51e99e84ad8c082bd234caff13-2754484929229908054",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 1.0,
+     "shaderName": "Legacy Shaders/Particles/Additive",
+     "sourceMaterialState": true,
+     "materialName": "yuanqiu2_add",
+     "materialBundle": "4wvy-axbjxxzb4k@kc9h88@0_fcc98c238ccf12f7b14e.majset",
+     "keywords": [],
+     "floats": [
+      {
+       "name": "_AlbedoIntensity",
+       "value": 1.0
+      },
+      {
+       "name": "_AlphaBlend",
+       "value": 1.0
+      },
+      {
+       "name": "_AlphaTest",
+       "value": 0.0
+      },
+      {
+       "name": "_BumpScale",
+       "value": 1.0
+      },
+      {
+       "name": "_Cull",
+       "value": 2.0
+      },
+      {
+       "name": "_Cutoff",
+       "value": 0.5
+      },
+      {
+       "name": "_DetailNormalMapScale",
+       "value": 1.0
+      },
+      {
+       "name": "_DstBlend",
+       "value": 10.0
+      },
+      {
+       "name": "_GlossMapScale",
+       "value": 1.0
+      },
+      {
+       "name": "_Glossiness",
+       "value": 0.5
+      },
+      {
+       "name": "_GlossyReflections",
+       "value": 1.0
+      },
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      },
+      {
+       "name": "_Lighting",
+       "value": 1.0
+      },
+      {
+       "name": "_Metallic",
+       "value": 0.0
+      },
+      {
+       "name": "_Mode",
+       "value": 3.0
+      },
+      {
+       "name": "_OcclusionStrength",
+       "value": 1.0
+      },
+      {
+       "name": "_Parallax",
+       "value": 0.019999999552965164
+      },
+      {
+       "name": "_RenderQueue",
+       "value": 2.0
+      },
+      {
+       "name": "_Shininess",
+       "value": 0.23999999463558197
+      },
+      {
+       "name": "_SmoothnessTextureChannel",
+       "value": 0.0
+      },
+      {
+       "name": "_SpecularHighlights",
+       "value": 1.0
+      },
+      {
+       "name": "_SpecularSource",
+       "value": 0.0
+      },
+      {
+       "name": "_SrcBlend",
+       "value": 5.0
+      },
+      {
+       "name": "_UVSec",
+       "value": 0.0
+      },
+      {
+       "name": "_ZTest",
+       "value": 2.0
+      },
+      {
+       "name": "_ZWrite",
+       "value": 0.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_Color",
+       "value": [
+        0.18977075815200806,
+        0.793312132358551,
+        0.9926470518112183,
+        1.0
+       ]
+      },
+      {
+       "name": "_EmissionColor",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_SpecColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        1.0
+       ]
+      },
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0,
+      0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 4.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    },
+    {
+     "texture": "WardrobeR30/Textures/CAB-ea60ed51e99e84ad8c082bd234caff13-2754484929229908054",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 1.0,
+     "shaderName": "Legacy Shaders/Particles/Additive",
+     "sourceMaterialState": true,
+     "materialName": "yuanqiu2_add",
+     "materialBundle": "4wvy-axbjxxzb4k@kc9h88@0_fcc98c238ccf12f7b14e.majset",
+     "keywords": [],
+     "floats": [
+      {
+       "name": "_AlbedoIntensity",
+       "value": 1.0
+      },
+      {
+       "name": "_AlphaBlend",
+       "value": 1.0
+      },
+      {
+       "name": "_AlphaTest",
+       "value": 0.0
+      },
+      {
+       "name": "_BumpScale",
+       "value": 1.0
+      },
+      {
+       "name": "_Cull",
+       "value": 2.0
+      },
+      {
+       "name": "_Cutoff",
+       "value": 0.5
+      },
+      {
+       "name": "_DetailNormalMapScale",
+       "value": 1.0
+      },
+      {
+       "name": "_DstBlend",
+       "value": 10.0
+      },
+      {
+       "name": "_GlossMapScale",
+       "value": 1.0
+      },
+      {
+       "name": "_Glossiness",
+       "value": 0.5
+      },
+      {
+       "name": "_GlossyReflections",
+       "value": 1.0
+      },
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      },
+      {
+       "name": "_Lighting",
+       "value": 1.0
+      },
+      {
+       "name": "_Metallic",
+       "value": 0.0
+      },
+      {
+       "name": "_Mode",
+       "value": 3.0
+      },
+      {
+       "name": "_OcclusionStrength",
+       "value": 1.0
+      },
+      {
+       "name": "_Parallax",
+       "value": 0.019999999552965164
+      },
+      {
+       "name": "_RenderQueue",
+       "value": 2.0
+      },
+      {
+       "name": "_Shininess",
+       "value": 0.23999999463558197
+      },
+      {
+       "name": "_SmoothnessTextureChannel",
+       "value": 0.0
+      },
+      {
+       "name": "_SpecularHighlights",
+       "value": 1.0
+      },
+      {
+       "name": "_SpecularSource",
+       "value": 0.0
+      },
+      {
+       "name": "_SrcBlend",
+       "value": 5.0
+      },
+      {
+       "name": "_UVSec",
+       "value": 0.0
+      },
+      {
+       "name": "_ZTest",
+       "value": 2.0
+      },
+      {
+       "name": "_ZWrite",
+       "value": 0.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_Color",
+       "value": [
+        0.18977075815200806,
+        0.793312132358551,
+        0.9926470518112183,
+        1.0
+       ]
+      },
+      {
+       "name": "_EmissionColor",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_SpecColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        1.0
+       ]
+      },
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0,
+      0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 4.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    }
+   ],
+   "renderMode": 4,
+   "sortingFudge": 0.0,
+   "lengthScale": 2.0,
+   "mesh": "WardrobeR30/Data/effect_liqi_mofashaonv--8695192392352649115-6620935423724358592-mesh.json",
+   "meshes": [
+    "WardrobeR30/Data/effect_liqi_mofashaonv--8695192392352649115-6620935423724358592-mesh.json"
+   ]
+  },
+  {
+   "name": "guangyun",
+   "parent": 0,
+   "position": [
+    0.0013000000035390258,
+    0.0,
+    0.01979999989271164
+   ],
+   "rotation": [
+    -0.0,
+    -7.450580596923828e-09,
+    1.1920928955078125e-07,
+    1.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "active": true,
+   "particle": "WardrobeR30/Data/effect_liqi_mofashaonv--329566126019366262.json",
+   "renderer": "WardrobeR30/Data/effect_liqi_mofashaonv--329566126019366262-renderer.json",
+   "texture": "WardrobeR30/Textures/CAB-475c97e77f7dbe4289e016b75bda5445--4888948125396351708",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "srcBlend": 5.0,
+   "dstBlend": 1.0,
+   "shaderName": "Legacy Shaders/Particles/Additive",
+   "sourceMaterialState": true,
+   "materialName": "pai_faguang_huang",
+   "materialBundle": "9ux7zauuw_@zz1dbm8@hb99$ncwiwohtggi__7e0a8692362513a0fa81.majset",
+   "keywords": [],
+   "floats": [
+    {
+     "name": "_AlbedoIntensity",
+     "value": 1.0
+    },
+    {
+     "name": "_AlphaBlend",
+     "value": 1.0
+    },
+    {
+     "name": "_AlphaTest",
+     "value": 0.0
+    },
+    {
+     "name": "_BumpScale",
+     "value": 1.0
+    },
+    {
+     "name": "_Cull",
+     "value": 2.0
+    },
+    {
+     "name": "_Cutoff",
+     "value": 0.5
+    },
+    {
+     "name": "_DetailNormalMapScale",
+     "value": 1.0
+    },
+    {
+     "name": "_DstBlend",
+     "value": 10.0
+    },
+    {
+     "name": "_GlossMapScale",
+     "value": 1.0
+    },
+    {
+     "name": "_Glossiness",
+     "value": 0.5
+    },
+    {
+     "name": "_GlossyReflections",
+     "value": 1.0
+    },
+    {
+     "name": "_InvFade",
+     "value": 1.0
+    },
+    {
+     "name": "_Lighting",
+     "value": 1.0
+    },
+    {
+     "name": "_Metallic",
+     "value": 0.0
+    },
+    {
+     "name": "_Mode",
+     "value": 1.0
+    },
+    {
+     "name": "_OcclusionStrength",
+     "value": 1.0
+    },
+    {
+     "name": "_Parallax",
+     "value": 0.019999999552965164
+    },
+    {
+     "name": "_RenderQueue",
+     "value": 2.0
+    },
+    {
+     "name": "_Shininess",
+     "value": 0.23999999463558197
+    },
+    {
+     "name": "_SmoothnessTextureChannel",
+     "value": 0.0
+    },
+    {
+     "name": "_SpecularHighlights",
+     "value": 1.0
+    },
+    {
+     "name": "_SpecularSource",
+     "value": 0.0
+    },
+    {
+     "name": "_SrcBlend",
+     "value": 5.0
+    },
+    {
+     "name": "_UVSec",
+     "value": 0.0
+    },
+    {
+     "name": "_ZTest",
+     "value": 2.0
+    },
+    {
+     "name": "_ZWrite",
+     "value": 0.0
+    }
+   ],
+   "colors": [
+    {
+     "name": "_Color",
+     "value": [
+      0.18977075815200806,
+      0.793312132358551,
+      0.9926470518112183,
+      1.0
+     ]
+    },
+    {
+     "name": "_EmissionColor",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_SpecColor",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      1.0
+     ]
+    },
+    {
+     "name": "_TintColor",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    }
+   ],
+   "extraTextures": [],
+   "textureScale": [
+    1.0,
+    1.0
+   ],
+   "textureOffset": [
+    0.0,
+    0.0
+   ],
+   "uvScroll": [
+    0,
+    0
+   ],
+   "filterMode": 1,
+   "wrapU": 0,
+   "wrapV": 0,
+   "zTest": 4.0,
+   "zWrite": 0.0,
+   "cull": 0.0,
+   "materials": [
+    {
+     "texture": "WardrobeR30/Textures/CAB-475c97e77f7dbe4289e016b75bda5445--4888948125396351708",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 1.0,
+     "shaderName": "Legacy Shaders/Particles/Additive",
+     "sourceMaterialState": true,
+     "materialName": "pai_faguang_huang",
+     "materialBundle": "9ux7zauuw_@zz1dbm8@hb99$ncwiwohtggi__7e0a8692362513a0fa81.majset",
+     "keywords": [],
+     "floats": [
+      {
+       "name": "_AlbedoIntensity",
+       "value": 1.0
+      },
+      {
+       "name": "_AlphaBlend",
+       "value": 1.0
+      },
+      {
+       "name": "_AlphaTest",
+       "value": 0.0
+      },
+      {
+       "name": "_BumpScale",
+       "value": 1.0
+      },
+      {
+       "name": "_Cull",
+       "value": 2.0
+      },
+      {
+       "name": "_Cutoff",
+       "value": 0.5
+      },
+      {
+       "name": "_DetailNormalMapScale",
+       "value": 1.0
+      },
+      {
+       "name": "_DstBlend",
+       "value": 10.0
+      },
+      {
+       "name": "_GlossMapScale",
+       "value": 1.0
+      },
+      {
+       "name": "_Glossiness",
+       "value": 0.5
+      },
+      {
+       "name": "_GlossyReflections",
+       "value": 1.0
+      },
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      },
+      {
+       "name": "_Lighting",
+       "value": 1.0
+      },
+      {
+       "name": "_Metallic",
+       "value": 0.0
+      },
+      {
+       "name": "_Mode",
+       "value": 1.0
+      },
+      {
+       "name": "_OcclusionStrength",
+       "value": 1.0
+      },
+      {
+       "name": "_Parallax",
+       "value": 0.019999999552965164
+      },
+      {
+       "name": "_RenderQueue",
+       "value": 2.0
+      },
+      {
+       "name": "_Shininess",
+       "value": 0.23999999463558197
+      },
+      {
+       "name": "_SmoothnessTextureChannel",
+       "value": 0.0
+      },
+      {
+       "name": "_SpecularHighlights",
+       "value": 1.0
+      },
+      {
+       "name": "_SpecularSource",
+       "value": 0.0
+      },
+      {
+       "name": "_SrcBlend",
+       "value": 5.0
+      },
+      {
+       "name": "_UVSec",
+       "value": 0.0
+      },
+      {
+       "name": "_ZTest",
+       "value": 2.0
+      },
+      {
+       "name": "_ZWrite",
+       "value": 0.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_Color",
+       "value": [
+        0.18977075815200806,
+        0.793312132358551,
+        0.9926470518112183,
+        1.0
+       ]
+      },
+      {
+       "name": "_EmissionColor",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_SpecColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        1.0
+       ]
+      },
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0,
+      0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 4.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    },
+    {
+     "texture": "WardrobeR30/Textures/CAB-475c97e77f7dbe4289e016b75bda5445--4888948125396351708",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 1.0,
+     "shaderName": "Legacy Shaders/Particles/Additive",
+     "sourceMaterialState": true,
+     "materialName": "pai_faguang_huang",
+     "materialBundle": "9ux7zauuw_@zz1dbm8@hb99$ncwiwohtggi__7e0a8692362513a0fa81.majset",
+     "keywords": [],
+     "floats": [
+      {
+       "name": "_AlbedoIntensity",
+       "value": 1.0
+      },
+      {
+       "name": "_AlphaBlend",
+       "value": 1.0
+      },
+      {
+       "name": "_AlphaTest",
+       "value": 0.0
+      },
+      {
+       "name": "_BumpScale",
+       "value": 1.0
+      },
+      {
+       "name": "_Cull",
+       "value": 2.0
+      },
+      {
+       "name": "_Cutoff",
+       "value": 0.5
+      },
+      {
+       "name": "_DetailNormalMapScale",
+       "value": 1.0
+      },
+      {
+       "name": "_DstBlend",
+       "value": 10.0
+      },
+      {
+       "name": "_GlossMapScale",
+       "value": 1.0
+      },
+      {
+       "name": "_Glossiness",
+       "value": 0.5
+      },
+      {
+       "name": "_GlossyReflections",
+       "value": 1.0
+      },
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      },
+      {
+       "name": "_Lighting",
+       "value": 1.0
+      },
+      {
+       "name": "_Metallic",
+       "value": 0.0
+      },
+      {
+       "name": "_Mode",
+       "value": 1.0
+      },
+      {
+       "name": "_OcclusionStrength",
+       "value": 1.0
+      },
+      {
+       "name": "_Parallax",
+       "value": 0.019999999552965164
+      },
+      {
+       "name": "_RenderQueue",
+       "value": 2.0
+      },
+      {
+       "name": "_Shininess",
+       "value": 0.23999999463558197
+      },
+      {
+       "name": "_SmoothnessTextureChannel",
+       "value": 0.0
+      },
+      {
+       "name": "_SpecularHighlights",
+       "value": 1.0
+      },
+      {
+       "name": "_SpecularSource",
+       "value": 0.0
+      },
+      {
+       "name": "_SrcBlend",
+       "value": 5.0
+      },
+      {
+       "name": "_UVSec",
+       "value": 0.0
+      },
+      {
+       "name": "_ZTest",
+       "value": 2.0
+      },
+      {
+       "name": "_ZWrite",
+       "value": 0.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_Color",
+       "value": [
+        0.18977075815200806,
+        0.793312132358551,
+        0.9926470518112183,
+        1.0
+       ]
+      },
+      {
+       "name": "_EmissionColor",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_SpecColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        1.0
+       ]
+      },
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0,
+      0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 4.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    }
+   ],
+   "renderMode": 4,
+   "sortingFudge": 0.0,
+   "lengthScale": 2.0,
+   "mesh": "WardrobeR30/Data/effect_liqi_mofashaonv--329566126019366262-6620935423724358592-mesh.json",
+   "meshes": [
+    "WardrobeR30/Data/effect_liqi_mofashaonv--329566126019366262-6620935423724358592-mesh.json"
+   ]
+  },
+  {
+   "name": "bao",
+   "parent": 2,
+   "position": [
+    0.0,
+    -0.0,
+    -0.017799999564886093
+   ],
+   "rotation": [
+    0.5,
+    -0.5000000596046448,
+    -0.5000000596046448,
+    0.5
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "active": true,
+   "particle": "WardrobeR30/Data/effect_liqi_mofashaonv--6349561975166423696.json",
+   "renderer": "WardrobeR30/Data/effect_liqi_mofashaonv--6349561975166423696-renderer.json",
+   "texture": "WardrobeR30/Textures/CAB-475c97e77f7dbe4289e016b75bda5445--1581341857766232287",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "srcBlend": 5.0,
+   "dstBlend": 1.0,
+   "shaderName": "Legacy Shaders/Particles/Additive",
+   "sourceMaterialState": true,
+   "materialName": "Particle_Impact01",
+   "materialBundle": "9ux7zauuw_@zz1dbm8@hb99$ncwiwohtggi__7e0a8692362513a0fa81.majset",
+   "keywords": [],
+   "floats": [
+    {
+     "name": "_Cull",
+     "value": 0.0
+    },
+    {
+     "name": "_Cutoff",
+     "value": 0.009999999776482582
+    },
+    {
+     "name": "_DstBlend",
+     "value": 10.0
+    },
+    {
+     "name": "_InvFade",
+     "value": 1.0
+    },
+    {
+     "name": "_Mode",
+     "value": 1.0
+    },
+    {
+     "name": "_RenderQueue",
+     "value": 2.0
+    },
+    {
+     "name": "_SrcBlend",
+     "value": 5.0
+    },
+    {
+     "name": "_ZTest",
+     "value": 2.0
+    },
+    {
+     "name": "_ZWrite",
+     "value": 0.0
+    }
+   ],
+   "colors": [
+    {
+     "name": "_Color",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    },
+    {
+     "name": "_TintColor",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    }
+   ],
+   "extraTextures": [],
+   "textureScale": [
+    1.0,
+    1.0
+   ],
+   "textureOffset": [
+    0.0,
+    0.0
+   ],
+   "uvScroll": [
+    0,
+    0
+   ],
+   "filterMode": 1,
+   "wrapU": 0,
+   "wrapV": 0,
+   "zTest": 0.0,
+   "zWrite": 0.0,
+   "cull": 0.0,
+   "materials": [
+    {
+     "texture": "WardrobeR30/Textures/CAB-475c97e77f7dbe4289e016b75bda5445--1581341857766232287",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 1.0,
+     "shaderName": "Legacy Shaders/Particles/Additive",
+     "sourceMaterialState": true,
+     "materialName": "Particle_Impact01",
+     "materialBundle": "9ux7zauuw_@zz1dbm8@hb99$ncwiwohtggi__7e0a8692362513a0fa81.majset",
+     "keywords": [],
+     "floats": [
+      {
+       "name": "_Cull",
+       "value": 0.0
+      },
+      {
+       "name": "_Cutoff",
+       "value": 0.009999999776482582
+      },
+      {
+       "name": "_DstBlend",
+       "value": 10.0
+      },
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      },
+      {
+       "name": "_Mode",
+       "value": 1.0
+      },
+      {
+       "name": "_RenderQueue",
+       "value": 2.0
+      },
+      {
+       "name": "_SrcBlend",
+       "value": 5.0
+      },
+      {
+       "name": "_ZTest",
+       "value": 2.0
+      },
+      {
+       "name": "_ZWrite",
+       "value": 0.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_Color",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      },
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0,
+      0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 0.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    },
+    {
+     "texture": "WardrobeR30/Textures/CAB-475c97e77f7dbe4289e016b75bda5445--1581341857766232287",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 1.0,
+     "shaderName": "Legacy Shaders/Particles/Additive",
+     "sourceMaterialState": true,
+     "materialName": "Particle_Impact01",
+     "materialBundle": "9ux7zauuw_@zz1dbm8@hb99$ncwiwohtggi__7e0a8692362513a0fa81.majset",
+     "keywords": [],
+     "floats": [
+      {
+       "name": "_Cull",
+       "value": 0.0
+      },
+      {
+       "name": "_Cutoff",
+       "value": 0.009999999776482582
+      },
+      {
+       "name": "_DstBlend",
+       "value": 10.0
+      },
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      },
+      {
+       "name": "_Mode",
+       "value": 1.0
+      },
+      {
+       "name": "_RenderQueue",
+       "value": 2.0
+      },
+      {
+       "name": "_SrcBlend",
+       "value": 5.0
+      },
+      {
+       "name": "_ZTest",
+       "value": 2.0
+      },
+      {
+       "name": "_ZWrite",
+       "value": 0.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_Color",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      },
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0,
+      0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 0.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    }
+   ],
+   "renderMode": 4,
+   "sortingFudge": -600.0,
+   "lengthScale": 2.0,
+   "mesh": "WardrobeR30/Data/effect_liqi_mofashaonv--6349561975166423696-6620935423724358592-mesh.json",
+   "meshes": [
+    "WardrobeR30/Data/effect_liqi_mofashaonv--6349561975166423696-6620935423724358592-mesh.json"
+   ]
+  },
+  {
+   "name": "lizi (1)",
+   "parent": 2,
+   "position": [
+    0.0013000000035390258,
+    0.13609999418258667,
+    -0.004399999976158142
+   ],
+   "rotation": [
+    -5.268354641430051e-09,
+    1.714271924413424e-08,
+    -0.7071068286895752,
+    0.7071067690849304
+   ],
+   "scale": [
+    1.0000001192092896,
+    1.0000001192092896,
+    1.0
+   ],
+   "active": true,
+   "particle": "WardrobeR30/Data/effect_liqi_mofashaonv-8421301386377789127.json",
+   "renderer": "WardrobeR30/Data/effect_liqi_mofashaonv-8421301386377789127-renderer.json",
+   "texture": "WardrobeR30/Textures/CAB-d879da0e8b2859978eb4f5292bdf6002-5022913984921588440",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "srcBlend": 5.0,
+   "dstBlend": 1.0,
+   "shaderName": "Legacy Shaders/Particles/Additive",
+   "sourceMaterialState": true,
+   "materialName": "UI_daxingxing_si",
+   "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrix0so7xr66bssun2xxzb4k@kc9h88@0_ef1ee95fa295d2244a8c.majset",
+   "keywords": [],
+   "floats": [
+    {
+     "name": "_InvFade",
+     "value": 1.0
+    }
+   ],
+   "colors": [
+    {
+     "name": "_TintColor",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    }
+   ],
+   "extraTextures": [],
+   "textureScale": [
+    1.0,
+    1.0
+   ],
+   "textureOffset": [
+    0.0,
+    0.0
+   ],
+   "uvScroll": [
+    0,
+    0
+   ],
+   "filterMode": 1,
+   "wrapU": 0,
+   "wrapV": 0,
+   "zTest": 0.0,
+   "zWrite": 0.0,
+   "cull": 0.0,
+   "materials": [
+    {
+     "texture": "WardrobeR30/Textures/CAB-d879da0e8b2859978eb4f5292bdf6002-5022913984921588440",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 1.0,
+     "shaderName": "Legacy Shaders/Particles/Additive",
+     "sourceMaterialState": true,
+     "materialName": "UI_daxingxing_si",
+     "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrix0so7xr66bssun2xxzb4k@kc9h88@0_ef1ee95fa295d2244a8c.majset",
+     "keywords": [],
+     "floats": [
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0,
+      0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 0.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    },
+    {
+     "texture": "WardrobeR30/Textures/CAB-d879da0e8b2859978eb4f5292bdf6002-5022913984921588440",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 1.0,
+     "shaderName": "Legacy Shaders/Particles/Additive",
+     "sourceMaterialState": true,
+     "materialName": "UI_daxingxing_si",
+     "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrix0so7xr66bssun2xxzb4k@kc9h88@0_ef1ee95fa295d2244a8c.majset",
+     "keywords": [],
+     "floats": [
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0,
+      0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 0.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    }
+   ],
+   "renderMode": 0,
+   "sortingFudge": 0.0,
+   "lengthScale": 2.0
+  },
+  {
+   "name": "lizi (3)",
+   "parent": 2,
+   "position": [
+    0.0,
+    0.02720000594854355,
+    -0.0025999974459409714
+   ],
+   "rotation": [
+    -5.268354641430051e-09,
+    1.714271924413424e-08,
+    -0.7071068286895752,
+    0.7071067690849304
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "active": true,
+   "particle": "WardrobeR30/Data/effect_liqi_mofashaonv-6376627755021100056.json",
+   "renderer": "WardrobeR30/Data/effect_liqi_mofashaonv-6376627755021100056-renderer.json",
+   "texture": "WardrobeR30/Textures/CAB-475c97e77f7dbe4289e016b75bda5445--1581341857766232287",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "srcBlend": 5.0,
+   "dstBlend": 1.0,
+   "shaderName": "Legacy Shaders/Particles/Additive",
+   "sourceMaterialState": true,
+   "materialName": "Particle_Impact01",
+   "materialBundle": "9ux7zauuw_@zz1dbm8@hb99$ncwiwohtggi__7e0a8692362513a0fa81.majset",
+   "keywords": [],
+   "floats": [
+    {
+     "name": "_Cull",
+     "value": 0.0
+    },
+    {
+     "name": "_Cutoff",
+     "value": 0.009999999776482582
+    },
+    {
+     "name": "_DstBlend",
+     "value": 10.0
+    },
+    {
+     "name": "_InvFade",
+     "value": 1.0
+    },
+    {
+     "name": "_Mode",
+     "value": 1.0
+    },
+    {
+     "name": "_RenderQueue",
+     "value": 2.0
+    },
+    {
+     "name": "_SrcBlend",
+     "value": 5.0
+    },
+    {
+     "name": "_ZTest",
+     "value": 2.0
+    },
+    {
+     "name": "_ZWrite",
+     "value": 0.0
+    }
+   ],
+   "colors": [
+    {
+     "name": "_Color",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    },
+    {
+     "name": "_TintColor",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    }
+   ],
+   "extraTextures": [],
+   "textureScale": [
+    1.0,
+    1.0
+   ],
+   "textureOffset": [
+    0.0,
+    0.0
+   ],
+   "uvScroll": [
+    0,
+    0
+   ],
+   "filterMode": 1,
+   "wrapU": 0,
+   "wrapV": 0,
+   "zTest": 0.0,
+   "zWrite": 0.0,
+   "cull": 0.0,
+   "materials": [
+    {
+     "texture": "WardrobeR30/Textures/CAB-475c97e77f7dbe4289e016b75bda5445--1581341857766232287",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 1.0,
+     "shaderName": "Legacy Shaders/Particles/Additive",
+     "sourceMaterialState": true,
+     "materialName": "Particle_Impact01",
+     "materialBundle": "9ux7zauuw_@zz1dbm8@hb99$ncwiwohtggi__7e0a8692362513a0fa81.majset",
+     "keywords": [],
+     "floats": [
+      {
+       "name": "_Cull",
+       "value": 0.0
+      },
+      {
+       "name": "_Cutoff",
+       "value": 0.009999999776482582
+      },
+      {
+       "name": "_DstBlend",
+       "value": 10.0
+      },
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      },
+      {
+       "name": "_Mode",
+       "value": 1.0
+      },
+      {
+       "name": "_RenderQueue",
+       "value": 2.0
+      },
+      {
+       "name": "_SrcBlend",
+       "value": 5.0
+      },
+      {
+       "name": "_ZTest",
+       "value": 2.0
+      },
+      {
+       "name": "_ZWrite",
+       "value": 0.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_Color",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      },
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0,
+      0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 0.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    },
+    {
+     "texture": "WardrobeR30/Textures/CAB-475c97e77f7dbe4289e016b75bda5445--1581341857766232287",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 1.0,
+     "shaderName": "Legacy Shaders/Particles/Additive",
+     "sourceMaterialState": true,
+     "materialName": "Particle_Impact01",
+     "materialBundle": "9ux7zauuw_@zz1dbm8@hb99$ncwiwohtggi__7e0a8692362513a0fa81.majset",
+     "keywords": [],
+     "floats": [
+      {
+       "name": "_Cull",
+       "value": 0.0
+      },
+      {
+       "name": "_Cutoff",
+       "value": 0.009999999776482582
+      },
+      {
+       "name": "_DstBlend",
+       "value": 10.0
+      },
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      },
+      {
+       "name": "_Mode",
+       "value": 1.0
+      },
+      {
+       "name": "_RenderQueue",
+       "value": 2.0
+      },
+      {
+       "name": "_SrcBlend",
+       "value": 5.0
+      },
+      {
+       "name": "_ZTest",
+       "value": 2.0
+      },
+      {
+       "name": "_ZWrite",
+       "value": 0.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_Color",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      },
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0,
+      0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 0.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    }
+   ],
+   "renderMode": 0,
+   "sortingFudge": 0.0,
+   "lengthScale": 2.0
+  },
+  {
+   "name": "bao (1)",
+   "parent": 2,
+   "position": [
+    -0.0,
+    0.0,
+    -0.017000000923871994
+   ],
+   "rotation": [
+    0.5,
+    -0.5000000596046448,
+    -0.5000000596046448,
+    0.5
+   ],
+   "scale": [
+    1.000000238418579,
+    1.0000001192092896,
+    1.000000238418579
+   ],
+   "active": true,
+   "particle": "WardrobeR30/Data/effect_liqi_mofashaonv--2355329808341930018.json",
+   "renderer": "WardrobeR30/Data/effect_liqi_mofashaonv--2355329808341930018-renderer.json",
+   "texture": "WardrobeR30/Textures/CAB-d879da0e8b2859978eb4f5292bdf6002--2352679705809042268",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "srcBlend": 5.0,
+   "dstBlend": 1.0,
+   "shaderName": "Legacy Shaders/Particles/Additive",
+   "sourceMaterialState": true,
+   "materialName": "UI_daxingxing_kuang01",
+   "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrix0so7xr66bssun2xxzb4k@kc9h88@0_ef1ee95fa295d2244a8c.majset",
+   "keywords": [],
+   "floats": [
+    {
+     "name": "_InvFade",
+     "value": 1.0
+    }
+   ],
+   "colors": [
+    {
+     "name": "_TintColor",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    }
+   ],
+   "extraTextures": [],
+   "textureScale": [
+    1.0,
+    1.0
+   ],
+   "textureOffset": [
+    0.0,
+    0.0
+   ],
+   "uvScroll": [
+    0,
+    0
+   ],
+   "filterMode": 1,
+   "wrapU": 0,
+   "wrapV": 0,
+   "zTest": 0.0,
+   "zWrite": 0.0,
+   "cull": 0.0,
+   "materials": [
+    {
+     "texture": "WardrobeR30/Textures/CAB-d879da0e8b2859978eb4f5292bdf6002--2352679705809042268",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 1.0,
+     "shaderName": "Legacy Shaders/Particles/Additive",
+     "sourceMaterialState": true,
+     "materialName": "UI_daxingxing_kuang01",
+     "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrix0so7xr66bssun2xxzb4k@kc9h88@0_ef1ee95fa295d2244a8c.majset",
+     "keywords": [],
+     "floats": [
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0,
+      0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 0.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    },
+    {
+     "texture": "WardrobeR30/Textures/CAB-d879da0e8b2859978eb4f5292bdf6002--2352679705809042268",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 1.0,
+     "shaderName": "Legacy Shaders/Particles/Additive",
+     "sourceMaterialState": true,
+     "materialName": "UI_daxingxing_kuang01",
+     "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrix0so7xr66bssun2xxzb4k@kc9h88@0_ef1ee95fa295d2244a8c.majset",
+     "keywords": [],
+     "floats": [
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0,
+      0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 0.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    }
+   ],
+   "renderMode": 4,
+   "sortingFudge": -600.0,
+   "lengthScale": 2.0,
+   "mesh": "WardrobeR30/Data/effect_liqi_mofashaonv--2355329808341930018-6620935423724358592-mesh.json",
+   "meshes": [
+    "WardrobeR30/Data/effect_liqi_mofashaonv--2355329808341930018-6620935423724358592-mesh.json"
+   ]
+  },
+  {
+   "name": "lizi (4)",
+   "parent": 2,
+   "position": [
+    -0.009999999776482582,
+    0.42100000381469727,
+    -0.004999999888241291
+   ],
+   "rotation": [
+    -0.27158892154693604,
+    -0.6577126383781433,
+    0.6405095458030701,
+    -0.28879228234291077
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    5.5
+   ],
+   "active": true,
+   "particle": "WardrobeR30/Data/effect_liqi_mofashaonv--2196814167224421475.json",
+   "renderer": "WardrobeR30/Data/effect_liqi_mofashaonv--2196814167224421475-renderer.json",
+   "texture": "WardrobeR30/Textures/CAB-475c97e77f7dbe4289e016b75bda5445--2366642061164363392",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "srcBlend": 5.0,
+   "dstBlend": 1.0,
+   "shaderName": "Legacy Shaders/Particles/Additive",
+   "sourceMaterialState": true,
+   "materialName": "shenxian_xulie01_add",
+   "materialBundle": "9ux7zauuw_@zz1dbm8@hb99$ncwiwohtggi__7e0a8692362513a0fa81.majset",
+   "keywords": [],
+   "floats": [
+    {
+     "name": "_Cull",
+     "value": 0.0
+    },
+    {
+     "name": "_Cutoff",
+     "value": 0.009999999776482582
+    },
+    {
+     "name": "_DstBlend",
+     "value": 10.0
+    },
+    {
+     "name": "_InvFade",
+     "value": 1.0
+    },
+    {
+     "name": "_Mode",
+     "value": 1.0
+    },
+    {
+     "name": "_RenderQueue",
+     "value": 2.0
+    },
+    {
+     "name": "_SrcBlend",
+     "value": 5.0
+    },
+    {
+     "name": "_ZTest",
+     "value": 2.0
+    },
+    {
+     "name": "_ZWrite",
+     "value": 0.0
+    }
+   ],
+   "colors": [
+    {
+     "name": "_Color",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    },
+    {
+     "name": "_TintColor",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    }
+   ],
+   "extraTextures": [],
+   "textureScale": [
+    1.0,
+    1.0
+   ],
+   "textureOffset": [
+    0.0,
+    0.0
+   ],
+   "uvScroll": [
+    0,
+    0
+   ],
+   "filterMode": 1,
+   "wrapU": 0,
+   "wrapV": 0,
+   "zTest": 0.0,
+   "zWrite": 0.0,
+   "cull": 0.0,
+   "materials": [
+    {
+     "texture": "WardrobeR30/Textures/CAB-475c97e77f7dbe4289e016b75bda5445--2366642061164363392",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 1.0,
+     "shaderName": "Legacy Shaders/Particles/Additive",
+     "sourceMaterialState": true,
+     "materialName": "shenxian_xulie01_add",
+     "materialBundle": "9ux7zauuw_@zz1dbm8@hb99$ncwiwohtggi__7e0a8692362513a0fa81.majset",
+     "keywords": [],
+     "floats": [
+      {
+       "name": "_Cull",
+       "value": 0.0
+      },
+      {
+       "name": "_Cutoff",
+       "value": 0.009999999776482582
+      },
+      {
+       "name": "_DstBlend",
+       "value": 10.0
+      },
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      },
+      {
+       "name": "_Mode",
+       "value": 1.0
+      },
+      {
+       "name": "_RenderQueue",
+       "value": 2.0
+      },
+      {
+       "name": "_SrcBlend",
+       "value": 5.0
+      },
+      {
+       "name": "_ZTest",
+       "value": 2.0
+      },
+      {
+       "name": "_ZWrite",
+       "value": 0.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_Color",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      },
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0,
+      0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 0.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    },
+    {
+     "texture": "WardrobeR30/Textures/CAB-475c97e77f7dbe4289e016b75bda5445--2366642061164363392",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 1.0,
+     "shaderName": "Legacy Shaders/Particles/Additive",
+     "sourceMaterialState": true,
+     "materialName": "shenxian_xulie01_add",
+     "materialBundle": "9ux7zauuw_@zz1dbm8@hb99$ncwiwohtggi__7e0a8692362513a0fa81.majset",
+     "keywords": [],
+     "floats": [
+      {
+       "name": "_Cull",
+       "value": 0.0
+      },
+      {
+       "name": "_Cutoff",
+       "value": 0.009999999776482582
+      },
+      {
+       "name": "_DstBlend",
+       "value": 10.0
+      },
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      },
+      {
+       "name": "_Mode",
+       "value": 1.0
+      },
+      {
+       "name": "_RenderQueue",
+       "value": 2.0
+      },
+      {
+       "name": "_SrcBlend",
+       "value": 5.0
+      },
+      {
+       "name": "_ZTest",
+       "value": 2.0
+      },
+      {
+       "name": "_ZWrite",
+       "value": 0.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_Color",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      },
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0,
+      0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 0.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    }
+   ],
+   "renderMode": 4,
+   "sortingFudge": 0.0,
+   "lengthScale": 2.0,
+   "mesh": "WardrobeR30/Data/effect_liqi_mofashaonv--2196814167224421475--4460435069474029585-mesh.json",
+   "meshes": [
+    "WardrobeR30/Data/effect_liqi_mofashaonv--2196814167224421475--4460435069474029585-mesh.json"
+   ]
+  }
+ ],
+ "sourceVersion": "4.0.51",
+ "preserveActiveState": true,
+ "extraMaterials": []
+}

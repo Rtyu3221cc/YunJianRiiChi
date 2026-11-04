@@ -1,0 +1,627 @@
+{
+  "version": "0.6.21",
+  "date": "2026-11-05",
+  "source": {
+    "client": "4.0.51",
+    "assetManifest": "0.16.289",
+    "tables": [
+      "Excel item_definition/item",
+      "Excel item_definition/view",
+      "Excel item_definition_item_name_chs"
+    ],
+    "lua": [
+      "Block_QiPai.AddQiPai",
+      "Block_QiPai.setNewLiqiEffect",
+      "DesktopMgr.setNewHuleEffect",
+      "Scene_MJ playerDecoGroupSet"
+    ]
+  },
+  "newCounts": {
+    "headFrame": 1,
+    "tileBack": 4,
+    "cloth": 4,
+    "lobbyBackground": 2,
+    "riichiEffect": 46,
+    "winEffect": 3,
+    "stick": 3,
+    "callout": 1
+  },
+  "added": [
+    {
+      "sourceId": 30550042,
+      "id": "headframe_chilin",
+      "name": "头像框-炽焰之御",
+      "category": "headFrame",
+      "nativeEffect": "",
+      "previewSecond": 17.25
+    },
+    {
+      "sourceId": 30570018,
+      "id": "mjp_26summer",
+      "name": "牌背-雷魔石",
+      "category": "tileBack",
+      "nativeEffect": "",
+      "previewSecond": 19.25
+    },
+    {
+      "sourceId": 30570019,
+      "id": "mjp_26shuiyi",
+      "name": "牌背-喵体力学",
+      "category": "tileBack",
+      "nativeEffect": "",
+      "previewSecond": 21.25
+    },
+    {
+      "sourceId": 30570020,
+      "id": "mjp_26wansheng",
+      "name": "牌背-鎏金乐章",
+      "category": "tileBack",
+      "nativeEffect": "",
+      "previewSecond": 23.25
+    },
+    {
+      "sourceId": 30570021,
+      "id": "mjp_26gaoxiaosai",
+      "name": "牌背-高校联赛",
+      "category": "tileBack",
+      "nativeEffect": "",
+      "previewSecond": 25.25
+    },
+    {
+      "sourceId": 30580029,
+      "id": "tablecloth_26summer",
+      "name": "桌布-噼啪充电站",
+      "category": "cloth",
+      "nativeEffect": "",
+      "previewSecond": 27.25
+    },
+    {
+      "sourceId": 30580030,
+      "id": "tablecloth_26shuiyi",
+      "name": "桌布-混一色！",
+      "category": "cloth",
+      "nativeEffect": "",
+      "previewSecond": 29.25
+    },
+    {
+      "sourceId": 30580031,
+      "id": "tablecloth_26wansheng",
+      "name": "桌布-奇迹舞台",
+      "category": "cloth",
+      "nativeEffect": "",
+      "previewSecond": 31.25
+    },
+    {
+      "sourceId": 30580032,
+      "id": "tablecloth_26gaoxiaosai",
+      "name": "桌布-官方赛事高校联赛",
+      "category": "cloth",
+      "nativeEffect": "",
+      "previewSecond": 33.25
+    },
+    {
+      "sourceId": 30700008,
+      "id": "beijing_akagi",
+      "name": "AKAGI 联动纪念",
+      "category": "lobbyBackground",
+      "nativeEffect": "",
+      "previewSecond": 35.25
+    },
+    {
+      "sourceId": 30700010,
+      "id": "beijing_fengchehuatian",
+      "name": "风车花田",
+      "category": "lobbyBackground",
+      "nativeEffect": "",
+      "previewSecond": 37.25
+    },
+    {
+      "sourceId": 308002,
+      "id": "effect_liqi_saki",
+      "name": "立直-花天月地",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_saki",
+      "previewSecond": 48.25
+    },
+    {
+      "sourceId": 308007,
+      "id": "effect_liqi_kuangdu",
+      "name": "立直-纸牌花火",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_kuangdu",
+      "previewSecond": 52.5
+    },
+    {
+      "sourceId": 308012,
+      "id": "effect_liqi_akagi",
+      "name": "立直-幽冥之焰",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_akagi",
+      "previewSecond": 56.75
+    },
+    {
+      "sourceId": 308017,
+      "id": "effect_liqi_kaguya",
+      "name": "立直-恋之箭矢",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_kaguya",
+      "previewSecond": 61.0
+    },
+    {
+      "sourceId": 308022,
+      "id": "effect_liqi_2211saki",
+      "name": "立直-未来视",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_2211saki",
+      "previewSecond": 65.25
+    },
+    {
+      "sourceId": 308027,
+      "id": "effect_liqi_llx",
+      "name": "立直-王者的决意",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_llx",
+      "previewSecond": 69.5
+    },
+    {
+      "sourceId": 308032,
+      "id": "effect_liqi_yly",
+      "name": "立直-英灵的典仪",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_yly",
+      "previewSecond": 73.75
+    },
+    {
+      "sourceId": 308037,
+      "id": "effect_liqi_24ba",
+      "name": "立直-虹色轨迹",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_24ba",
+      "previewSecond": 78.0
+    },
+    {
+      "sourceId": 308042,
+      "id": "effect_liqi_25hf",
+      "name": "立直-虚影祝祷",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_25hf",
+      "previewSecond": 82.25
+    },
+    {
+      "sourceId": 308047,
+      "id": "effect_liqi_25yh",
+      "name": "立直-伊丽莎白",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_25yh",
+      "previewSecond": 86.5
+    },
+    {
+      "sourceId": 308053,
+      "id": "effect_liqi_26dj",
+      "name": "立直-决战宣言",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_26dj",
+      "previewSecond": 90.75
+    },
+    {
+      "sourceId": 30520013,
+      "id": "ron_chilin",
+      "name": "和牌-神火坠霄",
+      "category": "winEffect",
+      "nativeEffect": "WardrobeR30/ron_chilin",
+      "previewSecond": 5.75
+    },
+    {
+      "sourceId": 30520014,
+      "id": "ron_26summer",
+      "name": "和牌-天罚！",
+      "category": "winEffect",
+      "nativeEffect": "WardrobeR30/ron_26summer",
+      "previewSecond": 11.5
+    },
+    {
+      "sourceId": 30520015,
+      "id": "ron_26shuiyi",
+      "name": "和牌-灵感大暴走",
+      "category": "winEffect",
+      "nativeEffect": "WardrobeR30/ron_26shuiyi",
+      "previewSecond": 0.0
+    },
+    {
+      "sourceId": 30530001,
+      "id": "effect_liqi_23wansheng",
+      "name": "立直-南瓜夜行",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_23wansheng",
+      "previewSecond": 95.0
+    },
+    {
+      "sourceId": 30530002,
+      "id": "effect_liqi_23winter",
+      "name": "立直-星河入梦",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_23winter",
+      "previewSecond": 99.25
+    },
+    {
+      "sourceId": 30530003,
+      "id": "effect_liqi_24chunjie",
+      "name": "立直-挥毫",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_24chunjie",
+      "previewSecond": 103.5
+    },
+    {
+      "sourceId": 30530004,
+      "id": "effect_liqi_24haidao",
+      "name": "立直-一步之遥",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_24haidao",
+      "previewSecond": 107.75
+    },
+    {
+      "sourceId": 30530005,
+      "id": "effect_liqi_24summer",
+      "name": "立直-萌爪狂欢",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_24summer",
+      "previewSecond": 112.0
+    },
+    {
+      "sourceId": 30530006,
+      "id": "effect_liqi_nanfenghua",
+      "name": "立直-有凤来仪",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_nanfenghua",
+      "previewSecond": 116.25
+    },
+    {
+      "sourceId": 30530007,
+      "id": "effect_liqi_24imas",
+      "name": "立直-水漾星光",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_24imas",
+      "previewSecond": 120.5
+    },
+    {
+      "sourceId": 30530008,
+      "id": "effect_liqi_24winter",
+      "name": "立直-一锤定音",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_24winter",
+      "previewSecond": 124.75
+    },
+    {
+      "sourceId": 30530010,
+      "id": "effect_liqi_25summer",
+      "name": "立直-暗藏鲨机",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_25summer",
+      "previewSecond": 129.0
+    },
+    {
+      "sourceId": 30530011,
+      "id": "effect_liqi_25dongri",
+      "name": "立直-行云",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_25dongri",
+      "previewSecond": 133.25
+    },
+    {
+      "sourceId": 30530012,
+      "id": "effect_liqi_26chunjie",
+      "name": "立直-荷间戏",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_26chunjie",
+      "previewSecond": 137.5
+    },
+    {
+      "sourceId": 30530013,
+      "id": "effect_liqi_chilin",
+      "name": "立直-破阵神骥",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_chilin",
+      "previewSecond": 141.75
+    },
+    {
+      "sourceId": 30530015,
+      "id": "effect_liqi_26shuiyi",
+      "name": "立直-给点颜色",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_26shuiyi",
+      "previewSecond": 146.0
+    },
+    {
+      "sourceId": 30560011,
+      "id": "liqi_26summer",
+      "name": "立直棒-优胜猫猫奖杯",
+      "category": "stick",
+      "nativeEffect": "",
+      "previewSecond": 39.25
+    },
+    {
+      "sourceId": 30560012,
+      "id": "liqi_26shuiyi",
+      "name": "立直棒-墨彩喷喷",
+      "category": "stick",
+      "nativeEffect": "",
+      "previewSecond": 41.25
+    },
+    {
+      "sourceId": 30560013,
+      "id": "liqi_26wansheng",
+      "name": "立直棒-定音之弦",
+      "category": "stick",
+      "nativeEffect": "",
+      "previewSecond": 43.25
+    },
+    {
+      "sourceId": 30590002,
+      "id": "mpzs_26summer",
+      "name": "鸣牌指示-森之眷顾",
+      "category": "callout",
+      "nativeEffect": "WardrobeR30/mpzs_26summer",
+      "previewSecond": 45.25
+    },
+    {
+      "sourceId": 305301,
+      "id": "effect_liqi_feichangshitai",
+      "name": "立直-非常事态",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_feichangshitai",
+      "previewSecond": 150.25
+    },
+    {
+      "sourceId": 305302,
+      "id": "effect_liqi_mofashaonv",
+      "name": "立直-魔法少女",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_mofashaonv",
+      "previewSecond": 154.5
+    },
+    {
+      "sourceId": 305303,
+      "id": "effect_liqi_20chunjie",
+      "name": "立直-鼠生威",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_20chunjie",
+      "previewSecond": 158.75
+    },
+    {
+      "sourceId": 305304,
+      "id": "effect_liqi_szx",
+      "name": "立直-星陨",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_szx",
+      "previewSecond": 163.0
+    },
+    {
+      "sourceId": 305305,
+      "id": "effect_liqi_xhzy",
+      "name": "立直-血·朗基努斯枪",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_xhzy",
+      "previewSecond": 167.25
+    },
+    {
+      "sourceId": 305306,
+      "id": "effect_liqi_nws",
+      "name": "立直-断罪",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_nws",
+      "previewSecond": 171.5
+    },
+    {
+      "sourceId": 305307,
+      "id": "effect_liqi_jd",
+      "name": "立直-蝶惑",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_jd",
+      "previewSecond": 175.75
+    },
+    {
+      "sourceId": 305308,
+      "id": "effect_liqi_hl",
+      "name": "立直-浪之声",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_hl",
+      "previewSecond": 180.0
+    },
+    {
+      "sourceId": 305309,
+      "id": "effect_liqi_music",
+      "name": "立直-开场曲",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_music",
+      "previewSecond": 184.25
+    },
+    {
+      "sourceId": 305310,
+      "id": "effect_liqi_21chunjie",
+      "name": "立直-生财有道",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_21chunjie",
+      "previewSecond": 188.5
+    },
+    {
+      "sourceId": 305311,
+      "id": "effect_liqi_21cyber",
+      "name": "立直-虚拟导航",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_21cyber",
+      "previewSecond": 192.75
+    },
+    {
+      "sourceId": 305312,
+      "id": "effect_liqi_21magic",
+      "name": "立直-灵魂契约",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_21magic",
+      "previewSecond": 197.0
+    },
+    {
+      "sourceId": 305313,
+      "id": "effect_liqi_21zhounian",
+      "name": "立直-风华斩",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_21zhounian",
+      "previewSecond": 201.25
+    },
+    {
+      "sourceId": 305315,
+      "id": "effect_liqi_xiyuansi",
+      "name": "立直-虎啸长风",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_xiyuansi",
+      "previewSecond": 205.5
+    },
+    {
+      "sourceId": 305316,
+      "id": "effect_liqi_21winter",
+      "name": "立直-鹿雪冬至",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_21winter",
+      "previewSecond": 209.75
+    },
+    {
+      "sourceId": 305317,
+      "id": "effect_liqi_22chunjie",
+      "name": "立直-暗香梅影",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_22chunjie",
+      "previewSecond": 214.0
+    },
+    {
+      "sourceId": 305318,
+      "id": "effect_liqi_22rpg",
+      "name": "立直-雷电环索",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_22rpg",
+      "previewSecond": 218.25
+    },
+    {
+      "sourceId": 305319,
+      "id": "effect_liqi_beiyuan",
+      "name": "立直-蛇行诡道",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_beiyuan",
+      "previewSecond": 222.5
+    },
+    {
+      "sourceId": 305320,
+      "id": "effect_liqi_22summer",
+      "name": "立直-立直鸭",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_22summer",
+      "previewSecond": 226.75
+    },
+    {
+      "sourceId": 305321,
+      "id": "effect_liqi_23wenquan",
+      "name": "立直-量子智能",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_23wenquan",
+      "previewSecond": 231.0
+    },
+    {
+      "sourceId": 305322,
+      "id": "effect_liqi_23rpg",
+      "name": "立直-毒烟玉",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_23rpg",
+      "previewSecond": 235.25
+    },
+    {
+      "sourceId": 305323,
+      "id": "effect_liqi_dongcheng",
+      "name": "立直-狐缘之绊",
+      "category": "riichiEffect",
+      "nativeEffect": "WardrobeR30/effect_liqi_dongcheng",
+      "previewSecond": 239.5
+    }
+  ],
+  "remaining": [
+    {
+      "sourceId": 309500,
+      "name": "橘色虎爪",
+      "category": "hand",
+      "sourceKey": "hand_22chunjie",
+      "reason": "原版手模和动作资源需要单独接入"
+    },
+    {
+      "sourceId": 30530009,
+      "name": "立直-曲径通幽",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_liyang",
+      "reason": "原始预制件或座位变体未通过导入"
+    },
+    {
+      "sourceId": 30530014,
+      "name": "立直-天裁！",
+      "category": "riichiEffect",
+      "sourceKey": "effect_liqi_26summer",
+      "reason": "原始预制件或座位变体未通过导入"
+    },
+    {
+      "sourceId": 30580007,
+      "name": "动态桌布-星间飞行",
+      "category": "cloth",
+      "sourceKey": "tablecloth_24summer",
+      "reason": "独立动态桌布场景"
+    },
+    {
+      "sourceId": 30700009,
+      "name": "烟霞瀑布",
+      "category": "lobbyBackground",
+      "sourceKey": "beijing_yanxiapubu",
+      "reason": "大厅全幅图缺失"
+    },
+    {
+      "sourceId": 30990002,
+      "name": "立直型强袭猫爪",
+      "category": "hand",
+      "sourceKey": "hand_vip",
+      "reason": "原版手模和动作资源需要单独接入"
+    },
+    {
+      "sourceId": 305030,
+      "name": "夜月猫爪",
+      "category": "hand",
+      "sourceKey": "hand_cat_black",
+      "reason": "原版手模和动作资源需要单独接入"
+    },
+    {
+      "sourceId": 305031,
+      "name": "蓝猫爪",
+      "category": "hand",
+      "sourceKey": "hand_cat_blue",
+      "reason": "原版手模和动作资源需要单独接入"
+    },
+    {
+      "sourceId": 305805,
+      "name": "动态桌布-捞金鱼",
+      "category": "cloth",
+      "sourceKey": "tablecloth_21fish",
+      "reason": "独立动态桌布场景"
+    },
+    {
+      "sourceId": 305809,
+      "name": "动态桌布-紫霞海岸",
+      "category": "cloth",
+      "sourceKey": "tablecloth_22event",
+      "reason": "独立动态桌布场景"
+    }
+  ],
+  "aliases": [
+    {
+      "sourceId": 305015,
+      "name": "淡黄牌背",
+      "runtimeId": "mjp_default"
+    }
+  ],
+  "otherKnownGaps": [
+    "弦上华章（对局音乐）",
+    "未完诗篇（大厅音乐）"
+  ],
+  "frameParityVerified": false
+}

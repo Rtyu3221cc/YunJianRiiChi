@@ -58,8 +58,8 @@ namespace YunJian.Riichi
         GUIStyle namePlateText,roomCaption;
         static readonly WaitDetail[] NoWaits=new WaitDetail[0];
         bool waitPressCaptured,waitPressCancelled,waitHoldVisible;
-        string waitDecisionKey;
-        Rect waitButtonScreenRect;
+        string waitDecisionKey,waitHandKey;bool waitAutoShown;
+        Rect waitButtonScreenRect,waitPanelScreenRect;
 #if UNITY_EDITOR
         bool validationWaitInput;
 #endif
@@ -109,7 +109,7 @@ namespace YunJian.Riichi
             introduction.Reset();allLast.Reset();ResetWaitPress();validationWaitInput=false;
             nextPoll = float.PositiveInfinity; ClearSelection();localHand.Reset();
             table.Render(fixture);gameAudio.SetScene(fixture);
-            effects.Reset();resultDisplay.Reset();choosingKind=null;waitDecisionKey=null;ObserveWaitState();yakuman.Reset();yakuman.Observe(State);
+            effects.Reset();resultDisplay.Reset();choosingKind=null;waitDecisionKey=waitHandKey=null;ObserveWaitState();yakuman.Reset();yakuman.Observe(State);
         }
         public void ValidationApplyState(RoomView fixture){fixture.Normalize();State=fixture;ObserveHandDrag();ObserveWaitState();yakuman.Observe(fixture);introduction.Observe(fixture,true);allLast.Observe(fixture);RebindSelection();table.Render(fixture);gameAudio.SetScene(fixture);}
 #endif
@@ -259,6 +259,8 @@ namespace YunJian.Riichi
         {waitPressCaptured=false;waitPressCancelled=false;waitHoldVisible=false;}
         void ObserveWaitState()
         {
+            string handKey=State==null?null:State.audioRoom+":"+State.matchSeq+":"+State.handSeq+":"+State.round+":"+State.honba+":"+State.you;
+            if(handKey!=waitHandKey){waitHandKey=handKey;waitAutoShown=false;}
             bool discardDecision=State!=null&&State.phase=="play"&&State.turn==State.you&&State.options.Any(o=>o.kind=="discard"||o.kind=="riichi");
             bool hasWaits=State!=null&&((State.waitDetails?.Length??0)>0||discardDecision&&(State.discardHints??new DiscardHint[0]).Any(h=>(h.waits?.Length??0)>0));
             if(State==null||(State.phase!="play"&&State.phase!="reaction")||!hasWaits){
@@ -270,7 +272,9 @@ namespace YunJian.Riichi
             string next=State.audioRoom+":"+State.matchSeq+":"+State.handSeq+":"+State.phase+":"+State.turn+":"+string.Join(",",State.hand)+":"+State.drawn+":"+string.Join(";",State.players.Select(p=>p.river.Length+"/"+string.Join(",",p.melds)))+":"+State.pending?.from+":"+State.pending?.kind+":"+State.pending?.tile;
             if(next==waitDecisionKey)return;
             waitDecisionKey=next;waitPressCaptured=false;waitPressCancelled=false;
-            waitHoldVisible=discardDecision&&(State.waitDetails?.Length??0)>0;
+            // Turn changes and polling never open a popup. Only the first
+            // prospective tenpai discard in this hand may open it automatically.
+            waitHoldVisible=false;
         }
         // Capture the whole gesture, including release outside the button, so
         // dragging off this read-only control cannot accidentally discard a tile.
@@ -278,6 +282,7 @@ namespace YunJian.Riichi
         {
             bool consumed=waitPressCaptured;
             if(!WaitIndicatorVisible){ResetWaitPress();return consumed;}
+            if(down&&waitHoldVisible&&!waitButtonScreenRect.Contains(point)){if(waitPanelScreenRect.Contains(point))return true;waitHoldVisible=false;}
             if(down && waitButtonScreenRect.Contains(point)){
                 waitPressCaptured=true;waitPressCancelled=false;consumed=true;
             }
@@ -326,7 +331,7 @@ namespace YunJian.Riichi
 #if UNITY_EDITOR
             if(!validationHandInput)
 #endif
-            UpdateHandPointer(Input.mousePosition,Input.GetMouseButtonDown(0),Input.GetMouseButton(0),Input.GetMouseButtonUp(0),Time.unscaledTime,waitInputConsumed||Input.touchCount>1);
+            UpdateHandPointer(Input.mousePosition,Input.GetMouseButtonDown(0),Input.GetMouseButton(0),Input.GetMouseButtonUp(0),Time.unscaledTime,waitInputConsumed||NativePanel.DismissedPointer||Input.touchCount>1);
         }
         bool InUI(Vector3 mouse)
         {
@@ -579,7 +584,7 @@ namespace YunJian.Riichi
             // With choices the centred button row speaks for itself; it occupies this band.
             // No response-waiting overlay on the table.
             if (RiichiMode) GUI.Label(new Rect(w * .5f - 210, h - 105, 420, 22), "选牌后再点一次 · 立直打出", centered);
-            var bounds=table.HandScreenBounds();
+            var bounds=table.HandScreenBounds(true);
             var top=viewport.FromScreen(new Vector2(bounds.xMin,bounds.yMax),Screen.height);
             var bottom=viewport.FromScreen(new Vector2(bounds.xMax,bounds.yMin),Screen.height);
             CurrentFuritenPanel=new Rect();
@@ -590,10 +595,11 @@ namespace YunJian.Riichi
             }
             CurrentWaitButton=new Rect();waitButtonScreenRect=new Rect();
             if(WaitIndicatorVisible)DrawWaitButton(new Rect(23,h-157,64,64));
-            CurrentWaitPanel=new Rect();
+            CurrentWaitPanel=new Rect();waitPanelScreenRect=new Rect();
             if(CurrentWaitDetails.Length>0 && bounds.width>0){
                 CurrentWaitPanel=TableIndicators.WaitRect(CurrentWaitDetails.Length,new Vector2((top.x+bottom.x)/2,0),top.y-10,w*.70f);
                 TableIndicators.Waits(table,CurrentWaitDetails,CurrentWaitPanel);
+                var a=GUI.matrix.MultiplyPoint3x4(CurrentWaitPanel.position);var b=GUI.matrix.MultiplyPoint3x4(new Vector3(CurrentWaitPanel.xMax,CurrentWaitPanel.yMax));waitPanelScreenRect=Rect.MinMaxRect(a.x,a.y,b.x,b.y);uiButtons.Add(waitPanelScreenRect);
             }
             if(!AutoPlaying)DrawActionButtons(w,h);
             effects.DrawCall(w,h,State.n);
@@ -699,6 +705,7 @@ namespace YunJian.Riichi
         }
         void DrawRoom()
         {
+            if(NativePanel.DismissOutside(new Rect(270,120,740,450),()=>showRoom=false))return;
             Panel(new Rect(270, 120, 740, 450)); GUI.Label(new Rect(305, 145, 650, 50), "房间信息", title);
             GUI.Label(new Rect(305, 210, 650, 60), "房间号：" + State?.pin + "\n可在同一局域网下通过房间号加入。", label);
             GUI.Label(new Rect(305, 295, 650, 100), string.IsNullOrEmpty(addresses) ? endpoint : addresses, label);

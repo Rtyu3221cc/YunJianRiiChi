@@ -40,6 +40,7 @@ namespace YunJian.Riichi
         public void BindWinningTile(Transform tile){if(native?.Playback!=null){native.Playback.Bind(tile,WinningEvent);return;}if(!UsesNewHuleBinding)return;if(winningTileQueue==null)winningTileQueue=gameObject.AddComponent<NativeWinningTileQueue>();winningTileQueue.Bind(tile);}
         int nativeView;
         Quaternion nativeWorldRotation=Quaternion.identity;
+        bool explicitTileMount;
         public bool HasFixedWorldRotation {get;private set;}
         public Quaternion TileMountRotation {get;private set;}
         public Quaternion TableRotation(Quaternion tileRotation)=>HasFixedWorldRotation?nativeWorldRotation:tileRotation*TileMountRotation;
@@ -54,6 +55,15 @@ namespace YunJian.Riichi
         public int MeshLayerCount {get;private set;}
         public void SetOverlay(bool enabled){foreach(var material in materials){material.SetFloat("_ZTest",enabled?8:4);material.renderQueue=enabled?3100:3000;}}
         public void SetTileReadability(Transform tile,float intensity,float faceOpacity,bool enabled){CalloutReadability.Apply(materials,tile,intensity,faceOpacity,enabled);}
+#if UNITY_EDITOR
+        public static bool ReviewPreviousRiichiMount;
+#endif
+        public bool LegacySidewaysCompensation{get;private set;}
+        public void BindLegacyRiichi(bool sideways=false){LegacySidewaysCompensation=sideways&&native!=null&&!HasFixedWorldRotation&&!explicitTileMount;
+#if UNITY_EDITOR
+            LegacySidewaysCompensation&=!ReviewPreviousRiichiMount;
+#endif
+            if(LegacySidewaysCompensation)TileMountRotation*=Quaternion.Euler(0,0,180);if(native!=null&&!HasFixedWorldRotation){native.BindLegacyRiichiRoot(!explicitTileMount);native.BindLegacyRiichiSeat(nativeView);}Sample(-1);}
         public static int SourceLayerCount=>JsonUtility.FromJson<Config>(WardrobePackService.Asset<TextAsset>("Majsoul/Actions/fire-effect").text).layers.Length;
         static Vector3 V(float[] v)=>new Vector3(v[0],v[1],v[2]);
         static Color C(float[] c)=>new Color(c[0],c[1],c[2],c[3]);
@@ -103,6 +113,7 @@ namespace YunJian.Riichi
             TileMountRotation=SourcePlaybackContracts.TileMount;
             if(!string.IsNullOrEmpty(config.nativeEffect)){
                 TileMountRotation=config.nativeTileEuler?.Length==3?Quaternion.Euler(V(config.nativeTileEuler)):SourcePlaybackContracts.NativeTileMount;
+                explicitTileMount=config.nativeTileEuler?.Length==3;
                 HasFixedWorldRotation=config.nativeWorldEuler?.Length==3;
                 nativeWorldRotation=HasFixedWorldRotation?Quaternion.Euler(V(config.nativeWorldEuler)):Quaternion.identity;
                 string source=config.nativeVariants!=null&&config.nativeVariants.Length==4?config.nativeVariants[(nativeView%4+4)%4]:config.nativeEffect;

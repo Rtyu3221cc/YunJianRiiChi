@@ -1,0 +1,6079 @@
+{
+ "nodes": [
+  {
+   "name": "effect_liqi_akagi_1",
+   "parent": -1,
+   "position": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotation": [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "active": true
+  },
+  {
+   "name": "root_static",
+   "parent": 0,
+   "position": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotation": [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "active": true
+  },
+  {
+   "name": "root_move",
+   "parent": 0,
+   "position": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotation": [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "active": true
+  },
+  {
+   "name": "01",
+   "parent": 2,
+   "position": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotation": [
+    -0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "scale": [
+    1.090000033378601,
+    1.1990001201629639,
+    1.090000033378601
+   ],
+   "active": true
+  },
+  {
+   "name": "guang",
+   "parent": 3,
+   "position": [
+    0.0,
+    0.0,
+    0.00930000003427267
+   ],
+   "rotation": [
+    -0.0,
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "scale": [
+    1.0000003576278687,
+    1.0000005960464478,
+    1.0000003576278687
+   ],
+   "active": true,
+   "particle": "WardrobeR30/Data/effect_liqi_akagi-6960108352428565525.json",
+   "renderer": "WardrobeR30/Data/effect_liqi_akagi-6960108352428565525-renderer.json",
+   "texture": "WardrobeR30/Textures/CAB-3490ca335c4d947ec3bfd9d9d6a74db6--4269656301620195515",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "srcBlend": 5.0,
+   "dstBlend": 1.0,
+   "shaderName": "FizzFX/Normal",
+   "sourceMaterialState": true,
+   "materialName": "fx_skill_027_liqi_001",
+   "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrilwnuxnnpixssu@zf5f$4c335w_60d1d76fa4d94a76c490.majset",
+   "keywords": [
+    "DEF_MainTex"
+   ],
+   "floats": [
+    {
+     "name": "_AMBReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_AMBlightLerp",
+     "value": 0.0
+    },
+    {
+     "name": "_AMBlightTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_AlbedoIntensity",
+     "value": 1.0
+    },
+    {
+     "name": "_Alpha",
+     "value": 1.0
+    },
+    {
+     "name": "_AlphaBlend",
+     "value": 1.0
+    },
+    {
+     "name": "_AlphaTest",
+     "value": 0.0
+    },
+    {
+     "name": "_BumpScale",
+     "value": 1.0
+    },
+    {
+     "name": "_Cull",
+     "value": 2.0
+    },
+    {
+     "name": "_CullMode",
+     "value": 0.0
+    },
+    {
+     "name": "_Cutoff",
+     "value": 0.5
+    },
+    {
+     "name": "_DMaskReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DetailNormalMapScale",
+     "value": 1.0
+    },
+    {
+     "name": "_DissMode",
+     "value": 0.0
+    },
+    {
+     "name": "_Dissolve",
+     "value": 0.0
+    },
+    {
+     "name": "_DissolveReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DistortionReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DstBlend",
+     "value": 1.0
+    },
+    {
+     "name": "_EdgeColorMulti",
+     "value": 1.0
+    },
+    {
+     "name": "_EdgeDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_EdgeWidth",
+     "value": 0.0
+    },
+    {
+     "name": "_GlossMapScale",
+     "value": 1.0
+    },
+    {
+     "name": "_Glossiness",
+     "value": 0.5
+    },
+    {
+     "name": "_GlossyReflections",
+     "value": 1.0
+    },
+    {
+     "name": "_InsideEdge",
+     "value": 0.0
+    },
+    {
+     "name": "_InvFade",
+     "value": 1.0
+    },
+    {
+     "name": "_Lighting",
+     "value": 1.0
+    },
+    {
+     "name": "_MainColorMulti",
+     "value": 1.0
+    },
+    {
+     "name": "_MainReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_MainTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_MaskReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_MaskTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_Metallic",
+     "value": 0.0
+    },
+    {
+     "name": "_Mode",
+     "value": 3.0
+    },
+    {
+     "name": "_OcclusionStrength",
+     "value": 1.0
+    },
+    {
+     "name": "_OutsideEdge",
+     "value": 0.0
+    },
+    {
+     "name": "_Parallax",
+     "value": 0.019999999552965164
+    },
+    {
+     "name": "_RenderMode",
+     "value": 1.0
+    },
+    {
+     "name": "_RenderQueue",
+     "value": 2.0
+    },
+    {
+     "name": "_RenderType",
+     "value": 0.0
+    },
+    {
+     "name": "_Shininess",
+     "value": 0.23999999463558197
+    },
+    {
+     "name": "_SmoothnessTextureChannel",
+     "value": 0.0
+    },
+    {
+     "name": "_SpecularHighlights",
+     "value": 1.0
+    },
+    {
+     "name": "_SpecularSource",
+     "value": 0.0
+    },
+    {
+     "name": "_SpineAnimAlpha",
+     "value": 1.0
+    },
+    {
+     "name": "_SrcBlend",
+     "value": 5.0
+    },
+    {
+     "name": "_UVSec",
+     "value": 0.0
+    },
+    {
+     "name": "_ZTest",
+     "value": 2.0
+    },
+    {
+     "name": "_ZWrite",
+     "value": 0.0
+    }
+   ],
+   "colors": [
+    {
+     "name": "_AMBlightAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_Color",
+     "value": [
+      0.18977075815200806,
+      0.793312132358551,
+      0.9926470518112183,
+      1.0
+     ]
+    },
+    {
+     "name": "_DMaskAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_DissolveAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_DistortionAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_EdgeColor",
+     "value": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_EmissionColor",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_MainAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_MainColor",
+     "value": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_MaskAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_SpecColor",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      1.0
+     ]
+    },
+    {
+     "name": "_TintColor",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    }
+   ],
+   "extraTextures": [],
+   "textureScale": [
+    1.0,
+    1.0
+   ],
+   "textureOffset": [
+    0.0,
+    0.0
+   ],
+   "uvScroll": [
+    0.0,
+    0.0
+   ],
+   "filterMode": 1,
+   "wrapU": 0,
+   "wrapV": 0,
+   "zTest": 2.0,
+   "zWrite": 0.0,
+   "cull": 0.0,
+   "materials": [
+    {
+     "texture": "WardrobeR30/Textures/CAB-3490ca335c4d947ec3bfd9d9d6a74db6--4269656301620195515",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 1.0,
+     "shaderName": "FizzFX/Normal",
+     "sourceMaterialState": true,
+     "materialName": "fx_skill_027_liqi_001",
+     "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrilwnuxnnpixssu@zf5f$4c335w_60d1d76fa4d94a76c490.majset",
+     "keywords": [
+      "DEF_MainTex"
+     ],
+     "floats": [
+      {
+       "name": "_AMBReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_AMBlightLerp",
+       "value": 0.0
+      },
+      {
+       "name": "_AMBlightTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_AlbedoIntensity",
+       "value": 1.0
+      },
+      {
+       "name": "_Alpha",
+       "value": 1.0
+      },
+      {
+       "name": "_AlphaBlend",
+       "value": 1.0
+      },
+      {
+       "name": "_AlphaTest",
+       "value": 0.0
+      },
+      {
+       "name": "_BumpScale",
+       "value": 1.0
+      },
+      {
+       "name": "_Cull",
+       "value": 2.0
+      },
+      {
+       "name": "_CullMode",
+       "value": 0.0
+      },
+      {
+       "name": "_Cutoff",
+       "value": 0.5
+      },
+      {
+       "name": "_DMaskReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DetailNormalMapScale",
+       "value": 1.0
+      },
+      {
+       "name": "_DissMode",
+       "value": 0.0
+      },
+      {
+       "name": "_Dissolve",
+       "value": 0.0
+      },
+      {
+       "name": "_DissolveReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DistortionReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DstBlend",
+       "value": 1.0
+      },
+      {
+       "name": "_EdgeColorMulti",
+       "value": 1.0
+      },
+      {
+       "name": "_EdgeDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_EdgeWidth",
+       "value": 0.0
+      },
+      {
+       "name": "_GlossMapScale",
+       "value": 1.0
+      },
+      {
+       "name": "_Glossiness",
+       "value": 0.5
+      },
+      {
+       "name": "_GlossyReflections",
+       "value": 1.0
+      },
+      {
+       "name": "_InsideEdge",
+       "value": 0.0
+      },
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      },
+      {
+       "name": "_Lighting",
+       "value": 1.0
+      },
+      {
+       "name": "_MainColorMulti",
+       "value": 1.0
+      },
+      {
+       "name": "_MainReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_MainTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_MaskReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_MaskTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_Metallic",
+       "value": 0.0
+      },
+      {
+       "name": "_Mode",
+       "value": 3.0
+      },
+      {
+       "name": "_OcclusionStrength",
+       "value": 1.0
+      },
+      {
+       "name": "_OutsideEdge",
+       "value": 0.0
+      },
+      {
+       "name": "_Parallax",
+       "value": 0.019999999552965164
+      },
+      {
+       "name": "_RenderMode",
+       "value": 1.0
+      },
+      {
+       "name": "_RenderQueue",
+       "value": 2.0
+      },
+      {
+       "name": "_RenderType",
+       "value": 0.0
+      },
+      {
+       "name": "_Shininess",
+       "value": 0.23999999463558197
+      },
+      {
+       "name": "_SmoothnessTextureChannel",
+       "value": 0.0
+      },
+      {
+       "name": "_SpecularHighlights",
+       "value": 1.0
+      },
+      {
+       "name": "_SpecularSource",
+       "value": 0.0
+      },
+      {
+       "name": "_SpineAnimAlpha",
+       "value": 1.0
+      },
+      {
+       "name": "_SrcBlend",
+       "value": 5.0
+      },
+      {
+       "name": "_UVSec",
+       "value": 0.0
+      },
+      {
+       "name": "_ZTest",
+       "value": 2.0
+      },
+      {
+       "name": "_ZWrite",
+       "value": 0.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_AMBlightAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_Color",
+       "value": [
+        0.18977075815200806,
+        0.793312132358551,
+        0.9926470518112183,
+        1.0
+       ]
+      },
+      {
+       "name": "_DMaskAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_DissolveAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_DistortionAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_EdgeColor",
+       "value": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_EmissionColor",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_MainAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_MainColor",
+       "value": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_MaskAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_SpecColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        1.0
+       ]
+      },
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0.0,
+      0.0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 2.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    }
+   ],
+   "renderMode": 4,
+   "sortingFudge": 0.0,
+   "lengthScale": 2.0,
+   "mesh": "WardrobeR30/Data/effect_liqi_akagi-6960108352428565525--3339778678128937632-mesh.json",
+   "meshes": [
+    "WardrobeR30/Data/effect_liqi_akagi-6960108352428565525--3339778678128937632-mesh.json"
+   ]
+  },
+  {
+   "name": "guangyun",
+   "parent": 3,
+   "position": [
+    0.0,
+    0.0,
+    0.00930000003427267
+   ],
+   "rotation": [
+    -0.0,
+    -7.450580596923828e-09,
+    1.1920928955078125e-07,
+    1.0
+   ],
+   "scale": [
+    0.800000011920929,
+    0.800000011920929,
+    0.800000011920929
+   ],
+   "active": true,
+   "particle": "WardrobeR30/Data/effect_liqi_akagi--2706976441824820097.json",
+   "renderer": "WardrobeR30/Data/effect_liqi_akagi--2706976441824820097-renderer.json",
+   "texture": "WardrobeR30/Textures/CAB-3490ca335c4d947ec3bfd9d9d6a74db6-1263717000576687222",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "srcBlend": 5.0,
+   "dstBlend": 1.0,
+   "shaderName": "FizzFX/Normal",
+   "sourceMaterialState": true,
+   "materialName": "fx_skill_027_liqi_002",
+   "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrilwnuxnnpixssu@zf5f$4c335w_60d1d76fa4d94a76c490.majset",
+   "keywords": [
+    "DEF_MainTex"
+   ],
+   "floats": [
+    {
+     "name": "_AMBReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_AMBlightLerp",
+     "value": 0.0
+    },
+    {
+     "name": "_AMBlightTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_AlbedoIntensity",
+     "value": 1.0
+    },
+    {
+     "name": "_Alpha",
+     "value": 1.0
+    },
+    {
+     "name": "_AlphaBlend",
+     "value": 1.0
+    },
+    {
+     "name": "_AlphaTest",
+     "value": 0.0
+    },
+    {
+     "name": "_BumpScale",
+     "value": 1.0
+    },
+    {
+     "name": "_Cull",
+     "value": 2.0
+    },
+    {
+     "name": "_CullMode",
+     "value": 0.0
+    },
+    {
+     "name": "_Cutoff",
+     "value": 0.5
+    },
+    {
+     "name": "_DMaskReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DetailNormalMapScale",
+     "value": 1.0
+    },
+    {
+     "name": "_DissMode",
+     "value": 0.0
+    },
+    {
+     "name": "_Dissolve",
+     "value": 0.0
+    },
+    {
+     "name": "_DissolveReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DistortionReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DstBlend",
+     "value": 1.0
+    },
+    {
+     "name": "_EdgeColorMulti",
+     "value": 1.0
+    },
+    {
+     "name": "_EdgeDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_EdgeWidth",
+     "value": 0.0
+    },
+    {
+     "name": "_GlossMapScale",
+     "value": 1.0
+    },
+    {
+     "name": "_Glossiness",
+     "value": 0.5
+    },
+    {
+     "name": "_GlossyReflections",
+     "value": 1.0
+    },
+    {
+     "name": "_InsideEdge",
+     "value": 0.0
+    },
+    {
+     "name": "_InvFade",
+     "value": 1.0
+    },
+    {
+     "name": "_Lighting",
+     "value": 1.0
+    },
+    {
+     "name": "_MainColorMulti",
+     "value": 1.0
+    },
+    {
+     "name": "_MainReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_MainTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_MaskReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_MaskTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_Metallic",
+     "value": 0.0
+    },
+    {
+     "name": "_Mode",
+     "value": 3.0
+    },
+    {
+     "name": "_OcclusionStrength",
+     "value": 1.0
+    },
+    {
+     "name": "_OutsideEdge",
+     "value": 0.0
+    },
+    {
+     "name": "_Parallax",
+     "value": 0.019999999552965164
+    },
+    {
+     "name": "_RenderMode",
+     "value": 1.0
+    },
+    {
+     "name": "_RenderQueue",
+     "value": 2.0
+    },
+    {
+     "name": "_RenderType",
+     "value": 0.0
+    },
+    {
+     "name": "_Shininess",
+     "value": 0.23999999463558197
+    },
+    {
+     "name": "_SmoothnessTextureChannel",
+     "value": 0.0
+    },
+    {
+     "name": "_SpecularHighlights",
+     "value": 1.0
+    },
+    {
+     "name": "_SpecularSource",
+     "value": 0.0
+    },
+    {
+     "name": "_SpineAnimAlpha",
+     "value": 1.0
+    },
+    {
+     "name": "_SrcBlend",
+     "value": 5.0
+    },
+    {
+     "name": "_UVSec",
+     "value": 0.0
+    },
+    {
+     "name": "_ZTest",
+     "value": 2.0
+    },
+    {
+     "name": "_ZWrite",
+     "value": 0.0
+    }
+   ],
+   "colors": [
+    {
+     "name": "_AMBlightAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_Color",
+     "value": [
+      0.18977075815200806,
+      0.793312132358551,
+      0.9926470518112183,
+      1.0
+     ]
+    },
+    {
+     "name": "_DMaskAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_DissolveAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_DistortionAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_EdgeColor",
+     "value": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_EmissionColor",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_MainAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_MainColor",
+     "value": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_MaskAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_SpecColor",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      1.0
+     ]
+    },
+    {
+     "name": "_TintColor",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    }
+   ],
+   "extraTextures": [],
+   "textureScale": [
+    1.0,
+    1.0
+   ],
+   "textureOffset": [
+    0.0,
+    0.0
+   ],
+   "uvScroll": [
+    0.0,
+    0.0
+   ],
+   "filterMode": 1,
+   "wrapU": 0,
+   "wrapV": 0,
+   "zTest": 2.0,
+   "zWrite": 0.0,
+   "cull": 0.0,
+   "materials": [
+    {
+     "texture": "WardrobeR30/Textures/CAB-3490ca335c4d947ec3bfd9d9d6a74db6-1263717000576687222",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 1.0,
+     "shaderName": "FizzFX/Normal",
+     "sourceMaterialState": true,
+     "materialName": "fx_skill_027_liqi_002",
+     "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrilwnuxnnpixssu@zf5f$4c335w_60d1d76fa4d94a76c490.majset",
+     "keywords": [
+      "DEF_MainTex"
+     ],
+     "floats": [
+      {
+       "name": "_AMBReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_AMBlightLerp",
+       "value": 0.0
+      },
+      {
+       "name": "_AMBlightTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_AlbedoIntensity",
+       "value": 1.0
+      },
+      {
+       "name": "_Alpha",
+       "value": 1.0
+      },
+      {
+       "name": "_AlphaBlend",
+       "value": 1.0
+      },
+      {
+       "name": "_AlphaTest",
+       "value": 0.0
+      },
+      {
+       "name": "_BumpScale",
+       "value": 1.0
+      },
+      {
+       "name": "_Cull",
+       "value": 2.0
+      },
+      {
+       "name": "_CullMode",
+       "value": 0.0
+      },
+      {
+       "name": "_Cutoff",
+       "value": 0.5
+      },
+      {
+       "name": "_DMaskReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DetailNormalMapScale",
+       "value": 1.0
+      },
+      {
+       "name": "_DissMode",
+       "value": 0.0
+      },
+      {
+       "name": "_Dissolve",
+       "value": 0.0
+      },
+      {
+       "name": "_DissolveReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DistortionReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DstBlend",
+       "value": 1.0
+      },
+      {
+       "name": "_EdgeColorMulti",
+       "value": 1.0
+      },
+      {
+       "name": "_EdgeDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_EdgeWidth",
+       "value": 0.0
+      },
+      {
+       "name": "_GlossMapScale",
+       "value": 1.0
+      },
+      {
+       "name": "_Glossiness",
+       "value": 0.5
+      },
+      {
+       "name": "_GlossyReflections",
+       "value": 1.0
+      },
+      {
+       "name": "_InsideEdge",
+       "value": 0.0
+      },
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      },
+      {
+       "name": "_Lighting",
+       "value": 1.0
+      },
+      {
+       "name": "_MainColorMulti",
+       "value": 1.0
+      },
+      {
+       "name": "_MainReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_MainTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_MaskReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_MaskTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_Metallic",
+       "value": 0.0
+      },
+      {
+       "name": "_Mode",
+       "value": 3.0
+      },
+      {
+       "name": "_OcclusionStrength",
+       "value": 1.0
+      },
+      {
+       "name": "_OutsideEdge",
+       "value": 0.0
+      },
+      {
+       "name": "_Parallax",
+       "value": 0.019999999552965164
+      },
+      {
+       "name": "_RenderMode",
+       "value": 1.0
+      },
+      {
+       "name": "_RenderQueue",
+       "value": 2.0
+      },
+      {
+       "name": "_RenderType",
+       "value": 0.0
+      },
+      {
+       "name": "_Shininess",
+       "value": 0.23999999463558197
+      },
+      {
+       "name": "_SmoothnessTextureChannel",
+       "value": 0.0
+      },
+      {
+       "name": "_SpecularHighlights",
+       "value": 1.0
+      },
+      {
+       "name": "_SpecularSource",
+       "value": 0.0
+      },
+      {
+       "name": "_SpineAnimAlpha",
+       "value": 1.0
+      },
+      {
+       "name": "_SrcBlend",
+       "value": 5.0
+      },
+      {
+       "name": "_UVSec",
+       "value": 0.0
+      },
+      {
+       "name": "_ZTest",
+       "value": 2.0
+      },
+      {
+       "name": "_ZWrite",
+       "value": 0.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_AMBlightAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_Color",
+       "value": [
+        0.18977075815200806,
+        0.793312132358551,
+        0.9926470518112183,
+        1.0
+       ]
+      },
+      {
+       "name": "_DMaskAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_DissolveAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_DistortionAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_EdgeColor",
+       "value": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_EmissionColor",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_MainAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_MainColor",
+       "value": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_MaskAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_SpecColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        1.0
+       ]
+      },
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0.0,
+      0.0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 2.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    }
+   ],
+   "renderMode": 4,
+   "sortingFudge": 0.0,
+   "lengthScale": 2.0,
+   "mesh": "WardrobeR30/Data/effect_liqi_akagi--2706976441824820097--3339778678128937632-mesh.json",
+   "meshes": [
+    "WardrobeR30/Data/effect_liqi_akagi--2706976441824820097--3339778678128937632-mesh.json"
+   ]
+  },
+  {
+   "name": "bao",
+   "parent": 3,
+   "position": [
+    0.0,
+    0.0,
+    -0.008999999612569809
+   ],
+   "rotation": [
+    0.5,
+    -0.5,
+    -0.4999999701976776,
+    0.5
+   ],
+   "scale": [
+    0.8000001311302185,
+    0.8000001907348633,
+    0.8000001907348633
+   ],
+   "active": true,
+   "particle": "WardrobeR30/Data/effect_liqi_akagi-4951628565642350716.json",
+   "renderer": "WardrobeR30/Data/effect_liqi_akagi-4951628565642350716-renderer.json",
+   "texture": "WardrobeR30/Textures/CAB-3490ca335c4d947ec3bfd9d9d6a74db6-9066614791509398268",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "srcBlend": 5.0,
+   "dstBlend": 1.0,
+   "shaderName": "FizzFX/Normal",
+   "sourceMaterialState": true,
+   "materialName": "fx_skill_027_liqi_003",
+   "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrilwnuxnnpixssu@zf5f$4c335w_60d1d76fa4d94a76c490.majset",
+   "keywords": [
+    "DEF_MainTex"
+   ],
+   "floats": [
+    {
+     "name": "_AMBReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_AMBlightLerp",
+     "value": 0.0
+    },
+    {
+     "name": "_AMBlightTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_Alpha",
+     "value": 1.0
+    },
+    {
+     "name": "_Cull",
+     "value": 0.0
+    },
+    {
+     "name": "_CullMode",
+     "value": 0.0
+    },
+    {
+     "name": "_Cutoff",
+     "value": 0.009999999776482582
+    },
+    {
+     "name": "_DMaskReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DissMode",
+     "value": 0.0
+    },
+    {
+     "name": "_Dissolve",
+     "value": 0.0
+    },
+    {
+     "name": "_DissolveReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DistortionReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DstBlend",
+     "value": 1.0
+    },
+    {
+     "name": "_EdgeColorMulti",
+     "value": 1.0
+    },
+    {
+     "name": "_EdgeDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_EdgeWidth",
+     "value": 0.0
+    },
+    {
+     "name": "_InsideEdge",
+     "value": 0.0
+    },
+    {
+     "name": "_InvFade",
+     "value": 1.0
+    },
+    {
+     "name": "_MainColorMulti",
+     "value": 1.0
+    },
+    {
+     "name": "_MainReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_MainTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_MaskReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_MaskTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_Mode",
+     "value": 3.0
+    },
+    {
+     "name": "_OutsideEdge",
+     "value": 0.0
+    },
+    {
+     "name": "_RenderMode",
+     "value": 1.0
+    },
+    {
+     "name": "_RenderQueue",
+     "value": 2.0
+    },
+    {
+     "name": "_RenderType",
+     "value": 0.0
+    },
+    {
+     "name": "_SpineAnimAlpha",
+     "value": 1.0
+    },
+    {
+     "name": "_SrcBlend",
+     "value": 5.0
+    },
+    {
+     "name": "_ZTest",
+     "value": 2.0
+    },
+    {
+     "name": "_ZWrite",
+     "value": 0.0
+    }
+   ],
+   "colors": [
+    {
+     "name": "_AMBlightAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_Color",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    },
+    {
+     "name": "_DMaskAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_DissolveAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_DistortionAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_EdgeColor",
+     "value": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_MainAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_MainColor",
+     "value": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_MaskAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_TintColor",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    }
+   ],
+   "extraTextures": [],
+   "textureScale": [
+    1.0,
+    1.0
+   ],
+   "textureOffset": [
+    0.0,
+    0.0
+   ],
+   "uvScroll": [
+    0.0,
+    0.0
+   ],
+   "filterMode": 1,
+   "wrapU": 0,
+   "wrapV": 0,
+   "zTest": 2.0,
+   "zWrite": 0.0,
+   "cull": 0.0,
+   "materials": [
+    {
+     "texture": "WardrobeR30/Textures/CAB-3490ca335c4d947ec3bfd9d9d6a74db6-9066614791509398268",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 1.0,
+     "shaderName": "FizzFX/Normal",
+     "sourceMaterialState": true,
+     "materialName": "fx_skill_027_liqi_003",
+     "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrilwnuxnnpixssu@zf5f$4c335w_60d1d76fa4d94a76c490.majset",
+     "keywords": [
+      "DEF_MainTex"
+     ],
+     "floats": [
+      {
+       "name": "_AMBReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_AMBlightLerp",
+       "value": 0.0
+      },
+      {
+       "name": "_AMBlightTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_Alpha",
+       "value": 1.0
+      },
+      {
+       "name": "_Cull",
+       "value": 0.0
+      },
+      {
+       "name": "_CullMode",
+       "value": 0.0
+      },
+      {
+       "name": "_Cutoff",
+       "value": 0.009999999776482582
+      },
+      {
+       "name": "_DMaskReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DissMode",
+       "value": 0.0
+      },
+      {
+       "name": "_Dissolve",
+       "value": 0.0
+      },
+      {
+       "name": "_DissolveReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DistortionReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DstBlend",
+       "value": 1.0
+      },
+      {
+       "name": "_EdgeColorMulti",
+       "value": 1.0
+      },
+      {
+       "name": "_EdgeDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_EdgeWidth",
+       "value": 0.0
+      },
+      {
+       "name": "_InsideEdge",
+       "value": 0.0
+      },
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      },
+      {
+       "name": "_MainColorMulti",
+       "value": 1.0
+      },
+      {
+       "name": "_MainReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_MainTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_MaskReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_MaskTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_Mode",
+       "value": 3.0
+      },
+      {
+       "name": "_OutsideEdge",
+       "value": 0.0
+      },
+      {
+       "name": "_RenderMode",
+       "value": 1.0
+      },
+      {
+       "name": "_RenderQueue",
+       "value": 2.0
+      },
+      {
+       "name": "_RenderType",
+       "value": 0.0
+      },
+      {
+       "name": "_SpineAnimAlpha",
+       "value": 1.0
+      },
+      {
+       "name": "_SrcBlend",
+       "value": 5.0
+      },
+      {
+       "name": "_ZTest",
+       "value": 2.0
+      },
+      {
+       "name": "_ZWrite",
+       "value": 0.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_AMBlightAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_Color",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      },
+      {
+       "name": "_DMaskAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_DissolveAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_DistortionAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_EdgeColor",
+       "value": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_MainAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_MainColor",
+       "value": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_MaskAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0.0,
+      0.0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 2.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    }
+   ],
+   "renderMode": 4,
+   "sortingFudge": -600.0,
+   "lengthScale": 2.0,
+   "mesh": "WardrobeR30/Data/effect_liqi_akagi-4951628565642350716--3339778678128937632-mesh.json",
+   "meshes": [
+    "WardrobeR30/Data/effect_liqi_akagi-4951628565642350716--3339778678128937632-mesh.json"
+   ]
+  },
+  {
+   "name": "lizi",
+   "parent": 3,
+   "position": [
+    0.0,
+    0.021519998088479042,
+    0.00430000014603138
+   ],
+   "rotation": [
+    -0.0,
+    -0.0,
+    -0.7071068286895752,
+    0.7071068286895752
+   ],
+   "scale": [
+    0.7999998927116394,
+    0.7999998927116394,
+    0.800000011920929
+   ],
+   "active": true,
+   "particle": "WardrobeR30/Data/effect_liqi_akagi--7470525730829945153.json",
+   "renderer": "WardrobeR30/Data/effect_liqi_akagi--7470525730829945153-renderer.json",
+   "texture": "WardrobeR30/Textures/CAB-3490ca335c4d947ec3bfd9d9d6a74db6-9066614791509398268",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "srcBlend": 5.0,
+   "dstBlend": 1.0,
+   "shaderName": "FizzFX/Normal",
+   "sourceMaterialState": true,
+   "materialName": "fx_skill_027_liqi_003",
+   "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrilwnuxnnpixssu@zf5f$4c335w_60d1d76fa4d94a76c490.majset",
+   "keywords": [
+    "DEF_MainTex"
+   ],
+   "floats": [
+    {
+     "name": "_AMBReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_AMBlightLerp",
+     "value": 0.0
+    },
+    {
+     "name": "_AMBlightTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_Alpha",
+     "value": 1.0
+    },
+    {
+     "name": "_Cull",
+     "value": 0.0
+    },
+    {
+     "name": "_CullMode",
+     "value": 0.0
+    },
+    {
+     "name": "_Cutoff",
+     "value": 0.009999999776482582
+    },
+    {
+     "name": "_DMaskReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DissMode",
+     "value": 0.0
+    },
+    {
+     "name": "_Dissolve",
+     "value": 0.0
+    },
+    {
+     "name": "_DissolveReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DistortionReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DstBlend",
+     "value": 1.0
+    },
+    {
+     "name": "_EdgeColorMulti",
+     "value": 1.0
+    },
+    {
+     "name": "_EdgeDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_EdgeWidth",
+     "value": 0.0
+    },
+    {
+     "name": "_InsideEdge",
+     "value": 0.0
+    },
+    {
+     "name": "_InvFade",
+     "value": 1.0
+    },
+    {
+     "name": "_MainColorMulti",
+     "value": 1.0
+    },
+    {
+     "name": "_MainReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_MainTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_MaskReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_MaskTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_Mode",
+     "value": 3.0
+    },
+    {
+     "name": "_OutsideEdge",
+     "value": 0.0
+    },
+    {
+     "name": "_RenderMode",
+     "value": 1.0
+    },
+    {
+     "name": "_RenderQueue",
+     "value": 2.0
+    },
+    {
+     "name": "_RenderType",
+     "value": 0.0
+    },
+    {
+     "name": "_SpineAnimAlpha",
+     "value": 1.0
+    },
+    {
+     "name": "_SrcBlend",
+     "value": 5.0
+    },
+    {
+     "name": "_ZTest",
+     "value": 2.0
+    },
+    {
+     "name": "_ZWrite",
+     "value": 0.0
+    }
+   ],
+   "colors": [
+    {
+     "name": "_AMBlightAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_Color",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    },
+    {
+     "name": "_DMaskAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_DissolveAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_DistortionAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_EdgeColor",
+     "value": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_MainAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_MainColor",
+     "value": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_MaskAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_TintColor",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    }
+   ],
+   "extraTextures": [],
+   "textureScale": [
+    1.0,
+    1.0
+   ],
+   "textureOffset": [
+    0.0,
+    0.0
+   ],
+   "uvScroll": [
+    0.0,
+    0.0
+   ],
+   "filterMode": 1,
+   "wrapU": 0,
+   "wrapV": 0,
+   "zTest": 2.0,
+   "zWrite": 0.0,
+   "cull": 0.0,
+   "materials": [
+    {
+     "texture": "WardrobeR30/Textures/CAB-3490ca335c4d947ec3bfd9d9d6a74db6-9066614791509398268",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 1.0,
+     "shaderName": "FizzFX/Normal",
+     "sourceMaterialState": true,
+     "materialName": "fx_skill_027_liqi_003",
+     "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrilwnuxnnpixssu@zf5f$4c335w_60d1d76fa4d94a76c490.majset",
+     "keywords": [
+      "DEF_MainTex"
+     ],
+     "floats": [
+      {
+       "name": "_AMBReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_AMBlightLerp",
+       "value": 0.0
+      },
+      {
+       "name": "_AMBlightTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_Alpha",
+       "value": 1.0
+      },
+      {
+       "name": "_Cull",
+       "value": 0.0
+      },
+      {
+       "name": "_CullMode",
+       "value": 0.0
+      },
+      {
+       "name": "_Cutoff",
+       "value": 0.009999999776482582
+      },
+      {
+       "name": "_DMaskReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DissMode",
+       "value": 0.0
+      },
+      {
+       "name": "_Dissolve",
+       "value": 0.0
+      },
+      {
+       "name": "_DissolveReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DistortionReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DstBlend",
+       "value": 1.0
+      },
+      {
+       "name": "_EdgeColorMulti",
+       "value": 1.0
+      },
+      {
+       "name": "_EdgeDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_EdgeWidth",
+       "value": 0.0
+      },
+      {
+       "name": "_InsideEdge",
+       "value": 0.0
+      },
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      },
+      {
+       "name": "_MainColorMulti",
+       "value": 1.0
+      },
+      {
+       "name": "_MainReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_MainTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_MaskReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_MaskTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_Mode",
+       "value": 3.0
+      },
+      {
+       "name": "_OutsideEdge",
+       "value": 0.0
+      },
+      {
+       "name": "_RenderMode",
+       "value": 1.0
+      },
+      {
+       "name": "_RenderQueue",
+       "value": 2.0
+      },
+      {
+       "name": "_RenderType",
+       "value": 0.0
+      },
+      {
+       "name": "_SpineAnimAlpha",
+       "value": 1.0
+      },
+      {
+       "name": "_SrcBlend",
+       "value": 5.0
+      },
+      {
+       "name": "_ZTest",
+       "value": 2.0
+      },
+      {
+       "name": "_ZWrite",
+       "value": 0.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_AMBlightAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_Color",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      },
+      {
+       "name": "_DMaskAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_DissolveAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_DistortionAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_EdgeColor",
+       "value": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_MainAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_MainColor",
+       "value": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_MaskAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0.0,
+      0.0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 2.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    }
+   ],
+   "renderMode": 0,
+   "sortingFudge": 2.0,
+   "lengthScale": 2.0
+  },
+  {
+   "name": "quan",
+   "parent": 3,
+   "position": [
+    0.0,
+    0.0,
+    0.026500003412365913
+   ],
+   "rotation": [
+    0.7071070671081543,
+    -0.7071065902709961,
+    -1.621825163056201e-08,
+    -1.3170904367143521e-09
+   ],
+   "scale": [
+    0.7999998927116394,
+    0.7999998927116394,
+    1.6259294748306274
+   ],
+   "active": true,
+   "particle": "WardrobeR30/Data/effect_liqi_akagi--7998006919100263137.json",
+   "renderer": "WardrobeR30/Data/effect_liqi_akagi--7998006919100263137-renderer.json",
+   "texture": "WardrobeR30/Textures/CAB-3490ca335c4d947ec3bfd9d9d6a74db6--1158088966939737228",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "srcBlend": 5.0,
+   "dstBlend": 10.0,
+   "shaderName": "FizzFX/Normal",
+   "sourceMaterialState": true,
+   "materialName": "fx_skill_027_liqi_004",
+   "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrilwnuxnnpixssu@zf5f$4c335w_60d1d76fa4d94a76c490.majset",
+   "keywords": [
+    "DEF_MainTex"
+   ],
+   "floats": [
+    {
+     "name": "_AMBReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_AMBlightLerp",
+     "value": 0.0
+    },
+    {
+     "name": "_AMBlightTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_AlbedoIntensity",
+     "value": 1.0
+    },
+    {
+     "name": "_Alpha",
+     "value": 1.0
+    },
+    {
+     "name": "_AlphaBlend",
+     "value": 1.0
+    },
+    {
+     "name": "_AlphaTest",
+     "value": 0.0
+    },
+    {
+     "name": "_BumpScale",
+     "value": 1.0
+    },
+    {
+     "name": "_Cull",
+     "value": 2.0
+    },
+    {
+     "name": "_CullMode",
+     "value": 0.0
+    },
+    {
+     "name": "_Cutoff",
+     "value": 0.5
+    },
+    {
+     "name": "_DMaskReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DetailNormalMapScale",
+     "value": 1.0
+    },
+    {
+     "name": "_DissMode",
+     "value": 0.0
+    },
+    {
+     "name": "_Dissolve",
+     "value": 0.0
+    },
+    {
+     "name": "_DissolveReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DistortionReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DstBlend",
+     "value": 10.0
+    },
+    {
+     "name": "_EdgeColorMulti",
+     "value": 1.0
+    },
+    {
+     "name": "_EdgeDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_EdgeWidth",
+     "value": 0.0
+    },
+    {
+     "name": "_GlossMapScale",
+     "value": 1.0
+    },
+    {
+     "name": "_Glossiness",
+     "value": 0.5
+    },
+    {
+     "name": "_GlossyReflections",
+     "value": 1.0
+    },
+    {
+     "name": "_InsideEdge",
+     "value": 0.0
+    },
+    {
+     "name": "_InvFade",
+     "value": 1.0
+    },
+    {
+     "name": "_Lighting",
+     "value": 1.0
+    },
+    {
+     "name": "_MainColorMulti",
+     "value": 1.0
+    },
+    {
+     "name": "_MainReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_MainTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_MaskReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_MaskTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_Metallic",
+     "value": 0.0
+    },
+    {
+     "name": "_Mode",
+     "value": 1.0
+    },
+    {
+     "name": "_OcclusionStrength",
+     "value": 1.0
+    },
+    {
+     "name": "_OutsideEdge",
+     "value": 0.0
+    },
+    {
+     "name": "_Parallax",
+     "value": 0.019999999552965164
+    },
+    {
+     "name": "_RenderMode",
+     "value": 0.0
+    },
+    {
+     "name": "_RenderQueue",
+     "value": 2.0
+    },
+    {
+     "name": "_RenderType",
+     "value": 0.0
+    },
+    {
+     "name": "_Shininess",
+     "value": 0.23999999463558197
+    },
+    {
+     "name": "_SmoothnessTextureChannel",
+     "value": 0.0
+    },
+    {
+     "name": "_SpecularHighlights",
+     "value": 1.0
+    },
+    {
+     "name": "_SpecularSource",
+     "value": 0.0
+    },
+    {
+     "name": "_SpineAnimAlpha",
+     "value": 1.0
+    },
+    {
+     "name": "_SrcBlend",
+     "value": 5.0
+    },
+    {
+     "name": "_UVSec",
+     "value": 0.0
+    },
+    {
+     "name": "_ZTest",
+     "value": 2.0
+    },
+    {
+     "name": "_ZWrite",
+     "value": 0.0
+    }
+   ],
+   "colors": [
+    {
+     "name": "_AMBlightAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_Color",
+     "value": [
+      0.18977075815200806,
+      0.793312132358551,
+      0.9926470518112183,
+      1.0
+     ]
+    },
+    {
+     "name": "_DMaskAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_DissolveAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_DistortionAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_EdgeColor",
+     "value": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_EmissionColor",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_MainAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_MainColor",
+     "value": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_MaskAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_SpecColor",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      1.0
+     ]
+    },
+    {
+     "name": "_TintColor",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    }
+   ],
+   "extraTextures": [],
+   "textureScale": [
+    1.0,
+    1.0
+   ],
+   "textureOffset": [
+    0.0,
+    0.0
+   ],
+   "uvScroll": [
+    0.0,
+    0.0
+   ],
+   "filterMode": 1,
+   "wrapU": 0,
+   "wrapV": 0,
+   "zTest": 2.0,
+   "zWrite": 0.0,
+   "cull": 0.0,
+   "materials": [
+    {
+     "texture": "WardrobeR30/Textures/CAB-3490ca335c4d947ec3bfd9d9d6a74db6--1158088966939737228",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 10.0,
+     "shaderName": "FizzFX/Normal",
+     "sourceMaterialState": true,
+     "materialName": "fx_skill_027_liqi_004",
+     "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrilwnuxnnpixssu@zf5f$4c335w_60d1d76fa4d94a76c490.majset",
+     "keywords": [
+      "DEF_MainTex"
+     ],
+     "floats": [
+      {
+       "name": "_AMBReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_AMBlightLerp",
+       "value": 0.0
+      },
+      {
+       "name": "_AMBlightTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_AlbedoIntensity",
+       "value": 1.0
+      },
+      {
+       "name": "_Alpha",
+       "value": 1.0
+      },
+      {
+       "name": "_AlphaBlend",
+       "value": 1.0
+      },
+      {
+       "name": "_AlphaTest",
+       "value": 0.0
+      },
+      {
+       "name": "_BumpScale",
+       "value": 1.0
+      },
+      {
+       "name": "_Cull",
+       "value": 2.0
+      },
+      {
+       "name": "_CullMode",
+       "value": 0.0
+      },
+      {
+       "name": "_Cutoff",
+       "value": 0.5
+      },
+      {
+       "name": "_DMaskReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DetailNormalMapScale",
+       "value": 1.0
+      },
+      {
+       "name": "_DissMode",
+       "value": 0.0
+      },
+      {
+       "name": "_Dissolve",
+       "value": 0.0
+      },
+      {
+       "name": "_DissolveReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DistortionReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DstBlend",
+       "value": 10.0
+      },
+      {
+       "name": "_EdgeColorMulti",
+       "value": 1.0
+      },
+      {
+       "name": "_EdgeDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_EdgeWidth",
+       "value": 0.0
+      },
+      {
+       "name": "_GlossMapScale",
+       "value": 1.0
+      },
+      {
+       "name": "_Glossiness",
+       "value": 0.5
+      },
+      {
+       "name": "_GlossyReflections",
+       "value": 1.0
+      },
+      {
+       "name": "_InsideEdge",
+       "value": 0.0
+      },
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      },
+      {
+       "name": "_Lighting",
+       "value": 1.0
+      },
+      {
+       "name": "_MainColorMulti",
+       "value": 1.0
+      },
+      {
+       "name": "_MainReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_MainTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_MaskReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_MaskTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_Metallic",
+       "value": 0.0
+      },
+      {
+       "name": "_Mode",
+       "value": 1.0
+      },
+      {
+       "name": "_OcclusionStrength",
+       "value": 1.0
+      },
+      {
+       "name": "_OutsideEdge",
+       "value": 0.0
+      },
+      {
+       "name": "_Parallax",
+       "value": 0.019999999552965164
+      },
+      {
+       "name": "_RenderMode",
+       "value": 0.0
+      },
+      {
+       "name": "_RenderQueue",
+       "value": 2.0
+      },
+      {
+       "name": "_RenderType",
+       "value": 0.0
+      },
+      {
+       "name": "_Shininess",
+       "value": 0.23999999463558197
+      },
+      {
+       "name": "_SmoothnessTextureChannel",
+       "value": 0.0
+      },
+      {
+       "name": "_SpecularHighlights",
+       "value": 1.0
+      },
+      {
+       "name": "_SpecularSource",
+       "value": 0.0
+      },
+      {
+       "name": "_SpineAnimAlpha",
+       "value": 1.0
+      },
+      {
+       "name": "_SrcBlend",
+       "value": 5.0
+      },
+      {
+       "name": "_UVSec",
+       "value": 0.0
+      },
+      {
+       "name": "_ZTest",
+       "value": 2.0
+      },
+      {
+       "name": "_ZWrite",
+       "value": 0.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_AMBlightAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_Color",
+       "value": [
+        0.18977075815200806,
+        0.793312132358551,
+        0.9926470518112183,
+        1.0
+       ]
+      },
+      {
+       "name": "_DMaskAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_DissolveAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_DistortionAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_EdgeColor",
+       "value": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_EmissionColor",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_MainAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_MainColor",
+       "value": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_MaskAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_SpecColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        1.0
+       ]
+      },
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0.0,
+      0.0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 2.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    }
+   ],
+   "renderMode": 4,
+   "sortingFudge": 0.0,
+   "lengthScale": 2.0,
+   "mesh": "WardrobeR30/Data/effect_liqi_akagi--7998006919100263137-1143785870503041430-mesh.json",
+   "meshes": [
+    "WardrobeR30/Data/effect_liqi_akagi--7998006919100263137-1143785870503041430-mesh.json"
+   ]
+  },
+  {
+   "name": "tuowei_alpha",
+   "parent": 3,
+   "position": [
+    -0.0028800186701118946,
+    0.0759199932217598,
+    0.024979999288916588
+   ],
+   "rotation": [
+    0.5570847392082214,
+    -0.430183470249176,
+    -0.562232255935669,
+    0.43415865302085876
+   ],
+   "scale": [
+    1.8194223642349243,
+    0.7713989615440369,
+    0.7999998927116394
+   ],
+   "active": true,
+   "particle": "WardrobeR30/Data/effect_liqi_akagi--7783240623163726822.json",
+   "renderer": "WardrobeR30/Data/effect_liqi_akagi--7783240623163726822-renderer.json",
+   "texture": "WardrobeR30/Textures/CAB-3490ca335c4d947ec3bfd9d9d6a74db6--4494925027112970340",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "srcBlend": 5.0,
+   "dstBlend": 10.0,
+   "shaderName": "FizzFX/Normal",
+   "sourceMaterialState": true,
+   "materialName": "fx_skill_027_liqi_005",
+   "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrilwnuxnnpixssu@zf5f$4c335w_60d1d76fa4d94a76c490.majset",
+   "keywords": [
+    "DEF_MainTex"
+   ],
+   "floats": [
+    {
+     "name": "_AMBReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_AMBlightLerp",
+     "value": 0.0
+    },
+    {
+     "name": "_AMBlightTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_Alpha",
+     "value": 1.0
+    },
+    {
+     "name": "_Cull",
+     "value": 0.0
+    },
+    {
+     "name": "_CullMode",
+     "value": 0.0
+    },
+    {
+     "name": "_Cutoff",
+     "value": 0.009999999776482582
+    },
+    {
+     "name": "_DMaskReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DissMode",
+     "value": 0.0
+    },
+    {
+     "name": "_Dissolve",
+     "value": 0.0
+    },
+    {
+     "name": "_DissolveReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DistortionReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DstBlend",
+     "value": 10.0
+    },
+    {
+     "name": "_EdgeColorMulti",
+     "value": 1.0
+    },
+    {
+     "name": "_EdgeDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_EdgeWidth",
+     "value": 0.0
+    },
+    {
+     "name": "_InsideEdge",
+     "value": 0.0
+    },
+    {
+     "name": "_InvFade",
+     "value": 1.0
+    },
+    {
+     "name": "_MainColorMulti",
+     "value": 1.0
+    },
+    {
+     "name": "_MainReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_MainTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_MaskReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_MaskTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_Mode",
+     "value": 1.0
+    },
+    {
+     "name": "_OutsideEdge",
+     "value": 0.0
+    },
+    {
+     "name": "_RenderMode",
+     "value": 0.0
+    },
+    {
+     "name": "_RenderQueue",
+     "value": 2.0
+    },
+    {
+     "name": "_RenderType",
+     "value": 0.0
+    },
+    {
+     "name": "_SpineAnimAlpha",
+     "value": 1.0
+    },
+    {
+     "name": "_SrcBlend",
+     "value": 5.0
+    },
+    {
+     "name": "_ZTest",
+     "value": 2.0
+    },
+    {
+     "name": "_ZWrite",
+     "value": 0.0
+    }
+   ],
+   "colors": [
+    {
+     "name": "_AMBlightAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_Color",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    },
+    {
+     "name": "_DMaskAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_DissolveAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_DistortionAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_EdgeColor",
+     "value": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_MainAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_MainColor",
+     "value": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_MaskAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_TintColor",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    }
+   ],
+   "extraTextures": [],
+   "textureScale": [
+    1.0,
+    1.0
+   ],
+   "textureOffset": [
+    0.0,
+    0.0
+   ],
+   "uvScroll": [
+    0.0,
+    0.0
+   ],
+   "filterMode": 1,
+   "wrapU": 0,
+   "wrapV": 0,
+   "zTest": 2.0,
+   "zWrite": 0.0,
+   "cull": 0.0,
+   "materials": [
+    {
+     "texture": "WardrobeR30/Textures/CAB-3490ca335c4d947ec3bfd9d9d6a74db6--4494925027112970340",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 10.0,
+     "shaderName": "FizzFX/Normal",
+     "sourceMaterialState": true,
+     "materialName": "fx_skill_027_liqi_005",
+     "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrilwnuxnnpixssu@zf5f$4c335w_60d1d76fa4d94a76c490.majset",
+     "keywords": [
+      "DEF_MainTex"
+     ],
+     "floats": [
+      {
+       "name": "_AMBReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_AMBlightLerp",
+       "value": 0.0
+      },
+      {
+       "name": "_AMBlightTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_Alpha",
+       "value": 1.0
+      },
+      {
+       "name": "_Cull",
+       "value": 0.0
+      },
+      {
+       "name": "_CullMode",
+       "value": 0.0
+      },
+      {
+       "name": "_Cutoff",
+       "value": 0.009999999776482582
+      },
+      {
+       "name": "_DMaskReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DissMode",
+       "value": 0.0
+      },
+      {
+       "name": "_Dissolve",
+       "value": 0.0
+      },
+      {
+       "name": "_DissolveReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DistortionReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DstBlend",
+       "value": 10.0
+      },
+      {
+       "name": "_EdgeColorMulti",
+       "value": 1.0
+      },
+      {
+       "name": "_EdgeDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_EdgeWidth",
+       "value": 0.0
+      },
+      {
+       "name": "_InsideEdge",
+       "value": 0.0
+      },
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      },
+      {
+       "name": "_MainColorMulti",
+       "value": 1.0
+      },
+      {
+       "name": "_MainReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_MainTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_MaskReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_MaskTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_Mode",
+       "value": 1.0
+      },
+      {
+       "name": "_OutsideEdge",
+       "value": 0.0
+      },
+      {
+       "name": "_RenderMode",
+       "value": 0.0
+      },
+      {
+       "name": "_RenderQueue",
+       "value": 2.0
+      },
+      {
+       "name": "_RenderType",
+       "value": 0.0
+      },
+      {
+       "name": "_SpineAnimAlpha",
+       "value": 1.0
+      },
+      {
+       "name": "_SrcBlend",
+       "value": 5.0
+      },
+      {
+       "name": "_ZTest",
+       "value": 2.0
+      },
+      {
+       "name": "_ZWrite",
+       "value": 0.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_AMBlightAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_Color",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      },
+      {
+       "name": "_DMaskAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_DissolveAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_DistortionAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_EdgeColor",
+       "value": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_MainAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_MainColor",
+       "value": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_MaskAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0.0,
+      0.0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 2.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    }
+   ],
+   "renderMode": 4,
+   "sortingFudge": 0.0,
+   "lengthScale": 2.0,
+   "mesh": "WardrobeR30/Data/effect_liqi_akagi--7783240623163726822-6620935423724358592-mesh.json",
+   "meshes": [
+    "WardrobeR30/Data/effect_liqi_akagi--7783240623163726822-6620935423724358592-mesh.json"
+   ]
+  },
+  {
+   "name": "guang",
+   "parent": 3,
+   "position": [
+    -0.002400004770606756,
+    0.002400000113993883,
+    0.007460001856088638
+   ],
+   "rotation": [
+    0.5,
+    -0.5000000596046448,
+    -0.4999999403953552,
+    0.5000000596046448
+   ],
+   "scale": [
+    0.7999999523162842,
+    0.8000002503395081,
+    0.8000000715255737
+   ],
+   "active": true,
+   "particle": "WardrobeR30/Data/effect_liqi_akagi--355897991330435976.json",
+   "renderer": "WardrobeR30/Data/effect_liqi_akagi--355897991330435976-renderer.json",
+   "texture": "WardrobeR30/Textures/CAB-3490ca335c4d947ec3bfd9d9d6a74db6--3739039927650463618",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "srcBlend": 5.0,
+   "dstBlend": 1.0,
+   "shaderName": "FizzFX/Normal",
+   "sourceMaterialState": true,
+   "materialName": "fx_skill_027_liqi_006",
+   "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrilwnuxnnpixssu@zf5f$4c335w_60d1d76fa4d94a76c490.majset",
+   "keywords": [
+    "DEF_MainTex"
+   ],
+   "floats": [
+    {
+     "name": "_AMBReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_AMBlightLerp",
+     "value": 0.0
+    },
+    {
+     "name": "_AMBlightTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_AlbedoIntensity",
+     "value": 1.0
+    },
+    {
+     "name": "_Alpha",
+     "value": 1.0
+    },
+    {
+     "name": "_AlphaBlend",
+     "value": 1.0
+    },
+    {
+     "name": "_AlphaTest",
+     "value": 0.0
+    },
+    {
+     "name": "_BumpScale",
+     "value": 1.0
+    },
+    {
+     "name": "_Cull",
+     "value": 2.0
+    },
+    {
+     "name": "_CullMode",
+     "value": 0.0
+    },
+    {
+     "name": "_Cutoff",
+     "value": 0.5
+    },
+    {
+     "name": "_DMaskReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DetailNormalMapScale",
+     "value": 1.0
+    },
+    {
+     "name": "_DissMode",
+     "value": 0.0
+    },
+    {
+     "name": "_Dissolve",
+     "value": 0.0
+    },
+    {
+     "name": "_DissolveReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DistortionReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DstBlend",
+     "value": 1.0
+    },
+    {
+     "name": "_EdgeColorMulti",
+     "value": 1.0
+    },
+    {
+     "name": "_EdgeDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_EdgeWidth",
+     "value": 0.0
+    },
+    {
+     "name": "_GlossMapScale",
+     "value": 1.0
+    },
+    {
+     "name": "_Glossiness",
+     "value": 0.5
+    },
+    {
+     "name": "_GlossyReflections",
+     "value": 1.0
+    },
+    {
+     "name": "_InsideEdge",
+     "value": 0.0
+    },
+    {
+     "name": "_InvFade",
+     "value": 1.0
+    },
+    {
+     "name": "_Lighting",
+     "value": 1.0
+    },
+    {
+     "name": "_MainColorMulti",
+     "value": 1.0
+    },
+    {
+     "name": "_MainReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_MainTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_MaskReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_MaskTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_Metallic",
+     "value": 0.0
+    },
+    {
+     "name": "_Mode",
+     "value": 3.0
+    },
+    {
+     "name": "_OcclusionStrength",
+     "value": 1.0
+    },
+    {
+     "name": "_OutsideEdge",
+     "value": 0.0
+    },
+    {
+     "name": "_Parallax",
+     "value": 0.019999999552965164
+    },
+    {
+     "name": "_RenderMode",
+     "value": 1.0
+    },
+    {
+     "name": "_RenderQueue",
+     "value": 2.0
+    },
+    {
+     "name": "_RenderType",
+     "value": 0.0
+    },
+    {
+     "name": "_Shininess",
+     "value": 0.23999999463558197
+    },
+    {
+     "name": "_SmoothnessTextureChannel",
+     "value": 0.0
+    },
+    {
+     "name": "_SpecularHighlights",
+     "value": 1.0
+    },
+    {
+     "name": "_SpecularSource",
+     "value": 0.0
+    },
+    {
+     "name": "_SpineAnimAlpha",
+     "value": 1.0
+    },
+    {
+     "name": "_SrcBlend",
+     "value": 5.0
+    },
+    {
+     "name": "_UVSec",
+     "value": 0.0
+    },
+    {
+     "name": "_ZTest",
+     "value": 2.0
+    },
+    {
+     "name": "_ZWrite",
+     "value": 0.0
+    }
+   ],
+   "colors": [
+    {
+     "name": "_AMBlightAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_Color",
+     "value": [
+      0.18977075815200806,
+      0.793312132358551,
+      0.9926470518112183,
+      1.0
+     ]
+    },
+    {
+     "name": "_DMaskAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_DissolveAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_DistortionAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_EdgeColor",
+     "value": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_EmissionColor",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_MainAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_MainColor",
+     "value": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_MaskAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_SpecColor",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      1.0
+     ]
+    },
+    {
+     "name": "_TintColor",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    }
+   ],
+   "extraTextures": [],
+   "textureScale": [
+    1.0,
+    1.0
+   ],
+   "textureOffset": [
+    0.0,
+    0.0
+   ],
+   "uvScroll": [
+    0.0,
+    0.0
+   ],
+   "filterMode": 1,
+   "wrapU": 0,
+   "wrapV": 0,
+   "zTest": 2.0,
+   "zWrite": 0.0,
+   "cull": 0.0,
+   "materials": [
+    {
+     "texture": "WardrobeR30/Textures/CAB-3490ca335c4d947ec3bfd9d9d6a74db6--3739039927650463618",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 1.0,
+     "shaderName": "FizzFX/Normal",
+     "sourceMaterialState": true,
+     "materialName": "fx_skill_027_liqi_006",
+     "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrilwnuxnnpixssu@zf5f$4c335w_60d1d76fa4d94a76c490.majset",
+     "keywords": [
+      "DEF_MainTex"
+     ],
+     "floats": [
+      {
+       "name": "_AMBReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_AMBlightLerp",
+       "value": 0.0
+      },
+      {
+       "name": "_AMBlightTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_AlbedoIntensity",
+       "value": 1.0
+      },
+      {
+       "name": "_Alpha",
+       "value": 1.0
+      },
+      {
+       "name": "_AlphaBlend",
+       "value": 1.0
+      },
+      {
+       "name": "_AlphaTest",
+       "value": 0.0
+      },
+      {
+       "name": "_BumpScale",
+       "value": 1.0
+      },
+      {
+       "name": "_Cull",
+       "value": 2.0
+      },
+      {
+       "name": "_CullMode",
+       "value": 0.0
+      },
+      {
+       "name": "_Cutoff",
+       "value": 0.5
+      },
+      {
+       "name": "_DMaskReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DetailNormalMapScale",
+       "value": 1.0
+      },
+      {
+       "name": "_DissMode",
+       "value": 0.0
+      },
+      {
+       "name": "_Dissolve",
+       "value": 0.0
+      },
+      {
+       "name": "_DissolveReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DistortionReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DstBlend",
+       "value": 1.0
+      },
+      {
+       "name": "_EdgeColorMulti",
+       "value": 1.0
+      },
+      {
+       "name": "_EdgeDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_EdgeWidth",
+       "value": 0.0
+      },
+      {
+       "name": "_GlossMapScale",
+       "value": 1.0
+      },
+      {
+       "name": "_Glossiness",
+       "value": 0.5
+      },
+      {
+       "name": "_GlossyReflections",
+       "value": 1.0
+      },
+      {
+       "name": "_InsideEdge",
+       "value": 0.0
+      },
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      },
+      {
+       "name": "_Lighting",
+       "value": 1.0
+      },
+      {
+       "name": "_MainColorMulti",
+       "value": 1.0
+      },
+      {
+       "name": "_MainReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_MainTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_MaskReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_MaskTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_Metallic",
+       "value": 0.0
+      },
+      {
+       "name": "_Mode",
+       "value": 3.0
+      },
+      {
+       "name": "_OcclusionStrength",
+       "value": 1.0
+      },
+      {
+       "name": "_OutsideEdge",
+       "value": 0.0
+      },
+      {
+       "name": "_Parallax",
+       "value": 0.019999999552965164
+      },
+      {
+       "name": "_RenderMode",
+       "value": 1.0
+      },
+      {
+       "name": "_RenderQueue",
+       "value": 2.0
+      },
+      {
+       "name": "_RenderType",
+       "value": 0.0
+      },
+      {
+       "name": "_Shininess",
+       "value": 0.23999999463558197
+      },
+      {
+       "name": "_SmoothnessTextureChannel",
+       "value": 0.0
+      },
+      {
+       "name": "_SpecularHighlights",
+       "value": 1.0
+      },
+      {
+       "name": "_SpecularSource",
+       "value": 0.0
+      },
+      {
+       "name": "_SpineAnimAlpha",
+       "value": 1.0
+      },
+      {
+       "name": "_SrcBlend",
+       "value": 5.0
+      },
+      {
+       "name": "_UVSec",
+       "value": 0.0
+      },
+      {
+       "name": "_ZTest",
+       "value": 2.0
+      },
+      {
+       "name": "_ZWrite",
+       "value": 0.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_AMBlightAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_Color",
+       "value": [
+        0.18977075815200806,
+        0.793312132358551,
+        0.9926470518112183,
+        1.0
+       ]
+      },
+      {
+       "name": "_DMaskAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_DissolveAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_DistortionAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_EdgeColor",
+       "value": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_EmissionColor",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_MainAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_MainColor",
+       "value": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_MaskAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_SpecColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        1.0
+       ]
+      },
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0.0,
+      0.0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 2.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    }
+   ],
+   "renderMode": 4,
+   "sortingFudge": -600.0,
+   "lengthScale": 2.0,
+   "mesh": "WardrobeR30/Data/effect_liqi_akagi--355897991330435976-6620935423724358592-mesh.json",
+   "meshes": [
+    "WardrobeR30/Data/effect_liqi_akagi--355897991330435976-6620935423724358592-mesh.json"
+   ]
+  },
+  {
+   "name": "tuowei_add",
+   "parent": 3,
+   "position": [
+    -0.0036799991503357887,
+    0.07455997914075851,
+    0.025140006095170975
+   ],
+   "rotation": [
+    0.5570847392082214,
+    -0.430183470249176,
+    -0.562232255935669,
+    0.43415865302085876
+   ],
+   "scale": [
+    1.3609533309936523,
+    0.6206265091896057,
+    0.7999998927116394
+   ],
+   "active": true,
+   "particle": "WardrobeR30/Data/effect_liqi_akagi-476165254707296668.json",
+   "renderer": "WardrobeR30/Data/effect_liqi_akagi-476165254707296668-renderer.json",
+   "texture": "WardrobeR30/Textures/CAB-3490ca335c4d947ec3bfd9d9d6a74db6--4494925027112970340",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "srcBlend": 5.0,
+   "dstBlend": 1.0,
+   "shaderName": "FizzFX/Normal",
+   "sourceMaterialState": true,
+   "materialName": "fx_skill_027_liqi_007",
+   "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrilwnuxnnpixssu@zf5f$4c335w_60d1d76fa4d94a76c490.majset",
+   "keywords": [
+    "DEF_MainTex"
+   ],
+   "floats": [
+    {
+     "name": "_AMBReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_AMBlightLerp",
+     "value": 0.0
+    },
+    {
+     "name": "_AMBlightTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_Alpha",
+     "value": 1.0
+    },
+    {
+     "name": "_Cull",
+     "value": 0.0
+    },
+    {
+     "name": "_CullMode",
+     "value": 0.0
+    },
+    {
+     "name": "_Cutoff",
+     "value": 0.009999999776482582
+    },
+    {
+     "name": "_DMaskReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DissMode",
+     "value": 0.0
+    },
+    {
+     "name": "_Dissolve",
+     "value": 0.0
+    },
+    {
+     "name": "_DissolveReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DistortionReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DstBlend",
+     "value": 1.0
+    },
+    {
+     "name": "_EdgeColorMulti",
+     "value": 1.0
+    },
+    {
+     "name": "_EdgeDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_EdgeWidth",
+     "value": 0.0
+    },
+    {
+     "name": "_InsideEdge",
+     "value": 0.0
+    },
+    {
+     "name": "_InvFade",
+     "value": 1.0
+    },
+    {
+     "name": "_MainColorMulti",
+     "value": 1.0
+    },
+    {
+     "name": "_MainReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_MainTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_MaskReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_MaskTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_Mode",
+     "value": 3.0
+    },
+    {
+     "name": "_OutsideEdge",
+     "value": 0.0
+    },
+    {
+     "name": "_RenderMode",
+     "value": 1.0
+    },
+    {
+     "name": "_RenderQueue",
+     "value": 2.0
+    },
+    {
+     "name": "_RenderType",
+     "value": 0.0
+    },
+    {
+     "name": "_SpineAnimAlpha",
+     "value": 1.0
+    },
+    {
+     "name": "_SrcBlend",
+     "value": 5.0
+    },
+    {
+     "name": "_ZTest",
+     "value": 2.0
+    },
+    {
+     "name": "_ZWrite",
+     "value": 0.0
+    }
+   ],
+   "colors": [
+    {
+     "name": "_AMBlightAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_Color",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    },
+    {
+     "name": "_DMaskAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_DissolveAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_DistortionAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_EdgeColor",
+     "value": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_MainAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_MainColor",
+     "value": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_MaskAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_TintColor",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    }
+   ],
+   "extraTextures": [],
+   "textureScale": [
+    1.0,
+    1.0
+   ],
+   "textureOffset": [
+    0.0,
+    0.0
+   ],
+   "uvScroll": [
+    0.0,
+    0.0
+   ],
+   "filterMode": 1,
+   "wrapU": 0,
+   "wrapV": 0,
+   "zTest": 2.0,
+   "zWrite": 0.0,
+   "cull": 0.0,
+   "materials": [
+    {
+     "texture": "WardrobeR30/Textures/CAB-3490ca335c4d947ec3bfd9d9d6a74db6--4494925027112970340",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 1.0,
+     "shaderName": "FizzFX/Normal",
+     "sourceMaterialState": true,
+     "materialName": "fx_skill_027_liqi_007",
+     "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrilwnuxnnpixssu@zf5f$4c335w_60d1d76fa4d94a76c490.majset",
+     "keywords": [
+      "DEF_MainTex"
+     ],
+     "floats": [
+      {
+       "name": "_AMBReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_AMBlightLerp",
+       "value": 0.0
+      },
+      {
+       "name": "_AMBlightTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_Alpha",
+       "value": 1.0
+      },
+      {
+       "name": "_Cull",
+       "value": 0.0
+      },
+      {
+       "name": "_CullMode",
+       "value": 0.0
+      },
+      {
+       "name": "_Cutoff",
+       "value": 0.009999999776482582
+      },
+      {
+       "name": "_DMaskReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DissMode",
+       "value": 0.0
+      },
+      {
+       "name": "_Dissolve",
+       "value": 0.0
+      },
+      {
+       "name": "_DissolveReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DistortionReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DstBlend",
+       "value": 1.0
+      },
+      {
+       "name": "_EdgeColorMulti",
+       "value": 1.0
+      },
+      {
+       "name": "_EdgeDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_EdgeWidth",
+       "value": 0.0
+      },
+      {
+       "name": "_InsideEdge",
+       "value": 0.0
+      },
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      },
+      {
+       "name": "_MainColorMulti",
+       "value": 1.0
+      },
+      {
+       "name": "_MainReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_MainTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_MaskReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_MaskTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_Mode",
+       "value": 3.0
+      },
+      {
+       "name": "_OutsideEdge",
+       "value": 0.0
+      },
+      {
+       "name": "_RenderMode",
+       "value": 1.0
+      },
+      {
+       "name": "_RenderQueue",
+       "value": 2.0
+      },
+      {
+       "name": "_RenderType",
+       "value": 0.0
+      },
+      {
+       "name": "_SpineAnimAlpha",
+       "value": 1.0
+      },
+      {
+       "name": "_SrcBlend",
+       "value": 5.0
+      },
+      {
+       "name": "_ZTest",
+       "value": 2.0
+      },
+      {
+       "name": "_ZWrite",
+       "value": 0.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_AMBlightAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_Color",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      },
+      {
+       "name": "_DMaskAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_DissolveAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_DistortionAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_EdgeColor",
+       "value": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_MainAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_MainColor",
+       "value": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_MaskAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0.0,
+      0.0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 2.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    }
+   ],
+   "renderMode": 4,
+   "sortingFudge": -1.0,
+   "lengthScale": 2.0,
+   "mesh": "WardrobeR30/Data/effect_liqi_akagi-476165254707296668-6620935423724358592-mesh.json",
+   "meshes": [
+    "WardrobeR30/Data/effect_liqi_akagi-476165254707296668-6620935423724358592-mesh.json"
+   ]
+  },
+  {
+   "name": "luoxuan",
+   "parent": 3,
+   "position": [
+    -0.017039988189935684,
+    -0.06295999139547348,
+    0.020420005545020103
+   ],
+   "rotation": [
+    -0.008090107701718807,
+    -0.7070605158805847,
+    -0.7070605158805847,
+    -0.008090107701718807
+   ],
+   "scale": [
+    0.009999552741646767,
+    0.9704123735427856,
+    3.23907470703125
+   ],
+   "active": true,
+   "particle": "WardrobeR30/Data/effect_liqi_akagi-1050326158722379510.json",
+   "renderer": "WardrobeR30/Data/effect_liqi_akagi-1050326158722379510-renderer.json",
+   "texture": "WardrobeR30/Textures/CAB-3490ca335c4d947ec3bfd9d9d6a74db6-1872166206910374747",
+   "tint": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "srcBlend": 5.0,
+   "dstBlend": 1.0,
+   "shaderName": "FizzFX/Normal",
+   "sourceMaterialState": true,
+   "materialName": "fx_skill_027_liqi_008",
+   "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrilwnuxnnpixssu@zf5f$4c335w_60d1d76fa4d94a76c490.majset",
+   "keywords": [
+    "DEF_MainTex"
+   ],
+   "floats": [
+    {
+     "name": "_AMBReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_AMBlightLerp",
+     "value": 0.0
+    },
+    {
+     "name": "_AMBlightTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_Alpha",
+     "value": 1.0
+    },
+    {
+     "name": "_Cull",
+     "value": 0.0
+    },
+    {
+     "name": "_CullMode",
+     "value": 0.0
+    },
+    {
+     "name": "_Cutoff",
+     "value": 0.009999999776482582
+    },
+    {
+     "name": "_DMaskReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DissMode",
+     "value": 0.0
+    },
+    {
+     "name": "_Dissolve",
+     "value": 0.0
+    },
+    {
+     "name": "_DissolveReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DistortionReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_DstBlend",
+     "value": 1.0
+    },
+    {
+     "name": "_EdgeColorMulti",
+     "value": 1.0
+    },
+    {
+     "name": "_EdgeDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_EdgeWidth",
+     "value": 0.0
+    },
+    {
+     "name": "_InsideEdge",
+     "value": 0.0
+    },
+    {
+     "name": "_InvFade",
+     "value": 1.0
+    },
+    {
+     "name": "_MainColorMulti",
+     "value": 1.0
+    },
+    {
+     "name": "_MainReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_MainTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_MaskReverse",
+     "value": 0.0
+    },
+    {
+     "name": "_MaskTexDistortion",
+     "value": 0.0
+    },
+    {
+     "name": "_Mode",
+     "value": 3.0
+    },
+    {
+     "name": "_OutsideEdge",
+     "value": 0.0
+    },
+    {
+     "name": "_RenderMode",
+     "value": 1.0
+    },
+    {
+     "name": "_RenderQueue",
+     "value": 2.0
+    },
+    {
+     "name": "_RenderType",
+     "value": 0.0
+    },
+    {
+     "name": "_SpineAnimAlpha",
+     "value": 1.0
+    },
+    {
+     "name": "_SrcBlend",
+     "value": 5.0
+    },
+    {
+     "name": "_ZTest",
+     "value": 2.0
+    },
+    {
+     "name": "_ZWrite",
+     "value": 0.0
+    }
+   ],
+   "colors": [
+    {
+     "name": "_AMBlightAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_Color",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    },
+    {
+     "name": "_DMaskAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_DissolveAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_DistortionAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_EdgeColor",
+     "value": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_MainAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_MainColor",
+     "value": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "name": "_MaskAnim",
+     "value": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "name": "_TintColor",
+     "value": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ]
+    }
+   ],
+   "extraTextures": [],
+   "textureScale": [
+    1.0,
+    1.0
+   ],
+   "textureOffset": [
+    0.0,
+    0.0
+   ],
+   "uvScroll": [
+    0.0,
+    0.0
+   ],
+   "filterMode": 1,
+   "wrapU": 0,
+   "wrapV": 0,
+   "zTest": 2.0,
+   "zWrite": 0.0,
+   "cull": 0.0,
+   "materials": [
+    {
+     "texture": "WardrobeR30/Textures/CAB-3490ca335c4d947ec3bfd9d9d6a74db6-1872166206910374747",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 1.0,
+     "shaderName": "FizzFX/Normal",
+     "sourceMaterialState": true,
+     "materialName": "fx_skill_027_liqi_008",
+     "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrilwnuxnnpixssu@zf5f$4c335w_60d1d76fa4d94a76c490.majset",
+     "keywords": [
+      "DEF_MainTex"
+     ],
+     "floats": [
+      {
+       "name": "_AMBReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_AMBlightLerp",
+       "value": 0.0
+      },
+      {
+       "name": "_AMBlightTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_Alpha",
+       "value": 1.0
+      },
+      {
+       "name": "_Cull",
+       "value": 0.0
+      },
+      {
+       "name": "_CullMode",
+       "value": 0.0
+      },
+      {
+       "name": "_Cutoff",
+       "value": 0.009999999776482582
+      },
+      {
+       "name": "_DMaskReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DissMode",
+       "value": 0.0
+      },
+      {
+       "name": "_Dissolve",
+       "value": 0.0
+      },
+      {
+       "name": "_DissolveReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DistortionReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DstBlend",
+       "value": 1.0
+      },
+      {
+       "name": "_EdgeColorMulti",
+       "value": 1.0
+      },
+      {
+       "name": "_EdgeDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_EdgeWidth",
+       "value": 0.0
+      },
+      {
+       "name": "_InsideEdge",
+       "value": 0.0
+      },
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      },
+      {
+       "name": "_MainColorMulti",
+       "value": 1.0
+      },
+      {
+       "name": "_MainReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_MainTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_MaskReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_MaskTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_Mode",
+       "value": 3.0
+      },
+      {
+       "name": "_OutsideEdge",
+       "value": 0.0
+      },
+      {
+       "name": "_RenderMode",
+       "value": 1.0
+      },
+      {
+       "name": "_RenderQueue",
+       "value": 2.0
+      },
+      {
+       "name": "_RenderType",
+       "value": 0.0
+      },
+      {
+       "name": "_SpineAnimAlpha",
+       "value": 1.0
+      },
+      {
+       "name": "_SrcBlend",
+       "value": 5.0
+      },
+      {
+       "name": "_ZTest",
+       "value": 2.0
+      },
+      {
+       "name": "_ZWrite",
+       "value": 0.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_AMBlightAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_Color",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      },
+      {
+       "name": "_DMaskAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_DissolveAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_DistortionAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_EdgeColor",
+       "value": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_MainAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_MainColor",
+       "value": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_MaskAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      0.0,
+      0.0
+     ],
+     "uvScroll": [
+      0.0,
+      0.0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 2.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    }
+   ],
+   "renderMode": 4,
+   "sortingFudge": 0.0,
+   "lengthScale": 2.0,
+   "mesh": "WardrobeR30/Data/effect_liqi_akagi-1050326158722379510-3524163141351269424-mesh.json",
+   "meshes": [
+    "WardrobeR30/Data/effect_liqi_akagi-1050326158722379510-3524163141351269424-mesh.json"
+   ]
+  },
+  {
+   "name": "guihuo_amin",
+   "parent": 3,
+   "position": [
+    0.01344000082463026,
+    0.0022400037851184607,
+    0.02770000509917736
+   ],
+   "rotation": [
+    -0.0,
+    -0.0,
+    1.1920928955078125e-07,
+    1.0
+   ],
+   "scale": [
+    0.8000000715255737,
+    0.7272726893424988,
+    0.8000000715255737
+   ],
+   "active": true,
+   "animations": [
+    "WardrobeR30/Animations/effect_liqi_akagi--9216645444193626287.json"
+   ]
+  },
+  {
+   "name": "yuanxing_heng",
+   "parent": 13,
+   "position": [
+    -0.011900000274181366,
+    9.999999747378752e-05,
+    -0.010200000368058681
+   ],
+   "rotation": [
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    0.0011403723619878292,
+    0.0013786524068564177,
+    0.001824889681302011
+   ],
+   "active": true,
+   "mesh": "WardrobeR30/Data/effect_liqi_akagi--3738213017373175554-static-mesh.json",
+   "staticMesh": true,
+   "materials": [
+    {
+     "texture": "WardrobeR30/Textures/CAB-3490ca335c4d947ec3bfd9d9d6a74db6--1445193897856822091",
+     "tint": [
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "srcBlend": 5.0,
+     "dstBlend": 10.0,
+     "shaderName": "FizzFX/Normal",
+     "sourceMaterialState": true,
+     "materialName": "fx_skill_027_liqi_009",
+     "materialBundle": "uwv8ssu24554i2casbd779dfggfxdrpyrilwnuxnnpixssu@zf5f$4c335w_60d1d76fa4d94a76c490.majset",
+     "keywords": [
+      "DEF_MainTex"
+     ],
+     "floats": [
+      {
+       "name": "_AMBReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_AMBlightLerp",
+       "value": 0.0
+      },
+      {
+       "name": "_AMBlightTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_Alpha",
+       "value": 1.0
+      },
+      {
+       "name": "_Cull",
+       "value": 0.0
+      },
+      {
+       "name": "_CullMode",
+       "value": 0.0
+      },
+      {
+       "name": "_Cutoff",
+       "value": 0.009999999776482582
+      },
+      {
+       "name": "_DMaskReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DissMode",
+       "value": 0.0
+      },
+      {
+       "name": "_Dissolve",
+       "value": 0.0
+      },
+      {
+       "name": "_DissolveReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DistortionReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_DstBlend",
+       "value": 10.0
+      },
+      {
+       "name": "_EdgeColorMulti",
+       "value": 1.0
+      },
+      {
+       "name": "_EdgeDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_EdgeWidth",
+       "value": 0.0
+      },
+      {
+       "name": "_InsideEdge",
+       "value": 0.0
+      },
+      {
+       "name": "_InvFade",
+       "value": 1.0
+      },
+      {
+       "name": "_MainColorMulti",
+       "value": 1.0
+      },
+      {
+       "name": "_MainReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_MainTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_MaskReverse",
+       "value": 0.0
+      },
+      {
+       "name": "_MaskTexDistortion",
+       "value": 0.0
+      },
+      {
+       "name": "_Mode",
+       "value": 1.0
+      },
+      {
+       "name": "_OutsideEdge",
+       "value": 0.0
+      },
+      {
+       "name": "_RenderMode",
+       "value": 0.0
+      },
+      {
+       "name": "_RenderQueue",
+       "value": 2.0
+      },
+      {
+       "name": "_RenderType",
+       "value": 0.0
+      },
+      {
+       "name": "_SpineAnimAlpha",
+       "value": 1.0
+      },
+      {
+       "name": "_SrcBlend",
+       "value": 5.0
+      },
+      {
+       "name": "_ZTest",
+       "value": 2.0
+      },
+      {
+       "name": "_ZWrite",
+       "value": 0.0
+      }
+     ],
+     "colors": [
+      {
+       "name": "_AMBlightAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_Color",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      },
+      {
+       "name": "_DMaskAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_DissolveAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_DistortionAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_EdgeColor",
+       "value": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_MainAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_MainColor",
+       "value": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      },
+      {
+       "name": "_MaskAnim",
+       "value": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ]
+      },
+      {
+       "name": "_TintColor",
+       "value": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ]
+      }
+     ],
+     "extraTextures": [],
+     "textureScale": [
+      1.0,
+      1.0
+     ],
+     "textureOffset": [
+      3.0,
+      0.0
+     ],
+     "uvScroll": [
+      0.0,
+      0.0
+     ],
+     "filterMode": 1,
+     "wrapU": 0,
+     "wrapV": 0,
+     "zTest": 2.0,
+     "zWrite": 0.0,
+     "cull": 0.0
+    }
+   ],
+   "sortingOrder": 0
+  },
+  {
+   "name": "root_rot",
+   "parent": 0,
+   "position": [
+    -999.9219970703125,
+    0.010999999940395355,
+    0.13385559618473053
+   ],
+   "rotation": [
+    0.5055407285690308,
+    0.4943971633911133,
+    0.4943971633911133,
+    -0.5055407285690308
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "active": true
+  },
+  {
+   "name": "root_ani",
+   "parent": 0,
+   "position": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotation": [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "active": true
+  },
+  {
+   "name": "root_maque",
+   "parent": 0,
+   "position": [
+    -999.9219970703125,
+    0.010999999940395355,
+    0.13385559618473053
+   ],
+   "rotation": [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "active": true
+  }
+ ],
+ "sourceVersion": "4.0.51",
+ "preserveActiveState": true,
+ "extraMaterials": []
+}

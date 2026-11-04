@@ -4,7 +4,7 @@ The source is the running 4.0.51 client, not a guessed Laya scene name.
 """
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
-import ast, gzip, hashlib, io, json, runpy, sys, time, urllib.request, warnings
+import ast, gzip, hashlib, io, json, runpy, sys, time, traceback, urllib.request, warnings
 
 R = Path(__file__).resolve().parent.parent
 REF = R/'dist/previews/2026-10-27-effects-reference'
@@ -12,6 +12,7 @@ NATIVE = R/'unity/Assets/Resources/Majsoul/NativeReview'
 OUT = NATIVE/'EffectsR11'
 BATCH = 'EffectsR11'
 AUDIT = REF/'source'
+LOCAL_TARGETS = None
 sys.path.insert(0, str(R/'tools/asset-inspector'))
 import UnityPy
 from UnityPy.helpers.MeshHelper import MeshHandler
@@ -73,7 +74,11 @@ def main():
                 if attempt==2:raise
                 time.sleep(1)
         datafile.write_bytes(gzip.decompress(raw) if raw.startswith(b'\x1f\x8b') else raw)
-    env = UnityPy.Environment(str(datafile),*[str(REF/'source/bundles'/f) for f in sorted(files)])
+    local_bundles = {p.name:p for folder in (REF/'source/bundles',AUDIT/'bundles') for p in folder.glob('*.majset')} if LOCAL_TARGETS is not None else {f:REF/'source/bundles'/f for f in sorted(files)}
+    env = UnityPy.Environment(str(datafile),*map(str,local_bundles.values()))
+    if LOCAL_TARGETS is not None:
+        targets = LOCAL_TARGETS
+    expanded = BATCH in ('FateR19','WinsR22','WardrobeR30')
     cab = {o.assets_file.name:o.assets_file for o in env.objects}
     container = {p.lower():v for p,v in env.container.items()}
     records = []
@@ -133,7 +138,7 @@ def main():
         name = sd['m_ParsedForm']['m_Name']
         floats, colors, texenv = dict(props['m_Floats']), dict(props['m_Colors']), dict(props['m_TexEnvs'])
         main = texenv.get('_MainTex')
-        if (not main or not main['m_Texture']['m_PathID']) and BATCH not in ['FateR19','WinsR22']:
+        if (not main or not main['m_Texture']['m_PathID']) and not expanded:
             raise ValueError('Missing main texture '+md['m_Name'])
         tex = resolve(obj.assets_file,main['m_Texture']) if main else None
         texdata = tex.read_typetree() if tex else {}
@@ -144,6 +149,9 @@ def main():
         state = sd['m_ParsedForm']['m_SubShaders'][0]['m_Passes'][0]['m_State']
         blend = state['rtBlend0']
         src,dst = blend['srcBlend']['val'],blend['destBlend']['val']
+        if LOCAL_TARGETS is not None:
+            src=floats.get(blend['srcBlend']['name'],src)
+            dst=floats.get(blend['destBlend']['name'],dst)
         if src==0 and dst==0:
             src,dst = floats.get('_SrcBlend',5),floats.get('_DstBlend',10)
         color = colors.get('_TintColor',dict(r=.5,g=.5,b=.5,a=.5))
@@ -170,7 +178,7 @@ def main():
         return dict(texture=texfile,tint=tint,srcBlend=src,dstBlend=dst,shaderName=name,
                     sourceMaterialState=True,materialName=md['m_Name'],materialBundle=str(obj.assets_file.parent.name),keywords=md.get('m_ValidKeywords',[]),
                     floats=[dict(name=k,value=v)for k,v in floats.items()if k!='<noninit>'],colors=[dict(name=k,value=[v[c]for c in 'rgba'])for k,v in colors.items()if k!='<noninit>'],extraTextures=extra,
-                    textureScale=vec(main['m_Scale']),textureOffset=vec(main['m_Offset']),
+                    textureScale=vec(main['m_Scale']) if main else [1,1],textureOffset=vec(main['m_Offset']) if main else [0,0],
                     uvScroll=[colors.get('_MainAnim',{}).get(c,0) for c in 'rg'],
                     filterMode=settings.get('m_FilterMode',1),wrapU=settings.get('m_WrapU',0),wrapV=settings.get('m_WrapV',0),
                     zTest=state_value('zTest'),zWrite=state_value('zWrite'),cull=state_value('culling'))
@@ -180,8 +188,8 @@ def main():
             return js(relative,dict(builtin=mesh['builtin'],sourcePathID=mesh['pathID']))
         helper=MeshHandler(mesh.read());helper.process()
         data=dict(vertices=[n for v in helper.m_Vertices for n in v],uv=[n for v in helper.m_UV0 for n in v[:2]],indices=[i for sm in helper.get_triangles() for tri in sm for i in tri])
-        if BATCH in ['FateR19','WinsR22'] and helper.m_Colors:data['colors']=[n for v in helper.m_Colors for n in v]
-        if BATCH=='WinsR22':
+        if expanded and helper.m_Colors:data['colors']=[n for v in helper.m_Colors for n in v]
+        if expanded:
             raw=mesh.read_typetree()
             if helper.m_BoneWeights and helper.m_BoneIndices:
                 data['weights']=[n for v in helper.m_BoneWeights for n in v];data['boneIndices']=[int(n)for v in helper.m_BoneIndices for n in v]
@@ -190,7 +198,7 @@ def main():
 
     jobs=[]
     for target in targets:
-        category='effect_hupai'if target['sourceKey']in WIN else'effect_lizhi';sourcekey=target['sourceKey']
+        sourcekey=target['sourceKey'];category=target.get('group') or ('effect_hupai' if sourcekey in WIN else 'effect_lizhi')
         paths=sorted(p for p in container if p.startswith(f'myassets/deco/{category}/{sourcekey}/3d/prefab/')and p.endswith('.prefab'))
         exact=next((p for p in paths if Path(p).stem==sourcekey),None)
         if exact:
@@ -198,18 +206,36 @@ def main():
         elif len(paths)>1:
             target['nativeVariants']=[BATCH+'/'+sourcekey]+[BATCH+'/'+Path(p).stem for p in paths[1:]]
         target['allPrefabs']=paths
+        if not paths:
+            unsupported.append(dict(effect=sourcekey,kind='missing-prefab'))
+            continue
         jobs.append((target,paths[0],sourcekey))
         for p in paths[1:]:jobs.append((dict(target),p,Path(p).stem))
 
-    for target,main,key in jobs:
+    def export_job(target,main,key):
         paths=target['allPrefabs']
         ptr=container[main];root=resolve(ptr.assetsfile,dict(m_FileID=ptr.m_FileID,m_PathID=ptr.path_id))
+        if root.type.name!='GameObject' and LOCAL_TARGETS is not None:
+            root=next(o for o in root.assets_file.objects.values() if o.type.name=='GameObject' and o.peek_name()==Path(main).stem)
         hierarchy=graph(root)
         transform_indices={(go.assets_file.name,next(c for c in components if c.type.name in ['Transform','RectTransform']).path_id):i for i,(go,td,components,parent)in enumerate(hierarchy)}
         nodes=[];extra_materials={}
         for go,td,components,parent in hierarchy:
             node=dict(name=go.peek_name(),parent=parent,position=vec(td['m_LocalPosition']),rotation=vec(td['m_LocalRotation']),scale=vec(td['m_LocalScale']),active=bool(go.read_typetree()['m_IsActive']))
             for c in components:
+                if LOCAL_TARGETS is not None and c.type.name=='MonoBehaviour':
+                    custom=c.read_typetree()
+                    if 'skeletonDataAsset' in custom and '_animationName' in custom:
+                        skeleton=resolve(c.assets_file,custom['skeletonDataAsset']);data=skeleton.read_typetree()
+                        atlas=resolve(skeleton.assets_file,data['atlasAssets'][0]);atlas_data=atlas.read_typetree()
+                        def text_asset(obj):
+                            value=obj.read().m_Script
+                            return value.encode('utf8','surrogateescape') if isinstance(value,str) else value
+                        stem=f'{BATCH}/Spine/{key}-{c.path_id}'
+                        node.update(spineSkeleton=save(stem+'.bytes',text_asset(resolve(skeleton.assets_file,data['skeletonJSON']))),
+                                    spineAtlas=save(stem+'.txt',text_asset(resolve(atlas.assets_file,atlas_data['atlasFile']))),
+                                    spineTextures=[material(resolve(atlas.assets_file,p))['texture'] for p in atlas_data['materials']],
+                                    spineScale=data['scale'],spineAnimation=custom['_animationName'],spineLoop=bool(custom['loop']),spineSpeed=custom['timeScale'])
                 if c.type.name not in ['Transform','ParticleSystem','ParticleSystemRenderer','Animator','MeshFilter','MeshRenderer','SkinnedMeshRenderer']:
                     unsupported.append(dict(kind='component',effect=key,node=node['name'],type=c.type.name))
                 if c.type.name=='Animator':
@@ -225,7 +251,7 @@ def main():
                                 relative=f'{BATCH}/Animations/{key}-{clip.path_id}'
                                 node['animations'].append(js(relative+'.json',{'AnimationClip':clipdata},clip))
                                 animation_sources.append(dict(bundle=str(clip.assets_file.parent.name),name=clipdata['m_Name'],output=relative+'.anim',effect=key,node=node['name']))
-                                if BATCH=='WinsR22':
+                                if expanded:
                                     bindings=clipdata.get('m_ClipBindingConstant',{}).get('genericBindings',[])
                                     if any(b.get('isPPtrCurve')for b in bindings):unsupported.append(dict(kind='animation-pointer-curves',effect=key,node=node['name'],clip=clipdata['m_Name'],bindings=[b for b in bindings if b.get('isPPtrCurve')]))
                                     for pointer in clipdata.get('m_ClipBindingConstant',{}).get('pptrCurveMapping',[]):
@@ -240,8 +266,11 @@ def main():
             if particle and renderer:
                 data=particle.read_typetree();data.pop('m_GameObject',None)
                 relative=f'{BATCH}/Data/{key}-{particle.path_id}'
-                node['particle']=js(relative+'.json',schema['editor_json']('ParticleSystem',data),particle)
                 rd=renderer.read_typetree()
+                if LOCAL_TARGETS is not None and (not any(p['m_PathID'] for p in rd['m_Materials']) or rd['m_RenderMode']==4 and not any(rd.get(f,{}).get('m_PathID') for f in ('m_Mesh','m_Mesh1','m_Mesh2','m_Mesh3'))):
+                    nodes.append(node)
+                    continue
+                node['particle']=js(relative+'.json',schema['editor_json']('ParticleSystem',data),particle)
                 renderer_data={k:v for k,v in rd.items() if k not in ['m_GameObject','m_Materials','m_Mesh','m_Mesh1','m_Mesh2','m_Mesh3']}
                 node['renderer']=js(relative+'-renderer.json',schema['editor_json']('ParticleSystemRenderer',renderer_data),renderer)
                 mats=[material(resolve(renderer.assets_file,p)) for p in rd['m_Materials'] if p['m_PathID']]
@@ -258,7 +287,7 @@ def main():
                 target.setdefault('particleLayers',0);target['particleLayers']+=1
             meshfilter=next((c for c in components if c.type.name=='MeshFilter'),None)
             static_renderer=next((c for c in components if c.type.name=='MeshRenderer'),None)
-            if meshfilter and static_renderer:
+            if meshfilter and static_renderer and meshfilter.read_typetree()['m_Mesh']['m_PathID']:
                 mesh=resolve(meshfilter.assets_file,meshfilter.read_typetree()['m_Mesh']);rd=static_renderer.read_typetree()
                 mesh_id=mesh.get('pathID') if isinstance(mesh,dict) else mesh.path_id
                 node['mesh']=mesh_data(mesh,f'{BATCH}/Data/{key}-{mesh_id}-static-mesh.json');node['staticMesh']=True
@@ -276,13 +305,23 @@ def main():
         target['allPrefabs']=paths
         target['nativeEffect']=BATCH+'/'+key
         if key==target['sourceKey']:
-            icons=[p for p in container if p.startswith(f'myassets/deco/{"effect_hupai"if key in WIN else"effect_lizhi"}/{key}/pic/common/')and p.endswith(('.png','.jpg'))]
+            category=target.get('group') or ('effect_hupai' if key in WIN else 'effect_lizhi')
+            icons=[p for p in container if p.startswith(f'myassets/deco/{category}/{key}/pic/')and p.endswith(('.png','.jpg'))]
+            if target.get('iconSource','').lower() in container:icons=[target['iconSource'].lower()]
             if icons:
                 iconptr=container[sorted(icons)[0]];iconobj=iconptr.assetsfile.objects[iconptr.path_id]
                 buf=io.BytesIO();iconobj.read().image.save(buf,format='PNG');save(f'{BATCH}/Icons/{key}.png',buf.getvalue(),iconobj)
                 target['icon']='Majsoul/NativeReview/'+BATCH+'/Icons/'+key
         js(f'{BATCH}/{key}-source.json',dict(nodes=nodes,sourceVersion='4.0.51',preserveActiveState=True,extraMaterials=list(extra_materials.values())),root)
         print('EXPORTED',key,target.get('particleLayers',0),'layers',flush=True)
+    for target,main,key in jobs:
+        try:
+            export_job(target,main,key)
+        except Exception as error:
+            if LOCAL_TARGETS is None:raise
+            unsupported.append(dict(effect=target['sourceKey'],kind='export-error',variant=key,error=str(error)))
+            print('EXPORT ERROR',key,str(error),flush=True)
+            traceback.print_exc()
     dump(OUT/'manifest.json',dict(clientVersion='4.0.51',resourceVersion='0.16.289',effects=targets,records=records,unsupported=unsupported))
     dump(AUDIT/'materials.json',material_audit)
     dump(AUDIT/'animation-sources.json',animation_sources)
@@ -291,6 +330,10 @@ def main():
 
 
 if __name__=='__main__':
+    if '--wardrobe-r30' in sys.argv:
+        WIN=[];RIICHI=[];BATCH='WardrobeR30';AUDIT=R/'build/wardrobe-r30'
+        NATIVE=AUDIT/'export';OUT=NATIVE/BATCH
+        LOCAL_TARGETS=json.loads((AUDIT/'targets.json').read_text('utf8'))
     if '--fate-r19' in sys.argv:
         WIN=['ron_25hf'];RIICHI=[];EXISTING={'ron_25hf':'ron-fate-hf'}
         BATCH='FateR19';OUT=NATIVE/BATCH;AUDIT=R/'build/fate-r19/source';AUDIT.mkdir(parents=True,exist_ok=True)

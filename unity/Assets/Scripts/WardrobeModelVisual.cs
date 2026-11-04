@@ -40,11 +40,17 @@ namespace YunJian.Riichi {
         }
         static void Normalize(Transform content,float length){var bounds=Bounds(content);var size=bounds.size;if(size.y>size.x&&size.y>size.z)content.localRotation=Quaternion.Euler(0,0,90);else if(size.z>size.x)content.localRotation=Quaternion.Euler(0,90,0);bounds=Bounds(content);content.localScale*=length/Mathf.Max(.001f,bounds.size.x);bounds=Bounds(content);content.localPosition-=new Vector3(bounds.center.x,bounds.min.y,bounds.center.z);}
         static Bounds Bounds(Transform root){
-            bool first=true;var b=new Bounds(Vector3.zero,Vector3.one);
+            bool first=true,firstSolid=true;var b=new Bounds(Vector3.zero,Vector3.one);var solidBounds=new Bounds();
             foreach(var mf in root.GetComponentsInChildren<MeshFilter>()){
+                var renderer=mf.GetComponent<MeshRenderer>();if(renderer==null||!renderer.enabled||mf.sharedMesh==null)continue;
+                bool solid=renderer.sharedMaterials.Any(m=>m!=null&&m.renderQueue<3000);
                 var bounds=mf.sharedMesh.bounds;
-                for(int i=0;i<8;i++){var p=bounds.center+Vector3.Scale(bounds.extents,new Vector3((i&1)==0?-1:1,(i&2)==0?-1:1,(i&4)==0?-1:1));p=root.parent.InverseTransformPoint(mf.transform.TransformPoint(p));if(first){b=new Bounds(p,Vector3.zero);first=false;}else b.Encapsulate(p);}
-            }return b;
+                for(int i=0;i<8;i++){var p=bounds.center+Vector3.Scale(bounds.extents,new Vector3((i&1)==0?-1:1,(i&2)==0?-1:1,(i&4)==0?-1:1));p=root.parent.InverseTransformPoint(mf.transform.TransformPoint(p));if(first){b=new Bounds(p,Vector3.zero);first=false;}else b.Encapsulate(p);if(solid){if(firstSolid){solidBounds=new Bounds(p,Vector3.zero);firstSolid=false;}else solidBounds.Encapsulate(p);}}
+            }
+            // Source shadows/glows may be much larger than the actual stick.
+            // Fit and centre its solid body; preserve the authored decoration ratios.
+            float full=Mathf.Max(b.size.x,Mathf.Max(b.size.y,b.size.z)),body=Mathf.Max(solidBounds.size.x,Mathf.Max(solidBounds.size.y,solidBounds.size.z));
+            return firstSolid||body<full*.4f?b:solidBounds;
         }
         public void Sample(float age){foreach(var motion in motions??new NativeEffectMotion[0])motion.Sample(age);}
         void Update()=>Sample(Time.unscaledTime-began);

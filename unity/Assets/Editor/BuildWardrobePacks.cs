@@ -66,6 +66,69 @@ namespace YunJian.Riichi.Editor {
         }
         public static void Build(){BuildPlatform(Environment.GetCommandLineArgs().Contains("-packAndroid")?"android":"windows");EditorApplication.Exit(0);}
         public static void BuildBoth(){WardrobeR22BindingStudy.Probe();BuildPlatform("windows");BuildPlatform("android");EditorApplication.Exit(0);}
+        public static void BuildWardrobeR30(){
+            string work=Repo+"/build/wardrobe-r30";
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            var spec=JsonUtility.FromJson<Spec>(Read(work+"/roots.json"));
+            var core=new HashSet<string>(spec.core);
+            var owners=new Dictionary<string,SortedSet<string>>();
+            foreach(var item in spec.items)foreach(string path in Dependencies(item.roots)){
+                if(!path.Contains("/WardrobeR30/")||core.Contains(path))continue;
+                if(!owners.TryGetValue(path,out var list))owners[path]=list=new SortedSet<string>(StringComparer.Ordinal);
+                list.Add(item.id);
+            }
+            string RootKey(string id)=>"deco-r30-"+id.Replace('_','-');
+            var records=spec.items.Select(i=>new WardrobePackRecord{key=RootKey(i.id),items=new[]{i.id},name=i.name,category=i.category,version=1}).ToDictionary(p=>p.key);
+            var addresses=new List<WardrobePackAddress>();var moves=new List<Move>();
+            foreach(var row in owners.OrderBy(x=>x.Key,StringComparer.Ordinal)){
+                string key=row.Value.Count==1?RootKey(row.Value.First()):"deco-r30-shared-"+Hash(Encoding.UTF8.GetBytes(string.Join("\n",row.Value))).Substring(0,16);
+                if(!records.ContainsKey(key))records[key]=new WardrobePackRecord{key=key,name="共享装扮资源",category="shared",version=1,hidden=true,items=row.Value.ToArray()};
+                string destination="Assets/WardrobePacks/Source/"+row.Key.Substring("Assets/Resources/".Length);
+                // The Spine binary and atlas share a basename. Both are serialized
+                // prefab references and do not need a public Resources address.
+                string address=Address(row.Key);
+                if(row.Key.Contains("/WardrobeR30/Spine/"))address+=Path.GetExtension(row.Key);
+                addresses.Add(new WardrobePackAddress{path=address,pack=key,source=destination});
+                moves.Add(new Move{from=row.Key,to=destination,runtime=true});
+            }
+            foreach(var item in spec.items){
+                var key=RootKey(item.id);
+                if(!addresses.Any(a=>a.pack==key))throw new Exception("No independently addressable resource for "+item.id);
+            }
+            foreach(string directory in moves.Select(m=>Path.GetDirectoryName(m.to)).Distinct())Directory.CreateDirectory(directory);
+            AssetDatabase.Refresh();AssetDatabase.StartAssetEditing();
+            try{foreach(var move in moves){string error=AssetDatabase.MoveAsset(move.from,move.to);if(error.Length>0)throw new Exception(error);}}
+            finally{AssetDatabase.StopAssetEditing();}
+            AssetDatabase.SaveAssets();AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            File.WriteAllLines(work+"/runtime-sources.txt",addresses.Select(a=>a.source).Concat(core).Distinct());
+            foreach(string platform in new[]{"windows","android"}){
+                string output=work+"/packs/"+platform;Directory.CreateDirectory(output);
+                var bundles=addresses.GroupBy(a=>a.pack).ToDictionary(g=>g.Key,g=>g.ToArray());
+                var builds=bundles.Select(g=>new AssetBundleBuild{assetBundleName=g.Key+".bundle",assetNames=g.Value.Select(a=>a.source).ToArray(),addressableNames=g.Value.Select(a=>a.path.ToLowerInvariant()).ToArray()}).ToArray();
+                var target=platform=="android"?BuildTarget.Android:BuildTarget.StandaloneWindows64;
+                var manifest=BuildPipeline.BuildAssetBundles(output,builds,BuildAssetBundleOptions.StrictMode|BuildAssetBundleOptions.ChunkBasedCompression,target);
+                if(manifest==null)throw new Exception("R30 resource build failed for "+platform);
+                string directory="Assets/Resources/Majsoul/WardrobeDirectory/packs-"+platform+".json";
+                var baseline=JsonUtility.FromJson<WardrobePackCatalog>(Read(directory));
+                var additions=new List<WardrobePackRecord>();
+                foreach(var group in bundles){
+                    var p=JsonUtility.FromJson<WardrobePackRecord>(JsonUtility.ToJson(records[group.Key]));
+                    string name=p.key+".bundle";byte[] data=File.ReadAllBytes(output+"/"+name);
+                    p.sha256=Hash(data);p.bytes=data.LongLength;p.available=true;
+                    p.file=p.key+"-v1-"+platform+"-"+p.sha256.Substring(0,12)+".bundle";
+                    p.url="https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/wardrobe-resources-v2/"+p.file;
+                    p.dependencies=manifest.GetDirectDependencies(name).Select(Path.GetFileNameWithoutExtension).OrderBy(k=>k,StringComparer.Ordinal).ToArray();
+                    p.assets=group.Value.Where(a=>!a.source.Contains("/WardrobeR30/Spine/")).Select(a=>a.path).ToArray();
+                    File.Copy(output+"/"+name,output+"/"+p.file,true);additions.Add(p);
+                }
+                baseline.packs=baseline.packs.Concat(additions).ToArray();
+                baseline.addresses=baseline.addresses.Concat(addresses.Where(a=>!a.source.Contains("/WardrobeR30/Spine/"))).ToArray();
+                baseline.items=baseline.items.Concat(spec.items.Select(i=>new WardrobePackItem{id=i.id,category=i.category,pack=RootKey(i.id)})).ToArray();
+                Save(work+"/packs-"+platform+".json",baseline);
+                Debug.Log("R30 PACKS "+platform+" "+additions.Count+" "+additions.Sum(p=>p.bytes)+" bytes");
+            }
+            Debug.Log("R30 PACKS PASS");EditorApplication.Exit(0);
+        }
         static void BuildPlatform(string platform){
             var plan=JsonUtility.FromJson<Plan>(Read(PlanPath));AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
             var target=platform=="android"?BuildTarget.Android:BuildTarget.StandaloneWindows64;

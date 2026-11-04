@@ -727,7 +727,7 @@ namespace YunJian.Riichi
             else if(current=="advanced-number")logical=new Rect(width/2-89.94f-384.16f,193.81f,768.32f,748.05f);
             else if(current=="advanced-help"||current=="qr-invalid")logical=new Rect((width-852.3f)/2,285,852.3f,510);
             else logical=new Rect((width-1100)/2,240,1100,600);
-            if(Event.current.type==EventType.MouseDown&&!logical.Contains(Event.current.mousePosition)&&!client.Busy&&!modalClosing){CloseModal();Event.current.Use();return;}
+            if(!modalClosing&&NativePanel.DismissOutside(logical,CloseModal))return;
             var matrix=GUI.matrix;var color=GUI.color;
             if(current=="scan")DrawScanner();else if(current=="invite")DrawInvitation();else if(current=="qr-invalid")DrawQrNotice();else if(current=="join")DrawJoin();else if(current=="rules")DrawRules();else if(current=="yaku")DrawYaku();else if(current=="friend-help")DrawFriendHelp();else if(current=="session"||current=="match-exit")DrawSessionDialog(current=="match-exit");else if(current=="leave")DrawRoomDialog(false);else if(current=="advanced-number")DrawAdvancedNumber();else if(current=="advanced-help")DrawAdvancedHelp();else{
                 var r=Popup(1100,600);string heading=current=="profile"?"个人设置":current=="invite"?"邀请牌友":current=="leave"?"返回大厅":current=="kick"?"移除座位":"说明";

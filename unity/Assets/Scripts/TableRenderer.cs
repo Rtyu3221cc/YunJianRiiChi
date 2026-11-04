@@ -81,11 +81,12 @@ namespace YunJian.Riichi
         readonly Dictionary<int,Transform> standingHands=new Dictionary<int,Transform>();
         sealed class OpponentRow {public Transform root;public int seat,count;public bool selfDraw;}
         readonly List<OpponentRow> opponentRows=new List<OpponentRow>();
-        public Rect HandScreenBounds()
+        public Rect HandScreenBounds(bool stable=false)
         {
             if(handTiles.Count==0)return new Rect();
             Vector2 min=new Vector2(float.MaxValue,float.MaxValue),max=new Vector2(float.MinValue,float.MinValue);
-            foreach(var hand in handTiles){var b=hand.GetComponent<Renderer>().bounds;
+            for(int i=0;i<handTiles.Count;i++){var hand=handTiles[i];var b=hand.GetComponent<Renderer>().bounds;
+                if(stable&&cameraHand!=null&&i<handBase.Count)b.center+=cameraHand.TransformPoint(handBase[i])-hand.position;
                 foreach(int x in new[]{-1,1})foreach(int y in new[]{-1,1}){
                     var p=HandCamera.WorldToScreenPoint(b.center+Vector3.Scale(b.extents,new Vector3(x,y,0)));
                     min=Vector2.Min(min,p);max=Vector2.Max(max,p);
@@ -760,7 +761,7 @@ namespace YunJian.Riichi
                     tile.name="River "+(start+j)+" "+r.tile;rendered.Add(tile);
                     // The marker belongs to the seat that can actually call, not to
                     // every discard while any seat still has a pending decision.
-                    if(SelfCanCall && state.phase=="reaction" && state.pending!=null && state.pending.kind=="discard" && state.pending.from==seatIndex && start+j==visible.Length-1)
+                    if(SelfCanCall && state.phase=="reaction" && state.pending!=null && state.pending.kind=="discard" && state.pending.from==seatIndex && raw==p.river.Length-1 && r.tile==state.pending.tile)
                     {
                         responseTarget=tile;
                         responseSeat=seatIndex;responseIndex=raw+1;

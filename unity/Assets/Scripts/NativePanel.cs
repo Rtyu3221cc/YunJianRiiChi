@@ -49,7 +49,25 @@ namespace YunJian.Riichi
             float left = anchor == TextAnchor.MiddleCenter ? x - width / 2 : anchor == TextAnchor.MiddleRight ? x - width : x;
             bool enabled = GUI.enabled; GUI.enabled = true; GUI.Label(new Rect(left, y - height / 2, width, height), value, s); GUI.enabled = enabled;
         }
-        public static bool Hit(Rect r) => GUI.Button(r, GUIContent.none, GUIStyle.none);
+        static int dismissedFrame=-1;
+#if UNITY_EDITOR
+        public static Vector2? ReviewOutsidePoint;
+#endif
+        public static bool DismissedPointer {
+            get {if(dismissedFrame<0)return false;if(Time.frameCount==dismissedFrame||Input.GetMouseButton(0)||Input.GetMouseButtonUp(0))return true;dismissedFrame=-1;return false;}
+        }
+        public static bool DismissOutside(Rect bounds,Action close){
+            var e=Event.current;bool review=false;Vector2 point=e?.mousePosition??Vector2.zero;
+#if UNITY_EDITOR
+            review=ReviewOutsidePoint.HasValue;if(review)point=GUI.matrix.inverse.MultiplyPoint3x4(ReviewOutsidePoint.Value);
+#endif
+            if(!GUI.enabled||e==null||(review?e.type!=EventType.Repaint:e.type!=EventType.MouseDown||e.button!=0)||bounds.Contains(point))return false;
+#if UNITY_EDITOR
+            if(review)ReviewOutsidePoint=null;
+#endif
+            dismissedFrame=Time.frameCount;GUIUtility.hotControl=0;close();if(!review)e.Use();return true;
+        }
+        public static bool Hit(Rect r) => !DismissedPointer&&GUI.Button(r, GUIContent.none, GUIStyle.none);
         static float Pixel(float value, float scale, float offset) => Mathf.Abs(scale) < .0001f ? value : (Mathf.Round(value * scale + offset) - offset) / scale;
         public static float BackOut(float t) { t = Mathf.Clamp01(t) - 1; return 1 + 2.70158f * t * t * t + 1.70158f * t * t; }
         public static void Popup(float width, float began) {

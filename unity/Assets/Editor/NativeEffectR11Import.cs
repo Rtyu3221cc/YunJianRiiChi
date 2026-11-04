@@ -82,6 +82,21 @@ namespace YunJian.Riichi.Editor {
             File.WriteAllLines(repo+"/build/wardrobe-r22/native-import-checks.txt",checks);File.WriteAllLines(repo+"/build/wardrobe-r22/native-import-failures.txt",failures);
             Debug.Log("WIN R22 IMPORT "+(failures.Count==0?"PASS":"INCOMPLETE")+" checks="+checks.Count+" failures="+failures.Count);EditorApplication.Exit(failures.Count==0?0:1);
         }
+        public static void RunWardrobeR30(){
+            checks.Clear();AssetDatabase.Refresh();
+            referenceOverride=Environment.GetEnvironmentVariable("YUNJIAN_R22_REPO")+"/build/wardrobe-r30/";
+            var sources=JsonUtility.FromJson<AnimationSources>("{\"rows\":"+File.ReadAllText(Reference+"animation-sources.json")+"}").rows;
+            var manifest=JsonUtility.FromJson<Manifest>(ReadSource(Folder+"WardrobeR30/manifest.json"));
+            var failures=new List<string>();
+            foreach(var entry in manifest.effects)foreach(string key in entry.nativeVariants??new[]{entry.nativeEffect}){
+                if(string.IsNullOrEmpty(key)||!File.Exists(Folder+key+"-source.json"))continue;
+                try{Import(key,sources);}catch(Exception error){failures.Add(key+" "+error);}
+            }
+            foreach(var bundle in bundles.Values)bundle.Unload(false);bundles.Clear();AssetDatabase.SaveAssets();
+            File.WriteAllLines(Reference+"native-import-checks.txt",checks);
+            File.WriteAllLines(Reference+"native-import-failures.txt",failures);
+            Debug.Log("R30 IMPORT COMPLETE "+checks.Count+" prefabs, "+failures.Count+" failures");EditorApplication.Exit(0);
+        }
         static Mesh Mesh(string path,string output){
             output=Physical(output);
             var data=JsonUtility.FromJson<MeshData>(ReadSource(Folder+path));
@@ -106,7 +121,7 @@ namespace YunJian.Riichi.Editor {
             var shader=Shader.Find("YunJian/NativeEffectParticle");if(shader==null)throw new Exception("Native effect shader did not compile");
             bool decoration=output.Contains("/StaticR16/");
             bool fate=output.Contains("/FateR19/");if(fate)shader=Resources.Load<Shader>("Majsoul/NativeReview/FateR19/FateParticle");
-            bool win=output.Contains("/WinsR22/");if(win)shader=Resources.Load<Shader>("Majsoul/NativeReview/WinsR22/WardrobeEffectParticle");
+            bool win=output.Contains("/WinsR22/")||output.Contains("/WardrobeR30/");if(win)shader=Resources.Load<Shader>("Majsoul/NativeReview/WinsR22/WardrobeEffectParticle");
             if(decoration)shader=Resources.Load<Shader>("Majsoul/Wardrobe/WardrobeParticle");
             if(decoration&&(source.shaderName.StartsWith("Catfood/")||source.shaderName.StartsWith("Unlit/")))shader=Resources.Load<Shader>("Majsoul/Wardrobe/StaticDecoration");
             var material=new Material(shader){name=source.materialName};
@@ -158,13 +173,22 @@ namespace YunJian.Riichi.Editor {
                 }else if(n.staticMesh){node.gameObject.AddComponent<MeshFilter>().sharedMesh=Mesh(n.mesh,Folder+name+"-"+i+"-model.asset");renderer=node.gameObject.AddComponent<MeshRenderer>();renderer.sortingOrder=n.sortingOrder;}
                 else if(n.skinnedMesh){var skin=node.gameObject.AddComponent<SkinnedMeshRenderer>();skin.sharedMesh=Mesh(n.mesh,Folder+name+"-"+i+"-skin.asset");skin.updateWhenOffscreen=true;skin.localBounds=skin.sharedMesh.bounds;renderer=skin;renderer.sortingOrder=n.sortingOrder;}
                 if(renderer!=null){renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;renderer.sharedMaterials=n.materials.Select((m,j)=>Material(m,Folder+name+"-"+i+"-"+j+".mat")).ToArray();}
+                if(!string.IsNullOrEmpty(n.spineSkeleton)){
+                    if(node.GetComponent<MeshFilter>()==null)node.gameObject.AddComponent<MeshFilter>();
+                    if(node.GetComponent<MeshRenderer>()==null)node.gameObject.AddComponent<MeshRenderer>();
+                    var spine=node.gameObject.AddComponent<NativeSpineEffect>();
+                    spine.skeletonData=AssetDatabase.LoadAssetAtPath<TextAsset>(Folder+n.spineSkeleton);
+                    spine.atlas=AssetDatabase.LoadAssetAtPath<TextAsset>(Folder+n.spineAtlas);
+                    spine.textures=n.spineTextures.Select(p=>AssetDatabase.LoadAssetAtPath<Texture2D>(Folder+p+".png")).ToArray();
+                    spine.scale=n.spineScale;spine.speed=n.spineSpeed;spine.animationName=n.spineAnimation;spine.loop=n.spineLoop;
+                }
                 if(config.preserveActiveState)node.gameObject.SetActive(n.active);
             }
             for(int i=0;i<nodes.Length;i++)if(config.nodes[i].skinnedMesh){var skin=nodes[i].GetComponent<SkinnedMeshRenderer>();skin.bones=config.nodes[i].bones.Select(b=>b>=0?nodes[b]:null).ToArray();skin.rootBone=config.nodes[i].rootBone>=0?nodes[config.nodes[i].rootBone]:null;}
             var tracks=new List<NativeMotionTrack>();
             for(int index=0;index<nodes.Length;index++)foreach(string path in config.nodes[index].animations??new string[0]){
                 var row=animations.First(a=>a.output==Path.ChangeExtension(path,".anim"));
-                var track=Bake(root,nodes,index,row,name.StartsWith("FateR19/")||name.StartsWith("WinsR22/"),swaps);tracks.Add(track);
+                var track=Bake(root,nodes,index,row,name.StartsWith("FateR19/")||name.StartsWith("WinsR22/")||name.StartsWith("WardrobeR30/"),swaps);tracks.Add(track);
                 string emptyAsset=Folder+row.output;if(AssetDatabase.LoadAssetAtPath<AnimationClip>(emptyAsset)!=null)AssetDatabase.DeleteAsset(emptyAsset);
             }
             if(tracks.Count>0){

@@ -6,6 +6,7 @@ namespace YunJian.Riichi {
  [Serializable] public class NativeEffectNode {
   public string name,particle,renderer,texture,mesh,shaderBundle,shaderName;public int parent,renderMode;public float[] position,rotation,scale,tint,textureScale,textureOffset,uvScroll;public float srcBlend,dstBlend,sortingFudge,lengthScale;
   public NativeMaterialSource[] materials;public string[] meshes,animations;public bool staticMesh,active,skinnedMesh;public int sortingOrder,rootBone;public int[] bones;
+  public string spineSkeleton,spineAtlas,spineAnimation;public string[] spineTextures;public float spineScale,spineSpeed;public bool spineLoop;
  }
  [Serializable] public class NativeExtraMaterial {public string name,source,asset;}
  [Serializable] public class NativeEffectSource {public NativeEffectNode[] nodes;public bool preserveActiveState;public NativeExtraMaterial[] extraMaterials;}
@@ -20,8 +21,11 @@ namespace YunJian.Riichi {
   public bool UsesApkShader {get;private set;}
   public Quaternion SurfaceMountRotation {get;private set;}=Quaternion.identity;
   NativeEffectMotion[] motions;
-  Transform authoredSpace;NativeEffectCamera sourceCamera;
+  NativeSpineEffect[] skeletons;
+  Transform authoredSpace,authoredRoot;NativeEffectCamera sourceCamera;
   NativeWinContract winContract;public NativeWinPlayback Playback {get;private set;}
+  string sourceName;
+  Transform plumGround;
   readonly Dictionary<ParticleSystem,bool> activation=new Dictionary<ParticleSystem,bool>();
   bool luaNewWin;Transform rootMove,rootRot,rootAni,rootAniTsumo,rootStatic;
   public bool UsesNewHuleBinding=>luaNewWin;
@@ -48,20 +52,62 @@ namespace YunJian.Riichi {
    }
   }
   public void SetTileReadability(Transform tile,float intensity,float faceOpacity,bool enabled){CalloutReadability.Apply(copies,tile,intensity,faceOpacity,enabled);}
+  public void BindLegacyRiichiRoot(bool resetRotation){if(authoredRoot==null)return;authoredRoot.localPosition=Vector3.zero;if(resetRotation)authoredRoot.localRotation=Quaternion.Euler(0,0,-180);Sample(-1);}
+  public void BindLegacyRiichiSeat(int seat){
+   if(!sourceName.StartsWith("WardrobeR30/"))return;
+   void Euler(string path,float x,float y,float z){var node=authoredRoot.Find(path);if(node!=null)node.localRotation=Quaternion.Euler(x,y,z);}
+   float angle=seat*90;
+   switch(sourceName.Substring("WardrobeR30/".Length)){
+    case "effect_liqi_xiyuansi":Euler("buzhuan",0,0,seat==3?-90:angle);break;
+    case "effect_liqi_nanfenghua":Euler("fx_liqi_073/buzhuan",0,angle,0);break;
+    case "effect_liqi_beiyuan":Euler("zhengdui",angle,-90,-90);break;
+    case "effect_liqi_22summer":
+     for(int i=1;i<=3;i++){var node=authoredRoot.Find("guangyun/ya/root"+i);if(node==null)continue;node.localRotation=Quaternion.Euler(0,0,angle);if(seat==2)node.localScale=new Vector3(1,-1,1);}break;
+    case "effect_liqi_22chunjie":plumGround=authoredRoot.Find("hongdi");break;
+    case "effect_liqi_2211saki":authoredRoot.localRotation=Quaternion.Euler(-180,-90,270);Euler("zhuan",270,0,angle);break;
+    case "effect_liqi_23rpg":Euler("root",angle,-90,-90);break;
+    case "effect_liqi_yly":authoredRoot.localRotation=Quaternion.Euler(-90,0,-180);Euler("fx_skill_062_liqi",45,angle+90,0);break;
+    case "effect_liqi_24summer":authoredRoot.localRotation=Quaternion.Euler(0,0,angle-180);break;
+   }
+  }
+  // Keep the callable marker plane in the tile-model frame. Source prefabs
+  // also retain a standalone authoring tilt; do not stack it on the mount.
+  public void BindCallableTileRoot(){if(authoredRoot==null)return;authoredRoot.localPosition=Vector3.zero;authoredRoot.localRotation=Quaternion.identity;Sample(-1);}
   public static Quaternion SurfaceMount(string name){
    var prefab=WardrobePackService.Asset<GameObject>("Majsoul/NativeReview/"+name);if(prefab==null)throw new InvalidOperationException("Missing imported APK prefab "+name);
    var root=prefab.transform.childCount>0?prefab.transform.GetChild(0):prefab.transform;return Quaternion.FromToRotation(root.localRotation*Vector3.forward,Vector3.up);
   }
+  void RestoreStandardBlend(GameObject clone,NativeEffectSource descriptor){
+   var nodes=clone.GetComponentsInChildren<Transform>(true).Skip(1).ToArray();
+   for(int i=0;i<Mathf.Min(nodes.Length,descriptor.nodes.Length);i++){
+    var source=descriptor.nodes[i].materials;
+    var renderer=nodes[i].GetComponent<Renderer>();
+    if(source==null||renderer==null)continue;
+    var materials=renderer.sharedMaterials;
+    bool changed=false;
+    for(int j=0;j<Mathf.Min(source.Length,materials.Length);j++){
+     if(source[j].shaderName!="FizzFX/Standard"||materials[j]==null)continue;
+     // The original pass uses Blend SrcAlpha [_BlendMode]. The numeric
+     // fallback in the pass metadata is zero when the state is property-backed.
+     var blend=source[j].floats?.FirstOrDefault(f=>f.name=="_BlendMode");
+     if(blend==null)continue;
+     var material=new Material(materials[j]);material.SetFloat("_DstBlend",blend.value);
+     copies.Add(material);materials[j]=material;changed=true;
+    }
+    if(changed)renderer.sharedMaterials=materials;
+   }
+  }
   public void Initialize(string name,uint seed=507,bool useApkShader=false,bool normalizeSurfaceOrigin=false,NativeWinContract contract=null){
-   winContract=contract;
+   winContract=contract;sourceName=name;
    WardrobePackService.Lease("Majsoul/NativeReview/"+name,gameObject);var prefab=WardrobePackService.Asset<GameObject>("Majsoul/NativeReview/"+name);if(prefab==null)throw new InvalidOperationException("Missing imported APK prefab "+name);
    var clone=Instantiate(prefab,transform,false);particles=clone.GetComponentsInChildren<ParticleSystem>(true);
    luaNewWin=name.StartsWith("FateR19/");
-   var table=GetComponentInParent<TableRenderer>();if((name.StartsWith("EffectsR11/")||name.StartsWith("WinsR22/")||luaNewWin)&&table!=null){authoredSpace=clone.transform;SyncSpace();foreach(var child in clone.GetComponentsInChildren<Transform>(true))child.gameObject.layer=NativeEffectCamera.Layer;sourceCamera=NativeEffectCamera.Ensure(table);sourceCamera.Register(this);}
+   var table=GetComponentInParent<TableRenderer>();if((name.StartsWith("EffectsR11/")||name.StartsWith("WinsR22/")||name.StartsWith("WardrobeR30/effect_liqi_")||contract!=null||luaNewWin)&&table!=null){authoredSpace=clone.transform;SyncSpace();foreach(var child in clone.GetComponentsInChildren<Transform>(true))child.gameObject.layer=NativeEffectCamera.Layer;sourceCamera=NativeEffectCamera.Ensure(table);sourceCamera.Register(this);}
    motions=clone.GetComponentsInChildren<NativeEffectMotion>(true);
+   skeletons=clone.GetComponentsInChildren<NativeSpineEffect>(true);
    // Imported prefabs have a neutral wrapper and an authored root. Some roots
    // already face the cloth; others retain the tile's original XY model plane.
-   var authored=clone.transform.childCount>0?clone.transform.GetChild(0):clone.transform;
+   var authored=authoredRoot=clone.transform.childCount>0?clone.transform.GetChild(0):clone.transform;
    if(contract!=null){authored.localPosition=Vector3.zero;Playback=gameObject.AddComponent<NativeWinPlayback>();Playback.Initialize(this,authored,clone.transform,contract);}
    if(luaNewWin){rootMove=authored.Find("root_move");rootRot=authored.Find("root_rot");rootAni=authored.Find("root_ani");rootAniTsumo=authored.Find("root_ani_zimo");rootStatic=authored.Find("root_static");BindLuaRoots();}
    if(normalizeSurfaceOrigin)authored.localPosition=Vector3.zero;
@@ -76,22 +122,24 @@ namespace YunJian.Riichi {
    }
 #endif
    var descriptor=WardrobePackService.Asset<TextAsset>("Majsoul/NativeReview/"+name+"-source");
-   if(descriptor!=null&&!name.StartsWith("EffectsR11/")&&!name.StartsWith("WinsR22/")&&!luaNewWin){var sourceUv=JsonUtility.FromJson<NativeEffectSource>(descriptor.text);foreach(var node in sourceUv.nodes.Where(n=>n.uvScroll!=null&&n.uvScroll.Length==2&&(n.uvScroll[0]!=0||n.uvScroll[1]!=0))){
+   if(descriptor!=null&&name.StartsWith("WardrobeR30/"))RestoreStandardBlend(clone,JsonUtility.FromJson<NativeEffectSource>(descriptor.text));
+   if(descriptor!=null&&!name.StartsWith("EffectsR11/")&&!name.StartsWith("WinsR22/")&&!name.StartsWith("WardrobeR30/")&&!luaNewWin){var sourceUv=JsonUtility.FromJson<NativeEffectSource>(descriptor.text);foreach(var node in sourceUv.nodes.Where(n=>n.uvScroll!=null&&n.uvScroll.Length==2&&(n.uvScroll[0]!=0||n.uvScroll[1]!=0))){
     var renderer=clone.GetComponentsInChildren<ParticleSystemRenderer>(true).FirstOrDefault(r=>r.name==node.name);if(renderer==null)continue;var material=new Material(renderer.sharedMaterial);copies.Add(material);renderer.sharedMaterial=material;scrolls.Add(new Scroll{material=material,origin=material.mainTextureOffset,speed=new Vector2(node.uvScroll[0],node.uvScroll[1])});
    }}
    Sample(-1);
   }
   public void Sample(float age){
    SyncSpace();BindLuaRoots();
+   if(plumGround!=null){plumGround.position=new Vector3(-.01f,.2f,.3f);plumGround.rotation=Quaternion.Euler(-60,0,0);}
    foreach(var scroll in scrolls)scroll.material.mainTextureOffset=scroll.origin+scroll.speed*Mathf.Max(0,age);
-   if(age<0){Playback?.AfterPose(age);foreach(var p in particles)p.Clear(false);activation.Clear();previous=-1;return;}
+   if(age<0){Playback?.AfterPose(age);foreach(var p in particles)p.Clear(false);foreach(var s in skeletons)s.Sample(-1);activation.Clear();previous=-1;return;}
    if(motions!=null&&motions.Length>0){
     if(previous<0||age<previous){foreach(var motion in motions)motion.Sample(0);BindLuaRoots();Playback?.AfterPose(0);activation.Clear();foreach(var p in particles){p.Stop(false,ParticleSystemStopBehavior.StopEmittingAndClear);p.Simulate(0,false,true,false);}previous=0;}
     while(previous<age-.000001f){float next=Mathf.Min(age,previous+1f/60);foreach(var motion in motions)motion.Sample(Playback?.SourceAge(next)??next);BindLuaRoots();Playback?.AfterPose(next);foreach(var p in particles)Simulate(p,next-previous,false);previous=next;}
-    foreach(var motion in motions)motion.Sample(Playback?.SourceAge(age)??age);BindLuaRoots();Playback?.AfterPose(age);return;
+    foreach(var motion in motions)motion.Sample(Playback?.SourceAge(age)??age);BindLuaRoots();Playback?.AfterPose(age);foreach(var s in skeletons)s.Sample(age);return;
    }
    bool restart=previous<0 || age<previous;float dt=restart?age:age-previous;
-   Playback?.AfterPose(age);foreach(var p in particles)Simulate(p,dt,restart);previous=age;
+   Playback?.AfterPose(age);foreach(var p in particles)Simulate(p,dt,restart);foreach(var s in skeletons)s.Sample(age);previous=age;
   }
   void Simulate(ParticleSystem particle,float dt,bool restart){if(winContract==null){particle.Simulate(dt,false,restart,false);return;}bool active=particle.gameObject.activeInHierarchy,was=activation.TryGetValue(particle,out var value)&&value;if(!active){particle.Stop(false,ParticleSystemStopBehavior.StopEmittingAndClear);activation[particle]=false;return;}particle.Simulate(dt,false,restart||!was,false);activation[particle]=true;}
   void OnDestroy(){if(sourceCamera!=null)sourceCamera.Remove(this);foreach(var m in copies)Destroy(m);}

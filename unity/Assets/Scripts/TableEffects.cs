@@ -345,6 +345,11 @@ namespace YunJian.Riichi
         void CompleteHandoff()
         {
             if (handedOff) return; handedOff=true;
+            // A long frame can cross both the declaration keypoint and the hand
+            // lifetime. Start the accepted effect before finishing that hand.
+            if(current?.kind=="discard"&&current.riichi&&!riichiVisualAttempted&&HandAge>=RiichiEffectAt){
+                riichiVisualAttempted=true;riichiVisual.TryPlay(current,targetTile!=null?targetTile:animatedTile,ValidationFreeze?ValidationTime:Time.unscaledTime);
+            }
             riichiVisual?.Settle(current);
             PlayLandingSound();
             if (animatedTile!=null) animatedTile.gameObject.SetActive(false);

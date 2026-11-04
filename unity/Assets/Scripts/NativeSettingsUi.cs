@@ -46,6 +46,8 @@ namespace YunJian.Riichi
             // Native settings has no full-screen dark mask. Its centre stays fixed when the edge inset changes.
             var baseMatrix = GUI.matrix; if (MusicGroup == null) Popup(width, opened);
             float rx = width / 2 - 838, vx = rx + 258, vy = 220;
+            Rect popupBounds=dropdown||botDropdown?new Rect(vx+600,vy+(dropdown?116.5f:211.5f),496,dropdown?315:232):new Rect(rx,101,1486,874);
+            if(MusicGroup==null&&DismissOutside(popupBounds,()=>{if(dropdown||botDropdown){dropdown=botDropdown=false;}else{audio.StopAudition();CharacterResourceUi.Current?.ClearFocus();close();}})){GUI.matrix=matrix;GUI.color=color;return;}
             bool enabled = GUI.enabled; GUI.enabled &= MusicGroup == null;
             Slice("official-panel-bg", new Rect(rx + 208, 120, 1260, 840), 30, 30, 30, 30);
             var dl = Art("official-panel-deco_l"); var dr = Art("official-panel-deco_r");
@@ -148,6 +150,7 @@ namespace YunJian.Riichi
             ScreenShade(new Color(0, 0, 0, .5f));
             var matrix = GUI.matrix; var color = GUI.color; Popup(width, musicOpened);
             float ox = width / 2 - 959, oy = 80;
+            if(DismissOutside(new Rect(ox,oy,1919,920),CloseMusic)){GUI.matrix=matrix;GUI.color=color;return;}
             Slice("official-config-setting_voice_popup_base", new Rect(ox, oy, 1919, 920), 1, 10, 1, 10);
             Label(MusicGroup == "lobby" ? "大厅音乐" : "对局音乐", width / 2, oy + 64.54f, 54, Gold, 1, TextAnchor.MiddleCenter);
             Image("native-pop2_close", new Rect(ox + 1618, oy + 43, 44, 44));

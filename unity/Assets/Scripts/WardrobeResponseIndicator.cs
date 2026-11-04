@@ -4,7 +4,7 @@ namespace YunJian.Riichi {
     // Original DesktopMgr.ShowChiPengEffect follows lastqipai while the local
     // operation panel is open. It is the viewer's outfit, not the discarder’s.
     public sealed class WardrobeResponseIndicator:MonoBehaviour {
-        TableRenderer table;NativeParticleEffect effect;WinTileEffect sourceEffect;string key;float started;
+        TableRenderer table;NativeParticleEffect effect;WinTileEffect sourceEffect;string key,markerStyle;float started;
         public NativeParticleEffect Effect=>effect;
         public WinTileEffect SourceEffect=>sourceEffect;
         public Transform EffectRoot=>effect!=null?effect.transform:sourceEffect!=null?sourceEffect.transform:null;
@@ -21,9 +21,24 @@ namespace YunJian.Riichi {
         // Only the editor may inspect a tile from its owner's side. This does
         // not create a legal response to one's own discard in the game.
         public bool InspectionMode;public Transform InspectionTarget;public string InspectionKey;
-        public bool ValidationRawOverlay;
+        public bool ValidationRawOverlay;public bool ReviewPreviousRootPose;public int ReviewMountVariant;public bool ReviewFaceAnchor;public bool ReviewSourceDepth;public bool ReviewPreviousCalloutRendering;
 #endif
         public bool ValidationFreeze;public float ValidationAge;
+        Quaternion MarkerMount {
+            get {
+#if UNITY_EDITOR
+                if(ReviewMountVariant==1)return SourcePlaybackContracts.TileMount;
+                if(ReviewMountVariant==2)return SourcePlaybackContracts.NativeTileMount;
+                if(ReviewPreviousCalloutRendering&&markerStyle=="mpzs_shandian")return SourcePlaybackContracts.TileMount;
+#endif
+                return SourcePlaybackContracts.CallableTileMount;
+            }
+        }
+        Vector3 MarkerPoint(Transform target){var point=SourcePlaybackContracts.TileModelOrigin(target);
+#if UNITY_EDITOR
+            if(ReviewFaceAnchor){var box=target.GetComponent<BoxCollider>();point+=target.TransformVector(Vector3.up*box.size.y*.5f);}
+#endif
+            return point;}
         void Awake(){table=GetComponent<TableRenderer>();}
         void LateUpdate(){
             var view=table.Client.State;var target=Target;bool inspecting=false;
@@ -34,19 +49,30 @@ namespace YunJian.Riichi {
             if(inspecting)eligible=view!=null&&target!=null;
             if(!eligible){Clear();return;}
             if(target==null){if(EffectRoot!=null)EffectRoot.gameObject.SetActive(false);return;}
-            var choice=WardrobeRuntime.Item(view,view.you,"callout");
+            var choice=WardrobeRuntime.Item(view,view.you,"callout");markerStyle=choice.id;
             string next;
 #if UNITY_EDITOR
             if(inspecting)next="inspection:"+InspectionKey+":"+choice.id;else
 #endif
-            next=view.audioRoom+":"+view.handSeq+":"+view.pending.from+":"+view.players[view.pending.from].river.Length+":"+choice.id;
+            next=view.audioRoom+":"+view.handSeq+":"+view.pending.from+":"+view.pending.tile+":"+view.players[view.pending.from].river.Length+":"+choice.id;
             if(next!=key){Clear();key=next;started=Time.unscaledTime;var go=new GameObject("Equipped callable river tile indicator");go.transform.SetParent(transform,false);
                 // World-space particle systems cache their birth transform. Bind
                 // position, scale and orientation before instantiating the prefab.
-                go.transform.position=target.position+Vector3.up*table.Geometry.Depth*.5f;go.transform.rotation=target.rotation;go.transform.localScale=Vector3.one*TableTileGeometry.SourceUnits;
+                go.transform.position=MarkerPoint(target);go.transform.rotation=target.rotation;go.transform.localScale=Vector3.one*TableTileGeometry.SourceUnits;
                 if(!string.IsNullOrEmpty(choice.nativeEffect)){
-                    go.transform.rotation*=NativeParticleEffect.SurfaceMount(choice.nativeEffect);effect=go.AddComponent<NativeParticleEffect>();effect.Initialize(choice.nativeEffect,507,false,true);
-                    effect.SetOverlay(choice.id!="effect_zhishi");
+                    go.transform.rotation*=MarkerMount;effect=go.AddComponent<NativeParticleEffect>();effect.Initialize(choice.nativeEffect,507,false,true);
+#if UNITY_EDITOR
+                    if(!ReviewPreviousRootPose)
+#endif
+                    effect.BindCallableTileRoot();
+                    // The reference recordings show the base below the tile,
+                    // occluded by tile bodies. Always-on-top rendering paints
+                    // that base across the face of the next river tile.
+                    bool overlay=false;
+#if UNITY_EDITOR
+                    overlay=ReviewPreviousCalloutRendering&&!ReviewSourceDepth&&choice.id!="effect_zhishi";
+#endif
+                    effect.SetOverlay(overlay);
                     foreach(var ps in effect.GetComponentsInChildren<ParticleSystem>()){var main=ps.main;main.scalingMode=ParticleSystemScalingMode.Hierarchy;}
                     go.transform.localScale=Vector3.one;go.transform.localScale=Vector3.one*TableTileGeometry.SourceUnits;
                 }else{
@@ -54,7 +80,7 @@ namespace YunJian.Riichi {
                     sourceEffect.SetOverlay(true);
                 }
             }
-            var root=EffectRoot;root.gameObject.SetActive(true);root.position=target.position+Vector3.up*table.Geometry.Depth*.5f;root.rotation=target.rotation*(effect!=null?effect.SurfaceMountRotation:Quaternion.identity);
+            var root=EffectRoot;root.gameObject.SetActive(true);root.position=MarkerPoint(target);root.rotation=target.rotation*(effect!=null?MarkerMount:Quaternion.identity);
             ApplyReadability(choice,target);
             float age=ValidationFreeze?ValidationAge:Time.unscaledTime-started;if(effect!=null)effect.Sample(age);else sourceEffect.Sample(age);
         }

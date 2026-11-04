@@ -7,7 +7,8 @@ const {sourceFile}=require('./wardrobe-source.cjs');
 
 test('R22 base keeps two to four selectable outfits per category, with complete offline defaults',()=>{
  for(const c of catalogs){
-  assert.equal(c.schema,1);assert.equal(c.protocol,1);assert.equal(c.items.length,354);
+  assert.equal(c.schema,1);assert.equal(c.protocol,1);
+  assert.equal(c.items.length,wardrobe.items.length+read('unity/Assets/Resources/Majsoul/Settings/music.json').tracks.length);
   const packs=new Map(c.packs.map(p=>[p.key,p]));assert.equal(packs.size,c.packs.length);
   for(const category of new Set(wardrobe.items.map(i=>i.category))){
    const items=wardrobe.items.filter(i=>i.category===category&&!i.hiddenFromSelection);
@@ -31,7 +32,8 @@ test('download packs form a finite verified dependency graph on both platforms',
    if(p.builtin)continue;
    assert.equal(p.available,true);assert.match(p.sha256,/^[a-f0-9]{64}$/);assert.ok(p.bytes>0);assert.ok(p.assets.length>0);
    assert.equal(p.file,`${p.key}-v${p.version}-${c.platform}-${p.sha256.slice(0,12)}.bundle`);
-   assert.equal(p.url,`https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/wardrobe-resources-v1/${p.file}`);
+   const version=p.key.startsWith('deco-r30-')?'v2':'v1';
+   assert.equal(p.url,`https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/wardrobe-resources-${version}/${p.file}`);
   }
   assert.equal(new Set(c.addresses.map(a=>a.path.toLowerCase())).size,c.addresses.length);
   for(const a of c.addresses){assert.ok(byKey.get(a.pack).assets.includes(a.path),a.path);assert.ok(fs.existsSync(path.join(root,'unity',a.source)),a.source);assert.ok(a.source.startsWith('Assets/WardrobePacks/'),a.source);}
@@ -51,7 +53,13 @@ test('optional heavy files physically leave Resources while original file GUIDs 
 });
 
 test('all mapped win sources are selectable and old scythe transforms remain intact',()=>{
- const wins=wardrobe.items.filter(i=>i.category==='winEffect');assert.equal(wins.length,60);
+ const wins=wardrobe.items.filter(i=>i.category==='winEffect');assert.equal(wins.length,63);
+ for(const [id,sourceId] of [['ron_chilin',30520013],['ron_26summer',30520014],['ron_26shuiyi',30520015]]){
+  const item=wins.find(i=>i.id===id);assert.equal(item.sourceItemId,sourceId);
+  const pack=catalogs[0].items.find(i=>i.id===id);
+  const source=catalogs[0].addresses.find(a=>a.path===item.effect&&a.pack===pack.pack);
+  const config=read('unity/'+source.source);assert.equal(config.playback.sourceKey,id);assert.equal(config.playback.lifetime,6);
+ }
  const audit=read('unity/Assets/Resources/Majsoul/Wardrobe/provenance-r22-wins.json');assert.equal(audit.records.length,45);
  for(const row of audit.records){const item=wins.find(i=>i.id===row.id);assert.equal(item.sourceItemId,row.sourceId);const config=JSON.parse(fs.readFileSync(sourceFile('unity/Assets/Resources/'+item.effect+'.json'),'utf8'));assert.equal(config.playback.sourceKey,row.sourceKey);assert.equal(config.playback.lifetime,6);}
  const scythe=wardrobe.items.find(i=>i.nativeEffect==='EffectsR11/effect_liqi_23ex_liandao'),config=JSON.parse(fs.readFileSync(sourceFile('unity/Assets/Resources/'+scythe.effect+'.json'),'utf8'));

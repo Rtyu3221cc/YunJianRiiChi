@@ -6,8 +6,8 @@ namespace YunJian.Riichi.Editor
 {
     [InitializeOnLoad] public static class ProjectSetup
     {
-        public const string ReleaseVersion="0.6.19";
-        public const int ReleaseCode=67;
+        public const string ReleaseVersion="0.6.21";
+        public const int ReleaseCode=69;
         static ProjectSetup() { EditorApplication.delayCall += EnsureScene; }
         static void EnsureScene()
         {
@@ -64,8 +64,17 @@ namespace YunJian.Riichi.Editor
             if (!File.Exists("Assets/Scenes/Table.unity")) CreateScene();
             Configure();
             Directory.CreateDirectory("Builds");
-            var report = BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, "Builds/yunjian-riichi-unity-"+ReleaseVersion+".apk", BuildTarget.Android, BuildOptions.None);
-            if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded) throw new System.Exception("Android build failed");
+            // Use the installed compiler API for Unity's SDK preflight as well
+            // as Gradle. AndroidCompilePlatform retains the app's target API.
+            var requestedTarget = PlayerSettings.Android.targetSdkVersion;
+            try {
+                PlayerSettings.Android.targetSdkVersion = (AndroidSdkVersions)36;
+                var report = BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, "Builds/yunjian-riichi-unity-"+ReleaseVersion+".apk", BuildTarget.Android, BuildOptions.None);
+                if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded) throw new System.Exception("Android build failed");
+            } finally {
+                PlayerSettings.Android.targetSdkVersion = requestedTarget;
+                AssetDatabase.SaveAssets();
+            }
         }
     }
     public class ResourceImport : AssetPostprocessor
@@ -125,6 +134,7 @@ namespace YunJian.Riichi.Editor
                 if (!File.Exists(file)) continue;
                 var text = File.ReadAllText(file);
                 text = System.Text.RegularExpressions.Regex.Replace(text, @"compileSdk(?:Version)?\s+(?:=\s*)?\d+", "compileSdk 36");
+                text = System.Text.RegularExpressions.Regex.Replace(text, @"targetSdk(?:Version)?\s+(?:=\s*)?\d+", "targetSdk 32");
                 File.WriteAllText(file, text);
             }
         }

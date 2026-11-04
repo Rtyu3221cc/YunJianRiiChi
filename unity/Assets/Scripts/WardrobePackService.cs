@@ -135,6 +135,26 @@ namespace YunJian.Riichi {
         static void Notify(){installedMemo.Clear();Revision++;WardrobeSelection.ReconcileAvailability();Changed?.Invoke();}
         public bool Queued(string key)=>queued.Contains(key);
         public bool ItemQueued(string id){var p=ForItem(id);return p!=null&&requestedRoots.Contains(p.key)&&!InstalledPack(p.key)&&Closure(p.key).Any(k=>k==DownloadKey||queued.Contains(k));}
+        public bool TryGetItemDownloadProgress(string id,out float progress){
+            progress=0;
+            var item=ForItem(id);
+            if(DownloadKey==null||item==null||!requestedRoots.Contains(item.key))return false;
+            var packs=Closure(item.key);
+            if(!packs.Contains(DownloadKey))return false;
+
+            long total=0;
+            double downloaded=0;
+            foreach(string key in packs){
+                var pack=Find(key);
+                if(pack.builtin)continue;
+                total+=pack.bytes;
+                if(key==DownloadKey)downloaded+=pack.bytes*(double)Progress;
+                else if(RawInstalled(pack))downloaded+=pack.bytes;
+            }
+            if(total<=0)return false;
+            progress=Mathf.Clamp01((float)(downloaded/total));
+            return true;
+        }
         public void DownloadItem(string id,string source=null){var p=ForItem(id);if(p!=null)Download(p.key,source);}
         public void Download(string key,string source=null){var p=Find(key);if(p==null||p.builtin||!p.available||InstalledPack(key))return;if(!p.hidden)requestedRoots.Add(key);if(source!=null)sources[key]=source;foreach(string k in Closure(key)){var d=Find(k);if(d.builtin||RawInstalled(d)||!d.available||!queued.Add(k))continue;queue.Enqueue(k);}if(!processing&&queue.Count>0)StartCoroutine(Process());}
         public void DownloadCategory(string category){foreach(var row in Directory.items.Where(x=>category==null||x.category==category))DownloadItem(row.id);}

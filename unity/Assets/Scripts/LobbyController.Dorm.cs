@@ -56,12 +56,12 @@ namespace YunJian.Riichi {
             Image(new Rect(0,0,Screen.width,Screen.height),"yard",ScaleMode.ScaleAndCrop);var color=GUI.color;GUI.color=new Color(color.r,color.g,color.b,color.a*DormOpacity);Image(new Rect(0,0,Screen.width,Screen.height),"indoor",ScaleMode.ScaleAndCrop);GUI.color=color;
         }
         public void OpenDorm(){
-            StopDressPreview();
+            StopCharacterVoicePreview();characterVoiceTab=false;StopDressPreview();
             dormOpen=true;dormLeaving=false;homeIllustrationEditing=false;roleOpen=roleClosing=false;dormView=outgoingDorm=DormView.Select;sortOpen=sortClosing=false;infoScroll=Vector2.zero;dormOpened=pageBegan=Now;pageMoving=true;characterTransition=Now-.2f;expression=0;Cue("normalflyin");
         }
         public void OpenRoleSelection(){dormOpen=false;roleOpen=true;roleClosing=false;rolePreview=CharacterRoster.Active.character;skinExpanded=false;randomTab=false;ResetRolePanes();roleStarted=Now;Cue("btn_appear");}
         void CloseRoleSelection(){roleClosing=true;roleOpen=false;roleClosed=Now;Cue("btn_cancel");}
-        void SetDormPage(DormView page){if(page==dormView)return;if(dormView==DormView.Skins&&page!=DormView.Skins&&BrowsingSkin.id!=CurrentOutfit.id){previousIllustration=BrowsingSkin;previousSkinBegan=Now;}outgoingDorm=dormView;dormView=page;pageBegan=Now;pageMoving=true;appreciationDragging=zoomDragging=skinDragging=false;infoPointerPending=infoPointerDragging=infoRailDragging=false;skinWasDragged=false;skinPressedCard=-1;Cue("btn_appear");}
+        void SetDormPage(DormView page){if(page==dormView)return;if(page!=DormView.Info)StopCharacterVoicePreview();if(dormView==DormView.Skins&&page!=DormView.Skins&&BrowsingSkin.id!=CurrentOutfit.id){previousIllustration=BrowsingSkin;previousSkinBegan=Now;}outgoingDorm=dormView;dormView=page;pageBegan=Now;pageMoving=true;appreciationDragging=zoomDragging=skinDragging=false;infoPointerPending=infoPointerDragging=infoRailDragging=false;skinWasDragged=false;skinPressedCard=-1;Cue("btn_appear");}
         bool CharacterBack(){
             if(dormOpen&&dormView==DormView.Wardrobe&&dressEye){dressEye=false;StopDressPreview();return true;}
             if(homeIllustrationEditing){CloseLobbyIllustrationEditor(false);return true;}
@@ -74,7 +74,7 @@ namespace YunJian.Riichi {
             Cue("btn_cancel");return true;
         }
         void OpenSkins(DormView from){skinReturn=from;skinIndex=Array.FindIndex(CurrentCharacter.skins,s=>s.id==CurrentOutfit.id);skinPosition=skinFrom=skinIndex;skinMotionBegan=Now-1;skinDescriptionScroll=Vector2.zero;SetDormPage(DormView.Skins);}
-        void SelectDorm(CharacterDefinition role){previousIllustration=CurrentOutfit;previousSkinBegan=Now;CharacterRoster.Dorm=role;expression=0;characterTransition=Now;infoScroll=Vector2.zero;PlayCharacterGreeting(role.key);}
+        void SelectDorm(CharacterDefinition role){StopCharacterVoicePreview();characterVoiceTab=false;previousIllustration=CurrentOutfit;previousSkinBegan=Now;CharacterRoster.Dorm=role;expression=0;characterTransition=Now;infoScroll=Vector2.zero;PlayCharacterGreeting(role.key);}
         void PlayCharacterGreeting(string key){GetComponent<CharacterVoices>()?.Play(key,"lobby_normal1");}
         Rect DormPortrait(CharacterSkin skin){float w=1400*IllustrationAspect(CharacterRoster.Find("yiji").skins[0]);return CharacterFraming.FrameRect(skin.id,"B0",new Rect(width*.315f-w/2,130,w,1400),out _);}
         Rect AppreciatePortrait(CharacterSkin skin){var r=DormPortrait(skin);r.width*=appreciationZoom;r.height*=appreciationZoom;r.x=width*.45f-r.width/2+appreciationPan.x;r.y=100+(1080-r.height)*.35f+appreciationPan.y;return r;}
@@ -123,7 +123,7 @@ namespace YunJian.Riichi {
             bool back=dormView==DormView.Info;int frame=back?16:1;
             if(pageMoving&&(outgoingDorm==DormView.Select&&dormView==DormView.Info||outgoingDorm==DormView.Info&&dormView==DormView.Select)){float q=Mathf.Clamp01((Now-pageBegan)/.25f);frame=back?1+Mathf.FloorToInt(q*15):16-Mathf.FloorToInt(q*15);}
             CImage(new Rect(x-58.5f,873.5f,145,145),"btn_anim_2_"+Mathf.Clamp(frame,1,16));
-            if(Hit(new Rect(x-64,866,150,160),"character-info")){if(dormView==DormView.Info)SetDormPage(DormView.Select);else if(dormView==DormView.Select){infoScroll=Vector2.zero;SetDormPage(DormView.Info);}}
+            if(Hit(new Rect(x-64,866,150,160),"character-info")){if(dormView==DormView.Info)SetDormPage(DormView.Select);else if(dormView==DormView.Select){characterVoiceTab=false;infoScroll=Vector2.zero;SetDormPage(DormView.Info);}}
         }
         void DrawDormLeftButtons(){
             float x=Mathf.Max(220,width*.12f);CImage(new Rect(x,238,88,88),"sushe_cloth_button");if(Hit(new Rect(x-21,217,130,130),"character-skins"))OpenSkins(DormView.Select);
@@ -143,7 +143,16 @@ namespace YunJian.Riichi {
                 // transition. Avoid keeping hidden cards alive in the cache.
                 if(sortOpen&&!sortClosing&&Now-sortBegan>=.18f)continue;
                 var r=new Rect(16.05f+i%3*220,18.3f+i/3*198-dormRoleScroll.y,204,192);if(r.yMax<0||r.y>cardView.height)continue;var role=roles[i];bool available=CharacterRoster.Available(role.key),selected=available&&role.key==CurrentCharacter.key;DrawCharacterCard(r,role,CharacterRoster.Outfit(role.key),selected,true);
-                if(!available){var pack=CharacterPackService.Find(role.key);bool downloading=CharacterPackService.Instance.DownloadKey==role.key||CharacterPackService.Instance.Queued(role.key);DownloadCardBand(r,downloading?"下载中":"下载 "+CharacterResourceUi.Size(pack?.bytes??0));if(Hit(r,"dorm-character-"+role.key))CharacterResourceUi.Current.Ask(role.key,false,id=>SelectDorm(CharacterRoster.Find(id)));continue;}
+                if(!available){
+                    var service=CharacterPackService.Instance;
+                    string status;
+                    if(service.DownloadKey==role.key)status=DownloadCardProgress(service.Progress);
+                    else if(service.Queued(role.key))status="等待下载";
+                    else status="下载 "+CharacterResourceUi.Size(CharacterPackService.Find(role.key)?.bytes??0);
+                    DownloadCardBand(r,status);
+                    if(Hit(r,"dorm-character-"+role.key))CharacterResourceUi.Current.Ask(role.key,false,id=>SelectDorm(CharacterRoster.Find(id)));
+                    continue;
+                }
                 var star=new Rect(r.x+.15f,r.y+147,40,40);if((selected||CharacterRoster.Favorite(role.key))&&Hit(star,"dorm-star-"+role.key)){CharacterRoster.Star(role.key);continue;}if(Hit(r,"dorm-character-"+role.key))SelectDorm(role);
             }
             targetOffset=previousOffset;GUI.EndGroup();
@@ -161,7 +170,8 @@ namespace YunJian.Riichi {
         void DrawCharacterInfo(){
             float x=width-1080;var frame=new Rect(x,146.5f,840,914);var backing=new Rect(x+50,150.5f,740,888);CImage(backing,"gift_bbg");CSlice(frame,"bg_frame");
             CImage(new Rect(x-.4f,159.5f,11,514),"bf_lampline");
-            foreach(int i in new[]{0,1}){var lamp=new Rect(x-55.9f,183.5f+i*140,121,164);CImage(lamp,i==0?"bf_chosen":"bf_unchooesd");VerticalCharacterLabel(new Rect(lamp.x+32,lamp.y+8.2f,55,147.6f),i==0?"档案":"语音",42,44,new Color(.12f,.09f,.08f));if(i==0)Hit(lamp,"profile-lantern");}
+            foreach(int i in new[]{0,1}){var lamp=new Rect(x-55.9f,183.5f+i*140,121,164);CImage(lamp,(i==1)==characterVoiceTab?"bf_chosen":"bf_unchooesd");VerticalCharacterLabel(new Rect(lamp.x+32,lamp.y+8.2f,55,147.6f),i==0?"档案":"语音",42,44,new Color(.12f,.09f,.08f));if(Hit(lamp,i==0?"profile-lantern":"voice-lantern"))SetCharacterInfoTab(i==1);}
+            if(characterVoiceTab){DrawCharacterVoicePage(x);return;}
             CSlice(new Rect(x+63,173.4f,715,151),"gift_heart_bg");CImage(new Rect(x+99,230.9f,94,36),"heart_deco");FlipImage(new Rect(x+645.4f,230.9f,94,36),"heart_deco",true,false);
             CImage(new Rect(x+198.8f,197.5f,440,108),"heart_normal");for(int i=0;i<5;i++){var heart=new Rect(x+219+i*80.5f,219,77,67);CImage(heart,"bf_heart_bg");CImage(heart,"bf_heart");}
             var c=CurrentCharacter;var viewport=new Rect(x+84,381,644,626);float introHeight=NText("profile-body",26,TextAnchor.UpperLeft,true).CalcHeight(new GUIContent(c.description),578);float emojiTop=325+introHeight+35,contentHeight=emojiTop+85+Mathf.CeilToInt(c.emojis.Length/4f)*170;

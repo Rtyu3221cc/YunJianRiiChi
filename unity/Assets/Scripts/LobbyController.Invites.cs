@@ -21,7 +21,7 @@ namespace YunJian.Riichi {
             qrScanner.Cancelled=()=>{if(Modal=="scan"&&!modalClosing)qrScanner.Begin();};
         }
         public void OpenInvitation(bool tableEntry=false){
-            invitationHeading=tableEntry?"邀请好友":"邀请牌友";
+            invitationHeading="房间号 "+client.State?.pin;
             OpenModal("invite");RefreshInvitation();
         }
         void RefreshInvitation(){

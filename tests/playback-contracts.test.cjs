@@ -14,5 +14,6 @@ test('ground and tile-bound declarations use the two original animation branches
  assert.equal(human('LiQiPai').cue,.275);assert.equal(human('LiQiPai').release,.65);assert.equal(human('LiQiPai').lifetime,.8075);
 });
 test('unverified adapted river effects stay identifiable but out of the default selector',()=>{
- const items=read('Wardrobe/catalog.json').items;const trials=items.filter(i=>i.category==='callout'&&i.trialStyle);assert.equal(trials.length,4);assert.ok(trials.every(i=>i.hiddenFromSelection));assert.equal(items.filter(i=>i.category==='callout'&&!i.hiddenFromSelection).length,4);
+ const items=read('Wardrobe/catalog.json').items;const trials=items.filter(i=>i.category==='callout'&&i.trialStyle);assert.equal(trials.length,4);assert.ok(trials.every(i=>i.hiddenFromSelection));assert.equal(items.filter(i=>i.category==='callout'&&!i.hiddenFromSelection).length,5);
+ const original=items.find(i=>i.id==='mpzs_26summer');assert.equal(original.sourceItemId,30590002);assert.ok(!original.trialStyle&&!original.hiddenFromSelection);
 });

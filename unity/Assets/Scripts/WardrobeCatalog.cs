@@ -37,7 +37,7 @@ namespace YunJian.Riichi {
         public static WardrobeItem ResolveHand(WardrobeItem item,string character){
             if(item==null||item.category!="hand")return item;
             if(WardrobeCatalog.CanonicalHand(item.id)=="hand-cat-orange")return WardrobeCatalog.Find("hand-cat-orange");
-            return WardrobeCatalog.Find(CharacterRoster.Find(character)?.sex==2?"hand-man":"hand-human");
+            return WardrobeCatalog.Find(character=="wangcilang"?"hand-dog":CharacterRoster.Find(character)?.sex==2?"hand-man":"hand-human");
         }
         public static string Motion(WardrobeItem item,string action){
             string suffix=action=="discard-hand"?"discard":action=="riichi-hand"?"riichi":action=="fulu-hand"?"meld":action=="tsumo-hand"?"tsumo":"hand";

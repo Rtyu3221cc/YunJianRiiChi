@@ -24,7 +24,7 @@ namespace YunJian.Riichi {
   // Use the winner's limit, never points including honba, sticks or dealer bonus.
   public static bool Eligible(WinDetail detail){
    var score=detail?.score;
-   if(score!=null)return score.damanguan>0 || score.fanshu>=5 || (score.fanshu==4&&score.fu>=40) || (score.fanshu==3&&score.fu>=70);
+   if(score!=null&&(score.damanguan>0 || score.fanshu>0 || score.fu>0))return score.damanguan>0 || score.fanshu>=5 || (score.fanshu==4&&score.fu>=40) || (score.fanshu==3&&score.fu>=70);
    var limit=detail?.limit;
    return limit=="满贯"||limit=="跳满"||limit=="倍满"||limit=="三倍满"||limit=="累计役满"||(!string.IsNullOrEmpty(limit)&&limit.Contains("役满"));
   }

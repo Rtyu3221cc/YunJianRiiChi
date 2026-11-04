@@ -21,7 +21,7 @@ namespace YunJian.Riichi {
             var hand=OrderedHand(State);if(index<0||index>=hand.Count)return;var tile=hand[index];
             SelectedIndex=index;selectedHandId=tile.Id;selectedFace=tile.Face;selectedCopy=hand.Take(index).Count(t=>t.Face==tile.Face);
             SelectedAction=TableRenderer.HandChoice(State,tile.Face,tile.Drawn,RiichiMode)?.id;table.SelectHand(index);
-            if(SelectedAction!=null&&(ActiveWaitHint?.waits?.Length??0)>0)waitHoldVisible=true;
+            if(!waitAutoShown&&SelectedAction!=null&&(ActiveWaitHint?.waits?.Length??0)>0){waitHoldVisible=true;waitAutoShown=true;}
         }
         void SubmitHandAction(string action,int physicalId){
             if(Busy||!OptionsReady)return;localHand.MarkDiscard(physicalId);ClearSelection();table.SelectHand(-1,true);table.RefreshSubmittedHand();Act(action);
