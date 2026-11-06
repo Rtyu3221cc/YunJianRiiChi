@@ -58,6 +58,8 @@ $taskUnity = 'D:\Unity\Lib\6000.6.4f1\Editor\Unity.exe'
 
 同一个角色不要混用 APK 导出缓存与 Web 动态图集缓存；它们的 atlas 页面可能不同。已经通过 APK 提取的本地角色继续用相同来源准备；切换到 `--web-only` 时使用干净的角色缓存，或追加 `--force` 重新准备整名角色。
 
+已验证的分层例外记录在 `scripts/prepare-character-resources.py` 的 `SPINE_WEB_LAYERS` 中。每一层都成套替换骨骼、atlas 和引用的全部贴图。
+
 更新上游数据时，将新增或变更的**完整原始记录**放到 `incoming/character-patch.json`，结构与 `config.json` 一致；包含 `item_definition/character`、`item_definition/skin` 两个数组中的必要记录。只新增皮肤时，可以只提供皮肤数组。资源键与 `prefix` 放到 `incoming/versions-patch.json` 的 `res` 对象内。
 
 ```powershell

@@ -70,7 +70,7 @@ namespace YunJian.Riichi {
         void OpenRoleSkins(string key,bool fromPool=false){rolePreview=key;rolePopupFromPool=fromPool;skinExpanded=true;roleSkinsScroll=Vector2.zero;roleSkinsDrag.Reset();Cue("btn_click");}
         void DrawActiveRoster(){
             var active=CharacterRoster.Active;var role=CharacterRoster.Find(active.character);var large=RoleRect(360.4f,394.67f,209.47f,209.83f);RoleHead(large,role,active.skin,false,false);CImage(RoleRect(512.68f,383.15f,104,163),"Role/using_1_text_right2",ScaleMode.ScaleToFit);if(Hit(RoleRect(349.88f,384.55f,230,230),"active-character-skins"))OpenRoleSkins(active.character);
-            var outfit=CharacterRoster.Skin(active.character,active.skin);CSlice(RoleRect(277.14f,647.15f,375.49f,100),"Role/name_base");Label(RoleRect(291.31f,654.51f,350.74f,51.12f),role.name,CText(36,TextAnchor.MiddleCenter,true),CharacterGold);Label(RoleRect(286.38f,699.65f,357,40),outfit.id==role.defaultSkin?outfit.description.Split('\n')[0]:outfit.name,CText(28),new Color(.84f,.87f,.92f));
+            var outfit=CharacterRoster.Skin(active.character,active.skin);CSlice(RoleRect(277.14f,647.15f,375.49f,100),"Role/name_base");Label(RoleRect(291.31f,654.51f,350.74f,51.12f),role.name,CharacterNameText(36),CharacterGold);Label(RoleRect(286.38f,699.65f,357,40),outfit.id==role.defaultSkin?outfit.description.Split('\n')[0]:outfit.name,CText(28),new Color(.84f,.87f,.92f));
             RolePane(RoleRect(669.52f,172.65f,933.15f,805.51f),"宿舍",RoleRect(707.87f,181.51f,521,61.91f),RoleRect(700.2f,243.43f,880.54f,5.03f));RoleFilter(RoleRect(1440.49f,185.46f,139,59),"role-favorites");DrawRoleRoster();
         }
         void DrawRoleRoster(){

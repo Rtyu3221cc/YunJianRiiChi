@@ -146,7 +146,7 @@ namespace YunJian.Riichi
             Camera.clearFlags = CameraClearFlags.SolidColor; Camera.backgroundColor = Color.black;
             Camera.allowMSAA = true; QualitySettings.antiAliasing = 4;
             QualitySettings.anisotropicFiltering=AnisotropicFiltering.ForceEnable;
-            Camera.cullingMask &= ~((1 << 12) | (1 << 13) | (1 << 14) | (1 << 15));
+            Camera.cullingMask &= ~((1 << 12) | (1 << 13) | (1 << 14) | (1 << 15) | (1 << WinCutIn.CompositionLayer));
             HandCamera = new GameObject("Original orthographic hand camera").AddComponent<Camera>();
             HandCamera.transform.position = new Vector3(0, 0, -30);
             HandCamera.orthographic = true; HandCamera.orthographicSize = 9;

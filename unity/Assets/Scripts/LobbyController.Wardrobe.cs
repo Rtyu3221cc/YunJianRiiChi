@@ -58,7 +58,21 @@ namespace YunJian.Riichi {
             dressEye=false;dressCategory="stick";dressScroll=dressItemScroll=Vector2.zero;dressItemDrag.Reset();dressItemRailDragging=false;SetDormPage(DormView.Wardrobe);
         }
         void StopDressPreview(){dressTable.Hide();dressMotion.Hide();if(dressAudio!=null)dressAudio.Stop();if(dressResourceLease!=null)Destroy(dressResourceLease);dressResourceLease=null;if(PlaylistAudio.Active!=null)PlaylistAudio.Active.ExternalAudition=false;}
-        void DisposeWardrobe(){StopDressPreview();dressMotion.Dispose();foreach(var m in dressSlices.Values)Destroy(m);dressSlices.Clear();}
+        Font wardrobeNameFont;
+        bool wardrobeNameFontResolved;
+        GUIStyle WardrobeNameText(int size,TextAnchor align=TextAnchor.MiddleCenter){
+            if(!wardrobeNameFontResolved){
+                var installed=Font.GetOSInstalledFontNames();
+                var family=new[]{"Noto Sans CJK SC","Noto Sans SC","Microsoft YaHei UI","Microsoft YaHei","SimHei"}
+                    .FirstOrDefault(name=>installed.Contains(name,StringComparer.OrdinalIgnoreCase));
+                if(family!=null)wardrobeNameFont=Font.CreateDynamicFontFromOSFont(family,size);
+                wardrobeNameFontResolved=true;
+            }
+            var style=CText(size,align);
+            style.font=wardrobeNameFont??body;
+            return style;
+        }
+        void DisposeWardrobe(){StopDressPreview();dressMotion.Dispose();if(wardrobeNameFont!=null)Destroy(wardrobeNameFont);foreach(var m in dressSlices.Values)Destroy(m);dressSlices.Clear();}
         void TickWardrobePreview(){
             if(!dressEye)return;
             var item=Draft(dressCategory);if(item==null)return;if(dressCategory=="hand")item=WardrobeRuntime.ResolveHand(item,CurrentCharacter.key);
@@ -141,7 +155,7 @@ namespace YunJian.Riichi {
                 var cat=dressCategories[i];var row=new Rect(12,i*DressPitch-dressScroll.y+10,DressRowWidth,114.53f*k);if(row.yMax<0||row.y>viewport.height)continue;
                 WSlice(row,"bf_popout");WImage(new Rect(row.center.x-139.01f*k,row.center.y-45.53f*k,3*k,92.5f*k),"line");var item=Draft(cat.key);
                 Label(new Rect(row.center.x-294.66f*k,row.center.y-42.63f*k,148.79f*k,84.5f*k),cat.name,CText(32,TextAnchor.MiddleCenter,true),CharacterGold);
-                Label(new Rect(row.center.x-119.69f*k,row.center.y-45*k,304*k,90*k),item?.name??cat.hint,CText(28,TextAnchor.MiddleLeft,true),CharacterGold);
+                Label(new Rect(row.center.x-119.69f*k,row.center.y-45*k,304*k,90*k),item?.name??cat.hint,WardrobeNameText(28,TextAnchor.MiddleLeft),CharacterGold);
                 var icon=new Rect(row.center.x+201.315f*k,row.center.y-47.555f*k,94.95f*k,94.95f*k);if(item!=null)DressImage(icon,item.icon,ScaleMode.ScaleAndCrop);else WImage(icon,cat.icon,ScaleMode.ScaleToFit);
                 if(cat.key==dressCategory)WSlice(new Rect(row.center.x+(11.79f-326.235f)*k,row.center.y+(.52f-66.065f)*k,652.47f*k,132.13f*k),"choose");
                 if(Hit(row,"dress-category-"+cat.key))SelectDressCategory(cat.key);
@@ -172,7 +186,7 @@ namespace YunJian.Riichi {
                     if(installed)EquipDressItem(dressCategory,item.id);
                     else{string categoryKey=dressCategory;WardrobeResourceUi.Current.Ask(item.id,id=>{EquipDressItem(categoryKey,id);dressItemScroll=Vector2.zero;});}
                 }
-                if(dressCategory=="hand")Label(new Rect(card.x-15,card.yMax+6,card.width+30,38),item.name,CText(25,TextAnchor.MiddleCenter,true),CharacterGold);
+                if(dressCategory=="hand")Label(new Rect(card.x-15,card.yMax+6,card.width+30,38),item.name,WardrobeNameText(25),CharacterGold);
             }
             targetOffset=offset;GUI.EndGroup();
         }
@@ -198,7 +212,7 @@ namespace YunJian.Riichi {
             }else if(item.category=="music"){
                 DressImage(new Rect(area.center.x-112,area.center.y-144,224,224),item.icon);Label(new Rect(area.x+30,area.center.y+108,area.width-60,48),"试听中",CText(28),CharacterGold);
             }else if(dressMotion.Image!=null)dressMotion.Draw(new Rect(area.center.x-265,area.y+8,530,530));
-            Label(caption,item.name,CText(32,TextAnchor.MiddleCenter,true),CharacterGold);
+            Label(caption,item.name,WardrobeNameText(32),CharacterGold);
         }
 #if UNITY_EDITOR
         public void PreviewWardrobe(string category="stick"){PreviewDorm("yiji",400101);OpenWardrobe();SelectDressCategory(category);ReviewSettleDorm();}

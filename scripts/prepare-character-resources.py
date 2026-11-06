@@ -96,6 +96,20 @@ def png(dest, obj, logical=True):
     dest.parent.mkdir(parents=True, exist_ok=True)
     image.save(dest)
 
+def spine_from_web(source, folder):
+    records.append(fetch(source.replace('.skel.txt', '.atlas.txt'), folder / 'atlas.txt'))
+    records.append(fetch(source, folder / 'skeleton.bytes'))
+    pages = [line.strip() for line in (folder / 'atlas.txt').read_text('utf-8-sig').splitlines()
+             if line.strip().endswith('.png')]
+    for page in pages:
+        records.append(fetch(source.rsplit('/', 1)[0] + '/' + page, folder / Path(page).name))
+
+
+# The Web export preserves more detail in Saber's foreground. Its background
+# layer has more pixels in the APK, so keep each complete layer with its source.
+SPINE_WEB_LAYERS = {(40011003, '2'): 'spine_1.skel.txt'}
+
+
 def spine_from_apk(source, folder):
     if not args.force and (folder/'skeleton.bytes').is_file()and(folder/'atlas.txt').is_file():
         pages=[s.strip()for s in(folder/'atlas.txt').read_text('utf8').splitlines()if s.strip().endswith('.png')]
@@ -174,14 +188,14 @@ for role in catalog['roles']:
             skin['hasWaitingroom']=(root/'Skins'/str(sid)/'waitingroom.png').is_file()
             if prefabs:
                 for source, part in zip(prefabs, parts):
-                    spine_from_apk(source, root / part)
+                    web_layer = SPINE_WEB_LAYERS.get((sid, part.rsplit('/', 1)[-1]))
+                    if web_layer:
+                        spine_from_web(web + 'spine/' + web_layer, root / part)
+                    else:
+                        spine_from_apk(source, root / part)
             elif skin['dynamic']:
-                for source,part in zip(web_skeletons,parts):
-                    folder=root/part
-                    records.append(fetch(source.replace('.skel.txt','.atlas.txt'),folder/'atlas.txt'))
-                    records.append(fetch(source,folder/'skeleton.bytes'))
-                    pages=[line.strip()for line in(folder/'atlas.txt').read_text('utf-8-sig').splitlines()if line.strip().endswith('.png')]
-                    for page in pages:records.append(fetch(source.rsplit('/',1)[0]+'/'+page,folder/Path(page).name))
+                for source, part in zip(web_skeletons, parts):
+                    spine_from_web(source, root / part)
             for part in parts:
                 header=(root/part/'skeleton.bytes').read_bytes()[:80]
                 assert b'4.2.'in header,('Unsupported Spine binary version',sid,part,header[:24].hex())

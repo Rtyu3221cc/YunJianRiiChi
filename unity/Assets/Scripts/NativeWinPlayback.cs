@@ -28,6 +28,13 @@ namespace YunJian.Riichi {
             native=owner;root=authored;space=container;plan=contract;table=GetComponentInParent<TableRenderer>();
             move=root.Find("root_move");rot=root.Find("root_rot");ani=root.Find("root_ani");aniTsumo=root.Find("root_ani_zimo");stationary=root.Find("root_static");fly=root.Find("root_fly");flyMove=fly?.Find("move");flyPosition=fly?.Find("positon");legacyPai=root.Find("pai_container/pai");
             if(plan.riichi)riichiMaque=root.Find("root_maque");
+            if(plan.sourceKey=="ron_chilin"){
+                // These cropped role quads are separate from the fire and maple layers.
+                var portrait=stationary?.Find("47_2/role");
+                if(portrait!=null)
+                    foreach(var renderer in portrait.GetComponentsInChildren<Renderer>(true))
+                        renderer.forceRenderingOff=true;
+            }
             if(plan.sourceKey=="ron_26shuiyi"&&move!=null)
                 paintFootprints=move.GetComponentsInChildren<Transform>(true).Where(t=>t.name=="d1"||t.name=="d2"||t.name=="d3").ToArray();
             if(plan.queueEnd>plan.queueBegin){queue=gameObject.AddComponent<NativeWinningTileQueue>();queue.Begin=plan.queueBegin;queue.End=plan.queueEnd;queue.DepthTest=plan.tileQueueMode==2?8:4;queue.LegacyQueues=plan.tileQueueMode==3;}

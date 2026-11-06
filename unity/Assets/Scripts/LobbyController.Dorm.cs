@@ -35,7 +35,7 @@ namespace YunJian.Riichi {
             var entry=nativeCharacterFonts.fonts.First(f=>f.key==key);string resource=entry.resource.EndsWith("/fengyucumaokai")?"Majsoul/Lobby/Fonts/brush":entry.resource;if(!nativeCharacterFontCache.TryGetValue(resource,out var font))nativeCharacterFontCache[resource]=font=Resources.Load<Font>(resource);return new GUIStyle(text){font=font,fontSize=size,alignment=align,wordWrap=wrap};
         }
         void VerticalCharacterLabel(Rect r,string value,int size,float pitch,Color color){
-            var style=CText(size,TextAnchor.MiddleCenter,true);style.wordWrap=false;style.clipping=TextClipping.Overflow;
+            var style=CharacterNameText(size);style.wordWrap=false;style.clipping=TextClipping.Overflow;
             float step=Mathf.Min(pitch,r.height/Mathf.Max(1,value.Length)),cell=size*2;
             for(int i=0;i<value.Length;i++)Label(new Rect(r.x,r.center.y+(i-(value.Length-1)*.5f)*step-cell/2,r.width,cell),value[i].ToString(),style,color);
         }
@@ -118,7 +118,7 @@ namespace YunJian.Riichi {
         }
         void DrawCharacterNameplate(){
             float x=width/2-881;CImage(new Rect(x,907,502,78),"sushe_name_bottom");CImage(new Rect(x+15,963,388,62),"sushe_cv_bottom");CImage(new Rect(x-64,874,150,144),"sushe_visit_flower");
-            Label(new Rect(x+69,904.2f,282,75),CurrentCharacter.name,CText(CurrentCharacter.name.Length>5?45:50,TextAnchor.MiddleCenter,true),Color.white);
+            Label(new Rect(x+69,904.2f,282,75),CurrentCharacter.name,CharacterNameText(CurrentCharacter.name.Length>5?45:50),Color.white);
             Label(new Rect(x+69,974.5f,282,45),"CV："+CurrentCharacter.cv,CText(30,TextAnchor.MiddleCenter,true),Color.white);
             bool back=dormView==DormView.Info;int frame=back?16:1;
             if(pageMoving&&(outgoingDorm==DormView.Select&&dormView==DormView.Info||outgoingDorm==DormView.Info&&dormView==DormView.Select)){float q=Mathf.Clamp01((Now-pageBegan)/.25f);frame=back?1+Mathf.FloorToInt(q*15):16-Mathf.FloorToInt(q*15);}
@@ -233,7 +233,7 @@ namespace YunJian.Riichi {
                 Hit(r,"skin-card-"+i,false);
             }
             targetOffset=targetBefore;GUI.EndGroup();
-            float x=width-920;Label(new Rect(x,640,329,60),BrowsingSkin.name,NText("skin-title",46,TextAnchor.MiddleLeft),CharacterGold);Label(new Rect(x+329.5f,655.5f,245,45),c.name,CText(30,TextAnchor.MiddleRight,true),new Color(.84f,.78f,.64f));CImage(new Rect(x+6,702,566,22),"dividing_line");
+            float x=width-920;Label(new Rect(x,640,329,60),BrowsingSkin.name,NText("skin-title",46,TextAnchor.MiddleLeft),CharacterGold);Label(new Rect(x+329.5f,655.5f,245,45),c.name,CharacterNameText(30,TextAnchor.MiddleRight),new Color(.84f,.78f,.64f));CImage(new Rect(x+6,702,566,22),"dividing_line");
             var style=NText("skin-body",30,TextAnchor.UpperLeft,true);float h=style.CalcHeight(new GUIContent(BrowsingSkin.description),575);var descriptionView=new Rect(x,735.5f,600,181);DragCharacterPane(skinDescriptionDrag,descriptionView,new Vector2(575,Mathf.Max(181,h)),ref skinDescriptionScroll,false);skinDescriptionScroll=GUI.BeginScrollView(descriptionView,skinDescriptionScroll,new Rect(0,0,575,Mathf.Max(181,h)),false,false,GUIStyle.none,GUIStyle.none);Label(new Rect(0,0,575,h),BrowsingSkin.description,style,new Color(.88f,.87f,.89f));GUI.EndScrollView();
             var button=new Rect(width-787.6f,931.3f,313,93);bool equipped=BrowsingSkin.id==CurrentOutfit.id;NativeUiChrome.CharacterButton(button,equipped);Label(new Rect(button.x+35,button.y+15,243,63),"选择服饰",NText("skin-title",42),equipped?new Color(.62f,.61f,.61f):CharacterGold);if(Hit(button,"equip-skin",!equipped)){CharacterRoster.Equip(c.key,BrowsingSkin.id);Cue("btn_click");}
         }

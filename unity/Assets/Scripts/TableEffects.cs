@@ -468,7 +468,10 @@ namespace YunJian.Riichi
         {
             overlay.CopyFrom(table.Camera);overlay.cullingMask=1<<14;overlay.clearFlags=CameraClearFlags.Depth;overlay.depth=table.HandCamera.depth+1;
         }
-        void LateUpdate() {if(overlay!=null && current!=null)ConfigureOverlay();}
+        void LateUpdate() {
+            if(overlay!=null && current!=null)ConfigureOverlay();
+            winCutIn.Render();
+        }
         public void RenderOverlay(RenderTexture texture)
         {
             if(overlay==null || !overlay.enabled)return;ConfigureOverlay();overlay.targetTexture=texture;overlay.Render();overlay.targetTexture=null;
@@ -478,7 +481,6 @@ namespace YunJian.Riichi
 #if UNITY_EDITOR
             if(ValidationSequentialClock&&validationCutInBegan>=0){winCutIn.Freeze=true;winCutIn.FrozenAge=ValidationTime-validationCutInBegan;}
 #endif
-            winCutIn.Sample(winCutIn.Age);
             StartQueued();
             UpdateImpact(); UpdateNorthEffects(); UpdateWinEffects();
             float elapsed=HandAge;
@@ -537,7 +539,7 @@ namespace YunJian.Riichi
         }
         public void DrawCall(float width,float height,int n)
         {
-            if(winCutIn.Active){winCutIn.Draw(width,height);return;}
+            if(winCutIn.Active){winCutIn.Draw();return;}
             if (call==null) return;
             if(IsWin(call)){NativeAnnouncements.DrawWin(call.kind,table.RelativeSeat(call.seat),n,width,height,CallAge);return;}
             string name=CallArt(call.kind);if(name==null)return;
