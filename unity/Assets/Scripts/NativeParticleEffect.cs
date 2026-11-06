@@ -15,6 +15,7 @@ namespace YunJian.Riichi {
   ParticleSystem[] particles;float previous=-1;readonly List<Material> copies=new List<Material>();
   sealed class Scroll {public Material material;public Vector2 origin,speed;}
   readonly List<Scroll> scrolls=new List<Scroll>();
+  readonly List<Mesh> repairedSkins=new List<Mesh>();
   static readonly Dictionary<string,AssetBundle> shaders=new Dictionary<string,AssetBundle>();
   public int LayerCount=>particles?.Length??0;
   public int ParticleCount=>particles?.Sum(p=>p.particleCount)??0;
@@ -77,7 +78,8 @@ namespace YunJian.Riichi {
    var prefab=WardrobePackService.Asset<GameObject>("Majsoul/NativeReview/"+name);if(prefab==null)throw new InvalidOperationException("Missing imported APK prefab "+name);
    var root=prefab.transform.childCount>0?prefab.transform.GetChild(0):prefab.transform;return Quaternion.FromToRotation(root.localRotation*Vector3.forward,Vector3.up);
   }
-  void RestoreStandardBlend(GameObject clone,NativeEffectSource descriptor){
+  void RestoreSourceMaterials(GameObject clone,NativeEffectSource descriptor){
+   var shader=Resources.Load<Shader>("Majsoul/NativeReview/WinsR22/WardrobeEffectParticle");
    var nodes=clone.GetComponentsInChildren<Transform>(true).Skip(1).ToArray();
    for(int i=0;i<Mathf.Min(nodes.Length,descriptor.nodes.Length);i++){
     var source=descriptor.nodes[i].materials;
@@ -86,21 +88,55 @@ namespace YunJian.Riichi {
     var materials=renderer.sharedMaterials;
     bool changed=false;
     for(int j=0;j<Mathf.Min(source.Length,materials.Length);j++){
-     if(source[j].shaderName!="FizzFX/Standard"||materials[j]==null)continue;
-     // The original pass uses Blend SrcAlpha [_BlendMode]. The numeric
-     // fallback in the pass metadata is zero when the state is property-backed.
-     var blend=source[j].floats?.FirstOrDefault(f=>f.name=="_BlendMode");
-     if(blend==null)continue;
-     var material=new Material(materials[j]);material.SetFloat("_DstBlend",blend.value);
+     if(materials[j]==null)continue;
+     var original=source[j];
+     float Field(string key,float fallback)=>original.floats?.FirstOrDefault(f=>f.name==key)?.value??fallback;
+     var material=new Material(materials[j]);
+     material.shader=shader;
+     if(original.shaderName=="FizzFX/Standard"){
+      foreach(var f in original.floats??Array.Empty<NativeNamedFloat>())if(material.HasProperty(f.name))material.SetFloat(f.name,f.value);
+      foreach(var c in original.colors??Array.Empty<NativeNamedColor>())if(material.HasProperty(c.name))material.SetVector(c.name,new Vector4(c.value[0],c.value[1],c.value[2],c.value[3]));
+      foreach(var t in original.extraTextures??Array.Empty<NativeNamedTexture>())if(material.HasProperty(t.name)&&material.GetTexture(t.name)==null){var tex=WardrobePackService.Asset<Texture2D>("Majsoul/NativeReview/"+t.texture);if(tex!=null)material.SetTexture(t.name,tex);}
+      material.SetFloat("_SrcBlend",5);material.SetFloat("_DstBlend",Field("_BlendMode",10));
+      material.SetFloat("_ZTest",Field("_ZTestMode",4));material.SetFloat("_SourceZWrite",Field("_ZWriteMode",0));material.SetFloat("_SourceCull",Field("_CullMode",0));
+      material.SetFloat("_StandardDissolve",(original.keywords??Array.Empty<string>()).Contains("_DISSOLVEENABLE_ON")?1:0);
+      if(renderer is ParticleSystemRenderer particle){
+       var streams=new List<ParticleSystemVertexStream>();particle.GetActiveVertexStreams(streams);
+       material.SetFloat("_CustomStreams",streams.Contains(ParticleSystemVertexStream.Custom2XYZW)?1:0);
+      }
+     }else if(original.shaderName.StartsWith("Legacy Shaders/Particles/")||original.shaderName=="Mobile/Particles/Additive"){
+      // Literal render states must never be read from an unnamed material slot.
+      material.SetFloat("_SrcBlend",5);material.SetFloat("_DstBlend",original.shaderName.EndsWith("Additive")?1:10);
+      material.SetFloat("_ZTest",4);material.SetFloat("_SourceZWrite",0);material.SetFloat("_SourceCull",0);
+     }
      copies.Add(material);materials[j]=material;changed=true;
     }
     if(changed)renderer.sharedMaterials=materials;
+   }
+  }
+  void RestoreCompressedSkin(GameObject clone){
+   foreach(var skin in clone.GetComponentsInChildren<SkinnedMeshRenderer>(true)){
+    var mesh=skin.sharedMesh;if(mesh==null)continue;
+    var weights=mesh.boneWeights;bool changed=false;
+    for(int i=0;i<weights.Length;i++){
+     var weight=weights[i];
+     // Compressed skin stores weights in 31 steps. Earlier exports used the
+     // integer sum to calculate the implicit fourth weight in normalized units.
+     float sum=weight.weight0+weight.weight1+weight.weight2;
+     if(weight.weight3<0&&sum>=0&&sum<1&&Mathf.Abs(weight.weight3-(1-Mathf.Round(sum*31)))<.001f){
+      weight.weight3=1-sum;weights[i]=weight;changed=true;
+     }
+    }
+    if(!changed)continue;
+    var repaired=Instantiate(mesh);repaired.boneWeights=weights;
+    repairedSkins.Add(repaired);skin.sharedMesh=repaired;
    }
   }
   public void Initialize(string name,uint seed=507,bool useApkShader=false,bool normalizeSurfaceOrigin=false,NativeWinContract contract=null){
    winContract=contract;sourceName=name;
    WardrobePackService.Lease("Majsoul/NativeReview/"+name,gameObject);var prefab=WardrobePackService.Asset<GameObject>("Majsoul/NativeReview/"+name);if(prefab==null)throw new InvalidOperationException("Missing imported APK prefab "+name);
    var clone=Instantiate(prefab,transform,false);particles=clone.GetComponentsInChildren<ParticleSystem>(true);
+   if(name=="WardrobeR30/effect_liqi_nanfenghua")RestoreCompressedSkin(clone);
    luaNewWin=name.StartsWith("FateR19/");
    var table=GetComponentInParent<TableRenderer>();if((name.StartsWith("EffectsR11/")||name.StartsWith("WinsR22/")||name.StartsWith("WardrobeR30/effect_liqi_")||contract!=null||luaNewWin)&&table!=null){authoredSpace=clone.transform;SyncSpace();foreach(var child in clone.GetComponentsInChildren<Transform>(true))child.gameObject.layer=NativeEffectCamera.Layer;sourceCamera=NativeEffectCamera.Ensure(table);sourceCamera.Register(this);}
    motions=clone.GetComponentsInChildren<NativeEffectMotion>(true);
@@ -122,7 +158,7 @@ namespace YunJian.Riichi {
    }
 #endif
    var descriptor=WardrobePackService.Asset<TextAsset>("Majsoul/NativeReview/"+name+"-source");
-   if(descriptor!=null&&name.StartsWith("WardrobeR30/"))RestoreStandardBlend(clone,JsonUtility.FromJson<NativeEffectSource>(descriptor.text));
+   if(descriptor!=null&&name.StartsWith("WardrobeR30/"))RestoreSourceMaterials(clone,JsonUtility.FromJson<NativeEffectSource>(descriptor.text));
    if(descriptor!=null&&!name.StartsWith("EffectsR11/")&&!name.StartsWith("WinsR22/")&&!name.StartsWith("WardrobeR30/")&&!luaNewWin){var sourceUv=JsonUtility.FromJson<NativeEffectSource>(descriptor.text);foreach(var node in sourceUv.nodes.Where(n=>n.uvScroll!=null&&n.uvScroll.Length==2&&(n.uvScroll[0]!=0||n.uvScroll[1]!=0))){
     var renderer=clone.GetComponentsInChildren<ParticleSystemRenderer>(true).FirstOrDefault(r=>r.name==node.name);if(renderer==null)continue;var material=new Material(renderer.sharedMaterial);copies.Add(material);renderer.sharedMaterial=material;scrolls.Add(new Scroll{material=material,origin=material.mainTextureOffset,speed=new Vector2(node.uvScroll[0],node.uvScroll[1])});
    }}
@@ -142,6 +178,6 @@ namespace YunJian.Riichi {
    Playback?.AfterPose(age);foreach(var p in particles)Simulate(p,dt,restart);foreach(var s in skeletons)s.Sample(age);previous=age;
   }
   void Simulate(ParticleSystem particle,float dt,bool restart){if(winContract==null){particle.Simulate(dt,false,restart,false);return;}bool active=particle.gameObject.activeInHierarchy,was=activation.TryGetValue(particle,out var value)&&value;if(!active){particle.Stop(false,ParticleSystemStopBehavior.StopEmittingAndClear);activation[particle]=false;return;}particle.Simulate(dt,false,restart||!was,false);activation[particle]=true;}
-  void OnDestroy(){if(sourceCamera!=null)sourceCamera.Remove(this);foreach(var m in copies)Destroy(m);}
+  void OnDestroy(){if(sourceCamera!=null)sourceCamera.Remove(this);foreach(var m in copies)Destroy(m);foreach(var mesh in repairedSkins)Destroy(mesh);}
  }
 }

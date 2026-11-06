@@ -150,8 +150,8 @@ def main():
         blend = state['rtBlend0']
         src,dst = blend['srcBlend']['val'],blend['destBlend']['val']
         if LOCAL_TARGETS is not None:
-            src=floats.get(blend['srcBlend']['name'],src)
-            dst=floats.get(blend['destBlend']['name'],dst)
+            if blend['srcBlend']['name']!='<noninit>':src=floats.get(blend['srcBlend']['name'],src)
+            if blend['destBlend']['name']!='<noninit>':dst=floats.get(blend['destBlend']['name'],dst)
         if src==0 and dst==0:
             src,dst = floats.get('_SrcBlend',5),floats.get('_DstBlend',10)
         color = colors.get('_TintColor',dict(r=.5,g=.5,b=.5,a=.5))
@@ -174,6 +174,7 @@ def main():
             extra.append(dict(name=prop,texture=file,scale=vec(value['m_Scale']),offset=vec(value['m_Offset']),filterMode=es.get('m_FilterMode',1),wrapU=es.get('m_WrapU',0),wrapV=es.get('m_WrapV',0)))
         def state_value(field):
             value=state.get(field,{})
+            if value.get('name')=='<noninit>':return value.get('val',0)
             return floats.get(value.get('name'),value.get('val',0))
         return dict(texture=texfile,tint=tint,srcBlend=src,dstBlend=dst,shaderName=name,
                     sourceMaterialState=True,materialName=md['m_Name'],materialBundle=str(obj.assets_file.parent.name),keywords=md.get('m_ValidKeywords',[]),
@@ -192,7 +193,12 @@ def main():
         if expanded:
             raw=mesh.read_typetree()
             if helper.m_BoneWeights and helper.m_BoneIndices:
-                data['weights']=[n for v in helper.m_BoneWeights for n in v];data['boneIndices']=[int(n)for v in helper.m_BoneIndices for n in v]
+                def normalized_weight(v):
+                    total=sum(v[:3]); w4=v[3]
+                    if w4<0 and 0<=total<1 and abs(w4-(1-round(total*31)))<.001:
+                        return (*v[:3],1-total)
+                    return v
+                data['weights']=[n for v in helper.m_BoneWeights for n in normalized_weight(v)];data['boneIndices']=[int(n)for v in helper.m_BoneIndices for n in v]
                 data['bindposes']=[matrix['e'+str(i)+str(j)]for matrix in raw['m_BindPose']for i in range(4)for j in range(4)]
         return js(relative,data,mesh)
 

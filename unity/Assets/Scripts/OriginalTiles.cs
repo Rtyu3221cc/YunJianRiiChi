@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -26,9 +27,13 @@ namespace YunJian.Riichi
         readonly Dictionary<string, RenderTexture> handTextures = new Dictionary<string, RenderTexture>();
         Camera doraCamera, handPreviewCamera;
         readonly WardrobeItem wardrobeFace,wardrobeBack;
+        readonly string[] tilePackPins;
+        bool disposed;
         public OriginalTiles(WardrobeItem face=null,WardrobeItem back=null)
         {
             wardrobeFace=face??WardrobeSelection.Get("tileFace");wardrobeBack=back??WardrobeSelection.Get("tileBack");
+            // Live tile materials retain these textures until the table changes skins.
+            tilePackPins=WardrobePackService.PinItem(wardrobeFace?.id).Concat(WardrobePackService.PinItem(wardrobeBack?.id)).ToArray();
             var d = JsonUtility.FromJson<MeshData>(Resources.Load<TextAsset>("Majsoul/OriginalTile/mesh").text);
             const float width = TableTileGeometry.SourceWidth, depth = TableTileGeometry.SourceDepth;
             var vertices = new Vector3[d.vertices.Length / 3]; var normals = new Vector3[vertices.Length]; var uv = new Vector2[vertices.Length];
@@ -218,6 +223,6 @@ namespace YunJian.Riichi
             root.gameObject.SetActive(false);if(shine)liveDora[key]=root;else UnityEngine.Object.Destroy(root.gameObject);
             doraTextures[key] = target; return target;
         }
-        public void Dispose() {foreach(var model in liveDora.Values)if(model!=null)UnityEngine.Object.Destroy(model.gameObject);liveDora.Clear(); UnityEngine.Object.Destroy(tableMesh); UnityEngine.Object.Destroy(handMesh);UnityEngine.Object.Destroy(outlineMesh);UnityEngine.Object.Destroy(glowMesh); UnityEngine.Object.Destroy(shell);UnityEngine.Object.Destroy(outline);UnityEngine.Object.Destroy(glow); foreach (var m in materials.Values) UnityEngine.Object.Destroy(m); foreach (var t in doraTextures.Values) { t.Release(); UnityEngine.Object.Destroy(t); } foreach (var t in handTextures.Values) { t.Release(); UnityEngine.Object.Destroy(t); } if (doraCamera != null) UnityEngine.Object.Destroy(doraCamera.gameObject); if (handPreviewCamera != null) UnityEngine.Object.Destroy(handPreviewCamera.gameObject); }
+        public void Dispose() {if(disposed)return;disposed=true;foreach(string key in tilePackPins)WardrobePackService.Unpin(key);foreach(var model in liveDora.Values)if(model!=null)UnityEngine.Object.Destroy(model.gameObject);liveDora.Clear(); UnityEngine.Object.Destroy(tableMesh); UnityEngine.Object.Destroy(handMesh);UnityEngine.Object.Destroy(outlineMesh);UnityEngine.Object.Destroy(glowMesh); UnityEngine.Object.Destroy(shell);UnityEngine.Object.Destroy(outline);UnityEngine.Object.Destroy(glow); foreach (var m in materials.Values) UnityEngine.Object.Destroy(m); foreach (var t in doraTextures.Values) { t.Release(); UnityEngine.Object.Destroy(t); } foreach (var t in handTextures.Values) { t.Release(); UnityEngine.Object.Destroy(t); } if (doraCamera != null) UnityEngine.Object.Destroy(doraCamera.gameObject); if (handPreviewCamera != null) UnityEngine.Object.Destroy(handPreviewCamera.gameObject); }
     }
 }

@@ -41,6 +41,9 @@ namespace YunJian.Riichi
         int nativeView;
         Quaternion nativeWorldRotation=Quaternion.identity;
         bool explicitTileMount;
+        bool fourNativeVariants;
+        public void ConfigureRiichi(bool upright){native?.Playback?.SetRiichiAction(upright,fourNativeVariants);}
+        public void ReverseRiichiHeading(){TileMountRotation=Quaternion.Euler(0,180,0)*TileMountRotation;}
         public bool HasFixedWorldRotation {get;private set;}
         public Quaternion TileMountRotation {get;private set;}
         public Quaternion TableRotation(Quaternion tileRotation)=>HasFixedWorldRotation?nativeWorldRotation:tileRotation*TileMountRotation;
@@ -116,7 +119,8 @@ namespace YunJian.Riichi
                 explicitTileMount=config.nativeTileEuler?.Length==3;
                 HasFixedWorldRotation=config.nativeWorldEuler?.Length==3;
                 nativeWorldRotation=HasFixedWorldRotation?Quaternion.Euler(V(config.nativeWorldEuler)):Quaternion.identity;
-                string source=config.nativeVariants!=null&&config.nativeVariants.Length==4?config.nativeVariants[(nativeView%4+4)%4]:config.nativeEffect;
+                fourNativeVariants=config.nativeVariants!=null&&config.nativeVariants.Length==4;
+                string source=fourNativeVariants?config.nativeVariants[(nativeView%4+4)%4]:config.nativeEffect;
                 native=gameObject.AddComponent<NativeParticleEffect>();native.Initialize(source,seed,false,false,config.playback);
                 SourceResultDelay=config.playback!=null?config.playback.resultDelay:native.UsesNewHuleBinding?3.3f:(float?)null;
                 systems.AddRange(native.GetComponentsInChildren<ParticleSystem>(true));

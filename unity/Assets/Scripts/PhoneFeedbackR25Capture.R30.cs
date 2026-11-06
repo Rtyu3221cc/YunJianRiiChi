@@ -8,8 +8,10 @@ using UnityEngine;
 
 namespace YunJian.Riichi.Editor {
     public sealed partial class PhoneFeedbackR25Capture {
-        bool R30Mode=>Environment.GetEnvironmentVariable("YUNJIAN_R25_MODE")=="r30";
+        bool R31Mode=>Environment.GetEnvironmentVariable("YUNJIAN_R25_MODE")=="r31";
+        bool R30Mode=>R31Mode||Environment.GetEnvironmentVariable("YUNJIAN_R25_MODE")=="r30";
         [Serializable] class R30Registration { public WardrobeItem[] items; }
+        static readonly string[] FeedbackCases={"effect_liqi_23wansheng","effect_liqi_23winter","effect_liqi_nanfenghua","effect_liqi_25dongri","effect_liqi_xhzy","effect_liqi_21winter","effect_liqi_22summer","effect_liqi_23rpg","effect_liqi_chilin","ron_26shuiyi"};
 
         IEnumerator R30Run(){
             yield return Size(960,540);
@@ -26,9 +28,11 @@ namespace YunJian.Riichi.Editor {
             WardrobePackService.ResetForReview();
             client.Lobby.DesignPreviewGardenEntry();
             yield return Wait(8);
+            if(R31Mode)yield return VerifyLiveHandAtlas(registered.items);
             report.fps=20;
             BeginRecording();
-            foreach(var row in registered.items.OrderBy(i=>i.id=="ron_26shuiyi"?0:i.category=="winEffect"?1:i.category=="riichiEffect"?3:2)){
+            var entries=R31Mode?FeedbackCases.Select(id=>registered.items.First(i=>i.id==id)):registered.items.OrderBy(i=>i.id=="ron_26shuiyi"?0:i.category=="winEffect"?1:i.category=="riichiEffect"?3:2);
+            foreach(var row in entries){
                 var item=WardrobeCatalog.Find(row.id);
                 Check(item!=null&&WardrobePackService.Installed(row.id),"Registered and installed "+row.id);
                 yield return WardrobePackService.Preload(new[]{row.id});
@@ -49,8 +53,13 @@ namespace YunJian.Riichi.Editor {
                     var visual=GetComponent<RiichiDiscardVisual>();int before=visual.PlayedCount;
                     yield return UseDeclaration(item,0);
                     ChapterAt(item.name);
-                    for(int f=0;f<85;f++){effects.ValidationTime=f/20f;yield return Frame();}
+                    for(int f=0;f<(R31Mode?105:85);f++){
+                        effects.ValidationTime=f/20f;
+                        if(R31Mode&&(f==16||f==25))InspectFeedbackPose(item.id,visual.Latest,f);
+                        yield return Frame();
+                    }
                     Check(visual.PlayedCount==before+1,"Gameplay riichi path "+item.id);
+                    if(R31Mode)Check(visual.ActiveCount==0,"Four-second cleanup "+item.id);
                     effects.Reset();
                 }else if(item.category=="callout"){
                     yield return R28Setup(item.id,1);
@@ -71,8 +80,59 @@ namespace YunJian.Riichi.Editor {
                     yield return Hold(40);
                 }
             }
+            if(R31Mode)yield return VerifyFeedbackDirections(registered.items);
             pipe.Close();encoder.WaitForExit();Check(encoder.ExitCode==0,"R30 video encoder completed");
             encoder.Dispose();encoder=null;pipe=null;Time.captureFramerate=0;
+        }
+
+        IEnumerator VerifyLiveHandAtlas(WardrobeItem[] items){
+            var skin=WardrobeCatalog.Find("mjp_26gaoxiaosai");
+            WardrobeSelection.Save(new System.Collections.Generic.Dictionary<string,string>{{"tileBack","mjp_default"}});
+            yield return WardrobePackService.Preload(new[]{skin.id});
+            using(var tiles=new OriginalTiles(back:skin)){
+                var root=new GameObject("Live hand atlas stress test");
+                try{
+                    var hand=tiles.CreateHand(root.transform,"p1",Vector3.one*200);
+                    var material=hand.GetComponent<MeshRenderer>().sharedMaterial;
+                    var atlas=material.GetTexture("_BackTex");
+                    var pack=WardrobePackService.ForItem(skin.id);
+                    Check(atlas!=null&&WardrobePackService.Pinned(pack.key),"Live hand atlas owns a pack lease");
+                    Check(WardrobeSelection.Get("tileBack").id!=skin.id,"Atlas lease survives independently of global selection");
+                    foreach(var item in items.Where(i=>i.category=="riichiEffect"))yield return WardrobePackService.Preload(new[]{item.id});
+                    yield return Wait(4);
+                    Check(atlas!=null&&material.GetTexture("_BackTex")==atlas,"Hand texture survives loading all 46 riichi packs");
+                }finally{Destroy(root);}
+            }
+        }
+
+        IEnumerator VerifyFeedbackDirections(WardrobeItem[] items){
+            var visual=GetComponent<RiichiDiscardVisual>();
+            foreach(string id in new[]{"effect_liqi_23wansheng","effect_liqi_23winter","effect_liqi_25dongri","effect_liqi_21winter","effect_liqi_chilin"}){
+                var item=items.First(i=>i.id==id);
+                yield return WardrobePackService.Preload(new[]{id});
+                for(int seat=1;seat<4;seat++){
+                    int before=visual.PlayedCount;
+                    yield return UseDeclaration(item,seat);
+                    effects.ValidationTime=.7f;yield return Wait(2);
+                    Check(visual.PlayedCount==before+1&&visual.Latest!=null,"Opponent seat "+seat+" plays "+id);
+                    effects.ValidationTime=5.5f;yield return Wait(2);
+                    Check(visual.ActiveCount==0,"Opponent seat "+seat+" cleans up "+id);
+                    effects.Reset();
+                }
+            }
+        }
+
+        void InspectFeedbackPose(string id,WinTileEffect effect,int frame){
+            if(effect==null)return;
+            var rows=effect.GetComponentsInChildren<ParticleSystem>(true)
+                .Where(p=>p.name.StartsWith("ya0")||p.name=="xian"||p.name.StartsWith("bao01"))
+                .Select(p=>p.name+"="+p.particleCount+" pos="+p.transform.position);
+            foreach(var skin in effect.GetComponentsInChildren<SkinnedMeshRenderer>(true)){
+                var mesh=new Mesh();skin.BakeMesh(mesh);
+                Debug.Log("R31 skin "+id+" frame="+frame+" "+skin.name+" size="+mesh.bounds.size.ToString("F4"));
+                Destroy(mesh);
+            }
+            Debug.Log("R31 pose "+id+" frame="+frame+" "+string.Join("; ",rows));
         }
     }
 }

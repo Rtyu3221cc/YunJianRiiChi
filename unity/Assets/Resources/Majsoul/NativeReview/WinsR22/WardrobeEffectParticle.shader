@@ -35,6 +35,13 @@ Shader "YunJian/WardrobeEffectParticle" {
   _Mask2Tex ("Standard secondary mask",2D)="white" {} _Mask2UV ("Secondary mask UV",Vector)=(1,1,0,0)
   _Mask2Anim ("Secondary mask animation",Vector)=(0,0,0,0) _Mask2Enable ("Secondary mask",Float)=0
   _DissolveEdgeMode ("Standard edge mode",Float)=0 _DissolveEdgeColor ("Standard edge color",Color)=(1,1,1,1)
+  _StandardDissolve ("Standard dissolve enabled",Float)=0 _CustomStreams ("Source particle custom streams",Float)=0
+  _MainCustom ("Main custom offset",Float)=0 _MaskCustom ("Mask custom offset",Float)=0
+  _DissolveUV ("Dissolve UV",Vector)=(1,1,0,0) _DissolveAmount ("Dissolve amount",Float)=0
+  _DissolveDetail ("Dissolve power",Float)=1 _DissolveOneMinus ("Invert dissolve",Float)=0 _DissolveCustom ("Dissolve particle input",Float)=0
+  _DissolveEdgeSoftness ("Dissolve softness",Float)=0 _DissolveEdgeWidth ("Dissolve edge width",Float)=0
+  _DissolveMaskTex ("Dissolve mask",2D)="black" {} _DissolveMaskEnable ("Use dissolve mask",Float)=0
+  _DissolveMaskDetail ("Dissolve mask power",Float)=1 _DissolveMaskUV ("Dissolve mask UV",Vector)=(1,1,0,0) _DissolveMaskAnim ("Dissolve mask animation",Vector)=(0,0,0,0)
  }
  SubShader {
   Tags {"Queue"="Transparent" "RenderType"="Transparent"}
@@ -55,9 +62,13 @@ Shader "YunJian/WardrobeEffectParticle" {
    float _SourceFamily,_AlbedoIntensity,_AlphaScale,_MainAlpha,_MainDesaturate,_MainClampU,_MainClampV,_Mask2Enable,_DissolveEdgeMode;
    float4 _TintColor,_Tint,_MainDetail,_MaskUV,_Mask2UV,_Mask2Anim,_DissolveEdgeColor;sampler2D _Mask2Tex;
    float _UseMainTex,_UseMaskTex,_UseDistortionTex,_UseDMaskTex,_UseDissolveTex,_UseAMBlightTex;
-   struct appdata {float4 vertex:POSITION;float2 uv:TEXCOORD0;float4 color:COLOR;};
-   struct v2f {float4 pos:SV_POSITION;float2 uv:TEXCOORD0;float4 color:COLOR;};
-   v2f vert(appdata v){v2f o;o.pos=UnityObjectToClipPos(v.vertex);o.uv=v.uv;o.color=v.color;return o;}
+   float _StandardDissolve,_CustomStreams,_MainCustom,_MaskCustom,_DissolveAmount,_DissolveDetail,_DissolveOneMinus,_DissolveCustom,_DissolveEdgeSoftness,_DissolveEdgeWidth;
+   float _DissolveMaskEnable,_DissolveMaskDetail;
+   float4 _DissolveUV,_DissolveMaskUV,_DissolveMaskAnim;
+   sampler2D _DissolveMaskTex;
+   struct appdata {float4 vertex:POSITION;float2 uv:TEXCOORD0;float4 data1:TEXCOORD1;float4 data2:TEXCOORD2;float4 color:COLOR;};
+   struct v2f {float4 pos:SV_POSITION;float2 uv:TEXCOORD0;float4 data1:TEXCOORD1;float4 data2:TEXCOORD2;float4 color:COLOR;};
+   v2f vert(appdata v){v2f o;o.pos=UnityObjectToClipPos(v.vertex);o.uv=v.uv;o.data1=v.data1*_CustomStreams;o.data2=v.data2*_CustomStreams;o.color=v.color;return o;}
    float2 sourceUV(float2 uv,float4 st,float4 anim){
     float time=_EffectAge>=0?_EffectAge:_Time.y;
     float2 p=uv*st.xy+st.zw-.5;float angle=anim.z*time+anim.w;
@@ -75,11 +86,25 @@ Shader "YunJian/WardrobeEffectParticle" {
     if(_SourceFamily<1.5){float4 c=tex2D(_MainTex,i.uv*_MainTex_ST.xy+_MainTex_ST.zw)*i.color;if(_SourceFamily<.5)c*=2*_TintColor;c.a=saturate(c.a);return c;}
     if(_SourceFamily>3.5){float4 c=tex2D(_MainTex,i.uv*_MainTex_ST.xy+_MainTex_ST.zw)*_Tint*_AlbedoIntensity;c.a*=_AlphaScale;return c;}
     if(_SourceFamily>2.5){
-     float4 c=tex2D(_MainTex,standardUV(i.uv,_MainTex_ST,_MainAnim));float grey=dot(c.rgb,float3(.299,.587,.114));c.rgb=lerp(c.rgb,grey.xxx,_MainDesaturate);
-     c.rgb=lerp(pow(max(c.rgb,0),_MainDetail.xxx),c.rgb*_MainDetail.z,_MainDetail.w)*_MainColor.rgb+_DissolveEdgeMode*_DissolveEdgeColor.rgb;
+     float4 mainST=_MainTex_ST;mainST.zw+=i.data1.xy*_MainCustom;
+     float4 c=tex2D(_MainTex,standardUV(i.uv,mainST,_MainAnim));float grey=dot(c.rgb,float3(.299,.587,.114));c.rgb=lerp(c.rgb,grey.xxx,_MainDesaturate);
+     c.rgb=lerp(pow(max(c.rgb,0),_MainDetail.xxx),c.rgb*_MainDetail.z,_MainDetail.w)*_MainColor.rgb;
      c.a*=_MainColor.a*_MainAlpha;
-     if(_UseMaskTex>.5)c.a*=tex2D(_MaskTex,standardUV(i.uv,_MaskUV,_MaskAnim)).a;
+     float4 maskUV=_MaskUV;maskUV.zw+=i.data1.zw*_MaskCustom;
+     if(_UseMaskTex>.5)c.a*=tex2D(_MaskTex,standardUV(i.uv,maskUV,_MaskAnim)).a;
      c.a*=lerp(1,tex2D(_Mask2Tex,standardUV(i.uv,_Mask2UV,_Mask2Anim)).b,_Mask2Enable);
+     if(_StandardDissolve>.5){
+      float noise=tex2D(_DissolveTex,standardUV(i.uv,_DissolveUV,_DissolveAnim)).r;
+      noise=pow(lerp(noise,1-noise,_DissolveOneMinus),_DissolveDetail);
+      noise+=_DissolveMaskEnable*pow(tex2D(_DissolveMaskTex,standardUV(i.uv,_DissolveMaskUV,_DissolveMaskAnim)).g,_DissolveMaskDetail);
+      float cut=noise-lerp(_DissolveAmount,i.data2.w,_DissolveCustom*_CustomStreams)+1;
+      float softness=clamp(2-_DissolveEdgeSoftness,0,.5);
+      float width=max(1-2*softness,.0001);
+      float inner=sourceSmooth(cut-softness,width),outer=sourceSmooth(cut+_DissolveEdgeWidth-softness,width);
+      float3 edge=(outer-inner)*_DissolveEdgeColor.rgb;
+      c.rgb=lerp(lerp(edge,c.rgb,inner),c.rgb+edge,_DissolveEdgeMode);
+      c.a*=outer;
+     }else c.rgb+=_DissolveEdgeMode*_DissolveEdgeColor.rgb;
      c*=i.color;c.a=saturate(c.a);return c*_SpineAnimAlpha;
     }
     float distortion=0;

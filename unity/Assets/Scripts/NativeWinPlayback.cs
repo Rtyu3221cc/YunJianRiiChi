@@ -13,13 +13,23 @@ namespace YunJian.Riichi {
     public sealed class NativeWinPlayback:MonoBehaviour {
         NativeParticleEffect native;NativeWinContract plan;Transform root,space,target,move,rot,ani,aniTsumo,stationary,fly,flyPosition,flyMove,legacyPai,riichiMaque;
         TableRenderer table;PublicSound sound;NativeWinningTileQueue queue;NativeWinTileModel rig;NativeParticleEffect extra;GameObject extraRoot;float rigEnd=1.9f;int relative;
+        bool uprightRiichi,riichiPoseCaptured;
+        Vector3 riichiStart,riichiLanding;
+        Quaternion riichiRotation;
+        Transform[] paintFootprints;
         public bool SceneOrigin=>plan.newStyle;
+        public void SetRiichiAction(bool upright,bool hasSeatVariants){
+            uprightRiichi=upright;
+            if(queue!=null)queue.End=hasSeatVariants?3:1;
+        }
         public NativeWinContract Contract=>plan;
         public float SourceAge(float age)=>!plan.newStyle&&plan.sourceKey=="ron_llx"?Mathf.Max(0,age-2):Mathf.Max(0,age);
         public void Initialize(NativeParticleEffect owner,Transform authored,Transform container,NativeWinContract contract){
             native=owner;root=authored;space=container;plan=contract;table=GetComponentInParent<TableRenderer>();
             move=root.Find("root_move");rot=root.Find("root_rot");ani=root.Find("root_ani");aniTsumo=root.Find("root_ani_zimo");stationary=root.Find("root_static");fly=root.Find("root_fly");flyMove=fly?.Find("move");flyPosition=fly?.Find("positon");legacyPai=root.Find("pai_container/pai");
             if(plan.riichi)riichiMaque=root.Find("root_maque");
+            if(plan.sourceKey=="ron_26shuiyi"&&move!=null)
+                paintFootprints=move.GetComponentsInChildren<Transform>(true).Where(t=>t.name=="d1"||t.name=="d2"||t.name=="d3").ToArray();
             if(plan.queueEnd>plan.queueBegin){queue=gameObject.AddComponent<NativeWinningTileQueue>();queue.Begin=plan.queueBegin;queue.End=plan.queueEnd;queue.DepthTest=plan.tileQueueMode==2?8:4;queue.LegacyQueues=plan.tileQueueMode==3;}
         }
         public void Bind(Transform tile,PublicSound item){
@@ -27,9 +37,14 @@ namespace YunJian.Riichi {
             native.SynchronizeSourceSpace();
             sound=item;if(table!=null&&item!=null)relative=table.RelativeSeat(item.kind=="ron"?item.from:item.seat);
             target=tile;queue?.Bind(tile);if(tile==null||sound==null)return;
+            if(plan.riichi&&!riichiPoseCaptured){
+                riichiPoseCaptured=true;
+                riichiStart=SourcePlaybackContracts.TileModelOrigin(tile)/TableTileGeometry.SourceUnits;
+                riichiRotation=tile.rotation;
+                var finalTile=table?.FindDiscard(item.seat,item.tile,item.riverIndex);
+                riichiLanding=SourcePlaybackContracts.TileModelOrigin(finalTile!=null?finalTile:tile)/TableTileGeometry.SourceUnits;
+            }
             if(first&&riichiMaque!=null){
-                var point=table==null?transform.position:table.DiscardPoint(item.seat,item.tile,item.riverIndex);
-                riichiMaque.position=point/TableTileGeometry.SourceUnits;
                 var localization=riichiMaque.GetComponentsInChildren<Transform>(true).FirstOrDefault(t=>t.name=="localization");
                 if(localization!=null){var preferred=localization.Find("chs")??localization.Find("common");foreach(Transform child in localization)child.gameObject.SetActive(child==preferred);}
             }
@@ -39,7 +54,33 @@ namespace YunJian.Riichi {
             else if(legacyPai!=null&&(sound.kind=="tsumo"||plan.sourceKey=="ron_kuangdu")){anchor=legacyPai;rigEnd=1.9f;}
             if(anchor!=null){if(rig==null){rig=gameObject.AddComponent<NativeWinTileModel>();rig.Initialize(anchor,plan.tileQueueMode,plan.queueBegin,plan.queueEnd);}rig.Bind(tile);}
         }
-        void PositionNewRoots(){if(!plan.newStyle)return;Vector3 point=transform.position/TableTileGeometry.SourceUnits;if(move!=null)move.position=point;if(rot!=null){rot.position=point;rot.rotation=(target!=null?target.rotation:transform.rotation)*SourcePlaybackContracts.NativeTileMount;}if(ani!=null)ani.position=point;if(aniTsumo!=null)aniTsumo.position=point;if(stationary!=null)stationary.position=Vector3.zero;}
+        void PositionNewRoots(){
+            if(!plan.newStyle)return;
+            Vector3 point=transform.position/TableTileGeometry.SourceUnits;
+            if(paintFootprints!=null&&target!=null)point=SourcePlaybackContracts.TileModelOrigin(target)/TableTileGeometry.SourceUnits;
+            Quaternion rotation=target!=null?target.rotation:transform.rotation;
+            if(plan.riichi&&uprightRiichi&&riichiPoseCaptured){point=riichiStart;rotation=riichiRotation;}
+            if(move!=null)move.position=point;
+            if(rot!=null){
+                rot.position=point;
+                bool reverse=plan.riichi&&(plan.sourceKey=="effect_liqi_23wansheng"||plan.sourceKey=="effect_liqi_23winter"||plan.sourceKey=="effect_liqi_25dongri");
+                rot.rotation=rotation*(reverse?Quaternion.Euler(0,180,0):Quaternion.identity)*SourcePlaybackContracts.NativeTileMount;
+            }
+            if(ani!=null)ani.position=point;
+            if(aniTsumo!=null)aniTsumo.position=point;
+            if(stationary!=null)stationary.position=Vector3.zero;
+            if(riichiMaque!=null&&riichiPoseCaptured)riichiMaque.position=riichiLanding;
+            if(paintFootprints!=null){
+                // The source uses the model center. The paint quads extend just
+                // below it, but the port's table cloth is raised to world Y=0.
+                // Rebase only those contact layers to the visible cloth surface.
+                for(int i=0;i<paintFootprints.Length;i++){
+                    var p=paintFootprints[i].position;
+                    p.y=Mathf.Max(p.y,(.004f+i*.001f)/TableTileGeometry.SourceUnits);
+                    paintFootprints[i].position=p;
+                }
+            }
+        }
         public void AfterPose(float age){
             bool visible=age>=0;space.gameObject.SetActive(visible);if(!visible){queue?.Sample(-1);rig?.Sample(-1);return;}
             Vector3 point=transform.position/TableTileGeometry.SourceUnits;
@@ -76,7 +117,7 @@ namespace YunJian.Riichi {
     // The real tile shape is copied; authored-node delta animates it independently
     // of the transformed game mesh basis. A poll only replaces the hidden source.
     public sealed class NativeWinTileModel:MonoBehaviour {
-        Transform anchor,holder,target;Matrix4x4 bindPose;int mode;float queueStart,queueEnd;
+        Transform anchor,holder,target;Matrix4x4 bindPose;int mode;float queueStart,queueEnd;bool hidesSource;
         readonly List<MeshRenderer> originals=new List<MeshRenderer>();readonly List<bool> enabledBefore=new List<bool>();readonly List<Material> copies=new List<Material>();readonly List<int> queues=new List<int>();
         public void Initialize(Transform node,int queueMode,float begin,float end){anchor=node;bindPose=node.localToWorldMatrix;if(Mathf.Abs(bindPose.determinant)<1e-20f){var scale=node.lossyScale;for(int axis=0;axis<3;axis++)if(Mathf.Abs(scale[axis])<1e-6f)scale[axis]=1;bindPose=Matrix4x4.TRS(node.position,node.rotation,scale);}mode=queueMode;queueStart=begin;queueEnd=end;}
         public void Bind(Transform tile){
@@ -91,9 +132,10 @@ namespace YunJian.Riichi {
             }
             holder.gameObject.SetActive(false);
         }
-        public void Sample(float age){if(holder==null)return;bool active=age>=0;holder.gameObject.SetActive(active);for(int i=0;i<originals.Count;i++)if(originals[i]!=null)originals[i].enabled=active?false:enabledBefore[i];bool queue=age>=queueStart&&age<queueEnd&&mode>0;for(int i=0;i<copies.Count;i++){copies[i].renderQueue=queue?mode==3?3006:3090:queues[i];if(copies[i].HasProperty("_ZTest"))copies[i].SetFloat("_ZTest",queue&&mode==2?8:4);}}
-        void Restore(){for(int i=0;i<originals.Count;i++)if(originals[i]!=null)originals[i].enabled=enabledBefore[i];}
+        public void Sample(float age){if(holder==null)return;bool active=age>=0;holder.gameObject.SetActive(active);if(!active){Restore();return;}hidesSource=true;for(int i=0;i<originals.Count;i++)if(originals[i]!=null)originals[i].enabled=false;bool queue=age>=queueStart&&age<queueEnd&&mode>0;for(int i=0;i<copies.Count;i++){copies[i].renderQueue=queue?mode==3?3006:3090:queues[i];if(copies[i].HasProperty("_ZTest"))copies[i].SetFloat("_ZTest",queue&&mode==2?8:4);}}
+        void Restore(){if(!hidesSource)return;for(int i=0;i<originals.Count;i++)if(originals[i]!=null)originals[i].enabled=enabledBefore[i];hidesSource=false;}
         void Clear(){if(holder!=null){holder.gameObject.SetActive(false);Destroy(holder.gameObject);}holder=null;foreach(var m in copies)Destroy(m);copies.Clear();queues.Clear();originals.Clear();enabledBefore.Clear();}
+        void OnDisable(){Restore();if(holder!=null)holder.gameObject.SetActive(false);}
         void OnDestroy(){Restore();Clear();}
     }
 }

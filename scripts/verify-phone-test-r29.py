@@ -4,11 +4,12 @@ from zipfile import ZipFile
 import hashlib, importlib.util, json, re, shutil, subprocess, sys
 
 R = Path(__file__).resolve().parent.parent
-R30 = '--wardrobe-r30' in sys.argv[2:]
-B = R / ('build/wardrobe-r30' if R30 else 'build/phone-test-r29')
+R31 = '--wardrobe-r31' in sys.argv[2:]
+R30 = R31 or '--wardrobe-r30' in sys.argv[2:]
+B = R / ('build/phone-test-r32' if R31 else 'build/wardrobe-r30' if R30 else 'build/phone-test-r29')
 U = R / 'unity'
 APK = Path(sys.argv[1]).resolve()
-VERSION, CODE = ('0.6.21', 69) if R30 else ('0.6.20', 68)
+VERSION, CODE = ('0.6.22', 70) if R31 else ('0.6.21', 69) if R30 else ('0.6.20', 68)
 
 spec = importlib.util.spec_from_file_location('signature_r29', R/'scripts/verify-apk-signature.py')
 signing = importlib.util.module_from_spec(spec)
@@ -44,6 +45,9 @@ with ZipFile(APK) as archive:
         for row in android['addresses']:
             if row['pack'].startswith('deco-r30-'):
                 assert 'assets/bin/Data/'+guid(U/row['source']) not in names, row['source']
+    if R31:
+        for symbol in [b'RestoreSourceMaterials', b'RestoreCompressedSkin', b'ConfigureRiichi', b'tilePackPins', b'paintFootprints']:
+            assert symbol in metadata, 'Missing effect correction: '+repr(symbol)
     for cls in ['PhoneFeedbackR25Capture', 'PhoneFeedbackR29Build', 'ReviewPreviousCalloutRendering']:
         assert cls.encode() not in metadata, 'Editor-only recorder leaked into Android: '+cls
     for source in (U/'Assets/Resources').rglob('*'):
@@ -97,7 +101,13 @@ if dest.resolve()!=APK:
     shutil.copy2(APK, dest)
 assert sha(dest)==signature['sha256']
 report = dict(localPhoneTestOnly=True, version=VERSION, versionCode=CODE, apk=signature, bundledResources=resources, excludedHeavyAssets=excluded, nodeTests=192, compiledInputFiles=len(source_rows), voiceDirectoryRoles=122, visibleVoiceRows=16226, priorVoicePageRuntimeLookups=16226, priorR28RuntimeChecks=131, priorR28CalloutClips=20, androidDeviceTested=False, artifactRedownloaded=False, githubReleaseCreated=False, committed=False)
-if R30:
+if R31:
+    preview = json.loads((R/'build/wardrobe-r31/capture/checks.json').read_text('utf8'))
+    assert len(preview['chapters']) == 10 and len(preview['checks']) == 166
+    assert 'Hand texture survives loading all 46 riichi packs' in preview['checks']
+    report.update(unityUnitAssertions=186, wardrobeRuntimeChecks=len(preview['checks']),
+                  correctedEffects=len(preview['chapters']), wardrobeDownload=json.loads((B/'storage.json').read_text('utf8')))
+elif R30:
     preview = json.loads((B/'capture/checks.json').read_text('utf8'))
     registered = json.loads((B/'registered.json').read_text('utf8'))['items']
     assert len(preview['chapters']) == len(registered)

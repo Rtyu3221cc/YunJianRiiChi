@@ -25,10 +25,12 @@ namespace YunJian.Riichi {
                 var block=new MaterialPropertyBlock();source.GetPropertyBlock(block);renderer.SetPropertyBlock(block);
                 originals.Add(source);enabledBefore.Add(source.enabled);clones.Add(renderer);
             }
+            root.gameObject.SetActive(false);
         }
         public void Sample(float age){
             bool active=age>=Begin&&age<End&&root!=null;
-            Active=active;if(root==null)return;root.gameObject.SetActive(active);
+            bool wasActive=Active;Active=active;if(root==null)return;root.gameObject.SetActive(active);
+            if(!active&&!wasActive)return;
             var scale=transform.lossyScale;root.position=Vector3.zero;root.rotation=Quaternion.identity;root.localScale=new Vector3(1/scale.x,1/scale.y,1/scale.z);
             for(int i=0;i<originals.Count;i++){
                 var source=originals[i];if(source==null)continue;
@@ -36,8 +38,9 @@ namespace YunJian.Riichi {
                 clones[i].enabled=enabledBefore[i];source.enabled=active?false:enabledBefore[i];
             }
         }
-        void Restore(){for(int i=0;i<originals.Count;i++)if(originals[i]!=null)originals[i].enabled=enabledBefore[i];Active=false;}
+        void Restore(){if(!Active)return;for(int i=0;i<originals.Count;i++)if(originals[i]!=null)originals[i].enabled=enabledBefore[i];Active=false;}
         void ClearCopies(){if(root!=null){root.gameObject.SetActive(false);Destroy(root.gameObject);}root=null;foreach(var material in materials)Destroy(material);materials.Clear();originals.Clear();enabledBefore.Clear();clones.Clear();}
+        void OnDisable(){Restore();if(root!=null)root.gameObject.SetActive(false);}
         void OnDestroy(){Restore();ClearCopies();}
     }
 }

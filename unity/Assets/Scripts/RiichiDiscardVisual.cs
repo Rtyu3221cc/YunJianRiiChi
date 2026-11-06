@@ -41,8 +41,9 @@ namespace YunJian.Riichi
             float scale=ground?1:TableTileGeometry.WorldWidth(carried)/((native?TableTileGeometry.SourceWidth:SourcePlaybackContracts.TileWidth)*TableTileGeometry.SourceUnits);
             int sourceView=((int)Mathf.Round(Mathf.Repeat(-table.SeatAngle(action.seat),360)/90))%4;
             effect.InitializeTable(choice.effect,point,Quaternion.identity,now,(uint)(action.id+71),false,scale,sourceView);
-            if(sceneOrigin){effect.WinningEvent=action;effect.BindWinningTile(carried);}
+            if(sceneOrigin){effect.ConfigureRiichi(binding.action=="Dapai");effect.WinningEvent=action;effect.BindWinningTile(carried);}
             else effect.BindLegacyRiichi(binding.action=="LiQiPai");
+            if(choice.id=="effect_liqi_21winter")effect.ReverseRiichiHeading();
             if(!ground)effect.transform.rotation=Rotation(carried,effect);
             effect.Sample(-1);
             live.Add(new Burst{action=action,effect=effect,carried=carried,bound=carried,ground=ground,sceneOrigin=sceneOrigin});PlayedCount++;
