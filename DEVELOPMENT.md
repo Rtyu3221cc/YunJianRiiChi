@@ -21,7 +21,7 @@
 
 ## 已知问题与风险
 
-- unity/Assets/CharacterPacks/Source/ 里有 12 个角色已入库；约 58 个角色（4 万余个文件）未跟踪，也没被 .gitignore 排除，所以 git status 很长。是否要加忽略规则，待用户确认。
+- unity/Assets/CharacterPacks/Source/ 里 12 个角色已入库，另有约 58 个角色（4 万余个文件）未跟踪。2026-11-06 23:55 经用户同意，在本机 .git/info/exclude 加了 `/unity/Assets/CharacterPacks/Source/`。这条规则不提交、不推送，Codex 与 Claude Code 共用本目录的 .git，所以对双方都生效。已入库的文件照常跟踪，改动也照常显示。**以后在 Source/ 新增的素材不会出现在 git status 里，需要入库时用 `git add -f`。**
 - 工程的 bundleVersion 仍是 0.6.22（versionCode 70）。0.6.23 试装 APK 含 Saber 临时覆盖，不能从当前源码直接重建。
 - Android 真机测试未做。
 
