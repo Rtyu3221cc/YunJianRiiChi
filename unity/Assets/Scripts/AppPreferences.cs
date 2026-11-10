@@ -11,10 +11,12 @@ namespace YunJian.Riichi
         public static int Fps { get; private set; }
         public static float ScreenInset { get; private set; }
         public static int Revision { get; private set; }
-        static bool dynamicOutfits=true,randomBotAppearance=true,autoSortHand;
+        static bool dynamicOutfits=true,randomBotAppearance=true,randomBotWardrobe,autoSortHand;
         public static bool AutoSortHand {get{Load();return autoSortHand;}}
         public static bool DynamicOutfits {get{Load();return dynamicOutfits;}}
         public static bool RandomBotAppearance {get{Load();return randomBotAppearance;}}
+        // AI players wear random outfits picked from this device's downloaded items.
+        public static bool RandomBotWardrobe {get{Load();return randomBotWardrobe;}}
         static bool loaded;
         public static void Load()
         {
@@ -34,6 +36,7 @@ namespace YunJian.Riichi
             ScreenInset = Mathf.Clamp01(PlayerPrefs.GetFloat("riichi.setting.inset", 0));
             dynamicOutfits=PlayerPrefs.GetInt("riichi.setting.dynamicOutfits",1)!=0;
             autoSortHand=PlayerPrefs.GetInt("riichi.setting.autoSortHand",0)!=0;
+            randomBotWardrobe=PlayerPrefs.GetInt("riichi.setting.randomBotWardrobe",0)!=0;
             // Upgrade the former OFF default once; subsequent explicit choices persist.
             randomBotAppearance=PlayerPrefs.GetInt("riichi.setting.randomBotDefaultVersion",0)<1||PlayerPrefs.GetInt("riichi.setting.randomBotAppearance",1)!=0;
             Application.targetFrameRate = Fps;
@@ -48,6 +51,7 @@ namespace YunJian.Riichi
         public static void SetDynamicOutfits(bool enabled){Load();dynamicOutfits=enabled;Save();}
         public static void SetRandomBotAppearance(bool enabled){Load();randomBotAppearance=enabled;Save();}
         public static void SetAutoSortHand(bool enabled){Load();autoSortHand=enabled;Save();}
+        public static void SetRandomBotWardrobe(bool enabled){Load();randomBotWardrobe=enabled;Save();}
         static void Save() {
             if(CharacterRoster.PreviewOnly){Revision++;return;}
             for (int i = 0; i < 5; i++) {
@@ -56,7 +60,7 @@ namespace YunJian.Riichi
             }
             PlayerPrefs.SetInt("riichi.setting.fps", Fps); PlayerPrefs.SetFloat("riichi.setting.inset", ScreenInset);
             PlayerPrefs.SetInt("riichi.setting.dynamicOutfits",dynamicOutfits?1:0);PlayerPrefs.SetInt("riichi.setting.randomBotAppearance",randomBotAppearance?1:0);PlayerPrefs.SetInt("riichi.setting.randomBotDefaultVersion",1);
-            PlayerPrefs.SetInt("riichi.setting.autoSortHand",autoSortHand?1:0);
+            PlayerPrefs.SetInt("riichi.setting.autoSortHand",autoSortHand?1:0);PlayerPrefs.SetInt("riichi.setting.randomBotWardrobe",randomBotWardrobe?1:0);
             PlayerPrefs.Save(); Revision++;
         }
     }

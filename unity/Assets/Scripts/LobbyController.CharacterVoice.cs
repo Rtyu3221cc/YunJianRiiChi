@@ -10,7 +10,8 @@ namespace YunJian.Riichi {
         void StopCharacterVoicePreview(){VoicePlayer?.Stop();if(PlaylistAudio.Active!=null)PlaylistAudio.Active.CharacterVoicePreview=false;characterVoiceIndex=-1;characterVoiceNotice=null;}
         void SetCharacterInfoTab(bool voice){if(characterVoiceTab==voice)return;StopCharacterVoicePreview();characterVoiceTab=voice;infoScroll=Vector2.zero;characterVoiceOffset.y=0;}
         void DrawCharacterVoicePage(float x){
-            if(PlaylistAudio.Active!=null)PlaylistAudio.Active.CharacterVoicePreview=true;var role=CurrentCharacter.key;if(characterVoiceRole!=role){StopCharacterVoicePreview();characterVoiceRole=role;characterVoiceOffset.y=0;}
+            // The outgoing page keeps drawing during the exit transition; only the visible page ducks music.
+            if(PlaylistAudio.Active!=null&&dormOpen&&!dormLeaving&&dormView==DormView.Info)PlaylistAudio.Active.CharacterVoicePreview=true;var role=CurrentCharacter.key;if(characterVoiceRole!=role){StopCharacterVoicePreview();characterVoiceRole=role;characterVoiceOffset.y=0;}
             var rows=CharacterVoiceCatalog.Lines(role);bool playing=VoicePlayer!=null&&VoicePlayer.Playing&&VoicePlayer.PlayingCharacter==role;
             if(!playing)characterVoiceIndex=-1;
             Label(new Rect(x+84,178,644,52),"角色语音 · "+rows.Count(r=>r.available)+" 条可播放",NText("profile-heading",32,TextAnchor.MiddleLeft),CharacterGold);

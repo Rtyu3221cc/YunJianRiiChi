@@ -22,8 +22,8 @@ namespace YunJian.Riichi {
    var node=al.nodes.First(x=>x.path=="/UI_AL/node");var motion=node.components.First(c=>c.alphain_time>0 && c.scale_in_start!=null && c.scale_in_start.x>1);float t=Mathf.Clamp01(age/motion.alphain_time);float scale=Mathf.Lerp(motion.scale_in_start.x,1,t*t*t);
    float unit=Mathf.Min(width/1280,height/720);return new Rect(width/2+node.position[0]*2/3*unit-node.size[0]*scale*unit/3,height/2-node.position[1]*2/3*unit-node.size[1]*scale*unit/3,node.size[0]*scale*unit*2/3,node.size[1]*scale*unit*2/3);
   }
-  public static void DrawWin(string kind,int relative,int n,float width,float height,float age){
-   var old=GUI.color;GUI.color=new Color(0,0,0,.3f*Mathf.Clamp01(age/.15f));GUI.DrawTexture(new Rect(0,0,width,height),Texture2D.whiteTexture);GUI.color=new Color(1,1,1,Mathf.Clamp01(age/.2f)*Mathf.Clamp01((1.05f-age)/.15f));
+  public static void DrawWin(string kind,int relative,int n,float width,float height,float age,bool shade=true){
+   var old=GUI.color;if(shade){GUI.color=new Color(0,0,0,.3f*Mathf.Clamp01(age/.15f));GUI.DrawTexture(new Rect(0,0,width,height),Texture2D.whiteTexture);}GUI.color=new Color(1,1,1,Mathf.Clamp01(age/.2f)*Mathf.Clamp01((1.05f-age)/.15f));
    GUI.DrawTexture(WinRect(kind,relative,n,width,height,age),WinTexture(kind),ScaleMode.ScaleToFit);GUI.color=old;
   }
  }

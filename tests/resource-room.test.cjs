@@ -43,3 +43,15 @@ test('LAN capability accommodates wardrobe dependencies with a finite hash limit
  assert.equal(send(r,g,'resourceOffer',{resourceShare:{...share,hashes:[...hashes,'f'.repeat(64)]}}).ok,false);
  assert.equal(JSON.stringify(r.s),before);
 });
+
+test('a random character is rolled on entering the room and kept for the match',()=>{const seen=new Set();for(let k=0;k<12;k++){const {r,h}=setup();const lobby=r.view(0).players[0],pool=[400701,400709];assert(pool.includes(lobby.skin),'room shows a pool skin, not the fixed battle skin: '+lobby.skin);assert.equal(lobby.character,'bamuwei');ok(send(r,h,'prepareResources'));assert.equal(r.s.players[0].matchSkin,lobby.skin);assert.equal(r.view(0).players[0].skin,lobby.skin);seen.add(lobby.skin)}assert(seen.has(400709),'the room never showed a rolled pool skin')});
+test('AI players can wear random downloaded outfits and every client is asked to prepare them',()=>{
+ const pools=[{category:'winEffect',ids:['ron-flame','ron-wind','not-a-real-id']},{category:'stick',ids:['liqi_fish']},{category:'cloth',ids:['tablecloth_green']},{category:'hand',ids:['hand-cat-orange']}];
+ const r=new Room('bot-wear');const h=ok(r.dispatch({op:'create',host:'bot-wear',n:3,name:'甲',lobbyFlow:true,resourceProtocol:1,randomBotWardrobe:true,botWardrobes:pools})).token;
+ const wear={randomBotWardrobe:true,botWardrobes:pools};ok(send(r,h,'addBot',wear));ok(send(r,h,'addBot',wear));
+ for(const bot of r.s.players.filter(p=>p.bot)){assert(['ron-flame','ron-wind'].includes(bot.wardrobe.winEffect),JSON.stringify(bot.wardrobe));assert.equal(bot.wardrobe.stick,'liqi_fish');assert(!('cloth' in bot.wardrobe),'viewer-level cloth must not be assigned');assert(!('hand' in bot.wardrobe),'AI players keep the default hand')}
+ assert(r.view(0).players.filter(p=>p.bot).every(p=>p.wardrobe.winEffect));
+ ok(send(r,h,'prepareResources'));const wanted=r.view(0).resourceSetup.wardrobes;assert(wanted.some(w=>w.stick==='liqi_fish'),'bot outfits enter the shared preparation');
+ const plain=new Room('bot-plain');const p=ok(plain.dispatch({op:'create',host:'bot-plain',n:3,name:'乙',botWardrobes:pools})).token;ok(send(plain,p,'addBot'));assert.deepEqual(plain.s.players[1].wardrobe,{});
+ assert(!new Room('bot-bad').dispatch({op:'create',host:'bot-bad',n:3,name:'丙',randomBotWardrobe:true,botWardrobes:'x'}).ok);
+});

@@ -89,7 +89,7 @@ namespace YunJian.Riichi
             music=gameObject.AddComponent<AudioSource>();sounds=gameObject.AddComponent<AudioSource>();
             music.playOnAwake=sounds.playOnAwake=false;music.loop=true;music.spatialBlend=sounds.spatialBlend=0;
             music.clip=Resources.Load<AudioClip>("Majsoul/Lobby/Audio/lobby_autumn");
-            nativeYaku=new NativeYakuUi();discovery.Start();Home();
+            nativeYaku=new NativeYakuUi();discovery.Start();Home();BeginStartupPreload();
         }
         float Now {
             get {
@@ -104,6 +104,7 @@ namespace YunJian.Riichi
             if(client==null)return;discovery.Publish(client.State);
             TickCharacterPages();
             if(dormOpen&&dormView==DormView.Wardrobe&&dressEye)TickWardrobePreview();
+            TickDressTable();
             UpdateQrFlow();
             if(modalClosing&&Now-closeStarted>=.15f){Modal="";modalClosing=false;}
             bool visible=Visible;
@@ -113,7 +114,7 @@ namespace YunJian.Riichi
                 bool bgm=PlaylistAudio.Active==null&&AppPreferences.Gain(1)>0;
                 music.volume=AppPreferences.Gain(1);
                 if(!bgm)music.Pause();else if(music.clip!=null&&!music.isPlaying){music.UnPause();if(!music.isPlaying)music.Play();}
-                if(Page==ScreenPage.Home&&flyCount<1&&Now>=nextFly){Cue("flyin");flyCount++;}
+                if(Page==ScreenPage.Home&&flyCount<1&&Now>=nextFly&&!startupCover){Cue("flyin");flyCount++;}
                 if(Input.GetKeyDown(KeyCode.Escape))Back();
             }
             wasVisible=visible;
@@ -163,6 +164,7 @@ namespace YunJian.Riichi
         public void CloseModal(){if(Modal==""||modalClosing)return;StopQrCamera();CancelSearch();modalClosing=true;closeStarted=Now;Cue("btn_cancel");}
         public void Back()
         {
+            if(DressTableOpen){CloseDressTable();return;}
             if(client.Busy)return;
             if(CharacterBack())return;
             if(client.LobbyCloseSettings())return;
@@ -274,6 +276,7 @@ namespace YunJian.Riichi
         {
             Styles();targets.Clear();age=Now-started;
             var saved=GUI.matrix;var color=GUI.color;bool enabled=GUI.enabled;
+            if(StartupCovered)GUI.enabled=enabled=false;
             // Fill the physical screen proportionally, then lay controls within
             // the safe rectangle using one uniform scale. No stretched art.
             GUI.matrix=Matrix4x4.identity;
@@ -305,6 +308,7 @@ namespace YunJian.Riichi
             if(roleOpen||roleClosing){GUI.enabled=enabled&&!roleClosing;DrawRoleSelection();GUI.enabled=enabled;}
             if(modal){GUI.enabled=enabled&&!modalClosing;DrawModal();}
             GUI.matrix=saved;GUI.color=color;GUI.enabled=enabled;
+            DrawStartupCover();
         }
         void DrawGarden()
         {
@@ -621,6 +625,10 @@ namespace YunJian.Riichi
             var start=new Rect(width/2-147.5f,959.9f,295,105);
             if(state.host){if(RoomActionButton(start,"开始","start",CanStart))client.LobbyCommand("start");}
             else{bool ready=state.players.ElementAtOrDefault(state.you)?.ready??false;if(RoomActionButton(start,ready?"取消准备":"准备","ready",true))client.LobbyReady(!ready);}
+            // A folded start-resource prompt reopens from a twin of the start button, on its row.
+            // Room input is disabled while a preparation exists; this one button stays live.
+            var resources=GetComponent<ResourceRoomCoordinator>();
+            if(resources!=null&&resources.PromptFolded&&Modal==""){bool input=GUI.enabled;GUI.enabled=true;if(RoomActionButton(new Rect(start.x-start.width-40,start.y,start.width,start.height),"资源准备","resource-reopen",true))resources.Unfold();GUI.enabled=input;}
         }
         void RoomCentered(Rect r,string value,GUIStyle style,Color color,float lift=0)
         {r.y-=lift;Label(r,value,style,color);}

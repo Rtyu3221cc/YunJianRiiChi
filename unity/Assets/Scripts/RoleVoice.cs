@@ -28,15 +28,29 @@ namespace YunJian.Riichi
             foreach (var e in manifest.clips) { var clip = Resources.Load<AudioClip>(e.resource); if (clip != null) clips[e.key] = clip; }
         }
         public void Configure(bool enabled, float volume) { enabledVoice = enabled; output.volume = Mathf.Clamp01(volume); if (!enabled) Stop(); }
-        void Stop() { output.Stop(); queue.Clear(); }
+        void Stop() { output.Stop(); queue.Clear(); playingPriority = -1; }
         public void Reset() { Stop(); room = null; cursor = 0; }
         public void Suspend(bool flag) { suspended = flag; Reset(); }
         public void Preview() { Stop();var clip=CharacterVoices.Clip(CharacterRoster.Active.character,"ron");if(clip!=null)output.PlayOneShot(clip); }
         public void Observe(RoomView state){observed=state;if(string.IsNullOrEmpty(state.audioRoom)){Reset();return;}if(room!=state.audioRoom){Reset();room=state.audioRoom;cursor=state.audioSeq;last=Time.unscaledTime;}}
+        // A newer call cuts off the line still playing, so consecutive kita or a
+        // following chi/pon is heard on time. Win lines are never cut by lesser
+        // calls; a second win line (double ron) waits for the first.
+        static int Priority(PublicSound e)=>e.kind=="ron"||e.kind=="tsumo"?2:e.kind=="discard"?0:1;
+        int playingPriority=-1;
+        public int Interruptions { get; private set; }
+        void Speak(AudioClip clip,int priority){
+            if(clip==null)return;
+            if(output.isPlaying){
+                if(playingPriority==2&&priority<2)return;
+                if(playingPriority==2&&priority==2){queue.Enqueue(Tuple.Create(clip,Time.unscaledTime));while(queue.Count>8)queue.Dequeue();return;}
+                Interruptions++;
+            }
+            queue.Clear();output.Stop();output.clip=clip;playingPriority=priority;output.Play();
+        }
         public void QueuePresented(string key,PublicSound e){
             if(room!=key || e.id<=cursor)return;cursor=e.id;if(!enabledVoice || suspended)return;
-            if(e.kind=="ron" || e.kind=="tsumo")Stop();var clip=ClipFor(e);
-            if(clip!=null)queue.Enqueue(Tuple.Create(clip,Time.unscaledTime));
+            Speak(ClipFor(e),Priority(e));
         }
         public void Accept(RoomView state)
         {
@@ -47,11 +61,7 @@ namespace YunJian.Riichi
             var events = (state.audioEvents ?? new PublicSound[0]).Where(e => e.id > cursor).ToArray(); cursor = Math.Max(cursor, state.audioSeq);
             if (!enabledVoice || suspended || stale) return;
             if (events.Any(e => e.kind == "ron" || e.kind == "tsumo")) { Stop(); events = events.Where(e => e.kind == "ron" || e.kind == "tsumo").ToArray(); }
-            foreach (var e in events)
-            {
-                var clip=ClipFor(e);if(clip!=null)queue.Enqueue(Tuple.Create(clip,Time.unscaledTime));
-            }
-            while (queue.Count > 8) queue.Dequeue();
+            foreach (var e in events) Speak(ClipFor(e), Priority(e));
         }
         void Update()
         {
@@ -59,7 +69,7 @@ namespace YunJian.Riichi
             while (queue.Count > 0)
             {
                 var item = queue.Dequeue(); if (Time.unscaledTime - item.Item2 >= 8) continue;
-                output.clip = item.Item1; output.Play(); return;
+                output.clip = item.Item1; playingPriority = 2; output.Play(); return;
             }
         }
     }

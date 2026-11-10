@@ -22,7 +22,15 @@ namespace YunJian.Riichi
         AudioSource[] channels; AudioSource audition,riichi;string riichiKey;
         public bool RiichiPlaying=>riichi!=null&&riichi.isPlaying;
         public bool ExternalAudition {get;set;}
-        public bool CharacterVoicePreview {get;set;}
+        // The voice page refreshes this every frame it is the visible page. If a
+        // page transition or an unexpected exit stops refreshing it, the duck
+        // releases on its own instead of staying at the preview level.
+        float voicePreviewSeen=-10;
+        public bool CharacterVoicePreview {get=>Time.unscaledTime-voicePreviewSeen<.2f;set=>voicePreviewSeen=value?Time.unscaledTime:-10;}
+        // Ducking eases instead of jumping: down over DuckDownSeconds, back up over DuckUpSeconds.
+        public const float DuckDownSeconds=.8f,DuckUpSeconds=1.2f;
+        float duck=1;
+        public float DuckGain=>duck;
         RiichiClient client; int activeChannel, request; bool fading, loading, suspended, started;
         float fadeAt, fromGain = 1;
         readonly RoundMusicEnvelope roundEnvelope=new RoundMusicEnvelope();
@@ -77,7 +85,7 @@ namespace YunJian.Riichi
             if(pause!=roundPaused){roundPaused=pause;foreach(var channel in channels){if(pause)channel.Pause();else channel.UnPause();}}
             string nextGroup = client.LobbyPlaying ? "mj" : "lobby";
             if (!started || nextGroup != Group) { started = true; Group = nextGroup; ApplyPlaylist(); }
-            UpdateRiichi();RefreshVolumes();
+            UpdateRiichi();UpdateDuck(Time.unscaledDeltaTime);RefreshVolumes();
             foreach(var channel in channels)if(channel.clip!=null){var track=Tracks.FirstOrDefault(t=>clips.TryGetValue(t.id,out var clip)&&clip==channel.clip);if(track!=null)WardrobePackService.Touch(track.resource);}
             if(audition.clip!=null&&AuditionId!=0)WardrobePackService.Touch(Tracks.First(t=>t.id==AuditionId).resource);
             if(riichi.clip!=null&&client.State!=null)WardrobePackService.Touch(WardrobeRuntime.Item(client.State,client.State.you,"music").audio);
@@ -117,9 +125,20 @@ namespace YunJian.Riichi
             else { activeChannel = next; fading = false; }
             RefreshVolumes();
         }
+        float DuckTarget {
+            get {
+                if (AuditionPlaying || RiichiPlaying || ExternalAudition) return 0;
+                // Voice preview keeps music at no more than 0.1 absolute volume.
+                if (CharacterVoicePreview) { float base_ = AppPreferences.Gain(1) * RoundMusicGain; return base_ <= .1f ? 1 : .1f / base_; }
+                return 1;
+            }
+        }
+        void UpdateDuck(float dt) {
+            float target = DuckTarget;
+            duck = Mathf.MoveTowards(duck, target, dt / (target < duck ? DuckDownSeconds : DuckUpSeconds));
+        }
         void RefreshVolumes() {
-            float gain = AppPreferences.Gain(1) * RoundMusicGain * (AuditionPlaying || RiichiPlaying || ExternalAudition ? 0 : 1);
-            if(CharacterVoicePreview)gain=Mathf.Min(gain,.1f);
+            float gain = AppPreferences.Gain(1) * RoundMusicGain * duck;
             audition.volume = AppPreferences.Gain(1);
             if (fading) {
                 float t = Mathf.Clamp01((Time.unscaledTime - fadeAt) / FadeSeconds);

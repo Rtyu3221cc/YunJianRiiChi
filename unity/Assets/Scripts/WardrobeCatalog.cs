@@ -57,6 +57,7 @@ namespace YunJian.Riichi {
         public static string CanonicalHand(string id)=>id=="hand-cat"?"hand-cat-orange":id=="hand-man"||id=="hand-dog"?"hand-human":id;
         public static Texture2D Texture(string path){if(string.IsNullOrEmpty(path))return null;if(WardrobePackService.Managed(path))return WardrobePackService.Asset<Texture2D>(path);if(!textures.TryGetValue(path,out var t)||t==null)textures[path]=t=Resources.Load<Texture2D>(path);return t;}
         public static WardrobeUi Ui(string key)=>Data.ui.FirstOrDefault(i=>i.key==key);
+        public static string[] UiKeys=>Data.ui.Select(i=>i.key).ToArray();
         public static Rect AvatarFrameRect(Rect portrait,WardrobeItem item){
             var w=item.avatarWindow;if(w==null||w.Length!=4)return portrait;
             float width=portrait.width/w[2],height=portrait.height/w[3];return new Rect(portrait.x-w[0]*width,portrait.y-w[1]*height,width,height);

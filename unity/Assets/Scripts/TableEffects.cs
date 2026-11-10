@@ -13,9 +13,47 @@ namespace YunJian.Riichi
         [Serializable] class HandData { public int vertices, frames, fps; public float duration, landTime; public float[] uv, tilePoints,tileRotations; public int[] body, nails; }
         // Every clip is baked from the same public mesh, UVs and triangle groups; only
         // the sampled frames, the carried-object path and the timing differ.
-        sealed class Clip { public HandData data; public Vector3[][] vertices, normals; public Vector3[] frameVertices, frameNormals; }
+        sealed class Clip { public HandData data; public Vector3[][] vertices, normals; public Vector3[] frameVertices, frameNormals; public float[] armWeight; public int[] armNear, armFar; }
+        // The authored forearm stops ~.47 source units from the palm. On 20:9 phones
+        // the side players' sleeve end comes into view, so the far forearm is pushed
+        // further along its own axis each frame; palm and wrist stay as authored.
+        public const float ArmExtension=.6f;
+#if UNITY_EDITOR
+        public static bool ValidationAuthoredArm;
+#endif
+        static void MeasureArm(Clip clip){
+            var data=clip.data;int n=data.vertices;var parent=new int[n];for(int i=0;i<n;i++)parent[i]=i;
+            int Find(int x){while(parent[x]!=x){parent[x]=parent[parent[x]];x=parent[x];}return x;}
+            for(int i=0;i+2<data.body.Length;i+=3){parent[Find(data.body[i+1])]=Find(data.body[i]);parent[Find(data.body[i+2])]=Find(data.body[i]);}
+            var size=new Dictionary<int,int>();foreach(int v in data.body.Distinct()){int r=Find(v);size[r]=size.TryGetValue(r,out var c)?c+1:1;}
+            // Measure from the carried tile on the frame where the palm holds it: paws
+            // have no nail group and are one mesh with the arm. Tiny stray pieces are ignored.
+            var solid=new bool[n];for(int i=0;i<n;i++)solid[i]=size.TryGetValue(Find(i),out var c)&&c>=8;
+            int held=0;float closest=float.MaxValue;
+            for(int f=0;f<data.frames;f++){var tile=new Vector3(data.tilePoints[f*3],data.tilePoints[f*3+1],data.tilePoints[f*3+2]);for(int i=0;i<n;i++)if(solid[i]){float d=(clip.vertices[f][i]-tile).sqrMagnitude;if(d<closest){closest=d;held=f;}}}
+            var rest=clip.vertices[held];var centre=new Vector3(data.tilePoints[held*3],data.tilePoints[held*3+1],data.tilePoints[held*3+2]);
+            var distance=new float[n];float reach=0;
+            for(int i=0;i<n;i++){distance[i]=solid[i]?Vector3.Distance(rest[i],centre):-1;reach=Mathf.Max(reach,distance[i]);}
+            var weight=new float[n];var near=new List<int>();var far=new List<int>();
+            for(int i=0;i<n;i++){if(distance[i]<0)continue;weight[i]=Mathf.SmoothStep(0,1,Mathf.InverseLerp(reach*.55f,reach*.85f,distance[i]));
+                if(weight[i]>=.999f)far.Add(i);else if(distance[i]>=reach*.35f&&distance[i]<reach*.55f)near.Add(i);}
+            if(near.Count==0||far.Count==0)return;clip.armWeight=weight;clip.armNear=near.ToArray();clip.armFar=far.ToArray();
+        }
+        static void ExtendArm(Clip clip){
+            if(clip.armWeight==null)return;
+#if UNITY_EDITOR
+            if(ValidationAuthoredArm)return;
+#endif
+            var v=clip.frameVertices;Vector3 far=Vector3.zero,near=Vector3.zero;
+            foreach(int i in clip.armFar)far+=v[i];foreach(int i in clip.armNear)near+=v[i];
+            var axis=(far/clip.armFar.Length-near/clip.armNear.Length).normalized*ArmExtension;
+            for(int i=0;i<v.Length;i++)if(clip.armWeight[i]>0)v[i]+=axis*clip.armWeight[i];
+        }
         const string NormalClip="discard-hand", RiichiClip="riichi-hand", StickClip="lizhi-hand", MeldClip="fulu-hand", TsumoClip="tsumo-hand";
-        public const float TsumoHandScale=.48f;
+        // Authored proportion: the recorded own tsumo shows the palm about five
+        // tile widths wide at contact, which is scale 1. At .48 the hand lay flat
+        // at table level and its fingers cut through the standing tile.
+        public const float TsumoHandScale=1f;
         // Majsoul ships no dedicated nuki clip (the hand set is exactly Dapai, LiQiPai,
         // Zimo, Fulu and LiZhi), so extracting North reuses the meld motion.
         static readonly string[] MeldKinds={"chi","pon","kan","nuki"};
@@ -38,6 +76,10 @@ namespace YunJian.Riichi
         bool GroupCall=>current!=null && (current.kind=="chi" || current.kind=="pon" || current.kind=="kan");
         readonly List<WinTileEffect> winEffects = new List<WinTileEffect>();
         readonly HashSet<string> winningBursts = new HashSet<string>();
+        // Bursts that have played (key from:winSource:tile). Another player's
+        // tsumo keeps the hand standing until its burst (other-player tsumo recording).
+        readonly HashSet<string> firedBursts = new HashSet<string>();
+        public bool BurstFired(string key)=>firedBursts.Contains(key);
         readonly HashSet<string> riichiCalls=new HashSet<string>();
         readonly WinCutIn winCutIn=new WinCutIn();
         float winResultReadyAt;
@@ -45,7 +87,18 @@ namespace YunJian.Riichi
         public WinCutIn CutIn=>winCutIn;
         public int SpawnedWinEffects { get; private set; }
         static bool IsWin(PublicSound e) => e!=null && (e.kind=="ron" || e.kind=="tsumo");
-        public bool ShowWinPresentation => IsWin(current) || IsWin(call) || cutInWin!=null || handEvents.Any(IsWin) || callEvents.Any(IsWin) || (ValidationFreeze?ValidationTime:Time.unscaledTime)<winResultReadyAt || winCutIn.Active;
+        public bool ShowWinPresentation => IsWin(current) || IsWin(call) || cutIns.Count>0 || handEvents.Any(IsWin) || callEvents.Any(IsWin) || (ValidationFreeze?ValidationTime:Time.unscaledTime)<winResultReadyAt || winCutIn.Active || WinEffectPlaying;
+        // The source opens the settlement 3.3 s into new-style effects such as
+        // 咒层界 while the effect itself runs to its 6 s lifetime; players saw it cut
+        // off. Keep the table for each effect's own playback length. Waiting for the
+        // particle count to reach zero (0.6.29) also waited for invisible faded
+        // particles, leaving an empty table for seconds before the settlement.
+        public const float MaxWinEffectHold=10f;
+        // Native effects all carry the source's fixed six-second lifetime, while most
+        // are visually over after two or three; waiting for the lifetime left an empty
+        // table. Together with winResultReadyAt (the source's own result time) the
+        // settlement now opens at the later of that time and the last visible particle.
+        public bool WinEffectPlaying{get{float now=ValidationFreeze?ValidationTime:Time.unscaledTime;return winEffects.Any(e=>{if(e==null)return false;float age=now-e.StartedAt;return age<Mathf.Min(e.PlaybackDuration,MaxWinEffectHold)&&(age<.3f||e.ParticleCount>0);});}}
         public bool WinActionStarted=>IsWin(current) || call?.kind=="ron";
         readonly List<NorthPetals> northEffects = new List<NorthPetals>();
         bool handedOff,impactQueued;
@@ -62,6 +115,8 @@ namespace YunJian.Riichi
         public bool AwaitingDiscard(int seat,int index)=>current?.kind=="discard"&&current.seat==seat&&current.riverIndex==index&&!handedOff||handEvents.Any(e=>e.kind=="discard"&&e.seat==seat&&e.riverIndex==index);
         public bool ValidationFreeze;
         public float ValidationTime;
+        // Wardrobe preview: play hands and table effects without shouts, cut-ins or voices.
+        public bool SuppressShouts;
 #if UNITY_EDITOR
         public bool ValidationSequentialClock;
         public float ValidationTsumoHandScale=-1;
@@ -118,8 +173,8 @@ namespace YunJian.Riichi
 #if UNITY_EDITOR
             validationCutInBegan=-1;
 #endif
-            riichiVisual?.StopVisuals();
-            Finish(); FinishCall(); EndImpact(); EndNorthEffects(); EndWinEffects(); winningBursts.Clear();riichiCalls.Clear();winCutIn.Reset();cutInWin=null; ClearQueuedHands(); callEvents.Clear(); room = null; cursor = 0;spokenEvent=-1; last = Time.unscaledTime;
+            riichiVisual?.StopVisuals();EndTsumoTopple();
+            Finish(); FinishCall(); EndImpact(); EndNorthEffects(); EndWinEffects(); winningBursts.Clear();firedBursts.Clear();riichiCalls.Clear();winCutIn.Reset();cutIns.Clear();ronLead=null; ClearQueuedHands(); callEvents.Clear(); room = null; cursor = 0;spokenEvent=-1; last = Time.unscaledTime;
         }
         public void Accept(RoomView view)
         {
@@ -130,7 +185,7 @@ namespace YunJian.Riichi
             var fresh = (view.audioEvents ?? new PublicSound[0]).Where(e => e.id > cursor).OrderBy(e => e.id).ToArray();
             cursor = Math.Max(cursor, view.audioSeq);
             if (stale) { Finish(); FinishCall(); EndNorthEffects(); EndWinEffects(); ClearQueuedHands(); callEvents.Clear(); return; }
-            if(view.phase!="result" && !ShowWinPresentation)winningBursts.Clear();
+            if(view.phase!="result" && !ShowWinPresentation)winningBursts.Clear();firedBursts.Clear();
             // A newly received win is queued behind unfinished discard/declaration hands.
             foreach (var item in fresh)
             {
@@ -142,6 +197,7 @@ namespace YunJian.Riichi
                 }
                 if (ClipFor(item) != null && (item.kind!="discard" || table.FindDiscard(item.seat,item.tile,item.riverIndex)!=null)) handEvents.Enqueue(item);
                 string declaration=view.handSeq+":"+view.round+":"+view.honba+":"+item.seat;
+                if(SuppressShouts)continue;
                 if(item.kind=="discard" && item.riichi && riichiCalls.Add(declaration))
                     callEvents.Enqueue(new PublicSound{id=item.id,seat=item.seat,kind=view.players[item.seat].riichi==2?"double-riichi":"riichi"});
                 if (CallArt(item.kind) != null && (!(item.kind=="riichi"||item.kind=="double-riichi") || riichiCalls.Add(declaration))) callEvents.Enqueue(item);
@@ -200,6 +256,7 @@ namespace YunJian.Riichi
                     clip.normals[f][i]=new Vector3(values[n],values[n+1],values[n+2]);
                 }
             }
+            MeasureArm(clip);
             clips[stem] = clip;
             }
             var surface=clip.data;
@@ -215,7 +272,7 @@ namespace YunJian.Riichi
         }
         int spokenEvent=-1;
         void StartQueued(){
-            if(current!=null || call!=null || cutInWin!=null || winCutIn.Active || winEffects.Count>0 || table.ArrangingHand)return;
+            if(current!=null || call!=null || cutIns.Count>0 || winCutIn.Active || winEffects.Count>0 || table.ArrangingHand)return;
             int hand=handEvents.Count>0?handEvents.Peek().id:int.MaxValue,shout=callEvents.Count>0?callEvents.Peek().id:int.MaxValue,id=Math.Min(hand,shout);
             if(id==int.MaxValue)return;
             if(hand==id && shout==id && handEvents.Peek().kind=="tsumo"){
@@ -223,7 +280,7 @@ namespace YunJian.Riichi
                 if(win.id!=spokenEvent){spokenEvent=win.id;GetComponent<RoleVoice>()?.QueuePresented(room,win);}return;
             }
             PublicSound item=null;if(hand==id){item=handEvents.Dequeue();Begin(item);}if(shout==id){item=callEvents.Dequeue();BeginCall(item);}
-            if(item!=null && item.id!=spokenEvent){spokenEvent=item.id;GetComponent<RoleVoice>()?.QueuePresented(room,item);}
+            if(item!=null && item.id!=spokenEvent && !SuppressShouts){spokenEvent=item.id;GetComponent<RoleVoice>()?.QueuePresented(room,item);}
         }
         void Begin(PublicSound item)
         {
@@ -335,13 +392,40 @@ namespace YunJian.Riichi
         {
             var position=motion.TransformPoint(point)-Vector3.up*.12f;
             if(current.kind=="tsumo"){
-                // Zimo's original arm sweeps sideways. Let the tile rise and land
-                // over its reserved slot instead of sweeping across the exposed row.
+                // Follow Zimo's own arc: the hand lifts toward the winner, then swings
+                // down onto the slot (the contact keyframe maps to the slot in Begin).
+                // Pinning the tile over its slot turned this into a vertical drop.
+                // Only keep the standing tile from sinking below the table.
                 var target=table.WinningTarget(current);
-                if(target!=null){motion.position+=new Vector3(target.position.x-position.x,0,target.position.z-position.z);position.x=target.position.x;position.z=target.position.z;position.y=Mathf.Max(target.position.y,position.y);}
+                if(target!=null)position.y=Mathf.Max(target.position.y+StandingLift(target),position.y);
             }
             animatedTile.position=position;
         }
+        // Recorded own tsumo: the slapped tile stands ~0.10s, falls toward the
+        // winner face up in ~0.10s (accelerating), then rebounds a few degrees
+        // for ~0.05s. See docs/research-2026-11-07-presets-and-tile-motion.md.
+        public const float ToppleHold=.10f,ToppleFall=.10f,ToppleBounce=.05f,ToppleBounceDegrees=4f;
+        Transform toppleTile;Vector3 topplePosition;Quaternion toppleRotation;float toppleBegan=-1;
+        static float StandingLift(Transform tile){var box=tile!=null?tile.GetComponent<BoxCollider>():null;return box==null?0:box.size.z*.5f*tile.lossyScale.z;}
+        public static float ToppleAngle(float age){
+            if(age<ToppleHold)return 90;
+            if(age<ToppleHold+ToppleFall){float u=(age-ToppleHold)/ToppleFall;return 90*(1-u*u);}
+            if(age<ToppleHold+ToppleFall+ToppleBounce)return ToppleBounceDegrees*Mathf.Sin(Mathf.PI*(age-ToppleHold-ToppleFall)/ToppleBounce);
+            return 0;
+        }
+        void BeginTsumoTopple(Transform tile){
+            EndTsumoTopple();if(tile==null)return;
+            toppleTile=tile;topplePosition=tile.localPosition;toppleRotation=tile.localRotation;toppleBegan=ValidationFreeze?ValidationTime:Time.unscaledTime;UpdateTsumoTopple();
+        }
+        void UpdateTsumoTopple(){
+            if(toppleTile==null){toppleBegan=-1;return;}
+            float age=(ValidationFreeze?ValidationTime:Time.unscaledTime)-toppleBegan,angle=ToppleAngle(age);
+            var box=toppleTile.GetComponent<BoxCollider>();float half=box!=null?box.size.z*.5f:0;
+            toppleTile.localRotation=toppleRotation*Quaternion.Euler(angle,0,0);
+            toppleTile.localPosition=topplePosition+Vector3.up*half*Mathf.Sin(angle*Mathf.Deg2Rad);
+            if(age>=ToppleHold+ToppleFall+ToppleBounce)EndTsumoTopple();
+        }
+        void EndTsumoTopple(){if(toppleTile!=null){toppleTile.localPosition=topplePosition;toppleTile.localRotation=toppleRotation;}toppleTile=null;toppleBegan=-1;}
         void CompleteHandoff()
         {
             if (handedOff) return; handedOff=true;
@@ -363,6 +447,7 @@ namespace YunJian.Riichi
                 // The supplied sakura burst belongs to pointer clicks, not North.
             }
             else if (current.kind=="tsumo") {
+                BeginTsumoTopple(targetTile);
                 // ViewPlayer_Other._Hule releases the rig at keypoint[2], then
                 // calls ShowHuleEffect after .1s. Contact must not start it early.
                 float at=ValidationFreeze?tsumoPlan.release:started+tsumoPlan.release;
@@ -395,11 +480,11 @@ namespace YunJian.Riichi
                 var e=winEffects[i];if(e==null){winEffects.RemoveAt(i);continue;}
                 float age=now-e.StartedAt;
                 if(e.NeedsWinningTileBinding)e.BindWinningTile(table.WinningTarget(e.WinningEvent));
-                if(age>=0&&!e.SoundTriggered){e.SoundTriggered=true;GetComponent<GameAudio>()?.Cue(e.SoundCue);}
+                if(age>=0&&!e.SoundTriggered){e.SoundTriggered=true;GetComponent<GameAudio>()?.Cue(e.SoundCue);var w=e.WinningEvent;if(w!=null)firedBursts.Add(w.from+":"+w.winSource+":"+w.tile);}
                 e.Sample(age);
                 // Continuous emitters have a particle tail beyond the old 1.8 s
                 // cutoff. Keep the table visible until that tail really ends.
-                if(age>=e.PlaybackDuration&&(e.FixedSourceLifetime||e.ParticleCount==0)){e.gameObject.SetActive(false);Destroy(e.gameObject);winEffects.RemoveAt(i);}
+                if(age>=e.PlaybackDuration&&(e.FixedSourceLifetime||e.ParticleCount==0)||age>=MaxWinEffectHold){e.gameObject.SetActive(false);Destroy(e.gameObject);winEffects.RemoveAt(i);}
             }
         }
         void EndNorthEffects()
@@ -456,14 +541,29 @@ namespace YunJian.Riichi
                 impactRenderer.sharedMaterial.SetColor("_Tint", new Color(fade, fade * .95f, fade * .82f, 1f));
             impact.rotation = Quaternion.LookRotation(impact.position - table.Camera.transform.position, Vector3.up);
         }
-        PublicSound cutInWin;
+        // Multiple ron (一炮多响.mp4): every winner on the same discard shouts 和 at
+        // once, then each 满贯-or-better winner gets a cut-in in turn, then one win
+        // effect plays on the tile, using the first winner's choice.
+        readonly Queue<PublicSound> cutIns=new Queue<PublicSound>();
+        readonly List<PublicSound> winShouts=new List<PublicSound>();
+        PublicSound ronLead;
         void BeginCall(PublicSound item) { call=item; callStarted=Time.unscaledTime;
 #if UNITY_EDITOR
             validationCallBegan=ValidationTime;
 #endif
-            if(IsWin(item))cutInWin=item;
+            winShouts.Clear();
+            if(!IsWin(item))return;
+            winShouts.Add(item);
+            if(item.kind=="ron"){
+                ronLead=item;
+                while(callEvents.Count>0&&callEvents.Peek().kind=="ron"&&callEvents.Peek().from==item.from&&callEvents.Peek().tile==item.tile){
+                    var other=callEvents.Dequeue();winShouts.Add(other);
+                    if(!SuppressShouts&&other.id!=spokenEvent){spokenEvent=other.id;GetComponent<RoleVoice>()?.QueuePresented(room,other);}
+                }
+            }
+            foreach(var w in winShouts)cutIns.Enqueue(w);
         }
-        void FinishCall() { call=null; }
+        void FinishCall() { call=null;winShouts.Clear(); }
         void ConfigureOverlay()
         {
             overlay.CopyFrom(table.Camera);overlay.cullingMask=1<<14;overlay.clearFlags=CameraClearFlags.Depth;overlay.depth=table.HandCamera.depth+1;
@@ -482,22 +582,21 @@ namespace YunJian.Riichi
             if(ValidationSequentialClock&&validationCutInBegan>=0){winCutIn.Freeze=true;winCutIn.FrozenAge=ValidationTime-validationCutInBegan;}
 #endif
             StartQueued();
-            UpdateImpact(); UpdateNorthEffects(); UpdateWinEffects();
+            UpdateImpact(); UpdateNorthEffects(); UpdateWinEffects(); UpdateTsumoTopple();
             float elapsed=HandAge;
             if(current?.kind=="tsumo"&&elapsed>=tsumoPlan.cue&&!tsumoSoundPlayed)PlayLandingSound();
             if (current!=null && elapsed >= PlayLength) { CompleteHandoff(); Finish(); }
-            if(cutInWin!=null && CallAge>=1.05f){
-                var view=GetComponent<RiichiClient>().State;bool banner=WinCutIn.Eligible(view,cutInWin.seat);
+            if(cutIns.Count>0 && CallAge>=1.05f && !winCutIn.Active){
+                var w=cutIns.Dequeue();
+                var view=GetComponent<RiichiClient>().State;bool banner=WinCutIn.Eligible(view,w.seat);
                 var players=view?.players;
-                if(banner){winCutIn.Play(players!=null&&cutInWin.seat<players.Length?players[cutInWin.seat]:null);GetComponent<GameAudio>()?.Cue("cutin");}
-                // Double ron shares one discarded tile. Show both winners first,
-                // then play that tile's complete burst after the final cut-in.
+                if(banner){winCutIn.Play(players!=null&&w.seat<players.Length?players[w.seat]:null);GetComponent<GameAudio>()?.Cue("cutin");}
                 float at=ValidationFreeze?0:Time.unscaledTime;
 #if UNITY_EDITOR
                 if(ValidationSequentialClock){at=ValidationTime;if(banner){validationCutInBegan=ValidationTime;winCutIn.Freeze=true;winCutIn.FrozenAge=0;}}
 #endif
-                if(cutInWin.kind=="ron"&&!callEvents.Any(e=>e.kind=="ron"))SpawnWin(cutInWin,at+(banner?WinCutIn.Duration+.18f:0));
-                cutInWin=null;
+                // The shared tile's single burst follows the last cut-in.
+                if(cutIns.Count==0&&ronLead!=null){SpawnWin(ronLead,at+(banner?WinCutIn.Duration+.18f:0));ronLead=null;}
             }
             if (call!=null && CallAge >= 1.05f) FinishCall();
             if (current==null || motion==null || clip==null) return;
@@ -510,6 +609,7 @@ namespace YunJian.Riichi
             }
             float frame=Mathf.Clamp01(elapsed/ClipLength)*(clip.data.frames-1);int a=(int)frame,b=Mathf.Min(a+1,clip.data.frames-1);float t=frame-a;
             for(int i=0;i<clip.data.vertices;i++) {clip.frameVertices[i]=Vector3.Lerp(clip.vertices[a][i],clip.vertices[b][i],t);clip.frameNormals[i]=Vector3.Lerp(clip.normals[a][i],clip.normals[b][i],t);}
+            ExtendArm(clip);
             mesh.vertices=clip.frameVertices;mesh.normals=clip.frameNormals;mesh.RecalculateBounds();
             if(animatedTile!=null&&(!handedOff||current.kind!="tsumo"))
             {
@@ -521,12 +621,13 @@ namespace YunJian.Riichi
                 bool stick=current.kind=="riichi-stick";
                 animatedTile.rotation=current.kind=="discard"&&targetTile!=null?targetTile.rotation:current.kind=="nuki" && table.NorthTarget(current.seat,current.nuki)!=null
                     ? table.NorthTarget(current.seat,current.nuki).rotation
-                    : current.kind=="tsumo" && targetTile!=null?targetTile.rotation:Quaternion.Euler(0,table.SeatAngle(current.seat)+(!stick&&current.riichi?90f:0f),0);
+                    : current.kind=="tsumo" && targetTile!=null?targetTile.rotation*Quaternion.Euler(90,0,0):Quaternion.Euler(0,table.SeatAngle(current.seat)+(!stick&&current.riichi?90f:0f),0);
                 if(current.kind=="discard"&&current.riichi&&clip.data.tileRotations?.Length==clip.data.frames*4){
                     var turn=TileRotation(Mathf.Min(elapsed,SourceHandoff))*Quaternion.Inverse(TileRotation(SourceHandoff));
                     animatedTile.rotation=motion.rotation*turn*Quaternion.Inverse(motion.rotation)*animatedTile.rotation;
                 }
-                // Tsumo carries and slaps the tile face up for the entire motion.
+                // Tsumo carries the tile standing with its back to the winner; after
+                // contact it topples toward the winner face up (UpdateTsumoTopple).
             }
             if(current.kind=="discard"&&current.riichi&&!riichiVisualAttempted&&elapsed>=RiichiEffectAt){
                 riichiVisualAttempted=true;riichiVisual.TryPlay(current,animatedTile,ValidationFreeze?ValidationTime:Time.unscaledTime);
@@ -541,7 +642,10 @@ namespace YunJian.Riichi
         {
             if(winCutIn.Active){winCutIn.Draw();return;}
             if (call==null) return;
-            if(IsWin(call)){NativeAnnouncements.DrawWin(call.kind,table.RelativeSeat(call.seat),n,width,height,CallAge);return;}
+            if(IsWin(call)){
+                if(winShouts.Count==0)NativeAnnouncements.DrawWin(call.kind,table.RelativeSeat(call.seat),n,width,height,CallAge);
+                else for(int i=0;i<winShouts.Count;i++)NativeAnnouncements.DrawWin(winShouts[i].kind,table.RelativeSeat(winShouts[i].seat),n,width,height,CallAge,i==0);
+                return;}
             string name=CallArt(call.kind);if(name==null)return;
             float time=CallAge;
             var players=GetComponent<RiichiClient>().State?.players;
@@ -550,7 +654,7 @@ namespace YunJian.Riichi
 #if UNITY_EDITOR
         public void ValidationPlay(int seat,string kind,string tile=null,bool riichi=false,int riverIndex=0)
         {
-            Finish();FinishCall();winCutIn.Reset();cutInWin=null;EndNorthEffects();EndWinEffects();winningBursts.Clear();ClearQueuedHands();callEvents.Clear();ValidationFreeze=true;ValidationTime=.28f;
+            Finish();FinishCall();winCutIn.Reset();cutIns.Clear();ronLead=null;EndNorthEffects();EndWinEffects();winningBursts.Clear();firedBursts.Clear();ClearQueuedHands();callEvents.Clear();ValidationFreeze=true;ValidationTime=.28f;
             Begin(new PublicSound {seat=seat,kind=kind,tile=tile,riichi=riichi,riverIndex=riverIndex});
             if (CallArt(kind)!=null) BeginCall(new PublicSound {seat=seat,kind=kind,tile=tile,riichi=riichi});
         }

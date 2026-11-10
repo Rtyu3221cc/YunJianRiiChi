@@ -306,7 +306,8 @@ namespace YunJian.Riichi
             yakuman.Tick(active&&State!=null&&(State.phase=="play"||State.phase=="reaction")&&!introduction.Active&&!lobby.OverlayActive&&!showRoom&&page!="settings"&&!AutoPlaying,gameAudio);
             // Every press, on the table or the HUD, gets Majsoul's sakura tap burst.
             if(Input.GetMouseButtonDown(0))tap.Play(Input.mousePosition);
-            if(State?.phase=="result" && (State.result.draw || !effects.ShowWinPresentation)){
+            if(DressPreviewing){}
+            else if(State?.phase=="result" && (State.result.draw || !effects.ShowWinPresentation)){
                 resultDisplay.Observe(State);settlementAudio.Tick(State,resultDisplay,true,gameAudio);
 #if UNITY_EDITOR
                 bool livePresentation=!SessionPreviewOnly;
@@ -328,6 +329,7 @@ namespace YunJian.Riichi
 #endif
                 StartCoroutine(Send(new RequestBody { op = resumingConnection?"resume":"state",room=State?.audioRoom }, null, true)); }
             if(active&&State?.phase!="lobby"&&Input.GetKeyDown(KeyCode.Escape)){if(tableEmotes.Back()){}else if(page=="settings")LobbyCloseSettings();else if(lobby.OverlayActive)lobby.CloseModal();else lobby.ShowMatchExit();}
+            if(DressPreviewing)return;
 #if UNITY_EDITOR
             if(!validationHandInput)
 #endif
@@ -508,6 +510,12 @@ namespace YunJian.Riichi
             bool playing = active && State != null && (State.phase == "play" || State.phase == "reaction" || (State.phase == "result" && effects.ShowWinPresentation));
             viewport = TableViewport.Fit(Screen.width, Screen.height, Screen.safeArea, playing);
             GUI.matrix = viewport.Matrix;
+            if(DressPreviewing){
+                // Table HUD without controls, then the preview chrome from the lobby.
+                viewport=TableViewport.Fit(Screen.width,Screen.height,Screen.safeArea,true);GUI.matrix=viewport.Matrix;
+                bool interactive=GUI.enabled;GUI.enabled=false;if(State!=null)DrawTableUI(true);GUI.enabled=interactive;
+                GUI.matrix=previous;lobby.DrawDressPreviewOverlay();return;
+            }
             bool beforeSettings = GUI.enabled; GUI.enabled &= page != "settings" && CharacterResourceUi.Current?.ModalOpen!=true && WardrobeResourceUi.Current?.ModalOpen!=true && State?.resourceSetup==null;
             if (State == null || !active) DrawHome();
             else if (State.phase == "lobby") DrawLobby();
@@ -541,9 +549,12 @@ namespace YunJian.Riichi
         void DrawTableUI(bool passive=false)
         {
             float w = viewport.Width, h = viewport.Height;
+            // The wardrobe preview table has only its own close button.
+            if (!DressPreviewing) {
             if (SkinButton(new Rect(w - 175, 20, 40, 40), "replay_collect", "邀请好友")) lobby.OpenInvitation(true);
             if (SkinButton(new Rect(w - 117, 20, 40, 40), "btn_settings", "设置")) LobbyOpenSettings();
             if (SkinButton(new Rect(w - 59, 20, 40, 40), "btn_leave", "退出牌局")) { lobby.ShowMatchExit(); return; }
+            }
             // Original UI_DesktopInfo top-left node coordinates, uniformly scaled.
             const float k = .55f, ox = 34, oy = .6f;
             GUI.DrawTexture(new Rect(ox + 11*k, oy + 28*k, 313*k, 158*k), Skin("left_top"), ScaleMode.ScaleToFit);

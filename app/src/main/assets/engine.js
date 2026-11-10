@@ -4,6 +4,12 @@
 const M=g.Majiang, copy=x=>JSON.parse(JSON.stringify(x)), norm=p=>p.slice(0,2).replace('0','5');
 const RULE=M.rule({'カンドラ後乗せ':false,'リーチ後暗槓許可レベル':1});
 function check(ok,msg){if(!ok)throw Error(msg)}
+// AI outfits never include the hand: AI players keep the default human hand.
+const BOT_WARDROBE=['stick','riichiEffect','winEffect','headFrame'];
+const PRESENT_MS={riichiDiscard:3200,'riichi-stick':1300,pon:1600,chi:1600,kan:1600,ankan:1600,kakan:1600,nuki:1500};
+// The scorer names yaku in Japanese; settlement shows the simplified Chinese names.
+const YAKU_NAMES={'門前清自摸和':'门前清自摸和','ダブル立直':'两立直','一発':'一发','嶺上開花':'岭上开花','槍槓':'抢杠','河底撈魚':'河底捞鱼','翻牌 白':'役牌 白','翻牌 發':'役牌 发','翻牌 中':'役牌 中','一盃口':'一杯口','混全帯幺九':'混全带幺九','一気通貫':'一气通贯','三色同順':'三色同顺','三槓子':'三杠子','対々和':'对对和','混老頭':'混老头','七対子':'七对子','純全帯幺九':'纯全带幺九','二盃口':'二杯口','緑一色':'绿一色','清老頭':'清老头','国士無双':'国士无双','国士無双十三面':'国士无双十三面','四槓子':'四杠子','九蓮宝燈':'九莲宝灯','純正九蓮宝燈':'纯正九莲宝灯','四暗刻単騎':'四暗刻单骑','ドラ':'宝牌','赤ドラ':'赤宝牌','裏ドラ':'里宝牌'};
+function yakuName(name){return YAKU_NAMES[name]||name.replace(/^場風/,'场风').replace(/^自風/,'自风').replace('東','东')}
 function randomHex(n){const b=new Uint8Array(n);g.crypto.getRandomValues(b);return Array.from(b,x=>x.toString(16).padStart(2,'0')).join('')}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const b=new Uint32Array(1);let max=Math.floor(4294967296/(i+1))*(i+1);do{g.crypto.getRandomValues(b)}while(b[0]>=max);const j=b[0]%(i+1);[a[i],a[j]]=[a[j],a[i]];}return a}
 function tiles(h){const a=[];for(const s of ['m','p','s','z'])for(let n=1;n<h._bingpai[s].length;n++)for(let k=0;k<h._bingpai[s][n];k++)a.push(s+(n===5&&k<h._bingpai[s][0]?0:n));return a}
@@ -18,12 +24,19 @@ function characterSelection(req){
  check(Array.isArray(pool)&&pool.length<=1024,'随机雀士列表无效');const choices=pool.map(characterChoice),unique=[...new Map(choices.map(c=>[c.character+':'+c.skin,c])).values()];
  check(req.randomCharacters!==true||unique.length>0,'请先选择随机雀士');return {...active,characterPool:unique,randomCharacters:req.randomCharacters===true,wardrobe:wardrobeSelection(req.wardrobe)};
 }
+// A random selection is rolled once when it is applied, so the room already shows
+// the character this player will bring into the match.
+function rollCharacter(p){
+ if(!p.randomCharacters||!p.characterPool?.length){delete p.lobbyPick;return}
+ const key=shuffle([...new Set(p.characterPool.map(c=>c.character))])[0];p.lobbyPick={...shuffle(p.characterPool.filter(c=>c.character===key).slice())[0]};
+}
+function pickedCharacter(p){const c=p.lobbyPick;return p.randomCharacters&&c&&(p.characterPool||[]).some(x=>x.character===c.character&&x.skin===c.skin)?c:null}
 function freezeCharacter(p){
  let c={character:p.character||'yiji',skin:p.skin||400101};
- if(p.randomCharacters&&p.characterPool?.length){const key=shuffle([...new Set(p.characterPool.map(c=>c.character))])[0];c=shuffle(p.characterPool.filter(c=>c.character===key).slice())[0];}
+ if(p.randomCharacters&&p.characterPool?.length){if(!pickedCharacter(p))rollCharacter(p);c=p.lobbyPick;}
  p.matchCharacter=c.character;p.matchSkin=c.skin;p.matchWardrobe={...(p.wardrobe||{})};
 }
-function publicCharacter(p,phase,prepared=false){return {wardrobe:{...(phase==='lobby'&&!prepared?p.wardrobe:p.matchWardrobe||p.wardrobe||{})},character:phase==='lobby'&&!prepared?(p.character||'yiji'):(p.matchCharacter||p.character||'yiji'),skin:phase==='lobby'&&!prepared?(p.skin||400101):(p.matchSkin||p.skin||400101)}}
+function publicCharacter(p,phase,prepared=false){const lobby=phase==='lobby'&&!prepared,pick=lobby&&pickedCharacter(p);return {wardrobe:{...(lobby?p.wardrobe:p.matchWardrobe||p.wardrobe||{})},character:lobby?(pick?pick.character:p.character||'yiji'):(p.matchCharacter||p.character||'yiji'),skin:lobby?(pick?pick.skin:p.skin||400101):(p.matchSkin||p.skin||400101)}}
 function player(name,token){return {name,avatar:"",token:token||randomHex(18),recovery:randomHex(6),score:0,hand:'',river:[],riichi:0,ippatsu:false,nuki:0,temp:false,permanent:false,kans:0,ready:false,requests:[]}}
 class Room{
  constructor(host,save,snapshot){this.host=host;this.save=save||(()=>{});this.s=snapshot?JSON.parse(snapshot):null;this.seen={};this._bootAt=Date.now();this._waiting={};this._aiNow=()=>Date.now();this._aiPlan=null;if(this.s?.resourceSetup){this.s.resourceSetup.revision=++this.s.resourceRevision;this.s.resourceSetup.confirmations={};}}
@@ -73,9 +86,17 @@ class Room{
   const enabled=req.randomBotAppearance===true,pool=req.botCharacters||[];check(Array.isArray(pool)&&pool.length<=Object.keys(CHARACTER_SKINS).length,'电脑形象列表无效');
   const choices=pool.map(characterChoice);check(!enabled||choices.length>0,'没有可用的电脑形象');
   this.s.randomBotAppearance=enabled;this.s.botCharacters=[...new Map(choices.map(c=>[c.character,c])).values()];
+  // Optional AI outfits: the host's downloaded ids per seat-specific category.
+  // Unknown categories or ids are dropped; the room's resource preparation then
+  // fetches them for every other player like any human's outfit.
+  const offered=req.botWardrobes||[];check(Array.isArray(offered)&&offered.length<=BOT_WARDROBE.length*2,'电脑装扮列表无效');const pools={};
+  if(req.randomBotWardrobe===true)for(const e of offered){if(!e||!BOT_WARDROBE.includes(e.category)||!Array.isArray(e.ids))continue;const ids=[...new Set(e.ids.filter(id=>typeof id==='string'&&WARDROBE_CATALOG[e.category].includes(id)))];if(ids.length)pools[e.category]=ids;}
+  this.s.randomBotWardrobe=req.randomBotWardrobe===true&&Object.keys(pools).length>0;this.s.botWardrobes=pools;
  }
  addBot(){const s=this.s;check(s.players.length<s.n,'座位已满');let n=1;while(s.players.some(p=>p.name==='AI · '+n))n++;const p=player('AI · '+n);p.bot=true;
-  let choice={character:'yiji',skin:400101};if(s.randomBotAppearance&&s.botCharacters?.length){const used=new Set(s.players.filter(p=>p.bot).map(p=>p.character)),fresh=s.botCharacters.filter(c=>!used.has(c.character));choice=shuffle((fresh.length?fresh:s.botCharacters).slice())[0];}Object.assign(p,choice);s.players.push(p);}
+  let choice={character:'yiji',skin:400101};if(s.randomBotAppearance&&s.botCharacters?.length){const used=new Set(s.players.filter(p=>p.bot).map(p=>p.character)),fresh=s.botCharacters.filter(c=>!used.has(c.character));choice=shuffle((fresh.length?fresh:s.botCharacters).slice())[0];}Object.assign(p,choice);
+  p.wardrobe={};if(s.randomBotWardrobe)for(const [category,ids] of Object.entries(s.botWardrobes||{}))p.wardrobe[category]=shuffle(ids.slice())[0];
+  s.players.push(p);}
  emote(i,req){
   const s=this.s,p=s.players[i],now=Date.now();check(['play','reaction'].includes(s.phase),'当前不能发送表情');
   const identity=publicCharacter(p,s.phase),allowed=CHARACTER_EMOJIS[identity.character]||[];
@@ -118,11 +139,19 @@ class Room{
   const i=s.phase==='play'?s.turn:s.players.findIndex((p,j)=>this.controlled(p)&&this.options(j).length);
   if(i<0||!this.controlled(s.players[i]))return {ok:true,idle:true};
   const key=[s.audioRoom,s.version,s.phase,i,s.audioSeq].join(':'),now=this._aiNow();
-  if(this._aiPlan?.key!==key)this._aiPlan={key,until:now+700+Math.floor(Math.random()*301)};
+  if(this._aiPlan?.key!==key)this._aiPlan={key,until:now+Math.max(700+Math.floor(Math.random()*301),this.presentationLeft(Date.now()))};
   if(now<this._aiPlan.until)return {ok:true,idle:true,waitMs:this._aiPlan.until-now};
   const before=JSON.stringify(s);
   try{const action=g.RiichiAI.choose(this.view(i));if(!action)return {ok:true,idle:true};this.act(i,action);s.version++;this.save(JSON.stringify(s));return {ok:true,action};}
   catch(e){this.s=JSON.parse(before);return {ok:false,error:String(e.message||e)}}
+ }
+ // Time the clients still need to show the newest table events. AI players act
+ // only after it, so e.g. a ron never lands while the riichi effect is playing.
+ // Measured on the Unity table: riichi hand + declaration effect, stick hand,
+ // call shout + meld hand, kita hand with its petals.
+ presentationLeft(now){
+  let left=0;for(const e of this.s.audioEvents||[]){const ms=e.kind==='discard'?(e.riichi?PRESENT_MS.riichiDiscard:0):PRESENT_MS[e.kind]||0;if(ms&&Number.isFinite(e.at))left=Math.max(left,e.at+ms-now);}
+  return Math.min(left,PRESENT_MS.riichiDiscard);
  }
  h(i){return M.Shoupai.fromString(this.s.players[i].hand)}
  put(i,h){this.s.players[i].hand=h.toString()}
@@ -286,8 +315,7 @@ class Room{
    const i=winners[k],r=this.score(i,from,tile,kind,k===0?s.sticks:0);check(r,'和牌条件已变化');
    const winTile=from===null?this.h(i)._zimo:tile,winFrom=from===null?i:from,winSource=from===null?'tsumo':kind;
    const handTiles=tiles(this.h(i));if(from===null){const at=handTiles.lastIndexOf(winTile);if(at>=0)handTiles.splice(at,1);}
-    const yakuNames={'門前清自摸和':'门前清自摸和','ドラ':'宝牌','裏ドラ':'里宝牌','赤ドラ':'赤宝牌','七対子':'七对子','槍槓':'抢杠','海底摸月':'海底摸月','河底撈魚':'河底捞鱼','嶺上開花':'岭上开花'};
-    const yaku=r.hupai.map(y=>({name:yakuNames[y.name]||y.name,han:typeof y.fanshu==='number'?y.fanshu:0,yakuman:typeof y.fanshu==='string'?(y.fanshu.match(/\*/g)||[]).length:0}));
+    const yaku=r.hupai.map(y=>({name:yakuName(y.name),han:typeof y.fanshu==='number'?y.fanshu:0,yakuman:typeof y.fanshu==='string'?(y.fanshu.match(/\*/g)||[]).length:0}));
     const limit=r.damanguan?(r.damanguan===1?'役满':r.damanguan+'倍役满'):r.fanshu>=13?'累计役满':r.fanshu>=11?'三倍满':r.fanshu>=8?'倍满':r.fanshu>=6?'跳满':r.fanshu>=5||(r.fanshu===4&&r.fu>=40)||(r.fanshu===3&&r.fu>=70)?'满贯':'';
     this.sound(from===null?'tsumo':'ron',i,winTile,false,0,{from:winFrom,kind:winSource});r.delta.forEach((v,j)=>delta[j]+=v);details.push({seat:i,from:winFrom,winSource,tiles:handTiles,melds:this.h(i)._fulou.slice(),yaku,limit,name:s.players[i].name,hand:s.players[i].hand,tile:from===null?this.h(i)._zimo:tile,ron:from!==null,score:r,nuki:s.players[i].nuki,ura:s.players[i].riichi?s.ura.slice(0,1+this.totalKans()):[]});
   }
@@ -354,7 +382,7 @@ class Room{
    if(req.op==='state'){if(i>=0)this.seen[req.token]=Date.now();return {ok:true,state:this.view(i)}}
    if(req.op==='create'){
     check(req.host===this.host,'请在房主手机 App 内创建房间');if(s)return {ok:false,code:'ROOM_ACTIVE',error:'当前有未结束的房间',token:s.players[0].token,state:this.view(0)};check(req.n===3||req.n===4,'仅支持三人或四人');
-    const p=player(String(req.name||'房主').slice(0,12));p.resourceProtocol=req.resourceProtocol===1?1:0;p.avatar=avatar(req.avatar===undefined?'':req.avatar);Object.assign(p,characterSelection(req));
+    const p=player(String(req.name||'房主').slice(0,12));p.resourceProtocol=req.resourceProtocol===1?1:0;p.avatar=avatar(req.avatar===undefined?'':req.avatar);Object.assign(p,characterSelection(req));rollCharacter(p);
     this.s={schema:1,audioRoom:randomHex(8),audioSeq:0,audioEvents:[],n:req.n,rounds:req.rounds===1?1:req.rounds===4?4:2,idleSeconds:req.idleSeconds===0?0:120,red:req.red!==false,pin:String(parseInt(randomHex(4),16)%900000+100000),players:[p],phase:'lobby',version:1,dealer:0,round:0,honba:0,sticks:0,
      resourceProtocol:req.resourceProtocol===1?1:0,resourceRevision:0,lobbyFlow:req.lobbyFlow===true,lobbyCategory:['friend','ranked','competition'].includes(req.category)?req.category:'friend'};
     this.configureBots(req);if(req.bots===true)while(this.s.players.length<this.s.n)this.addBot();
@@ -374,7 +402,7 @@ class Room{
      s.version++;
     }
     Object.assign(s.players[i],{auto:false,autoReason:'',away:false,departed:false,lastInputAt:Date.now()});if(req.avatar!==undefined)s.players[i].avatar=avatar(req.avatar);
-    if(req.character&&(s.phase==='lobby'||characterNewSeat)){Object.assign(s.players[i],characterSelection(req));if(s.phase!=='lobby')freezeCharacter(s.players[i]);}
+    if(req.character&&(s.phase==='lobby'||characterNewSeat)){Object.assign(s.players[i],characterSelection(req));rollCharacter(s.players[i]);if(s.phase!=='lobby')freezeCharacter(s.players[i]);}
     s.players[i].resourceProtocol=req.resourceProtocol===1?1:0;if(characterNewSeat)delete s.resourceSetup;this.save(JSON.stringify(s));this.seen[s.players[i].token]=Date.now();return {ok:true,token:s.players[i].token,state:this.view(i)};
    }
    check(i>=0,'座位凭据失效');
@@ -428,7 +456,7 @@ class Room{
     s.version++;this.save(JSON.stringify(s));return {ok:true,state:this.view(i)};
    }
    if(req.op==='start'&&s.lobbyFlow)check(s.players.every((p,j)=>p.bot||j===0||p.lobbyReady),'请等待所有玩家准备');
-   if(req.op==='character'){check(!s.resourceSetup,'请先取消开局准备再切换雀士');check(s.phase==='lobby','出战雀士在本局结束前固定');Object.assign(s.players[i],characterSelection(req));}
+   if(req.op==='character'){check(!s.resourceSetup,'请先取消开局准备再切换雀士');check(s.phase==='lobby','出战雀士在本局结束前固定');Object.assign(s.players[i],characterSelection(req));rollCharacter(s.players[i]);}
    else if(req.op==='profile'){s.players[i].avatar=avatar(req.avatar);}
    else if(req.op==='addBot'||req.op==='fillBots'){delete s.resourceSetup;check(i===0&&s.phase==='lobby','仅房主可在开局前添加 AI');this.configureBots(req);this.addBot();if(req.op==='fillBots')while(s.players.length<s.n)this.addBot();}
    else if(req.op==='removeBot'){delete s.resourceSetup;check(i===0&&s.phase==='lobby','仅房主可在开局前移除 AI');check(Number.isInteger(req.seat)&&s.players[req.seat]?.bot,'该座位不是 AI');s.players.splice(req.seat,1);}
@@ -450,5 +478,5 @@ class Room{
   }catch(e){this.s=before?JSON.parse(before):null;this._waiting=waitingBefore;return {ok:false,error:String(e.message||e)}}
  }
 }
-g.RiichiRoom=Room;if(typeof module!=='undefined')module.exports={Room,tiles,RULE,norm};
+g.RiichiRoom=Room;if(typeof module!=='undefined')module.exports={Room,tiles,RULE,norm,yakuName};
 })(globalThis);

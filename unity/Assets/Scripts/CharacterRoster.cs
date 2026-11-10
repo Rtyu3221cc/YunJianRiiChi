@@ -15,7 +15,7 @@ namespace YunJian.Riichi {
     [Serializable] sealed class CharacterCatalog { public CharacterDefinition[] roles; public CharacterUiArt[] ui; }
     [Serializable] sealed class CharacterPreferences {
         public string dorm="yiji"; public CharacterChoice active=new CharacterChoice("yiji",400101);
-        public CharacterChoice[] outfits=new CharacterChoice[0],pool=new CharacterChoice[0];public string[] favorites=new string[0],order=new string[0];public bool random;
+        public CharacterChoice[] outfits=new CharacterChoice[0],pool=new CharacterChoice[0],battle=new CharacterChoice[0];public string[] favorites=new string[0],order=new string[0];public bool random;
     }
     // Dorm outfits, home illustration and the server's per-match choice are independent.
     public static class CharacterRoster {
@@ -28,7 +28,7 @@ namespace YunJian.Riichi {
             catalog=JsonUtility.FromJson<CharacterCatalog>((Resources.Load<TextAsset>("Majsoul/CharacterDirectory/catalog")??Resources.Load<TextAsset>("Majsoul/Characters/catalog")).text);
             try{prefs=JsonUtility.FromJson<CharacterPreferences>(PlayerPrefs.GetString(PrefKey,"{}"));}catch{prefs=null;}
             if(prefs==null)prefs=new CharacterPreferences();
-            prefs.outfits=prefs.outfits??new CharacterChoice[0];prefs.pool=prefs.pool??new CharacterChoice[0];prefs.favorites=prefs.favorites??new string[0];prefs.order=prefs.order??new string[0];
+            prefs.outfits=prefs.outfits??new CharacterChoice[0];prefs.battle=(prefs.battle??new CharacterChoice[0]).Where(Valid).ToArray();prefs.pool=prefs.pool??new CharacterChoice[0];prefs.favorites=prefs.favorites??new string[0];prefs.order=prefs.order??new string[0];
             if(Find(prefs.dorm)==null||!Available(prefs.dorm))prefs.dorm="yiji";
             if(prefs.active==null||!Valid(prefs.active)||!Available(prefs.active.character))prefs.active=new CharacterChoice("yiji",400101);
             prefs.pool=prefs.pool.Where(x=>Valid(x)&&Available(x.character)).GroupBy(x=>x.character+":"+x.skin).Select(x=>x.First()).ToArray();
@@ -45,7 +45,10 @@ namespace YunJian.Riichi {
         public static CharacterChoice[] Pool {get{Load();return prefs.pool.Select(c=>new CharacterChoice(c.character,c.skin)).ToArray();}}
         public static int Outfit(string key){Load();return prefs.outfits.FirstOrDefault(c=>c.character==key)?.skin??(key=="weilai"?406903:Find(key).defaultSkin);}
         public static void Equip(string key,int skin){Load();if(!Valid(new CharacterChoice(key,skin))||!Available(key))return;prefs.outfits=prefs.outfits.Where(c=>c.character!=key).Append(new CharacterChoice(key,skin)).ToArray();Save();}
-        public static void Use(string key,int skin){Load();var c=new CharacterChoice(key,skin);if(!Valid(c)||!Available(key))return;prefs.active=c;Save();}
+        // Each character remembers the outfit last chosen for matches, so switching
+        // away and back keeps it. Dorm outfits stay a separate preference.
+        public static int BattleSkin(string key){Load();if(prefs.active.character==key)return prefs.active.skin;return prefs.battle.FirstOrDefault(c=>c.character==key)?.skin??Outfit(key);}
+        public static void Use(string key,int skin){Load();var c=new CharacterChoice(key,skin);if(!Valid(c)||!Available(key))return;prefs.active=c;prefs.battle=prefs.battle.Where(b=>b.character!=key).Append(new CharacterChoice(key,skin)).ToArray();Save();}
         public static bool Favorite(string key){Load();return prefs.favorites.Contains(key);}
         public static void Star(string key){Load();if(!Available(key))return;prefs.favorites=Favorite(key)?prefs.favorites.Where(c=>c!=key).ToArray():prefs.favorites.Append(key).ToArray();Save();}
         public static CharacterDefinition[] Ordered(bool favoritesOnly=false,bool installedOnly=false){Load();return catalog.roles.Where(r=>(!favoritesOnly||Favorite(r.key))&&(!installedOnly||Available(r.key))).OrderByDescending(r=>Favorite(r.key)).ThenBy(r=>{int i=Array.IndexOf(prefs.order,r.key);return i<0?100+Array.IndexOf(catalog.roles,r):i;}).ToArray();}
@@ -66,9 +69,15 @@ namespace YunJian.Riichi {
         public static Texture2D PresentationPortrait(PlayerView p){var full=Portrait(p);return full.width>full.height*1.1f?Portrait(p,"bighead"):full;}
         public static CharacterUiArt Ui(string key){Load();return catalog.ui.FirstOrDefault(x=>x.key==key);}
         public static void FillRequest(RequestBody request){var a=Active;var pool=Pool;request.character=a.character;request.skin=a.skin;request.randomCharacters=Random&&pool.Length>0;request.characterPool=pool;}
-        public static void FillBotRequest(RequestBody request){request.randomBotAppearance=AppPreferences.RandomBotAppearance;request.botCharacters=request.randomBotAppearance?All.Where(r=>Available(r.key)).Select(r=>new CharacterChoice(r.key,Outfit(r.key))).ToArray():new CharacterChoice[0];}
+        public static void FillBotRequest(RequestBody request){request.randomBotAppearance=AppPreferences.RandomBotAppearance;request.botCharacters=request.randomBotAppearance?All.Where(r=>Available(r.key)).Select(r=>new CharacterChoice(r.key,Outfit(r.key))).ToArray():new CharacterChoice[0];
+            // Only seat-specific outfits: the cloth, tiles, call marker and music follow the viewer.
+            request.randomBotWardrobe=AppPreferences.RandomBotWardrobe;
+            request.botWardrobes=request.randomBotWardrobe?BotWardrobeCategories.Select(c=>new WardrobeChoices{category=c,ids=BotPool(c)}).Where(c=>c.ids.Length>0).ToArray():new WardrobeChoices[0];}
+        static string[] BotPool(string category)=>WardrobeCatalog.Items(category).Where(i=>WardrobePackService.Installed(i.id)).Select(i=>i.id).ToArray();
+        // AI players keep the default hand (user decision 2026-11-08: no cat paws for AI).
+        public static readonly string[] BotWardrobeCategories={"stick","riichiEffect","winEffect","headFrame"};
         static void Save(){if(PreviewOnly)return;PlayerPrefs.SetString(PrefKey,JsonUtility.ToJson(prefs));PlayerPrefs.Save();}
-        public static void ReconcileInstalled(){textures.Clear();if(prefs==null)return;prefs.favorites=prefs.favorites.Where(Available).ToArray();prefs.pool=prefs.pool.Where(p=>Available(p.character)).ToArray();prefs.outfits=prefs.outfits.Where(p=>Available(p.character)).ToArray();if(!Available(prefs.active.character))prefs.active=new CharacterChoice("yiji",400101);if(!Available(prefs.dorm))prefs.dorm="yiji";Save();}
+        public static void ReconcileInstalled(){textures.Clear();if(prefs==null)return;prefs.favorites=prefs.favorites.Where(Available).ToArray();prefs.pool=prefs.pool.Where(p=>Available(p.character)).ToArray();prefs.outfits=prefs.outfits.Where(p=>Available(p.character)).ToArray();prefs.battle=prefs.battle.Where(p=>Available(p.character)).ToArray();if(!Available(prefs.active.character))prefs.active=new CharacterChoice("yiji",400101);if(!Available(prefs.dorm))prefs.dorm="yiji";Save();}
         public static void BeginPreview(){PreviewOnly=true;catalog=null;prefs=null;textures.Clear();Load();prefs=new CharacterPreferences();}
         public static void EndPreview(){catalog=null;prefs=null;PreviewOnly=false;}
     }

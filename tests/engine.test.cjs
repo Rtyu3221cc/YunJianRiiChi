@@ -197,3 +197,12 @@ test('full-match identity differs from hand identity and survives recovery',()=>
  r.s.phase='result';r.s.result={matchOver:true};r.s.players.forEach(p=>p.ready=true);const next=r.dispatch({op:'next',token:r.s.players[0].token,version:r.s.version});assert(next.ok,next.error);assert.equal(next.state.matchSeq,2);assert(next.state.matchStartedAt>=first.matchStartedAt);
  assert.equal(new Room('host',null,JSON.stringify(r.s)).view(1).matchSeq,2);assert(!('matchOpeningUntil'in next.state));assert(next.state.players.every(p=>!('hand'in p)));conservation(r);
 });
+
+test('settlement yaku names are simplified Chinese, never Japanese',()=>{
+ const {yakuName}=require('../app/src/main/assets/engine.js'),fs=require('fs');
+ const names=[...new Set([...fs.readFileSync(require.resolve('../app/src/main/assets/core.js'),'utf8').matchAll(/name:\s*'([^']+)'/g)].map(m=>m[1]))];
+ for(const raw of names){const shown=yakuName(raw);assert(!/[぀-ヿ]|[帯盃気順槓対頭単緑蓮燈発嶺槍撈場風發]/.test(shown),raw+' -> '+shown);}
+ assert.equal(yakuName('ダブル立直'),'两立直');assert.equal(yakuName('場風 東'),'场风 东');assert.equal(yakuName('自風 南'),'自风 南');
+ const r=fixture();r.s.turn=1;r.s.players[1].hand='m123p123s123z1112z2';r.s.players[1].riichi=2;r.win([1]);const d=r.view(0).result.details[0];
+ assert(d.yaku.some(y=>y.name==='两立直'),JSON.stringify(d.yaku));
+});

@@ -115,6 +115,12 @@ namespace YunJian.Riichi {
             }
             if(parts.Length==0)return CharacterRoster.Texture("Skins/"+skin.id+"/full");if(parts.Length==1)return parts[0].Draw(now);var first=parts[0].Draw(now);if(!composites.TryGetValue(skin.id,out var composite))composites[skin.id]=composite=new Composite(first.width,first.height);var previous=RenderTexture.active;RenderTexture.active=composite.pma;GL.Clear(true,true,Color.clear);foreach(var part in parts)Graphics.Blit(part.Draw(now),composite.pma,composite.over);Graphics.Blit(composite.pma,composite.result,composite.straight);RenderTexture.active=previous;return composite.result;
         }
+        // True once Art() would draw the final picture: the still, or the animated
+        // parts when dynamic outfits are on.
+        public bool Ready(CharacterSkin skin){
+            if(CharacterRoster.DisplayTexture("Skins/"+skin.id+"/full")==null)return false;
+            return !skin.dynamic||!AnimationEnabled||dynamics.ContainsKey(skin.id);
+        }
         public void Play(CharacterSkin skin,string name){if(dynamics.TryGetValue(skin.id,out var parts))foreach(var p in parts)p.Play(name);}
         public void Draw(Rect rect,CharacterSkin skin,float now,bool flip=false){if(Event.current.type!=EventType.Repaint)return;var t=Art(skin,now);if(t==null)return;var matrix=GUI.matrix;if(flip)GUIUtility.ScaleAroundPivot(new Vector2(-1,1),rect.center);GUI.DrawTexture(rect,t,ScaleMode.ScaleToFit,true);GUI.matrix=matrix;}
         public void Dispose(){foreach(var parts in dynamics.Values)foreach(var p in parts)p.Dispose();dynamics.Clear();usedFrames.Clear();foreach(var c in composites.Values)c.Dispose();composites.Clear();}

@@ -138,8 +138,9 @@ namespace YunJian.Riichi
             Segmented(new Rect(607,84,484,64),AppPreferences.DynamicOutfits,"关闭","开启","preference-live-off","preference-live-on",AppPreferences.SetDynamicOutfits);
             Row(165,"电脑形象");var button=new Rect(607,179,484,64);Slice("official-config-setting_entry_btn",button,35,1,35,1);Label(AppPreferences.RandomBotAppearance?"从已下载雀士中随机":"一姬的初始形象",button.center.x-14,button.center.y,30,Text,0,TextAnchor.MiddleCenter,440,64);Image("official-config-setting_dropdown_tip",new Rect(1049,204,24,13));
             if(SettingsHit(button,"preference-bot-dropdown"))botDropdown=!botDropdown;
-            Row(260,"手牌理牌");Segmented(new Rect(607,274,484,64),AppPreferences.AutoSortHand,"手动","自动","preference-hand-manual","preference-hand-auto",AppPreferences.SetAutoSortHand);
-            Label("电脑形象设置对之后新增的电脑生效",36,385,27,Muted);Label("关闭动态服饰后，大厅和宿舍显示静态立绘",36,432,27,Muted);Label("手动理牌时，可在手牌区域内拖动换序",36,479,27,Muted);
+            Row(260,"电脑装扮");Segmented(new Rect(607,274,484,64),AppPreferences.RandomBotWardrobe,"默认装扮","随机已下载","preference-botwear-default","preference-botwear-random",AppPreferences.SetRandomBotWardrobe);
+            Row(355,"手牌理牌");Segmented(new Rect(607,369,484,64),AppPreferences.AutoSortHand,"手动","自动","preference-hand-manual","preference-hand-auto",AppPreferences.SetAutoSortHand);
+            Label("电脑形象和电脑装扮的设置对之后新增的电脑生效",36,480,27,Muted);Label("随机装扮从本机已下载的立直棒、立直特效、和牌特效和头像框中挑选，手保持默认",36,527,27,Muted);Label("关闭动态服饰后，大厅和宿舍显示静态立绘",36,574,27,Muted);Label("手动理牌时，可在手牌区域内拖动换序",36,621,27,Muted);
             if(botDropdown){const float x=600,y=211.5f;Slice("official-config-setting_dropdown_base",new Rect(x,y,496,232),50,50,50,50);
                 for(int i=0;i<2;i++){bool random=i==0;float row=y+31+i*83;if(AppPreferences.RandomBotAppearance==random)Slice("official-config-setting_dropdown_tip_selected",new Rect(x+8,row+18,480,60),1,1,1,1);Label(random?"从已下载雀士中随机":"一姬的初始形象",x+247.5f,row+46,30,Text,0,TextAnchor.MiddleCenter,470,70);
                     if(SettingsHit(new Rect(x+8,row,480,83),random?"preference-bot-random":"preference-bot-ichihime")){AppPreferences.SetRandomBotAppearance(random);botDropdown=false;}}

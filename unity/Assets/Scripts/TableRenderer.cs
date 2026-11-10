@@ -77,6 +77,13 @@ namespace YunJian.Riichi
             }
         }
         readonly List<Tuple<Transform,Vector3>> drawTiles=new List<Tuple<Transform,Vector3>>();
+        // Per-tile start delay (same index as drawTiles): exhaustive draw lays hands down seat by seat.
+        readonly List<float> drawDelays=new List<float>();
+        // Standing angle about the row axis before lay-down (same index as drawTiles).
+        // Shown tiles stand at -90 and fall back face up. Concealed (noten) tiles
+        // stand at +90 with their face toward their owner and tip forward face
+        // down, so other players never see the faces.
+        readonly List<float> drawStanding=new List<float>();
         readonly List<Transform> winningRows=new List<Transform>();
         readonly Dictionary<int,Transform> standingHands=new Dictionary<int,Transform>();
         sealed class OpponentRow {public Transform root;public int seat,count;public bool selfDraw;}
@@ -98,24 +105,28 @@ namespace YunJian.Riichi
         {
             if(drawTiles.Count==0)return;
             var fx=GetComponent<TableEffects>();
-            if(drawBegan<0){if(fx.HasPendingActions && !fx.WinActionStarted){SampleDrawReveal(0,false);return;}drawBegan=RevealNow;GetComponent<GameAudio>()?.DrawReveal(drawKey);}
+            if(drawBegan<0){
+                // Another player's tsumo: the slam lands on a standing hand and the
+                // row is shown with the burst (or once the presentation ends).
+                var wins=state?.phase=="result"&&state.result!=null&&!state.result.draw?state.result.details??new WinDetail[0]:new WinDetail[0];
+                bool opponentTsumo=wins.Length>0&&wins.All(d=>!d.ron&&d.seat!=state.you);
+                bool waiting=opponentTsumo?!wins.Any(d=>fx.BurstFired(d.seat+":"+d.winSource+":"+d.tile))&&fx.ShowWinPresentation:fx.HasPendingActions && !fx.WinActionStarted;
+                if(waiting){SampleDrawReveal(0,false);return;}drawBegan=RevealNow;GetComponent<GameAudio>()?.DrawReveal(drawKey);}
             SampleDrawReveal(RevealNow-drawBegan,true);
         }
         void SampleDrawReveal(float age,bool started)
         {
             bool selfWinner=state?.phase=="result" && (state.result?.details??new WinDetail[0]).Any(d=>d.seat==state.you);
-            if(started&&cameraHand!=null && selfWinner){
-                foreach(var hand in handTiles){var renderer=hand.GetComponent<MeshRenderer>();var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block);block.SetFloat("_Opacity",Mathf.Clamp01(1-age/.14f));renderer.SetPropertyBlock(block);}
-                if(age<.14f)return;
-                cameraHand.gameObject.SetActive(false);
-            }
+            // The camera-space hand and the table row swap on the same frame
+            // (no fade): the recordings show a cut from standing to flat.
+            if(started&&cameraHand!=null && selfWinner)cameraHand.gameObject.SetActive(false);
             if(started){
                 foreach(var detail in state.result?.details??new WinDetail[0])if(standingHands.TryGetValue(detail.seat,out var standing))standing.gameObject.SetActive(false);
                 foreach(var row in winningRows)row.gameObject.SetActive(true);
             }
-            float t=HandRevealMotion.Progress(age-(selfWinner ? .14f : 0));
-            foreach(var tile in drawTiles){
-                tile.Item1.localRotation=Quaternion.Euler(-90*(1-t),0,0);
+            for(int i=0;i<drawTiles.Count;i++){
+                var tile=drawTiles[i];float t=HandRevealMotion.Progress(age-(i<drawDelays.Count?drawDelays[i]:0));
+                tile.Item1.localRotation=Quaternion.Euler((i<drawStanding.Count?drawStanding[i]:-90)*(1-t),0,0);
                 tile.Item1.localPosition=tile.Item2+Vector3.up*tile.Item1.GetComponent<BoxCollider>().size.z*.5f*Mathf.Max(0,1-t);
             }
         }
@@ -222,7 +233,7 @@ namespace YunJian.Riichi
             if(resetOpening){opening.Reset();foreach(var standing in standingHands.Values)if(standing!=null){standing.gameObject.SetActive(false);Destroy(standing.gameObject);}standingHands.Clear();}
             opponentRows.RemoveAll(row=>row.root==null || !standingHands.Values.Contains(row.root));
             foreach (Transform t in content) { if(keepHand && t==cameraHand || standingHands.Values.Contains(t))continue;t.gameObject.SetActive(false); Destroy(t.gameObject); }
-            exposedTiles.Clear();exposedGroups.Clear();selectedTile=null;if(!keepHand){handTiles.Clear();handTileIds.Clear();submittedHidden.Clear();handBase.Clear();cameraHand=null;}drawTiles.Clear();winningRows.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); northTiles.Clear(); winningTiles.Clear(); responseTarget = null; selfMelds = null; state = null;
+            exposedTiles.Clear();exposedGroups.Clear();selectedTile=null;if(!keepHand){handTiles.Clear();handTileIds.Clear();submittedHidden.Clear();handBase.Clear();cameraHand=null;}drawTiles.Clear();drawDelays.Clear();drawStanding.Clear();winningRows.Clear(); riverTiles.Clear(); stickAnchors.Clear(); meldAnchors.Clear(); northTiles.Clear(); northBase.Clear(); winningTiles.Clear(); responseTarget = null; selfMelds = null; state = null;
         }
         public int RelativeSeat(int i) => (i - state.you + state.n) % state.n;
         float Angle(int i)
@@ -614,9 +625,16 @@ namespace YunJian.Riichi
                     int count=d!=null && d.tenpai?d.tiles.Length:p.count;bool self=i==state.you;float pitch=Geometry.Pitch;
                     PlaceOpponentRow(hand,seat,i,count);
                     float edge=self?(d!=null&&d.tenpai?4.05f:4.34f):Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f?4f:3.35f;
+                    bool tenpai=d!=null&&d.tenpai;
+                    float delay=self?HandRevealMotion.SelfDelay:HandRevealMotion.SeatDelay((i-state.you+state.players.Length)%state.players.Length,state.players.Length);
+                    // The viewer's own noten hand stands facing them with its real faces, then tips face down.
+                    var own=self&&!tenpai&&state.hand!=null&&state.hand.Length>=count?state.hand:null;
                     for(int j=0;j<count;j++){
-                        var tile=Tile(hand,d!=null&&d.tenpai?d.tiles[j]:"z5",new Vector3(self?-2.22f+j*pitch:(j-(count-1)*.5f)*pitch,.02f,-edge),d==null||!d.tenpai);
-                        drawTiles.Add(Tuple.Create(tile,tile.localPosition));
+                        var position=new Vector3(self?-2.22f+j*pitch:(j-(count-1)*.5f)*pitch,.02f,-edge);
+                        Transform tile;
+                        if(own!=null){tile=original.CreateTable(hand,"z5",position,true,false,1,own[j]);ContactShadow(tile,.002f-position.y,TableTileGeometry.Width,Geometry.Length);}
+                        else tile=Tile(hand,tenpai?d.tiles[j]:"z5",position,!tenpai);
+                        drawTiles.Add(Tuple.Create(tile,tile.localPosition));drawDelays.Add(delay);drawStanding.Add(tenpai?-90:90);
                     }
                 }
                 else if(state.phase=="result" && terminals && state.result.abortHand.seat==i){
@@ -626,7 +644,7 @@ namespace YunJian.Riichi
                     float edge=self?4.10f:Mathf.Abs(Mathf.Sin(Angle(i)*Mathf.Deg2Rad))>.5f?4f:3.35f;
                     for(int j=0;j<tiles.Length;j++){
                         var tile=Tile(reveal,tiles[j],new Vector3((j-(tiles.Length-1)*.5f)*pitch,.02f,-edge));
-                        drawTiles.Add(Tuple.Create(tile,tile.localPosition));
+                        drawTiles.Add(Tuple.Create(tile,tile.localPosition));drawDelays.Add(self?HandRevealMotion.SelfDelay:0);drawStanding.Add(-90);
                     }
                 }
                 else if(shown!=null){
@@ -637,7 +655,7 @@ namespace YunJian.Riichi
                     if(i==state.you)edge=4.05f;
                     for(int j=0;j<shown.tiles.Length;j++){
                         var tile=Tile(revealed,shown.tiles[j],new Vector3((j-(shown.tiles.Length-1)*.5f)*pitch,.02f,-edge));
-                        drawTiles.Add(Tuple.Create(tile,tile.localPosition));
+                        drawTiles.Add(Tuple.Create(tile,tile.localPosition));drawDelays.Add(0);drawStanding.Add(-90);
                     }
                 }
                 else if (i == state.you) {if(!keepHand)DrawHand();}
@@ -673,6 +691,84 @@ namespace YunJian.Riichi
             }
             foreach(var detail in state.result?.details??new WinDetail[0])
                 if(!detail.ron && detail.seat!=state.you && winningTiles.TryGetValue(detail.seat,out var target))target.position=SelfDrawPoint(detail.seat);
+            AlignOwnRevealedRow();
+            ClearNorthTiles();
+        }
+        // The viewer's revealed rows lie flat in the meld row (edge 4.05). FitCamera
+        // parks the melds by the screen edge, so on 20:9 phones three melds reach the
+        // centred row and its self-draw tile. Keep both left of the melds; only x/z
+        // of the tile is written so the tsumo topple lift is left alone.
+        void AlignOwnRevealedRow(){
+            if(state==null||!meldGroups.TryGetValue(state.you,out var groups)||groups.Count==0)return;
+            var seat=groups[0].group.parent.parent;
+            var rows=drawTiles.Where(d=>d.Item1!=null&&d.Item1.parent!=null&&d.Item1.parent.parent==seat).Select(d=>d.Item1.parent).Distinct().ToList();
+            if(rows.Count==0)return;
+            float meldLeft=float.MaxValue;
+            foreach(var g in groups)if(g.group!=null)foreach(var box in g.group.GetComponentsInChildren<BoxCollider>(true)){SeatBounds(seat,box,out var lo,out _);meldLeft=Mathf.Min(meldLeft,lo.x);}
+            if(meldLeft==float.MaxValue)return;
+            float right=float.MinValue;
+            foreach(var draw in drawTiles){
+                if(draw.Item1==null||!rows.Contains(draw.Item1.parent))continue;var box=draw.Item1.GetComponent<BoxCollider>();if(box==null)continue;
+                var p=draw.Item1.localPosition;var r=draw.Item1.localRotation;var rowAt=draw.Item1.parent.localPosition;
+                draw.Item1.parent.localPosition=Vector3.zero;draw.Item1.localPosition=draw.Item2;draw.Item1.localRotation=Quaternion.identity;
+                SeatBounds(seat,box,out _,out var hi);right=Mathf.Max(right,hi.x);
+                draw.Item1.localPosition=p;draw.Item1.localRotation=r;draw.Item1.parent.localPosition=rowAt;
+            }
+            Transform won=SelfDrawWinner(state.you)!=null&&winningTiles.TryGetValue(state.you,out var t)?t:null;
+            Vector3 wonAt=Vector3.zero;
+            if(won!=null&&won.GetComponent<BoxCollider>() is BoxCollider wonBox){
+                var keep=won.position;wonAt=SelfDrawPoint(state.you);won.position=new Vector3(wonAt.x,keep.y,wonAt.z);
+                SeatBounds(seat,wonBox,out _,out var hi);right=Mathf.Max(right,hi.x);won.position=keep;
+            }
+            if(right==float.MinValue)return;
+            float shift=Mathf.Min(0,meldLeft-Geometry.GroupGap*3-right);
+            foreach(var row in rows)row.localPosition=Vector3.right*shift;
+            if(won!=null){var at=wonAt+seat.TransformVector(Vector3.right*shift);won.position=new Vector3(at.x,won.position.y,at.z);}
+        }
+        // The source kita anchor sits ~.35 inward of the meld row and level with a
+        // revealed side hand, while a flat tile is ~.45 deep. Long meld rows, the
+        // flat winning hand and its self-draw tile then cut into the kita tiles.
+        // Like the recorded tables, slide the kita row inward just far enough to
+        // clear that seat's own tiles (measured in their final flat pose).
+        readonly Dictionary<Transform,Vector3> northBase=new Dictionary<Transform,Vector3>();
+        public const float NorthClearance=.06f;
+        static void SeatBounds(Transform seat,BoxCollider box,out Vector3 lo,out Vector3 hi){
+            lo=Vector3.one*float.MaxValue;hi=Vector3.one*float.MinValue;var h=box.size*.5f;
+            for(int i=0;i<8;i++){var p=seat.InverseTransformPoint(box.transform.TransformPoint(box.center+Vector3.Scale(h,new Vector3((i&1)==0?-1:1,(i&2)==0?-1:1,(i&4)==0?-1:1))));lo=Vector3.Min(lo,p);hi=Vector3.Max(hi,p);}
+        }
+        void ClearNorthTiles(){
+            if(state==null)return;
+            foreach(var pair in northTiles){
+                var tiles=pair.Value;if(tiles==null||tiles.Count==0||tiles[0]==null)continue;
+                var group=tiles[0].parent;var seat=group.parent;
+                foreach(var tile in tiles)if(tile!=null&&northBase.TryGetValue(tile,out var rest))tile.localPosition=rest;
+                // Revealed rows are measured lying flat, as they end up.
+                var posed=new List<Tuple<Transform,Vector3,Quaternion>>();
+                foreach(var draw in drawTiles)if(draw.Item1!=null&&draw.Item1.IsChildOf(seat)){posed.Add(Tuple.Create(draw.Item1,draw.Item1.localPosition,draw.Item1.localRotation));draw.Item1.localPosition=draw.Item2;draw.Item1.localRotation=Quaternion.identity;}
+                var obstacles=new List<Tuple<Vector3,Vector3>>();
+                foreach(var box in seat.GetComponentsInChildren<BoxCollider>(true))if(!box.transform.IsChildOf(group)){SeatBounds(seat,box,out var lo,out var hi);obstacles.Add(Tuple.Create(lo,hi));}
+                if(winningTiles.TryGetValue(pair.Key,out var won)&&won!=null&&won.GetComponent<BoxCollider>() is BoxCollider winBox){SeatBounds(seat,winBox,out var lo,out var hi);obstacles.Add(Tuple.Create(lo,hi));}
+                foreach(var p in posed){p.Item1.localPosition=p.Item2;p.Item1.localRotation=p.Item3;}
+                // Reserve this seat's flat winning row and its self-draw slot from the
+                // first frame, so the kita tiles never get nudged when the hand is shown.
+                if(pair.Key!=state.you&&pair.Key<state.players.Length){
+                    var shown=state.result?.details?.FirstOrDefault(d=>d.seat==pair.Key&&d.tiles!=null);int count=shown!=null?shown.tiles.Length:state.players[pair.Key].count;
+                    if(shown==null&&count%3==2)count--;
+                    if(count>0){
+                        float edge=Mathf.Abs(Mathf.Sin(Angle(pair.Key)*Mathf.Deg2Rad))>.5f?4.0f:2.95f,offset=OpponentHandOffset(seat,pair.Key,count,true),half=(count-1)*Geometry.Pitch*.5f;
+                        obstacles.Add(Tuple.Create(new Vector3(offset-half-Geometry.Pitch*.5f,0,-edge-Geometry.Length*.5f),new Vector3(offset+half+Geometry.Pitch*1.5f+Geometry.GroupGap,Geometry.Depth+.05f,-edge+Geometry.Length*.5f)));
+                    }
+                }
+                var own=tiles.Where(t=>t!=null&&t.GetComponent<BoxCollider>()!=null).Select(t=>{SeatBounds(seat,t.GetComponent<BoxCollider>(),out var lo,out var hi);return Tuple.Create(lo,hi);}).ToList();
+                bool Clear(float shift)=>!own.Any(n=>obstacles.Any(o=>n.Item1.x<o.Item2.x-.004f&&n.Item2.x>o.Item1.x+.004f&&n.Item1.y<o.Item2.y-.004f&&n.Item2.y>o.Item1.y+.004f&&n.Item1.z+shift<o.Item2.z+NorthClearance&&n.Item2.z+shift>o.Item1.z-NorthClearance));
+                if(Clear(0))continue;
+                for(float shift=.025f;shift<=1.2f;shift+=.025f){
+                    if(!Clear(shift))continue;
+                    var step=group.InverseTransformVector(seat.TransformVector(Vector3.forward*shift));
+                    foreach(var tile in tiles)if(tile!=null)tile.localPosition+=step;
+                    break;
+                }
+            }
         }
         // Melds occupy the player's right end of the same row. Keep the concealed
         // hand at its usual centre unless its visible edge enters that occupied span.
@@ -712,8 +808,11 @@ namespace YunJian.Riichi
             int seat=item.kind=="ron"?item.from:item.seat;
             return item.kind=="ron"?DiscardPoint(seat,item.tile):SelfDrawPoint(seat);
         }
-        Vector3 SelfDrawPoint(int seat){
-            var detail=SelfDrawWinner(seat);int count=detail?.tiles?.Length??13;
+        Vector3 SelfDrawPoint(int seat)=>AppendPoint(seat,SelfDrawWinner(seat));
+        // Ron from a discard leaves the tile in the discarder's river: the
+        // recorded own ron reveals only the 13-tile hand, nothing beside it.
+        Vector3 AppendPoint(int seat,WinDetail detail){
+            int count=detail?.tiles?.Length??13;
             float pitch=Geometry.Pitch;
             float edge=seat==state.you?4.05f:Mathf.Abs(Mathf.Sin(Angle(seat)*Mathf.Deg2Rad))>.5f?4f:2.95f;
             // One tile past the right end of the exposed hand, on the same seat axis.
@@ -930,7 +1029,7 @@ namespace YunJian.Riichi
             {
                 var tile = Tile(north, "z4", NativeReviewLayout.NorthLocal(NativeReviewLayout.Physical(RelativeSeat(index),state.n),0,angle)-new Vector3(i*Geometry.NorthPitch,0,0));
                 tile.localRotation = Quaternion.identity;
-                extracted.Add(tile);
+                extracted.Add(tile);northBase[tile]=tile.localPosition;
             }
         }
         void OnDestroy()

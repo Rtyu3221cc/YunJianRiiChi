@@ -6,8 +6,8 @@ namespace YunJian.Riichi.Editor
 {
     [InitializeOnLoad] public static class ProjectSetup
     {
-        public const string ReleaseVersion="0.6.22";
-        public const int ReleaseCode=70;
+        public const string ReleaseVersion="0.6.32";
+        public const int ReleaseCode=80;
         static ProjectSetup() { EditorApplication.delayCall += EnsureScene; }
         static void EnsureScene()
         {

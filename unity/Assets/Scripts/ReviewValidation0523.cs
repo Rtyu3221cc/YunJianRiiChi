@@ -43,7 +43,8 @@ namespace YunJian.Riichi
             fx.ValidationFreeze=true;fx.ValidationTime=.2f;fx.Accept(reaction);yield return null;
             Check(!client.OptionsReady && fx.ValidationCallKind==null && fx.ValidationKind=="discard","Call started before previous discard finished");
             fx.ValidationTime=.65f;yield return null;yield return null;Check(fx.ValidationCallKind=="pon" && !client.OptionsReady,"Queued meld did not follow previous hand");fx.Reset();yield return null;Check(client.OptionsReady,"Actions never unlocked after animation");
-            Check(HandRevealMotion.Progress(.12f)<.08f && HandRevealMotion.Progress(.36f)>1 && HandRevealMotion.Progress(.44f)<1,"Push-down lacks acceleration/contact/settle");
+            // 2026-11-07: push-down is a near-instant ease-out without overshoot.
+            Check(HandRevealMotion.Progress(.02f)>0 && HandRevealMotion.Progress(.02f)<1 && HandRevealMotion.Progress(HandRevealMotion.Duration)==1 && HandRevealMotion.Duration<=.06f,"Push-down is not a near-instant lay-down");
             Debug.Log("RIICHI REVIEW 0523 PASS: preserved losing hand, every North at its APK anchor facing its owner, source world-up fire and vertical billboard in all four seats, chronological calls and gated options, nonlinear reveal.");
             Resolution(754,347);for(int f=0;f<7;f++)yield return null;
             var data=Load(folder,"win-4-tsumo-0-0");data.audioEvents=new PublicSound[0];var d=data.result.details[0];

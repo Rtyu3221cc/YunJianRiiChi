@@ -52,11 +52,14 @@ namespace YunJian.Riichi {
             if(track==null||track.values.Length==0)return fallback;float f=Mathf.Clamp(time*60,0,track.values.Length-1);int i=(int)f;return Mathf.Lerp(track.values[i],track.values[Mathf.Min(i+1,track.values.Length-1)],f-i);
         }
         float DormOpacity=>dormLeaving?1-Mathf.SmoothStep(0,1,(Now-dormCloseBegan)/.25f):Mathf.Clamp01((Now-dormOpened)/.25f);
+        // Under the fade use the lobby background the player wears; the hard-coded
+        // default yard flashed in for a frame or two when entering or leaving.
         void DrawDormBackground(){
-            Image(new Rect(0,0,Screen.width,Screen.height),"yard",ScaleMode.ScaleAndCrop);var color=GUI.color;GUI.color=new Color(color.r,color.g,color.b,color.a*DormOpacity);Image(new Rect(0,0,Screen.width,Screen.height),"indoor",ScaleMode.ScaleAndCrop);GUI.color=color;
+            var lobbyBackground=WardrobeCatalog.Texture(WardrobeSelection.Get("lobbyBackground")?.texture);
+            if(lobbyBackground!=null)GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),lobbyBackground,ScaleMode.ScaleAndCrop);else Image(new Rect(0,0,Screen.width,Screen.height),"yard",ScaleMode.ScaleAndCrop);var color=GUI.color;GUI.color=new Color(color.r,color.g,color.b,color.a*DormOpacity);Image(new Rect(0,0,Screen.width,Screen.height),"indoor",ScaleMode.ScaleAndCrop);GUI.color=color;
         }
         public void OpenDorm(){
-            StopCharacterVoicePreview();characterVoiceTab=false;StopDressPreview();
+            StopCharacterVoicePreview();characterVoiceTab=false;StopDressPreview();StartCoroutine(WarmWardrobe());
             dormOpen=true;dormLeaving=false;homeIllustrationEditing=false;roleOpen=roleClosing=false;dormView=outgoingDorm=DormView.Select;sortOpen=sortClosing=false;infoScroll=Vector2.zero;dormOpened=pageBegan=Now;pageMoving=true;characterTransition=Now-.2f;expression=0;Cue("normalflyin");
         }
         public void OpenRoleSelection(){dormOpen=false;roleOpen=true;roleClosing=false;rolePreview=CharacterRoster.Active.character;skinExpanded=false;randomTab=false;ResetRolePanes();roleStarted=Now;Cue("btn_appear");}
@@ -235,7 +238,10 @@ namespace YunJian.Riichi {
             targetOffset=targetBefore;GUI.EndGroup();
             float x=width-920;Label(new Rect(x,640,329,60),BrowsingSkin.name,NText("skin-title",46,TextAnchor.MiddleLeft),CharacterGold);Label(new Rect(x+329.5f,655.5f,245,45),c.name,CharacterNameText(30,TextAnchor.MiddleRight),new Color(.84f,.78f,.64f));CImage(new Rect(x+6,702,566,22),"dividing_line");
             var style=NText("skin-body",30,TextAnchor.UpperLeft,true);float h=style.CalcHeight(new GUIContent(BrowsingSkin.description),575);var descriptionView=new Rect(x,735.5f,600,181);DragCharacterPane(skinDescriptionDrag,descriptionView,new Vector2(575,Mathf.Max(181,h)),ref skinDescriptionScroll,false);skinDescriptionScroll=GUI.BeginScrollView(descriptionView,skinDescriptionScroll,new Rect(0,0,575,Mathf.Max(181,h)),false,false,GUIStyle.none,GUIStyle.none);Label(new Rect(0,0,575,h),BrowsingSkin.description,style,new Color(.88f,.87f,.89f));GUI.EndScrollView();
-            var button=new Rect(width-787.6f,931.3f,313,93);bool equipped=BrowsingSkin.id==CurrentOutfit.id;NativeUiChrome.CharacterButton(button,equipped);Label(new Rect(button.x+35,button.y+15,243,63),"选择服饰",NText("skin-title",42),equipped?new Color(.62f,.61f,.61f):CharacterGold);if(Hit(button,"equip-skin",!equipped)){CharacterRoster.Equip(c.key,BrowsingSkin.id);Cue("btn_click");}
+            var button=new Rect(width-787.6f,931.3f,313,93);bool equipped=BrowsingSkin.id==CurrentOutfit.id;NativeUiChrome.CharacterButton(button,equipped);Label(new Rect(button.x+35,button.y+15,243,63),"选择服饰",NText("skin-title",42),equipped?new Color(.62f,.61f,.61f):CharacterGold);if(Hit(button,"equip-skin",!equipped)){CharacterRoster.Equip(c.key,BrowsingSkin.id);
+                // The lobby shows the battle character: an outfit chosen for it here applies there at once.
+                if(c.key==CharacterRoster.Active.character){CharacterRoster.Use(c.key,BrowsingSkin.id);client.PublishCharacterSelection();}
+                Cue("btn_click");}
         }
         void DrawSkinPageMask(){var r=new Rect(width-1080,0,864,1080);CImage(r,"skin_page_black_bg");var t=CharacterRoster.Texture("UI/skin_page_black_bg");if(t!=null)GUI.DrawTextureWithTexCoords(new Rect(r.xMax,0,Mathf.Max(0,width+bleedLeft-r.xMax+30),1080),t,new Rect(863f/864,0,1f/864,1));}
         void FlipImage(Rect r,string key,bool x,bool y){var t=CharacterRoster.Texture("UI/"+key);if(t!=null)GUI.DrawTextureWithTexCoords(r,t,new Rect(x?1:0,y?1:0,x?-1:1,y?-1:1));}

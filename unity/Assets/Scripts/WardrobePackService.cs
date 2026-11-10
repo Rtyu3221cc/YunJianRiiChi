@@ -122,15 +122,23 @@ namespace YunJian.Riichi {
             if(loaded.TryGetValue(path,out var cached)&&cached!=null){touched[row.pack]=Time.frameCount;return cached as T;}
             var b=Load(row.pack);if(b==null)return null;var asset=b.LoadAsset<T>(path.ToLowerInvariant());if(asset!=null){loaded[path]=asset;Track(row.pack,asset);}return asset;
         }
-        public static IEnumerator Preload(IEnumerable<string> ids){
+        public static int PreloadPackCount(IEnumerable<string> ids)=>ids.Select(ForItem).Where(p=>p!=null).SelectMany(p=>Closure(p.key)).Distinct().Count(k=>!Find(k).builtin);
+        // progress(done,total,name): one step per pack.
+        public static IEnumerator Preload(IEnumerable<string> ids,Action<int,int,string> progress=null){
             var keys=ids.Select(ForItem).Where(p=>p!=null).SelectMany(p=>Closure(p.key)).Distinct().Where(k=>!Find(k).builtin).ToArray();foreach(string key in keys)Pin(key);
             // Dependencies remain pinned until the entire graph is loaded. A
             // large texture pack must not be evicted between it and its prefab.
+            int done=0;
             try{foreach(string key in keys){
-                var p=Find(key);if(!RawInstalled(p)||bundles.ContainsKey(key))continue;
-                if(!bundleLoads.TryGetValue(key,out var op))bundleLoads[key]=op=AssetBundle.LoadFromFileAsync(FilePath(p));yield return op;bundleLoads.Remove(key);if(!ValidContent(p,op.assetBundle)){op.assetBundle?.Unload(true);File.Delete(FilePath(p)+".ok");installedMemo.Clear();continue;}bundles[key]=op.assetBundle;touched[key]=Time.frameCount;
-                foreach(string address in p.assets){var load=op.assetBundle.LoadAssetAsync(address.ToLowerInvariant());yield return load;if(load.asset!=null){loaded[address]=load.asset;Track(key,load.asset);}}yield return null;
-            }}finally{foreach(string key in keys)Unpin(key);}
+                var p=Find(key);progress?.Invoke(done,keys.Length,p.name);if(!RawInstalled(p)||bundles.ContainsKey(key)){done++;continue;}
+                if(!bundleLoads.TryGetValue(key,out var op))bundleLoads[key]=op=AssetBundle.LoadFromFileAsync(FilePath(p));yield return op;bundleLoads.Remove(key);if(!ValidContent(p,op.assetBundle)){op.assetBundle?.Unload(true);File.Delete(FilePath(p)+".ok");installedMemo.Clear();done++;continue;}bundles[key]=op.assetBundle;touched[key]=Time.frameCount;
+                // Request every asset of the pack at once; one frame per asset made
+                // large effect packs take seconds before a match could start.
+                var loads=p.assets.Select(address=>(address,request:op.assetBundle.LoadAssetAsync(address.ToLowerInvariant()))).ToArray();
+                while(loads.Any(l=>!l.request.isDone))yield return null;
+                foreach(var l in loads)if(l.request.asset!=null){loaded[l.address]=l.request.asset;Track(key,l.request.asset);}
+                done++;
+            }}finally{foreach(string key in keys)Unpin(key);progress?.Invoke(done,keys.Length,null);}
         }
         static void Notify(){installedMemo.Clear();Revision++;WardrobeSelection.ReconcileAvailability();Changed?.Invoke();}
         public bool Queued(string key)=>queued.Contains(key);

@@ -110,17 +110,19 @@ namespace YunJian.Riichi
             var parent=hand?tile:tile.Find("Original tile");if(parent.Find("APK dora shine")!=null)return;
             var shine=new GameObject("APK dora shine");shine.layer=parent.gameObject.layer;shine.transform.SetParent(parent,false);shine.AddComponent<NativeDoraShine>().Initialize(hand);
         }
-        public Transform CreateTable(Transform parent, string tile, Vector3 position, bool hidden=false, bool sideways=false, float opacity=1)
-            => CreateModel(parent,tile,position,TableTileGeometry.Width,hidden,sideways,opacity);
+        // concealedFace: a concealed tile normally carries a blank face; the viewer's own
+        // noten hand keeps its real faces so they show while it stands toward the viewer.
+        public Transform CreateTable(Transform parent, string tile, Vector3 position, bool hidden=false, bool sideways=false, float opacity=1, string concealedFace=null)
+            => CreateModel(parent,tile,position,TableTileGeometry.Width,hidden,sideways,opacity,concealedFace);
         // Fixed-size GUI previews are separate from gameplay geometry.
-        Transform CreateModel(Transform parent, string tile, Vector3 position, float width, bool hidden, bool sideways, float opacity)
+        Transform CreateModel(Transform parent, string tile, Vector3 position, float width, bool hidden, bool sideways, float opacity, string concealedFace=null)
         {
             var root = new GameObject(hidden ? "Concealed" : tile).transform; root.SetParent(parent, false); root.localPosition = position;
             if (sideways) root.localRotation = Quaternion.Euler(0,90,0);
             var model = new GameObject("Original tile").transform; model.SetParent(root, false); model.localScale = Vector3.one * width;
             if (hidden) { model.localRotation = Quaternion.Euler(0,0,180); model.localPosition = Vector3.up * TableDepth * width; }
             model.gameObject.AddComponent<MeshFilter>().sharedMesh = tableMesh;
-            model.gameObject.AddComponent<MeshRenderer>().sharedMaterials = new[] { shell, Face(hidden ? "z5" : tile, false) };
+            model.gameObject.AddComponent<MeshRenderer>().sharedMaterials = new[] { shell, Face(hidden ? concealedFace ?? "z5" : tile, false) };
             var edge=new GameObject("Original tile outline").transform;edge.SetParent(model,false);edge.localScale=Vector3.one*outlineScale;
             edge.gameObject.AddComponent<MeshFilter>().sharedMesh=outlineMesh;
             var edgeRenderer=edge.gameObject.AddComponent<MeshRenderer>();edgeRenderer.sharedMaterial=outline;edgeRenderer.shadowCastingMode=ShadowCastingMode.Off;

@@ -33,3 +33,13 @@ test('every bot action family waits 700..1000ms without publishing an early acti
 test('changed room version restarts bot thinking and consecutive actions get independent waits',()=>{
  const r=create();assert(op(r,'start').ok);r.s.players.forEach(p=>p.bot=true);let now=1000;r._aiNow=()=>now;let first=r.tick();now+=first.waitMs;r.s.version++;const second=r.tick();assert(second.idle&&second.waitMs>=700&&second.waitMs<=1000);now+=second.waitMs;assert(r.tick().action);const third=r.tick();if(third.waitMs)assert(third.waitMs>=700&&third.waitMs<=1000);
 });
+
+test('AI waits for the riichi presentation on clients before reacting',()=>{
+ const r=create();assert(op(r,'start').ok);r.s.players.forEach(p=>p.bot=true);let now=1000;r._aiNow=()=>now;let acted=0;globalThis.RiichiAI.choose=()=>'pass';r.act=()=>acted++;
+ r.s.audioEvents=[{id:99,kind:'discard',seat:1,tile:'z1',riichi:true,at:Date.now()}];r.s.audioSeq=99;
+ const first=r.tick();assert(first.waitMs>=3000&&first.waitMs<=3200,'riichi hold '+first.waitMs);now+=first.waitMs-1;assert(r.tick().idle);assert.equal(acted,0);now++;r.tick();assert.equal(acted,1);
+ r.s.audioEvents=[{id:100,kind:'discard',seat:1,tile:'z2',riichi:false,at:Date.now()}];r.s.audioSeq=100;r.s.version++;
+ const plain=r.tick();assert(plain.waitMs>=700&&plain.waitMs<=1000,'plain discard '+plain.waitMs);
+ r.s.audioEvents=[{id:101,kind:'riichi',seat:1,at:Date.now()},{id:102,kind:'riichi-stick',seat:1,at:Date.now()}];r.s.audioSeq=102;r.s.version++;
+ const stick=r.tick();assert(stick.waitMs>=1200&&stick.waitMs<=1300,'stick hold '+stick.waitMs);
+});
