@@ -1,11 +1,11 @@
 # 当前开发进度／Codex 与 Claude Code 交接
 
-- 更新时间：2026-11-22 00:23（东京时间）；上次执行：Codex（0.6.40 / 88 构建、核验与源码发布准备）。
+- 更新时间：2026-11-22 00:30（东京时间）；上次执行：Codex（0.6.40 / 88 APK 与源码推送完成）。
 - 共享 Git 根目录：`E:\MyWorkSpace_E\YunJianRiiChi`；Unity 工程：`unity/`；版本：6000.6.4f1。
-- 当前分支：`main`；本机 HEAD、origin/main 均为 `e9b35830`。本次未联网刷新远端引用。
-- 本轮将 0.6.33–0.6.40 的源码、资源与交接纳入显式提交清单；保留旧 APK 本机删除和未选历史产物，远端提交状态在本节最终回填。
+- 当前分支：`main`；0.6.40 源码提交 `a674b84d729f4df5adde3a29d73985b4ff0a06ab` 已推送并核对 origin/main。本节记录源码提交，含最终交接更新的最新 HEAD 以 `git log -1` 为准。
+- 0.6.33–0.6.40 源码、资源、测试与交接已按显式清单提交；保留旧 0.4.0／0.5.0 APK 的本机删除、未选历史产物和既有本机资源。源码提交后暂存区为空。
 - 最新可安装包：**0.6.40 / 88**（2026-11-22 构建），包含玩家页 R4–R7 与原有 R40/R41；下一次出包用 **0.6.41 / 89**。
-- 20:55 Codex 轮只完善了交接文档。21:56 Claude 轮按用户对成片的两条反馈做了 R41 修正（见下节），没有提交、推送、出包、发布或清理缓存。
+- 历史轮次：20:55 Codex 只完善了交接文档。21:56 Claude 轮按用户对成片的两条反馈做了 R41 修正（见下节），没有提交、推送、出包、发布或清理缓存。
 
 ## 0.6.40 / 88 构建与源码提交（Codex，2026-11-22）
 
@@ -13,8 +13,10 @@
 - v1/v2、独立 API-23 v1、原证书、ZIP 与 16 KB 对齐通过；Node 209、Python 8 通过。构建强制重新导入 20 张玩家页纹理，APK 内再次检查原尺寸、单级 mipmap、可读遮罩和原字体；核对 7728 个役满与 100 个 Profile 资源。
 - ProjectSetup 固化称号／使用中／立绘框／页签／遮罩的导入规则，防止重新导入覆盖手工 meta。版本常量及主 ProjectSettings 均为 0.6.40 / 88。保留此前 Saber 兼容覆盖，以 `scripts/phone-test/CharacterPackService.patch` 记录，并提供分步等价的构建入口。
 - [本轮交接](docs/handoff-unity-0.6.40.md)、[基础核验](dist/unity-0.6.40-verification.json)、[功能核验](dist/unity-0.6.40-feature-verification.json)、[玩家页入包核验](dist/unity-0.6.40-profile-verification.json)。原始日志在 build/release-0.6.40/。
-- 源码与交接文件已准备提交到 main，远端结果待最后回填。APK 不进 Git，未创建 GitHub Release；Android 真机未测。旧 APK 的本机删除和历史未选预览不加入本次提交。
+- 源码提交 [`a674b84d`](https://github.com/Rtyu3221cc/YunJianRiiChi/commit/a674b84d729f4df5adde3a29d73985b4ff0a06ab) 已推送 main，并通过远端 ref 与 GitHub 文件读取核对。APK 不进 Git，未创建 GitHub Release；Android 真机未测。旧 APK 的本机删除和历史未选预览不加入本次提交。
 - 暂存工程现为本版构建输入，保留 CharacterPackService 的原覆盖；后续仍在主工程修改。下一步在手机上覆盖安装，查玩家页触摸／滑动、段位终局、双手机同步和 R41 GPU 效果。
+
+下方 R1–R7 为阶段历史；当前安装包与源码状态以上方 0.6.40 记录为准。
 
 ## 玩家信息页 R7：使用中比例与立绘边框（Codex，2026-11-21）
 

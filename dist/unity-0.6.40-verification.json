@@ -21,7 +21,14 @@
   "forcedProfileReimports": 20,
   "androidDeviceTested": false,
   "apkPublished": false,
-  "sourcePublication": "Pending commit and GitHub push; see DEVELOPMENT.md for final state",
+  "sourcePublication": {
+    "repository": "Rtyu3221cc/YunJianRiiChi",
+    "branch": "main",
+    "codeCommit": "a674b84d729f4df5adde3a29d73985b4ff0a06ab",
+    "remoteMainVerified": "a674b84d729f4df5adde3a29d73985b4ff0a06ab",
+    "githubFileFetchVerified": true,
+    "apkPublished": false
+  },
   "characterPackStageOverlaySHA256": "3fb23e2ad7253463cfb8eb408c46a2b3882494aee250d184d1435ab77641f6d3",
   "baseVerifier": "scripts/verify-character-audio-apk.py",
   "baseAudioVerification": "unity-0.6.40-audio-verification.json",

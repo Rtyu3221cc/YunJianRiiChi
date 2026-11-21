@@ -1,6 +1,8 @@
 # Unity 0.6.40 / 88 构建与交接
 
-更新时间：2026-11-22 00:23（东京时间）。用户明确要求生成 APK、提交并推送代码到 GitHub、完善交接。主工程是 E 盘共享根目录；沿用 main。源码推送结果待本轮最后核实后回填。
+最终发布核对：2026-11-22 00:30（东京时间）。
+
+更新时间：2026-11-22 00:23（东京时间）。用户明确要求生成 APK、提交并推送代码到 GitHub、完善交接。主工程是 E 盘共享根目录；沿用 main。源码提交 [`a674b84d`](https://github.com/Rtyu3221cc/YunJianRiiChi/commit/a674b84d729f4df5adde3a29d73985b4ff0a06ab) 已推送 GitHub main，远端 ref 与 GitHub 文件内容已核对。最终交接更新另行提交，最新 HEAD 以 main 为准。
 
 ## 安装包与核验
 
@@ -40,7 +42,7 @@
 
 运行证据：`build/release-0.6.40/android-0.6.40.log`、`profile-imports.json`、`base-verification.log`、`signature-verification.json`；R7 录制与来源证据仍在 `build/player-info-source-r7/review/`。这些 build 内容只留在本机。
 
-Git 将按显式文件清单提交当前源码、必要原资源、meta、脚本、测试、文档和本轮相关预览；不提交 SDK、缓存、签名密钥、玩家存档、参考 APK，也不顺带提交旧 0.4.0／0.5.0 APK 的本机删除。历史大体积预览如未纳入本轮清单，仍留在本机 dist。最终提交与远端核实结果写回 DEVELOPMENT.md。
+源码提交 `a674b84d729f4df5adde3a29d73985b4ff0a06ab` 已按显式文件清单包含当前源码、必要原资源、meta、脚本、测试、文档和本轮相关预览；不提交 SDK、缓存、签名密钥、玩家存档、参考 APK，也不顺带提交旧 0.4.0／0.5.0 APK 的本机删除。历史大体积预览如未纳入本轮清单，仍留在本机 dist。提交与远端核实结果已写回 DEVELOPMENT.md。共享主根目录直接提交并推送；`.publish/YunJianRiiChi` 是本轮回归与清单校验镜像，不作为下一位的开发入口。
 
 ## 下一位接手
 
