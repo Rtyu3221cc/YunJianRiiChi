@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
 using UnityEngine.Rendering;
+using UnityEngine.UI;
 
 namespace YunJian.Riichi.Editor {
     public static class NativeEffectR11Import {
@@ -19,7 +20,11 @@ namespace YunJian.Riichi.Editor {
             if(relocated==null){string repo=Environment.GetEnvironmentVariable("YUNJIAN_R22_REPO")??Path.GetFullPath(".."),file=repo+"/docs/wardrobe-resource-layout-r22.json";relocated=File.Exists(file)?JsonUtility.FromJson<Layout>(File.ReadAllText(file)).moves.ToDictionary(m=>m.from,m=>m.to):new Dictionary<string,string>();}
             return relocated.TryGetValue(path,out var target)?target:path;
         }
-        static string ReadSource(string path)=>File.ReadAllText(Physical(path));
+        static string ReadSource(string path){
+            string file=Physical(path);
+            if(!File.Exists(file)&&path.StartsWith(Folder+"YakumanR39/",StringComparison.Ordinal))file=Environment.GetEnvironmentVariable("YUNJIAN_1114_REPO")+"/build/feedback-1114-r39/yakuman/export/"+path.Substring(Folder.Length);
+            return File.ReadAllText(file);
+        }
         static string LogicalAddress(string path){string prefix=path.StartsWith("Assets/WardrobePacks/Source/")?"Assets/WardrobePacks/Source/":"Assets/Resources/";return Path.ChangeExtension(path.Substring(prefix.Length),null);}
         [Serializable] class Manifest {public Entry[] effects;}
         [Serializable] class Entry {public string sourceKey,nativeEffect;public string[] nativeVariants;}
@@ -97,13 +102,31 @@ namespace YunJian.Riichi.Editor {
             File.WriteAllLines(Reference+"native-import-failures.txt",failures);
             Debug.Log("R30 IMPORT COMPLETE "+checks.Count+" prefabs, "+failures.Count+" failures");EditorApplication.Exit(0);
         }
+        public static void RunYakumanR39(){
+            checks.Clear();string repo=Environment.GetEnvironmentVariable("YUNJIAN_1114_REPO");
+            referenceOverride=repo+"/build/feedback-1114-r39/yakuman/source/";AssetDatabase.Refresh();
+            var sources=JsonUtility.FromJson<AnimationSources>("{\"rows\":"+File.ReadAllText(repo+"/build/feedback-1114-r39/yakuman/animation-sources.json")+"}").rows;
+            var manifest=JsonUtility.FromJson<Manifest>(File.ReadAllText(repo+"/build/feedback-1114-r39/yakuman/manifest.json"));
+            foreach(var entry in manifest.effects){if(Environment.GetEnvironmentVariable("YUNJIAN_1114_SKIP_EXISTING")=="1"&&File.Exists(Folder+entry.nativeEffect+".prefab"))continue;Import(entry.nativeEffect,sources);}
+            foreach(var bundle in bundles.Values)bundle.Unload(false);bundles.Clear();AssetDatabase.SaveAssets();
+            File.WriteAllLines(repo+"/build/feedback-1114-r39/yakuman/import-checks.txt",checks);Debug.Log("YAKUMAN IMPORT COMPLETE "+checks.Count);EditorApplication.Exit(0);
+        }
+        public static void RepairYakumanQueues(){Debug.Log("YAKUMAN QUEUES RESTORED "+RestoreYakumanQueues());EditorApplication.Exit(0);}
+        public static int RestoreYakumanQueues(){
+            string repo=Environment.GetEnvironmentVariable("YUNJIAN_1114_REPO");int changed=0;
+            foreach(string file in Directory.GetFiles(repo+"/build/feedback-1114-r39/yakuman/export/YakumanR39","*-source.json")){
+                string key=Path.GetFileName(file).Replace("-source.json","");var config=JsonUtility.FromJson<NativeEffectSource>(File.ReadAllText(file));
+                for(int i=0;i<config.nodes.Length;i++){var materials=config.nodes[i].materials??Array.Empty<NativeMaterialSource>();for(int j=0;j<materials.Length;j++){var source=materials[j];var material=AssetDatabase.LoadAssetAtPath<Material>(Folder+"YakumanR39/"+key+"-"+i+"-"+j+".mat");if(material==null)continue;bool dirty=false;if(source.hasSourceQueue&&source.sourceQueue>=0&&material.renderQueue!=source.sourceQueue){material.renderQueue=source.sourceQueue;dirty=true;}if(source.shaderName=="Catfood/Outline"&&material.GetFloat("_ZWrite")!=source.zWrite){material.SetFloat("_ZWrite",source.zWrite);dirty=true;}dirty=YakumanParticleState(material,source)||dirty;if(dirty){EditorUtility.SetDirty(material);changed++;}}}
+            }
+            AssetDatabase.SaveAssets();return changed;
+        }
         static Mesh Mesh(string path,string output){
             output=Physical(output);
             var data=JsonUtility.FromJson<MeshData>(ReadSource(Folder+path));
             var mesh=new Mesh{name=Path.GetFileNameWithoutExtension(path)};
             if(!string.IsNullOrEmpty(data.builtin)){
                 var primitive=GameObject.CreatePrimitive((PrimitiveType)Enum.Parse(typeof(PrimitiveType),data.builtin));UnityEngine.Object.DestroyImmediate(mesh);mesh=UnityEngine.Object.Instantiate(primitive.GetComponent<MeshFilter>().sharedMesh);UnityEngine.Object.DestroyImmediate(primitive);
-                if(AssetDatabase.LoadAssetAtPath<Mesh>(output)!=null)AssetDatabase.DeleteAsset(output);AssetDatabase.CreateAsset(mesh,output);return mesh;
+                return SaveAsset(mesh,output);
             }
             mesh.vertices=Enumerable.Range(0,data.vertices.Length/3).Select(i=>new Vector3(data.vertices[i*3],data.vertices[i*3+1],data.vertices[i*3+2])).ToArray();
             mesh.uv=Enumerable.Range(0,data.uv.Length/2).Select(i=>new Vector2(data.uv[i*2],data.uv[i*2+1])).ToArray();
@@ -113,18 +136,19 @@ namespace YunJian.Riichi.Editor {
             if(data.groups!=null&&data.groups.Length>0){mesh.subMeshCount=data.groups.Length;for(int i=0;i<data.groups.Length;i++)mesh.SetTriangles(data.groups[i].indices,i);}
             else mesh.triangles=data.indices;
             mesh.RecalculateNormals();mesh.RecalculateBounds();
-            if(AssetDatabase.LoadAssetAtPath<Mesh>(output)!=null)AssetDatabase.DeleteAsset(output);
-            AssetDatabase.CreateAsset(mesh,output);return mesh;
+            return SaveAsset(mesh,output);
         }
         static Material Material(NativeMaterialSource source,string output){
             output=Physical(output);
             var shader=Shader.Find("YunJian/NativeEffectParticle");if(shader==null)throw new Exception("Native effect shader did not compile");
             bool decoration=output.Contains("/StaticR16/");
             bool fate=output.Contains("/FateR19/");if(fate)shader=Resources.Load<Shader>("Majsoul/NativeReview/FateR19/FateParticle");
-            bool win=output.Contains("/WinsR22/")||output.Contains("/WardrobeR30/");if(win)shader=Resources.Load<Shader>("Majsoul/NativeReview/WinsR22/WardrobeEffectParticle");
+            bool win=output.Contains("/WinsR22/")||output.Contains("/WardrobeR30/")||output.Contains("/YakumanR39/");if(win)shader=Resources.Load<Shader>("Majsoul/NativeReview/WinsR22/WardrobeEffectParticle");
+            bool outline=output.Contains("/YakumanR39/")&&source.shaderName=="Catfood/Outline";if(outline)shader=Shader.Find("YunJian/OriginalTileOutline");
             if(decoration)shader=Resources.Load<Shader>("Majsoul/Wardrobe/WardrobeParticle");
             if(decoration&&(source.shaderName.StartsWith("Catfood/")||source.shaderName.StartsWith("Unlit/")))shader=Resources.Load<Shader>("Majsoul/Wardrobe/StaticDecoration");
             var material=new Material(shader){name=source.materialName};
+            if(outline){material.color=TableLook.OutlineColor;material.SetFloat("_ZWrite",source.zWrite);if(source.hasSourceQueue&&source.sourceQueue>=0)material.renderQueue=source.sourceQueue;return SaveAsset(material,output);}
             foreach(var value in source.floats??new NativeNamedFloat[0])if(material.HasProperty(value.name))material.SetFloat(value.name,value.value);
             foreach(var value in source.colors??new NativeNamedColor[0])if(material.HasProperty(value.name))material.SetColor(value.name,C(value.value));
             string texturePath=Physical(Folder+source.texture+".png");
@@ -151,17 +175,33 @@ namespace YunJian.Riichi.Editor {
             material.SetFloat("_SrcBlend",source.srcBlend);material.SetFloat("_DstBlend",source.dstBlend);
             if(decoration&&material.HasProperty("_RenderSrcBlend"))material.SetFloat("_RenderSrcBlend",source.srcBlend);
             material.SetFloat("_ZTest",source.zTest);material.SetFloat("_SourceZWrite",source.zWrite);material.SetFloat("_SourceCull",source.cull);
+            if(source.hasSourceQueue&&source.sourceQueue>=0)material.renderQueue=source.sourceQueue;
+            if(output.Contains("/YakumanR39/"))YakumanParticleState(material,source);
             if(decoration){material.renderQueue=source.zWrite>.5f?2000:3000;if(source.shaderName=="Catfood/Cartoon")material.SetFloat("_Cartoon",1);}
-            if(AssetDatabase.LoadAssetAtPath<Material>(output)!=null)AssetDatabase.DeleteAsset(output);
-            AssetDatabase.CreateAsset(material,output);return material;
+            return SaveAsset(material,output);
         }
+        static bool YakumanParticleState(Material material,NativeMaterialSource source){
+            if(source.shaderName!="Particles/Standard Unlit")return false;bool changed=false;
+            // Standard Unlit stores its blend state in saved properties. The
+            // legacy particle fallback (One, Zero) makes its sweep opaque.
+            var values=(source.floats??Array.Empty<NativeNamedFloat>()).ToDictionary(v=>v.name,v=>v.value);
+            foreach(var pair in new[]{("_SrcBlend","_SrcBlend"),("_DstBlend","_DstBlend"),("_ZTest","_ZTest"),("_ZWrite","_SourceZWrite"),("_Cull","_SourceCull")})if(values.TryGetValue(pair.Item1,out float value)&&material.GetFloat(pair.Item2)!=value){material.SetFloat(pair.Item2,value);changed=true;}
+            var color=(source.colors??Array.Empty<NativeNamedColor>()).FirstOrDefault(v=>v.name=="_Color");
+            if(color!=null&&material.GetColor("_TintColor")!=C(color.value)*.5f){material.SetColor("_TintColor",C(color.value)*.5f);changed=true;}return changed;
+        }
+        static T SaveAsset<T>(T value,string path)where T:UnityEngine.Object{var existing=AssetDatabase.LoadAssetAtPath<T>(path);if(existing==null){AssetDatabase.CreateAsset(value,path);return value;}EditorUtility.CopySerialized(value,existing);EditorUtility.SetDirty(existing);UnityEngine.Object.DestroyImmediate(value);return existing;}
         static void Import(string name,NativeR11AnimationStudy.Row[] animations){
             var config=JsonUtility.FromJson<NativeEffectSource>(ReadSource(Folder+name+"-source.json"));
             var swaps=new Dictionary<string,string>();foreach(var extra in config.extraMaterials??new NativeExtraMaterial[0]){Material(JsonUtility.FromJson<NativeMaterialSource>(ReadSource(Folder+extra.source)),Folder+extra.asset);swaps[extra.name]=Physical(Folder+extra.asset);}
             var root=new GameObject(Path.GetFileName(name));var nodes=new Transform[config.nodes.Length];
             for(int i=0;i<nodes.Length;i++){
-                var n=config.nodes[i];var node=new GameObject(n.name).transform;node.SetParent(n.parent<0?root.transform:nodes[n.parent],false);
+                var n=config.nodes[i];bool rect=n.rect?.size?.Length==2;var node=new GameObject(n.name,rect?new[]{typeof(RectTransform)}:Type.EmptyTypes).transform;node.SetParent(n.parent<0?root.transform:nodes[n.parent],false);
+                if(rect){var rt=(RectTransform)node;rt.anchorMin=new Vector2(n.rect.anchorMin[0],n.rect.anchorMin[1]);rt.anchorMax=new Vector2(n.rect.anchorMax[0],n.rect.anchorMax[1]);rt.pivot=new Vector2(n.rect.pivot[0],n.rect.pivot[1]);rt.sizeDelta=new Vector2(n.rect.size[0],n.rect.size[1]);}
                 node.localPosition=V(n.position);node.localRotation=new Quaternion(n.rotation[0],n.rotation[1],n.rotation[2],n.rotation[3]);node.localScale=V(n.scale);nodes[i]=node;
+                if(n.camera?.fov>0){var camera=node.gameObject.AddComponent<Camera>();camera.fieldOfView=n.camera.fov;camera.nearClipPlane=n.camera.near;camera.farClipPlane=n.camera.far;camera.depth=n.camera.depth;camera.enabled=false;camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=Color.black;}
+                if(n.canvas){var canvas=node.gameObject.AddComponent<Canvas>();canvas.renderMode=RenderMode.WorldSpace;}
+                if(n.canvasGroup){var group=node.gameObject.AddComponent<CanvasGroup>();group.alpha=n.canvasAlpha;group.blocksRaycasts=false;}
+                if(n.image)node.gameObject.AddComponent<RawImage>().raycastTarget=false;
                 Renderer renderer=null;
                 if(!string.IsNullOrEmpty(n.particle)){
                     var ps=node.gameObject.AddComponent<ParticleSystem>();ps.Stop(false,ParticleSystemStopBehavior.StopEmittingAndClear);
@@ -188,7 +228,7 @@ namespace YunJian.Riichi.Editor {
             var tracks=new List<NativeMotionTrack>();
             for(int index=0;index<nodes.Length;index++)foreach(string path in config.nodes[index].animations??new string[0]){
                 var row=animations.First(a=>a.output==Path.ChangeExtension(path,".anim"));
-                var track=Bake(root,nodes,index,row,name.StartsWith("FateR19/")||name.StartsWith("WinsR22/")||name.StartsWith("WardrobeR30/"),swaps);tracks.Add(track);
+                var track=Bake(root,nodes,index,row,name.StartsWith("FateR19/")||name.StartsWith("WinsR22/")||name.StartsWith("WardrobeR30/")||name.StartsWith("YakumanR39/"),swaps);tracks.Add(track);
                 string emptyAsset=Folder+row.output;if(AssetDatabase.LoadAssetAtPath<AnimationClip>(emptyAsset)!=null)AssetDatabase.DeleteAsset(emptyAsset);
             }
             if(tracks.Count>0){
@@ -218,6 +258,8 @@ namespace YunJian.Riichi.Editor {
                 add(i,1,0,"",4,()=>new[]{t.localRotation.x,t.localRotation.y,t.localRotation.z,t.localRotation.w});
                 add(i,2,0,"",3,()=>new[]{t.localScale.x,t.localScale.y,t.localScale.z});
                 if(referenceOverride!=null)add(i,6,0,"",1,()=>new[]{t.gameObject.activeSelf?1f:0f});
+                var sourceCamera=t.GetComponent<Camera>();if(sourceCamera!=null)add(i,9,0,"",1,()=>new[]{sourceCamera.fieldOfView});
+                var canvasGroup=t.GetComponent<CanvasGroup>();if(canvasGroup!=null)add(i,10,0,"",1,()=>new[]{canvasGroup.alpha});
                 var renderer=t.GetComponent<Renderer>();if(renderer==null)continue;
                 if(includeRendererVisibility)add(i,7,0,"",1,()=>new[]{renderer.enabled?1f:0f});
                 for(int materialIndex=0;materialIndex<renderer.sharedMaterials.Length;materialIndex++){

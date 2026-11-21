@@ -3,7 +3,7 @@
 The web client's default offsets describe different parents and MUST NOT be used
 here. F0 is the APK skin-card's explicit 228px force-offset override.
 """
-SCENES = ('A0', 'B0', 'B1', 'B2', 'F0', 'I0', 'J0', 'K0')
+SCENES = ('A0', 'B0', 'B1', 'B2', 'F0', 'I0', 'J0', 'K0', 'L0')
 
 
 def placements(item, data, defaults):

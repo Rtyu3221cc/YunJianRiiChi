@@ -7,6 +7,9 @@ namespace YunJian.Riichi {
         public bool Playing=>source!=null&&source.isPlaying;
         public string PlayingCharacter{get;private set;}
         public string PlayingKey{get;private set;}
+        public bool Automatic{get;private set;}
+        public float EndsAt{get;private set;}
+        public CharacterVoiceCaption Caption{get;}=new CharacterVoiceCaption();
 #if UNITY_EDITOR
         public event Action<string,string,AudioClip> ReviewPlayed;
         public event Action ReviewStopped;
@@ -19,7 +22,7 @@ namespace YunJian.Riichi {
         void Awake(){source=gameObject.AddComponent<AudioSource>();source.playOnAwake=false;source.spatialBlend=0;}
         public static AudioClip Clip(string character,string action){
             if(string.IsNullOrEmpty(action))return null;
-            character=CharacterRoster.Find(character)?.key??"yiji";if(!CharacterRoster.CanDisplay(character))character="yiji";string file=Actions.TryGetValue(action,out var mapped)?mapped:action,key=character+"/"+file;
+            character=CharacterRoster.Find(character)?.key??"yiji";if(!CharacterRoster.CanDisplay(character))character="yiji";string file=CharacterVoiceCatalog.Path(character,Actions.TryGetValue(action,out var mapped)?mapped:action),key=character+"/"+file;
             CharacterPackService.Touch("Voice/"+key);if(!clips.TryGetValue(key,out var c)||c==null){
                 c=CharacterPackService.Asset<AudioClip>("Voice/"+key);
                 if(c==null&&LegacyYaku.TryGetValue(file,out var legacy))c=CharacterPackService.Asset<AudioClip>("Voice/"+character+"/"+legacy);
@@ -33,13 +36,15 @@ namespace YunJian.Riichi {
 #if UNITY_EDITOR
             if(PlayingKey!=null)ReviewStopped?.Invoke();
 #endif
-            if(source!=null)source.Stop();PlayingCharacter=PlayingKey=null;}
-        public bool TryPlay(string character,string action){var c=Clip(character,action);if(c==null||AppPreferences.Gain(4)<=0){Stop();return false;}Stop();source.clip=c;source.volume=AppPreferences.Gain(4);PlayingCharacter=character;PlayingKey=action;source.Play();
+            if(source!=null)source.Stop();Caption.Clear();PlayingCharacter=PlayingKey=null;Automatic=false;EndsAt=0;}
+        public bool TryPlay(string character,string action,bool automatic=false){if(!automatic)GetComponent<CharacterVoicePlayback>()?.Cancel();character=CharacterRoster.Find(character)?.key??"yiji";if(!CharacterRoster.CanDisplay(character))character="yiji";var c=Clip(character,action);if(c==null||AppPreferences.Gain(4)<=0){Stop();return false;}Stop();source.clip=c;source.volume=AppPreferences.Gain(4);PlayingCharacter=character;PlayingKey=action;Automatic=automatic;EndsAt=Time.unscaledTime+c.length;source.Play();
+            var line=CharacterVoiceCatalog.Line(character,action);if(line?.type?.StartsWith("lobby_",StringComparison.Ordinal)==true)Caption.Begin(line.text,GetComponent<RiichiClient>()?.LobbyNickname,Time.unscaledTime,c.length);
 #if UNITY_EDITOR
             ReviewPlayed?.Invoke(character,action,c);
 #endif
             return true;}
         public void Play(string character,string action)=>TryPlay(character,action);
+        void Update(){if(source==null||PlayingKey==null)return;source.volume=AppPreferences.Gain(4);if(source.volume<=0||Time.unscaledTime>=EndsAt){Stop();return;}CharacterPackService.Touch("Voice/"+PlayingCharacter+"/"+CharacterVoiceCatalog.Path(PlayingCharacter,PlayingKey));}
         void OnDisable()=>Stop();
     }
 }

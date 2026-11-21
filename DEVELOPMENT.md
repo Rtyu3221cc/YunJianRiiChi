@@ -1,150 +1,212 @@
-# 当前开发进度
+# 当前开发进度／Codex 与 Claude Code 交接
 
-- 更新时间：2026-11-10 19:55（东京时间）
-- 最近接手：Claude Code（准备交回 Codex）
-- 共享 Git 根目录：E:\MyWorkSpace_E\YunJianRiiChi
-- Unity 工程：unity/，Unity 6000.6.4f1
-- 当前分支：main。2026-11-10 用户授权「代碼上傳至github」后，0.6.23 → 0.6.32 的代码已作为一个提交推送到 origin/main，一同推送的还有此前的两个协作文件提交 a7c37100、e63b5b4b。未打标签，也未发布 Release。
+- 更新时间：2026-11-22 00:23（东京时间）；上次执行：Codex（0.6.40 / 88 构建、核验与源码发布准备）。
+- 共享 Git 根目录：`E:\MyWorkSpace_E\YunJianRiiChi`；Unity 工程：`unity/`；版本：6000.6.4f1。
+- 当前分支：`main`；本机 HEAD、origin/main 均为 `e9b35830`。本次未联网刷新远端引用。
+- 本轮将 0.6.33–0.6.40 的源码、资源与交接纳入显式提交清单；保留旧 APK 本机删除和未选历史产物，远端提交状态在本节最终回填。
+- 最新可安装包：**0.6.40 / 88**（2026-11-22 构建），包含玩家页 R4–R7 与原有 R40/R41；下一次出包用 **0.6.41 / 89**。
+- 20:55 Codex 轮只完善了交接文档。21:56 Claude 轮按用户对成片的两条反馈做了 R41 修正（见下节），没有提交、推送、出包、发布或清理缓存。
 
-## 交接给 Codex（Claude Code，2026-11-10）
+## 0.6.40 / 88 构建与源码提交（Codex，2026-11-22）
 
-- 0.6.23 → 0.6.32 的全部改动已提交并推送（见上）。下方「已完成」按轮次列出了每项改动及其文件。
-- 范围：
-  - 已跟踪文件中有 32 个被修改。
-  - 新文件 8 个，各自带 `.meta`，需要一起入库：
-    - `WardrobePresets.cs`
-    - `DressPreviewStates.cs`
-    - `RiichiClient.DressPreview.cs`
-    - `LobbyController.DressTable.cs`
-    - `LobbyController.Preload.cs`
-    - `ReviewR33Capture.cs`
-    - `Editor/ReviewR33.cs`
-    - `docs/research-2026-11-07-presets-and-tile-motion.md`（没有 `.meta`）
-- 以下改动不是 Claude Code 做的，接手前就已存在或者来源没有核实，也没有动过，都**没有纳入提交**，仍留在工作区：
-  - `dist/yunjian-riichi-0.4.0.apk`、`0.5.0.apk` 处于删除状态
-  - `scripts/prepare-original-input-stage.py` 新增了 `review-r25` 批次
-  - `docs/` 下 r25–r28 的说明
-  - `scripts/*-r25/r26/r28/r29.py`
-  - `dist/` 下的旧 SHA 文件
-- 两份 `engine.js` 现在逐字节一致，修改时要同时改两份。
-- 构建方式（与仓库默认流程不同）：
-  - 在暂存工程 `build/phone-test-r24/stage/unity` 里构建，改过的文件需要手动复制过去。不要覆盖它的 `CharacterPackService.cs`（Saber 临时覆盖）。
-  - 构建命令：`Unity.exe -batchmode -quit -projectPath <暂存工程> -buildTarget Android -executeMethod YunJian.Riichi.Editor.ProjectSetup.BuildAndroid`
-  - 签名：`& (Resolve-Path scripts\sign-unity-apk.ps1).Path -ApkPath <绝对路径> -EditorPath <Unity.exe>`（必须用完整路径调用）。
-  - 下一版从 0.6.33 / 81 开始。
-- 出包后清理 C 盘（用户要求定时做）：删除 `%USERPROFILE%\.gradle\caches\9.3.1\transforms` 里比本次构建旧、且大于 50 MB 的目录，保留 `modules-2`。
-- 测试环境：
-  - Node 24 直接运行 `node --test tests/*.test.cjs`，上次结果是 196/196 通过。
-  - Python 用 codex 运行时自带的 python.exe。
-- 第一步：用户真机反馈 0.6.32 之后，再按反馈修改（见文末「下一步」）。
+- 用户已明确授权生成 APK、提交并推送 GitHub、更新交接。本机 [APK](dist/yunjian-riichi-unity-0.6.40.apk)，368,081,448 字节；SHA-256 `d988b49eeffc53248e59f6008506f7666056e4c3964e01712926018b2bb25cce`。
+- v1/v2、独立 API-23 v1、原证书、ZIP 与 16 KB 对齐通过；Node 209、Python 8 通过。构建强制重新导入 20 张玩家页纹理，APK 内再次检查原尺寸、单级 mipmap、可读遮罩和原字体；核对 7728 个役满与 100 个 Profile 资源。
+- ProjectSetup 固化称号／使用中／立绘框／页签／遮罩的导入规则，防止重新导入覆盖手工 meta。版本常量及主 ProjectSettings 均为 0.6.40 / 88。保留此前 Saber 兼容覆盖，以 `scripts/phone-test/CharacterPackService.patch` 记录，并提供分步等价的构建入口。
+- [本轮交接](docs/handoff-unity-0.6.40.md)、[基础核验](dist/unity-0.6.40-verification.json)、[功能核验](dist/unity-0.6.40-feature-verification.json)、[玩家页入包核验](dist/unity-0.6.40-profile-verification.json)。原始日志在 build/release-0.6.40/。
+- 源码与交接文件已准备提交到 main，远端结果待最后回填。APK 不进 Git，未创建 GitHub Release；Android 真机未测。旧 APK 的本机删除和历史未选预览不加入本次提交。
+- 暂存工程现为本版构建输入，保留 CharacterPackService 的原覆盖；后续仍在主工程修改。下一步在手机上覆盖安装，查玩家页触摸／滑动、段位终局、双手机同步和 R41 GPU 效果。
 
-## 已完成
+## 玩家信息页 R7：使用中比例与立绘边框（Codex，2026-11-21）
 
-- 共享根目录已对齐 GitHub 基线 9987935e，保留原本地分支 codex/lobby-room-1013（bfed191）。版本和试装包详情见 [交接手册](docs/CODEX-HANDOFF.md)。
-- 双方在同一目录轮流开发。AGENTS.md、CLAUDE.md 和本页是协作入口。
-- 2026-11-07 本轮（Claude Code，未提交）：
-  - 鸣牌语音打断：`RoleVoice.cs` 新语音打断正在播的语音（连续拔北、拔北后被碰）；和牌语音不被普通鸣牌打断，双响时排队。
-  - BGM 压低：`PlaylistAudio.cs` 改为缓降 0.8 秒、缓升 1.2 秒。语音页标志需每帧刷新，离开页面后自动释放。`LobbyController.CharacterVoice.cs` 只在语音页是当前页时压低（原问题：退出过渡期间旧页面仍在绘制，又把标志设回 true）。
-  - 对局皮肤记忆：`CharacterRoster.cs` 新增按角色保存的 `battle` 选择和 `BattleSkin()`。`LobbyController.RoleSelection.cs` 的头像和切换都改用它。宿舍装扮保持独立。
-  - 装扮预设（参考原版的交互形式，视觉为自有排版）：`WardrobePresets.cs` 共 5 个预设，存于 PlayerPrefs `riichi.wardrobe.presets.v2`。每个预设都是一套可编辑的装扮：`LobbyController.Wardrobe.cs` 左侧分类列表上方是页签 1–5 和「使用/使用中」按钮。编辑的是正在查看的预设，只有正在使用的预设会同步到 WardrobeSelection；打开装扮页时，正在使用的预设先与当前穿着同步。分类列表从 y=265 开始，高 740。
-  - 倒牌与拍牌（依据 docs/research-2026-11-07-presets-and-tile-motion.md）：
-    - `HandRevealMotion.cs` 倒牌改为 0.05s 缓出，去掉蓄力和回弹；新增按座位的延迟，流局时左右家 +0.35s、对家 +0.40s。
-    - `TableRenderer.cs` 新增 `drawDelays`；自己和牌时去掉手牌相机那排 0.14s 的淡出，与桌面那排同一帧切换。
-    - `TableEffects.cs` 自摸牌改为背面朝和牌者立着被拍下，交接后站立 0.10s，再朝和牌者倒下 0.10s（缓入），回弹 4° 用时 0.05s（`UpdateTsumoTopple`）。
-    - `ReviewValidation0523.cs` 的旧曲线断言已同步更新。
-    - 荣和第二段（「荣和的牌接到和牌者那排右端」）已在 0.6.27 撤销：`自己荣和.mp4` 中和牌者只亮 13 张，和的牌留在放铳者牌河。
-    - 流局时未听牌（用户指正后的版本）：未听牌的手牌牌面始终朝向持有者，从立着（`drawStanding` +90°）朝前扣倒成背面朝上，不亮牌。本家未听牌时，立牌用 `state.hand` 的真实牌面（`OriginalTiles.CreateTable` 的 `concealedFace`），在 `SelfNotenDelay` 0.55s 时最后扣倒。之前「先正面朝上再翻面」的做法是误读录像，已移除。
-    - 修正一个旧问题：蓋牌立着时牌面原本朝外（对着别家）。
-  - 预览录制工具：`Assets/Scripts/ReviewR33Capture.cs`、`Assets/Editor/ReviewR33.cs`。
-- 2026-11-08 本轮（Claude Code，未提交，版本 0.6.25 / versionCode 73）：
-  - 第 4 项预设（用户决定：新预设空白、不做重命名、不做重置、改竖排、「指定」开关暂不做）：`WardrobePresets.cs` 改为 10 个栏位，存于 `riichi.wardrobe.presets.v3`；新栏位为空，空分类等于默认物品，「使用」时空分类换回默认；打开装扮页时只把非默认的当前穿着同步进正在使用的栏位。`LobbyController.Wardrobe.cs`：栏位竖排在面板左侧，面板与栏位一起水平居中（`DressX`，原先面板贴右，16:9 时偏左）；分类列表上方显示预设名，下方是「使用/使用中」按钮；空分类显示灰色提示语。
-  - 第 6 项特效预览牌桌：装扮页立直特效、和牌特效、鸣牌指示的眼睛按钮进入全屏「装扮预览」牌桌。`RiichiClient.DressPreview.cs` 只在本地渲染脚本状态：不连房主、不轮询、会话不激活，退出回到空的大厅状态。`DressPreviewStates.cs` 构造四家牌河与手牌；`LobbyController.DressTable.cs` 播放循环脚本（立直：手把立直牌横着打出；和牌：自摸拍牌加和牌特效；鸣牌：上家打出可碰的牌），进入时装扮页淡出、牌桌淡入（进桌动画），退出时反向淡回，循环之间短暂黑场。`TableEffects.SuppressShouts` 在预览中关闭喊声、切入和语音。
-  - 自摸拍牌（0.6.26 / versionCode 74，用户反馈「竖直砸下去、模型穿进牌桌」）：`TableEffects.TsumoHandScale` 由 0.48 改为 1，按制作比例，原版录像中接触时手掌约 5 张牌宽。`PositionCarriedTile` 不再把牌的水平位置钉在落点，改为沿 Zimo 动作的弧线：从右下抬向镜头，再划弧落下。现在只保证立着的牌不低于桌面。分析见研究文档「自摸拍牌复查」。
-  - 第 7 项补充（依据 `九种九牌.mp4`、`其他玩家自摸.mp4`、`荒牌流局.mp4` 逐帧）：本家在流局（听牌或未听牌）和九种九牌时先切到桌面立着，+0.55s（`HandRevealMotion.SelfDelay`）再推倒或扣倒；原先本家听牌在切换同一帧就推倒，看不到推倒动作。别家自摸时和牌者手牌在拍牌期间保持立着，和牌特效爆开时才放倒（`TableEffects.BurstFired`，特效缺失时在演出结束后放倒）。
+- 使用中原图 130×99 旧导入为 128×128，禁用 NPOT 重采样与 mipmap 后恢复原比例。立绘框恢复原始 120×120，保留原 50 像素九宫格；立绘底图恢复 304×650。既有 PNG 和 GUID 不变。
+- 补回原版 UI_PlayerInfo 节点 16 的 waitingroom_mask 原素材及 36／37／37／34 边框，将非零 alpha 轮廓合并为缓存裁切区，修正矩形立绘透出边框底角的问题。只修改玩家页局部绘制，保留 CharacterFraming 和存档规则。
+- [使用中放大对照](dist/previews/2026-11-21-player-info-r7/使用中标记-原版与修正对照.jpg)、[立绘底角修正](dist/previews/2026-11-21-player-info-r7/立绘底角-修正前后.jpg)、[完整边框对照](dist/previews/2026-11-21-player-info-r7/立绘边框-原版与修正对照.jpg)、[10 秒实录](dist/previews/2026-11-21-player-info-r7/玩家信息页-R7-比例与边框预览.mp4)。
+- Unity 85 项、Node 209 项、Python 8 项通过；复看 16:9／20:9。视频 200 帧全部解码并核对方向。细节与已知预览日志异常见 [修正说明](docs/玩家信息页使用中比例与立绘边框修正-2026-11-21.md)，证据在 build/player-info-source-r7/review/。
+- 主工程已更新；暂存工程恢复，CharacterPackService 原覆盖保留。下次构建同步玩家页源码、3 份纹理 meta、新遮罩及 meta、native-art.json，连同 R4–R6 修改一起出包。APK 仍为旧 0.6.39 R1；未构建、发布、测 Android 真机、提交或推送。
 
-- 2026-11-08 真机反馈 8 项（Claude Code，未提交，0.6.27 / versionCode 75）：
-  1. 荣和：删除 `TableRenderer.ShowRonTile/CreateRonTile` 和 `TableEffects.ShowRonTiles`，和牌者手牌旁不再多出一张。
-  2. 役种日文：`engine.js` 新增 `YAKU_NAMES`/`yakuName()`，覆盖 core.js 全部役名（ダブル立直→两立直、翻牌→役牌、場風/自風→场风/自风 等），结算语音别名表均已包含这些简体名。两份 engine.js 已同步。
-  3. 预览入场动画：`LobbyController.DressTable.cs` 打开预览牌桌时先播开局入场动画（`RiichiClient.PlayDressIntro`，复用 `MatchIntroduction.Reenter`），资源预载与首帧渲染在动画后面完成，动画结束直接进牌桌；`DressPreviewStates` 其余三家改为「特效演示1/2/3」、固定一姬 400101。每次进入预览都会播放（约 3.5s）。
-  4. 去掉「已使用预设N。」提示；只在有未下载装扮被跳过时才提示。
-  5. 立直手臂：`TableEffects.MeasureArm/ExtendArm` 把前臂远端沿自身方向加长 0.6（源单位），手掌和手腕不动；参考点取「牌离网格最近的那一帧」的牌位置，人手、男手、猫爪、狗爪的权重都只落在前臂上。问题出在左右家放立直棒的那只手（20:9 时前臂末端露在屏幕内）。
-  6. `ResourceRoomCoordinator` 收起后不再自己画按钮，改由房间页在「开始」左侧画同款同尺寸的「资源准备」（`LobbyController.DrawRoom`），开局准备期间仅这个按钮可点。
-  7. 拔北穿模：`TableRenderer.ClearNorthTiles` 在北牌会碰到本座位副露、亮出的手牌或自摸牌时，把北牌整体向内移到刚好不碰（按最终平放姿态计算）；`AlignOwnRevealedRow` 让本家亮出的手牌和自摸牌留在副露左侧（20:9 下 3 副露时会碰到暗杠）。新增自动穿模检查 `ReviewR33Capture.OverlapScan`（`YUNJIAN_R33_MODE=overlap`）。
-  8. 宿舍里给当前出战角色「选择服饰」时同时改出战皮肤并通知房间，大厅立即生效；`engine.js` 的 `rollCharacter` 在建房、进房、切换选择时就抽好随机雀士，房间里直接显示，开局沿用同一个。
+## 玩家信息页 R6：称号比例与字体／页签（Codex，2026-11-21）
 
-- 0.6.28 / versionCode 76（用户反馈：别家自摸时北牌仍被推了一下）：原因是打牌时北牌在原锚点，和牌重绘后才发现亮牌并内移。`ClearNorthTiles` 现在对别家始终预留该座位最终平放的亮牌排加自摸牌位置，北牌从打牌起就在最终位置；`NorthClearance` 由 0.03 改为 0.06。新增 `ReviewR33Capture.NorthStable`：三麻别家 × 1–4 张北 × 0–4 副露，比较打牌/自摸/荣和三种状态下北牌位置。
-- 0.6.29 / versionCode 77（真机反馈 6 项）：
-  1. 长和牌特效：`TableEffects.WinEffectPlaying` 让牌桌一直保持到所有和牌特效真正结束（上限 12 秒）才进入结算。咒层界（`ron_25hf`）原先在特效开始约 5.3s 时允许结算，特效要到 6s 才结束；现在验证时钟上 8.6s 特效结束、同一刻才允许结算，特效在 8.0–8.2s 自然淡出。
-  2. AI 等演出：`engine.js` 的 `presentationLeft` 按最近事件推算客户端还要演多久，AI 在这之后才行动：立直宣言打牌 3.2s、立直棒 1.3s、吃碰杠 1.6s、拔北 1.5s，都从事件时间算起；普通打牌仍是 0.7–1.0s。
-  3/4. 预载：新文件 `LobbyController.Preload.cs`。启动时（在 Unity 启动画面后面）预载大厅角色的静态和动态立绘、立绘取景与大厅位置设置、宿舍服饰、大厅背景，以及装扮页字体（`GetOSInstalledFontNames` 在安卓上很慢）、40 张装扮 UI 图和 394 个物品图标（都是内置资源，不开资源包）。如果预载时启动画面还在，画面结束后重播大厅入场动画。打开宿舍时也会补做装扮页预载。
-  5. 设置 · 偏好新增「电脑装扮」：默认装扮 / 随机已下载（`AppPreferences.RandomBotWardrobe`，默认关）。客户端把本机已下载的立直棒、立直特效、和牌特效、手、头像框 id 发给房主，`engine.js` 的 `configureBots/addBot` 为每个新电脑各类别随机一件；无效 id 会被丢弃。桌布、牌、鸣牌指示和音乐始终跟随观看者，不随机。
-  6. 已有机制，未改代码：开局资源准备（`resourceSetup.wardrobes`）包含每个座位（含电脑）的装扮；本机缺的会提示，可选 GitHub 下载、局域网从其他玩家接收（`ResourceRoomCoordinator.UpdateShare`，房主也会转发别的玩家的包）或用默认装扮代替。新增 Node 测试确认电脑的装扮进入资源准备。
-- 0.6.30 / versionCode 78（真机反馈 7 项）：
-  1. 开局资源准备：`ResourceRoomCoordinator.Preload` 一次性发出全部角色立绘/语音请求并一起等待，同一角色只加载一次（原先每个资源至少等一帧，全是电脑也要等几秒）；`WardrobePackService.Preload` 同一资源包内的资源并行加载。面板改为大字号、进度条（完成数/总数和正在加载的项目）、每位玩家「正在加载/正在下载/已就绪」，并说明电脑无需加载。
-  2. 电脑随机装扮：可选的手只有人手和橘猫手，原先一半电脑抽到默认人手；现在有其他已下载物品时，随机池不含该类别的默认物品（`CharacterRoster.BotPool`）。设置只对之后新增的电脑生效。
-  3. 进出宿舍闪默认庭院：`DrawDormBackground` 改为垫自己选的大厅背景（原先写死 yard）。
-  4. 和牌后等结算太久：本项目的原生和牌特效都带源里固定的 6 秒寿命，多数 2–3 秒就看不见。`WinEffectPlaying` 改为「还在寿命内且还有粒子」，结算时机 = max(原版结算时机, 最后一个粒子消失)。炽焰：粒子 4.43s 消失，4.57s 结算（0.6.29 要到 8.57s）；咒层界仍在 8.57s 播完后结算。
-  5. 特效预览四个方向：`DressPreviewStates` 支持任一座位行动并穿预览装扮；立直和和牌按 自家 → 上家 → 对家 → 下家（屏幕顺时针）循环，鸣牌指示按 上家 → 对家 → 下家 循环（每轮 3.6s），顶部标签显示当前座位。
-  6. 未改：图中 4 番 30 符庄家 11600 按规则不算满贯（雀魂不采用切上满贯，4 番需 40 符以上）。角色横幅条件（`WinCutIn.Eligible`）与结算播报「满贯」用同一判定，录像中满贯和牌、一炮双响都有横幅。一炮双响流程已录像：两家依次「和」→ 各自横幅 → 同一张牌上播放和牌特效 → 结算。
-  7. 倒牌速度：重新逐帧量 `荒牌流局.mp4`（60fps），本家扣倒 1.37s 起、1.43s 平放、1.47s 停稳，约 0.10s；`HandRevealMotion.Duration` 由 0.05 改为 0.10。研究文档里「≤2 帧」的结论有误。
-- 0.6.31 / versionCode 79（真机反馈 4 项，本轮只出测试包）：
-  1. 一炮多响按 `1102/一炮多響.mp4`：同一张牌的荣和者同时喊「和」（`TableEffects.BeginCall` 把后续同牌荣和事件并入 `winShouts`，`NativeAnnouncements.DrawWin` 只压暗一次），之后满贯以上者依次切入角色横幅（`cutIns` 队列），最后在牌上只播放一次和牌特效，使用第一个荣和者（`ronLead`）的装扮。结算仍按和牌者逐页显示。
-  2. 特效预览：新增立直棒预览（打出立直 → 放置立直棒，`DressPreviewStates.RiichiStick`，四个座位循环，每轮 6.2s）；换座位不再黑屏（`DressTableCurtain` 恒为 0）；预览牌桌隐藏右上角邀请/设置/退出三个按钮，只留关闭按钮。
-  3. 电脑随机装扮不再包含手（用户本意是电脑保持默认手，上一轮理解反了）：客户端 `BotWardrobeCategories` 与 `engine.js` `BOT_WARDROBE` 都去掉 hand，随机池恢复包含默认物品；设置页说明同步。
-  4. 资源准备面板去掉「所有玩家就绪后自动开局…」一行；取消按钮改为 360×84、字号 34，与宿舍下载按钮同高。
-- 0.6.32 / versionCode 80（进游戏卡顿，`1102/進游戲加載卡頓.mp4`）：录像中 Unity 标志后大厅先出现但看板娘缺席约 1.5s（角色包异步加载），出现时大厅入场动画又重播一次（0.6.29 起的「启动画面后重播入场」）。`LobbyController.Preload.cs` 改为启动遮罩：Unity 标志之后保持启动画面同色（#1F1F20）并显示「正在加载···」，直到看板娘静态立绘（开启动态服饰时连同动态部件，`CharacterIllustration.Ready`）和大厅背景可绘制（最长 8s），再淡出 0.35s 并只播放一次入场动画；遮罩期间大厅不响应点击、不播飞入音效。装扮页预热移到遮罩结束之后。编辑器批处理录制不显示遮罩。
+- 修正 14 张称号被 TextureImporter 的 NPOT 重采样改成 256×64 的问题，恢复 338×65／66 原始尺寸，保留 PNG 和原 GUID。相同位置的首枚称号可见区域从 222×52 恢复为 288×52，宽度恢复、高度相同。
+- 场别页签按原 75×75 素材的 20／35 边框绘制九宫格，禁用两个页签纹理的 NPOT 重采样。成就标题和场别标签直接使用原版 fengyucumaokai 40 号字，计数使用原版 haolong_0。标签按参考片保留「段位場／友人場／活動場」字形；场别数据键不变。
+- [称号放大对照](dist/previews/2026-11-21-player-info-r6/称号比例-原版与修正对照.jpg)、[字体与页签修正前后](dist/previews/2026-11-21-player-info-r6/成就栏与页签-修正前后.jpg)、[原版对照](dist/previews/2026-11-21-player-info-r6/成就栏与页签-原版对照.jpg)、[16 秒专项预览](dist/previews/2026-11-21-player-info-r6/玩家信息页-R6-两处修正预览.mp4)。
+- Unity 专项 76 项、Node 209 项、Python 8 项通过；复看 16:9／20:9，成片 320 帧全帧解码。原字体与两个页签素材的引用、尺寸、来源见 [修正说明](docs/玩家信息页称号比例与页签字体修正-2026-11-21.md)；运行证据位于 build/player-info-source-r6/review/。
+- 主工程已更新，暂存工程恢复。下一次构建同步玩家页源码、16 份纹理 meta 和新增 Profile/Fonts 及 meta。APK 仍为旧 0.6.39 R1；未出包、未测 Android 真机、未提交或推送。成就计数仍为不可用占位。
 
-## 产物
+## 玩家信息页 R5 逐组件精修（Codex，2026-11-21）
 
-- 最新测试包 `dist/yunjian-riichi-unity-0.6.32-local.apk`（SHA-256 `f1bc8ce5…`，见 `dist/SHA256-yunjian-riichi-unity-0.6.32-local.txt`），本轮无预览视频。
-- 最新测试包 `dist/yunjian-riichi-unity-0.6.31-local.apk`（SHA-256 `e713ba88…`，见 `dist/SHA256-yunjian-riichi-unity-0.6.31-local.txt`）。本轮按用户要求不出预览视频；内部核对录像 `build/claude-1108e/preview-r41.mp4`（`YUNJIAN_R33_MODE=r41`）。
-- 最新测试包 `dist/yunjian-riichi-unity-0.6.30-local.apk`（SHA-256 `247d7e27…`，见 `dist/SHA256-yunjian-riichi-unity-0.6.30-local.txt`），预览 `dist/previews/2026-11-08-claude-r40/preview-r40.mp4`（录制命令 `YUNJIAN_R33_MODE=r40`，日志 `build/claude-1108d/`）。
-- 最新测试包 `dist/yunjian-riichi-unity-0.6.29-local.apk`（SHA-256 `b0dd0a48…`，见 `dist/SHA256-yunjian-riichi-unity-0.6.29-local.txt`），预览 `dist/previews/2026-11-08-claude-r39/preview-r39.mp4`（咒层界和牌的结算时机 + 设置页「电脑装扮」，录制命令 `YUNJIAN_R33_MODE=r39`，日志 `build/claude-1108c/`）。
-- 最新测试包 `dist/yunjian-riichi-unity-0.6.28-local.apk`（SHA-256 `666b2b7e…`，见 `dist/SHA256-yunjian-riichi-unity-0.6.28-local.txt`），预览 `dist/previews/2026-11-08-claude-r38/preview-r38.mp4`（与 r37 同结构，北牌章节已更新）及两份穿模报告。
-- 0.6.27 测试包 `dist/yunjian-riichi-unity-0.6.27-local.apk`（SHA-256 `9407ca2c…`，全文见 `dist/SHA256-yunjian-riichi-unity-0.6.27-local.txt`），签名证书与 0.6.23–0.6.26 相同，可覆盖安装。
-- 0.6.27 无声预览：`dist/previews/2026-11-08-claude-r37/preview-r37.mp4`（20:9，1800×810，约 68s），及穿模检查报告 `overlap-scan-1600x900.txt`、`overlap-scan-1800x810.txt`。录制命令 `YUNJIAN_R33_MODE=r37`，日志 `build/claude-1108b/`。
-- 0.6.26 包 `dist/yunjian-riichi-unity-0.6.26-local.apk`，SHA-256 见 `dist/SHA256-yunjian-riichi-unity-0.6.26-local.txt`。0.6.25 包仍在 `dist/`。
-- 0.6.26 无声预览：`dist/previews/2026-11-08-claude-r36/preview-tsumo.mp4`，包括和牌特效预览牌桌、本家自摸（正常速度和 0.25 倍）、别家自摸（正常速度和 0.5 倍）。录制命令为 `YUNJIAN_R33_MODE=tsumo`，日志 `build/claude-1108/capture-tsumo.log`。
-- 0.6.25 无声预览：`dist/previews/2026-11-08-claude-r35/preview-wardrobe.mp4`（竖排空白预设、居中、三种特效预览牌桌）与 `preview-motion.mp4`（本家听牌流局、全员未听牌、九种九牌、别家自摸，及本家自摸、荣和对照）。日志在 `build/claude-1108/`。
-- 构建在暂存工程 `build/phone-test-r24/stage/unity` 中完成：它有 Library 缓存，并保留 0.6.23 的 Saber 临时覆盖（`CharacterPackService.cs` 的 LocalSaberPart）。本轮改动的文件是手动复制过去的。本机没有系统 Python，`prepare-original-input-stage.py` 无法运行。
-- 无声预览视频 `dist/previews/2026-11-07-claude-r33/preview-r33.mp4`（预设、皮肤、BGM），以及 `preview-motion.mp4`（自摸、流局、荣和，含 0.25 倍慢放，使用验证时钟，按真实节奏播放）。日志在 `build/claude-1107/`。
+- 按原视频、UI_PlayerInfo / UI_TitleBook / UI_ChangeName 及布局组件逐项核对，输出 [17 组原版／R4／R5 局部对照](dist/previews/2026-11-21-player-info-r5/index.html)。修正文字尺寸和颜色、分区底纹、牌列比例与间隔、雷达／高光／走势位置、称号簿行位置和改名弹窗；保留原版隐藏节点状态。
+- [原片与本轮视频](dist/previews/2026-11-21-player-info-r5/玩家信息页-原片与组件精修对照.mp4)、[完整交互视频](dist/previews/2026-11-21-player-info-r5/玩家信息页-R5.mp4)。走势使用原图圆点、高分猫图标及逐点展开；改名使用透明输入样式、原版占位提示和“我取好了”文字。
+- Unity 100 项检查通过，含 16:9／20:9 的原版点击坐标、上下限、空昵称、弹窗拦截、空列表及滚动。Node 209、Python 8 项通过。两支视频全帧解码，核对 25 个走势点和 24 条连接。
+- [逐组件核对说明](docs/玩家信息页逐组件核对-2026-11-21.md) 记录具体坐标、图片来源及数据边界。成就条使用不可用占位“—”；风格算法、称号解锁和本地免费改名规则不变。活动场仍兼容 competition 存档键。
+- 主工程已更新；暂存工程录制后恢复，原有 CharacterPackService 覆盖保持。APK 仍为 0.6.39 R1，未出包、未测 Android 真机、未提交或推送。下次构建前同步玩家页源码、Profile/native-art.json 与新增 Native 原图及 meta。
 
-## 已知问题与风险
+## 玩家信息页 R4 源码核对（Codex，2026-11-21）
 
-- 未完成的用户需求：
-  - 第 2 项（原版结算、大厅提示语音）：未做。Claude Code 不从原版新增语音；可做的是在结算、进大厅、切换角色、进对局时播放角色包已有语音的触发点，待用户决定。
-  - 特效预览牌桌只在大厅（未进房间）可用；进房后不进入预览。预览使用当前查看的预设装扮，未下载的物品用默认物品。
-  - 别家荣和、本家听牌的流局没有原版录像，节奏按已有录像推断。
-- 编辑器录制时，左右家立直喊话的合成背景板显示为整块青色（`NativeCallouts.Compose`，本轮未改）；r37 立直手臂章节因此关闭了喊话。真机上是否正常需确认。
-- 第 8 项：宿舍「选择服饰」只在宿舍角色就是当前出战角色时改出战皮肤；给其他角色换装不影响大厅。
-- 本机编辑器（含非 batchmode）里 AudioSource 不会真正播放（isPlaying 始终为 false），所以语音打断无法在编辑器里录到，只能真机验证。
-- unity/Assets/CharacterPacks/Source/ 未跟踪部分在本机 .git/info/exclude 中排除。新增素材入库需要 `git add -f`。
-- Android 真机测试未做。
+- 用户确认具备界面和素材复制使用授权。已核对本机 4.0.16 的 UI_PlayerInfo、UI_PlayerTitle、UI_TitleBook、UI_GetTitle，及主界面 792 节点的预制体。按原画布尺寸修正主面板，替换称号图片、高光徽章、立绘框、页签、字体和使用中标记。纠正 R3 将获得称号弹窗背景用于单个称号的错误。
+- [原录像与本轮对照视频](dist/previews/2026-11-21-player-info-r4/玩家信息页-原片与源码修正对照.mp4)、[完整交互预览](dist/previews/2026-11-21-player-info-r4/玩家信息页-R4.mp4)、[关键画面对照](dist/previews/2026-11-21-player-info-r4/玩家信息页-原片对照.jpg)。对照按页面状态剪辑，保留各段原速；角色和演示数据不同。
+- Unity 57 项检查通过，含原图加载、称号佩戴与卸下、原有本地 ID、昵称和终局记录，复看 16:9 和 20:9。成片全帧解码，检查 25 个走势点和 24 条连接。证据在 build/player-info-source-r4/review/。
+- 共享规则中的 Node 回归 209 项、Python 角色输入回归 8 项通过。隔离预览日志中另有装扮校验目录和编辑器搜索索引异常，详见源码核对说明，未修改相关模块。
+- 称号获得方式先采用保留现有离线解锁条件的方案。具体原版称号映射、源码证据、资源来源及剩余数据差异见 [源码核对说明](docs/玩家信息页源码核对与修正-2026-11-21.md)。原版成就系统与最近窗口的风格算法尚未接入，本轮修正显示层。
+- 当前 APK 仍为 0.6.39 的 R1。下次出包要同步两份 C#、Profile/titles.json、新 Native 和 TitleIcons 资源及 meta，再按原流程构建。暂存工程在录制后恢复。
 
-## 验证
+## 玩家信息页 R3（Codex，2026-11-21）
 
-- 2026-11-09 00:10（0.6.32）：Unity 构建通过（编译无错）；APK 签名（v1+v2、证书 d1d8e506…、16 KB 对齐）通过，aapt 读出 0.6.32 / 80；出包后清理 Gradle 缓存 0.8 GB。启动遮罩在编辑器批处理里不显示，效果只能真机确认；未运行 Node 测试（未改 engine.js）。
-- 2026-11-08 21:30（0.6.31）：Node 196/196 通过（电脑装扮测试新增「不含手」断言）。r41 核对录像抽帧：两家同时喊和、两段横幅、只播一次特效、两家都亮牌；立直棒预览自家与上家依次放棒，换家无黑屏，右上角只有关闭按钮。APK 签名（v1+v2、证书 d1d8e506…、16 KB 对齐）通过，aapt 读出 0.6.31 / 79；出包后清理 Gradle 缓存 0.9 GB。未做真机测试。
-- 2026-11-08 20:30（0.6.30）：Node 196/196 通过。r40 录制通过，抽帧确认：资源准备面板进度与状态；进出宿舍全程是自选大厅背景；立直/和牌预览四个座位依次触发，鸣牌指示三个座位；炽焰 4.57s、咒层界 8.57s 结算且不早于特效结束；一炮双响两家各自横幅后再播特效；流局扣倒 0.10s。录制脚本此前把同一状态里的第一个荣和事件当作已播放（只影响录像，不影响游戏），已修正。未做真机测试；资源准备提速只在编辑器验证可运行，实际耗时需真机确认。APK 签名（v1+v2、证书 d1d8e506…、16 KB 对齐）通过，aapt 读出 0.6.30 / 78。
-- 2026-11-08 18:40（0.6.29）：`node --test tests/*.test.cjs` 196/196 通过，新增 AI 等待立直演出、电脑随机装扮进入资源准备两项。r39 录制通过：咒层界特效结束 8.6s，允许结算 8.6s；设置页新行显示正常。APK 签名（v1+v2、证书 d1d8e506…、16 KB 对齐）通过，aapt 读出 0.6.29 / 77。启动预载与宿舍卡顿只在编辑器里确认能运行，卡顿是否消失需真机确认；AI 等待时长按编辑器动画时长估算，未在真机计时。未运行 Python 测试（本轮未改角色输入）。出包后已清理 Gradle 缓存 1.7 GB。
-- 2026-11-08 17:20（0.6.28）：北牌位置检查 16:9 与 20:9 各 80 组比较，最大位移 0；穿模检查各 380 种牌桌 0 处重叠；r38 录制通过，抽帧确认北牌在亮牌前后位置不变、与和的牌有间隙。APK 签名（v1+v2、证书 d1d8e506…、16 KB 对齐）通过，aapt 读出 0.6.28 / 76。本轮只改 `TableRenderer.cs` 与录制脚本，未重跑 Node/Python 测试；未做真机测试。
-- C 盘清理：Gradle `transforms` 每次 APK 构建新增 0.7–4.9 GB 一次性缓存（已累计 15 GB）。已删除旧构建留下的大目录共 13.3 GB，C 盘可用由 34.5 GB 增至 47.1 GB；`modules-2` 依赖缓存保留。之后每轮出包后照此清理。%TEMP% 里的大目录来自 Visual Studio 安装器和后台下载，不是本项目产生的，未动。
-- 2026-11-08 16:45（0.6.27）：`node --test tests/*.test.cjs` 194/194 通过（Node 24，未加 `--test-isolation=none`），含新增的役名中文化与随机雀士进房即抽两项；`test_character_inputs.py` 8/8 通过（codex 运行时自带 Python）。穿模检查 1600×900 与 1800×810 各 380 种牌桌、约 50 万对牌，0 处重叠（修改前 285 种中有 6 类 132 处，全部为北牌）。r37 录制通过，抽帧确认：入场动画显示特效演示1/2/3；「资源准备」与「开始」同尺寸同一行（221×79，y 相同）；别家荣和只亮 13 张；两种拔北情况不再重叠；左右家放立直棒时，修改前前臂末端在画面内，修改后延伸出屏幕。APK 构建、签名（v1+v2、证书 d1d8e506…、16 KB 对齐）通过，aapt 读出 0.6.27 / 75。未做真机测试；第 8 项与第 2 项只有自动测试，没有录进视频。
-- 2026-11-08 10:30（0.6.26）：ReviewR33 tsumo 模式录制通过（965 帧）。抽帧确认：手从右下入场，抬向镜头，划弧落到落点；接触时指尖在牌后方，手不再平贴桌面穿过立着的牌；牌立约 0.1s 后倒成正面朝上。和牌特效预览牌桌、别家自摸照常。APK 构建成功；签名脚本报告 v1+v2、证书 d1d8e506…、16 KB 对齐通过；aapt 读出 0.6.26 / 74。未运行 Node 和 Python 测试（未改 engine.js），也未做真机测试。
-- 2026-11-08（0.6.25，编辑器 Play 模式 ReviewR33，均通过）：装扮页左右留白相等（1600×900 时各 59）；切到预设 2 时该栏位为空；在预设 2 选装扮不影响当前穿着，「使用」后换上、切回预设 1 后换回；三种特效预览牌桌均能打开，和牌特效实际生成，鸣牌指示挂到目标牌上，退出后会话不激活且 State 为空。动作录像抽帧确认：本家听牌先立后推倒、别家自摸拍牌时手牌立着、特效爆开时亮牌；九种九牌先立后推倒。
-- APK 0.6.25：Unity 构建成功；签名脚本报告 v1+v2、独立 v1 校验、证书 d1d8e506…、16 KB 对齐通过；aapt 读出 versionName 0.6.25、versionCode 73。
-- 2026-11-07 自动检查（编辑器 Play 模式，ReviewR33）：在正在使用的预设里改装扮会立即生效；编辑未使用的预设不影响当前穿着；「使用」能在预设 1 和预设 2 之间切换桌布；给一姬选 400103 后切到二阶堂再切回，皮肤保持；离开语音页后 BGM 压低系数恢复到 1。
-- 动作录像（ReviewR33，`YUNJIAN_R33_MODE=motion`）：两段荣和都检查到荣和的牌已接上；抽帧确认流局各家依次倒牌、未听牌的手牌牌面朝持有者立着后扣倒、本家最后扣倒，以及自摸先倒牌后拍牌、牌立着拍下后倒成正面朝上。
-- APK：Unity 构建成功，签名为 v1+v2，16 KB 对齐通过，aapt 读出 versionName 0.6.24、versionCode 72。
-- 未运行：Node 测试与 Python 测试（本轮未改 engine.js；本机无 Python）、Android 真机测试。
+- 按《點擊進入玩家信息.mp4》重新校准分区和阅读顺序。三麻／四麻放回立绘旁，场别回到上方，精选和牌、风格／高光和走势依序纵排，使用项目的深蓝和暖金色。走势沿用 R2 的坐标修复，ID 保留独立区域。
+- 称号移除自绘图标，使用已有提取目录中与工程内字节一致的 title_get_bg.png 和 title_spilit.png 作为共用底板、分隔线。称号名称、佩戴和解锁逻辑仍走本机档案。提取目录没有单个称号的徽章图。
+- [R3 预览 MP4](dist/previews/2026-11-21-player-info-r3/玩家信息页-R3.mp4)（65.4 秒，17 章节）和 [R2／R3 对照](dist/previews/2026-11-21-player-info-r3/玩家信息页-修正前后.jpg)。使用隔离数据在 Unity 编辑器复验 16:9 和 20:9，41 项检查通过，核对成片的 25 个走势数据点和 24 条连接线。当前 0.6.39 APK 仍为 R1。
+- 主工程改动在 unity/Assets/Scripts/LobbyController.PlayerInfo.cs。暂存工程已恢复至录制前状态，新一轮构建前同步该文件。
 
-## 研究（只分析，未改代码）
+## 玩家信息页 R2（Codex，2026-11-21）
 
-- [docs/research-2026-11-07-presets-and-tile-motion.md](docs/research-2026-11-07-presets-and-tile-motion.md)：装扮预设的状态转换，以及自摸、荣和、流局的倒牌与拍牌关键帧，并与本项目实现做了对照。主要结论：原版倒牌约 1–3 帧完成，本项目是 0.58s 慢倒加回弹；流局时原版各家依次倒牌。改动待用户确认。
-- 依据只有用户提供的录像和本项目代码，没有使用从原版解出的 Lua 代码。
+- 复看《點擊進入玩家信息.mp4》的主页、称号簿、改名和三麻／四麻切换关键帧。玩家信息页使用云间日麻自绘称号和高光图标，称号簿与主页共用徽章。段位、模式、精选牌型、风格、高光和走势分别布局，玩家 ID 移到立绘下方。
+- 修正走势线段在缩放面板内的坐标变换，折线端点与数据点对齐。称号图标作为缓存纹理绘制，避免在滚动容器里错位。既有档案格式、称号解锁条件和段位算分沿用。 另核对已有的雀魂 4.0.16 段位与称号提取目录，称号部分有配置、路径索引和共用界面图，独立称号徽章不在这份提取中。
+- [R2 预览 MP4](dist/previews/2026-11-21-player-info-r2/玩家信息页-R2.mp4)（65.4 秒，17 章节）和 [修正前后对照](dist/previews/2026-11-21-player-info-r2/玩家信息页-修正前后.jpg)。使用隔离数据在 Unity 编辑器录制，验过 16:9 和 20:9 的显示与关键操作、41 项检查、走势的 25 个数据点和 24 条连接线。现有 0.6.39 APK 为 R1，R2 尚未出包和真机测试。
+- 主工程变化位于 unity/Assets/Scripts/LobbyController.PlayerInfo.cs。录制后的暂存工程已恢复，下一次出包要把该文件同步到暂存工程。
 
-## 下一步
+## 0.6.39 功能预览视频（Codex，2026-11-21）
 
-1. 用户真机测试 0.6.32：冷启动时 Unity 标志后是否先显示「正在加载」再整体淡入大厅、入场动画只播一次。以及 0.6.31 的：一炮多响同时喊和与单次特效、立直棒预览、电脑保持默认手、资源准备面板。以及 0.6.30 的：资源准备是否明显变快、电脑随机装扮（手）、进出宿舍是否还闪、各和牌特效到结算的衔接、四方向特效预览、倒牌速度。以及 0.6.29 的：咒层界等长特效是否播完再结算、电脑在立直等演出后才行动、宿舍切装扮和冷启动是否还卡顿、「电脑装扮」随机后其他玩家能否下载到。另外仍待测 0.6.27/0.6.28 的：8 项反馈（荣和、役名、预览入场动画、预设提示、立直手臂、资源准备按钮、拔北穿模、宿舍换装与随机雀士），以及 0.6.26 的自摸拍牌；顺带看左右家立直喊话背景在真机上是否正常。
-2. 由用户决定第 2 项是否做「角色包已有语音的触发点」。
-3. 工作区里仍未纳入提交的旧文件（见「交接给 Codex」）如何处理，由用户决定。其中 `docs/CODEX-HANDOFF.md` 被 AGENTS.md 引用，但仍未跟踪。
+- [玩家信息页与段位 MP4](dist/previews/2026-11-21-0.6.39-preview/0.6.39-玩家信息页与段位.mp4)（65.4 秒，17 个章节）。从大厅头像进入，依次演示空档案、四麻和三麻战绩与段位表、走势场次切换、友人场／比赛场、风格说明、佩戴称号和改昵称。00:54.6 起是四麻半庄终局示例，顺位分 +80、素点 +16，回到玩家信息后段位进度由 354 更新为 450 PT。
+- [役满特效修正对照 MP4](dist/previews/2026-11-21-0.6.39-preview/0.6.39-役满特效修正对照.mp4)（30.5 秒，3 个章节）。左侧使用已有 R40 实录，右侧重新录制 0.6.39 的 R41，等速对照国士无双、纯正九莲宝灯和清老头的桌面飞牌与全屏演出，重点展示爆点、水波圈和划光时序。
+- 两支均为暂存 Unity 工程录制的静音画面。玩家战绩与终局使用隔离的演示数据。录制过程的玩家档案和操作检查共 40 项通过，成片全帧解码并检查关键画面。日志、章节、校验报告及录制入口在 build/2026-11-21-0.6.39-preview/。本轮是编辑器预览，Android 真机仍待验证。
+
+## 0.6.39 / 87 本机测试包（Claude，2026-11-15 08:36，最新）
+
+- APK：[yunjian-riichi-unity-0.6.39-local.apk](dist/yunjian-riichi-unity-0.6.39-local.apk)，366,834,626 字节，SHA-256 `2c02a32dff991855e504dbe4728cdb1f46dfb3ecd0d9f06693702e641dccbc23`（`dist/SHA256-unity-0.6.39-local.txt`）。
+- 构建流程：版本常量改为 0.6.39／87 并同步暂存工程；在暂存工程 `BuildAndroid` 构建，日志 `build/player-info-r1/apk/android-0.6.39.log`；然后用 `scripts/sign-unity-apk.ps1` 签名。
+- 构建前用全量对比确认暂存工程与主工程一致。差异只有：换行符、两个编辑器专用文件夹 `.meta` 的 GUID、一份第三方说明文档，以及有意保留的 `CharacterPackService.cs` 覆盖（SHA-256 不变）。
+- 核验（均通过）：
+  - [基础核验](dist/unity-0.6.39-local-verification.json)：v1/v2、独立 v1、原证书 `d1d8e506…dc2f`、16 KB 对齐；aapt2 读出的清单版本为 0.6.39／87；宿主输入（含新 engine.js）与目录逐字节一致；音频与手型资源齐全。
+  - [功能核验](dist/unity-0.6.39-feature-verification.json)：新脚本 `scripts/verify-feedback-apk-r41.py`，版本从 APK 清单读取。检查 7,728 个役满资源与当前 motion，6 个场景的划光颜色曲线，L0 framing，39 个 Profile 资源，段位／信息页等编译代码；确认编辑器测试代码未入包。旧的 `verify-feedback-apk-r39.py` 版本写死为 0.6.38，保留作历史，不要再用于新包。
+- 预览：[玩家信息与段位预览](dist/previews/2026-11-15-player-info/index.html)。内容是参考录像帧与 Unity 实际渲染的对照（主页／三麻／无记录／称号簿／改昵称／两张段位表），外加终局页、大厅名牌、宽屏和 R41 役满修正图；由 `scripts/package-player-info-preview.py` 生成，附 `manifest.json`。
+- 构建后清理 C 盘：删除两个旧构建留下的 Gradle transforms，释放 1.24 GB，保留最新一次的 transforms 和 `modules-2`。
+- **Android 真机未测**。重点测：
+  - 打一局段位场后，终局页显示段位变化，玩家信息页有记录；
+  - 两台手机同房间时，对方的段位和称号显示正确；
+  - 信息页触摸、称号簿滑动、改昵称输入法；
+  - R41 的爆点、水波圈和划光时序；
+  - 以往的待测项。
+- 15 项役满对照视频仍是 R40 版本，没有重录。
+
+## 玩家信息页与段位算分 R1（Claude，2026-11-14 22:44）
+
+按用户参考视频（`E:\MyWorkSpace_E\video\1114\claude`）完成。详细规则、文件表与验证见 [玩家信息与段位](docs/玩家信息与段位-2026-11-14.md)。
+
+- **规则**：
+  - 段位表按视频录入；段位分 = 顺位分 + 素点；跌破 0 降一级，初心不降。
+  - 顺位分为自定默认值（四麻半庄 +80/+40/0、东风 +40/+20/0，三麻半庄 +100/0、东风 +50/0，末位按表减分），在 `unity/Assets/Resources/Majsoul/Profile/rank-rules.json` 调整。
+  - 只有段位场改变段位，四麻、三麻分开计算。
+- **引擎**：终局给出 `standings`／`rules`，带每座位的整局统计；同分按离起家近者排前，供托归第一。玩家的段位和称号经 `profile` 同步给他人。两份 `engine.js` 一致。
+- **客户端**：
+  - 本机档案在 PlayerPrefs `riichi.player.v1`。
+  - 终局时记录一次；终局页显示素点、本家 PT 变化和段位条。
+  - 大厅头像打开新的玩家信息页，带称号簿、改昵称、段位说明表等弹窗。
+  - 大厅名牌、房间卡、开场和 HUD 改为真实段位与称号。
+  - 段位徽章复制自既有 APK 提取 `build/apk-rank-title-study/delivery`。
+- **测试修复**：`tests/ai.test.cjs` 有一例没有恢复共享的 `RiichiAI.choose`，这就是 `--test-isolation=none` 下 `session-flow` 两项旧失败的原因，已修复。
+- **验证**：
+  - Node 两种模式均 209/209；Python 8/8。
+  - `scripts/test-player-record.ps1`：25 项通过，13 张截图在 `build/player-info-r1/review2/`，已人工查看。
+  - Android 真机未运行。
+- **待用户确认**：顺位分默认值、8 个自定称号、改昵称是否加冷却。中途退出目前不记录这局，也没有惩罚。
+- 已打入 0.6.39／87（见上节）。
+
+## R41：飞牌爆点位置与划光时序（Claude，2026-11-14 21:56）
+
+用户对照成片反馈：① 桌面飞牌特效位置不对（国士无双，爆点落在和牌张远侧）；② 牌列未出现时高光已出现（纯正九莲宝灯）。
+
+1. **爆点位置**：`effect_baodian` 预制体根节点保留原编辑场景偏移 `(0.0243,-0.0015,0.1911)` 源单位（约 2.1 世界单位，朝牌桌远侧）；拖尾无此偏移所以原本正常。`unity/Assets/Scripts/YakumanCinematic.cs` 初始化爆点时改用 `normalizeSurfaceOrigin:true` 将根节点归位到和牌张。原 Lua `ShowYiManEffect` 源码本机未找到，此结论来自预制体数据与录像比对。
+2. **划光时序**：`huaguang` 的原始片段除位移外还有 `material._Color` 动画（rgb 平时为 0，仅两次扫过各约 0.4 秒升到 1，alpha 恒为 1）。导入用的着色器只有 `_TintColor`，编辑器采样时该通道被丢弃，划光常亮。受影响 6 个场景：`fan_chunzhengjiulianbaodeng`、`fan_jiulianbaodeng`、`fan_qinglaotou`、`fan_qinglaotou18`、`fan_ziyise`、`fan_ziyise18`；其余 15 个含 `huaguang` 的场景用旧着色器，导入正常。新增 `scripts/repair-yakuman-highlight-r41.py`，从保留的原始片段解码并补一条 `_TintColor` 曲线（幂等）；每份 motion 仅新增 1 条曲线，其余逐项不变。修改前副本在 `build/yakuman-alignment-r41/before/`。`scripts/import-yakuman-r39.py` 与 `NativeEffectR11Import.cs` 未改，**重新导入后需再跑一次该修复脚本**。
+3. **桌面水波圈（22:05 追加）**：`effect_baodian` 里的 `quan01`（0–1.2 秒每 0.2 秒一圈）、`quan`（1.2 秒一圈）和 `guang`（光晕）都是水平公告板，粒子本来就在发射，但挂点用的是牌桌牌的枢轴（贴着桌布，y≈0），整片被桌布深度遮住。APK 牌模型以中心为枢轴，现在 `YakumanCinematic.TileCenter` 按和牌张网格包围盒中心挂爆点（国士无双实测 y 0→0.12）。实录中 0.33–1.8 秒可见扩散圈和光晕，与原片时段一致。颜色按源数据（暖橙→黄绿）；原片在蓝色桌布上偏青，本机桌布不同，未改颜色。拖尾仍挂在原枢轴，未动。`tests/YakumanFilmCapture.cs` 另加爆点粒子状态日志（`*-burst.txt`）。
+4. 为不覆盖 R40 证据，`scripts/capture-yakuman-video-r40.ps1` 新增 `-Output`，`tests/YakumanFilmCapture.cs` 读取 `YUNJIAN_FILM_OUTPUT`；不传时行为不变。
+
+验证（本轮实际执行）：
+
+| 验证 | 结果 | 证据 |
+| --- | --- | --- |
+| Unity 编辑器实录 3 项（国士无双、清老头、纯正九莲宝灯） | 已查看关键帧：爆点闪光与星点在和牌张处；牌列出现前无划光，扫光两次落在牌面上 | `build/yakuman-alignment-r41/capture/`，及同目录三张 JPG |
+| 水波圈修正后实录 2 项（国士无双、纯正九莲宝灯） | 已查看国士无双前导关键帧，扩散圈与光晕可见；无编译错误 | `build/yakuman-alignment-r41/ripple/`、`国士无双-桌面水波圈.jpg` |
+| Node 默认隔离 | 202/202 通过（水波圈修改前运行；之后只改 C#，未重跑） | `build/yakuman-alignment-r41/node-default.log` |
+| Node `--test-isolation=none` | 当时 200 通过、2 失败（`session-flow` 旧问题；22:44 已查明并修复，见上节） | `build/yakuman-alignment-r41/node-no-isolation.log` |
+| Python 角色输入 | 8/8 通过 | 本轮命令输出 |
+| 未运行 | `scripts/test-yakuman-r39.ps1` 23 场景检查；九莲宝灯、字一色及两份 18 张变体的实录；15 项对照成片重新合成；Android 真机 | 只做了数据审计和 3 项实录 |
+
+- 交付目录的对照 MP4、`index.html`、`verification.json` **仍是 R40 版本**，不含本轮修正；需要新成片时重录全部 15 项后再对齐、合成。
+- 录制脚本在 Windows PowerShell 5.1 下 `ConvertFrom-Json` 解析 `packs-windows.json` 失败，需用 Codex 运行时的 `pwsh.exe`（`%USERPROFILE%\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\`），并把 Codex 的 `rg.exe` 目录加入 PATH。
+- 主／暂存工程的 `YakumanCinematic.cs` 与全部 motion 逐字节一致；暂存 Saber 覆盖摘要不变。
+- 下一步：等用户看效果；确认后可重录 15 项并合成新对照，或按下文流程出 0.6.39／87。
+
+## R40 任务与已完成结果（Codex）
+
+用户对 0.6.38 截图反馈部分牌面偏暗、牌列码放／位置与原片不同，要求逐项核对并交付原版对照视频，明确必须包含牌飞上去的过程。参考为 `../video/1114/codex/役滿特效.mp4` 和本地雀魂 4.0.16 APK。
+
+1. 修正演出原生坐标与牌桌转换坐标的光方向差异，仅在演出牌材质上设置局部光方向，保留源明暗层次；并按当前牌桌的牌面／牌背装扮绑定。
+2. 牌列只将网格牌计为手牌槽，保留同层爆点粒子的源动画开关。四暗刻原控制器含一个未启用的四杠子状态，旧匯入同时播放两段导致姿态覆盖；现按默认状态修正四暗刻和两份 18 张变体，23 场景共 180 条生效轨道，原始片段输入保留。
+3. 桌面前导按 `DesktopMgr.ShowYiManEffect`：0.15 秒延迟 → 抖动／翻起 → 向上加速及拖尾 → 2.15 秒进入全屏 → 完整播放 8 秒。克隆牌飞起时隐藏接触阴影，退出后恢复原牌可见状态。
+4. 补 15 组明确的 L0 立绘布局；其余 471 个皮肤使用正确的一姬基准和既有裁切，修正飞牌开场立绘落到屏幕外。其余场景 JSON 数据逐项不变，保持原 LF 换行。
+5. 已交付 15 种役满的并排视频，均包含桌面飞起、天空飞牌、结算手牌展开及收尾；已查看成片关键帧和全部牌列。右侧使用一姬，手牌按原片重建后经 `WinDetail` 动态绑定，开发清单不会替换实战手牌。
+
+本轮技术细节、完整文件清单和可复制复验步骤见 [役满牌面与飞牌对照](docs/役满牌面与飞牌对照-2026-11-14.md)。
+
+## 交付物与对应版本
+
+| 内容 | 当前入口／文件 | 状态 |
+| --- | --- | --- |
+| 15 项役满对照及段落跳转 | [index.html](dist/previews/2026-11-14-yakuman-comparison/index.html) | 本轮修正后的实际 Unity 编辑器录制 |
+| 完整对照视频 | [含完整飞牌 MP4](dist/previews/2026-11-14-yakuman-comparison/役满原版与修正对照-含完整飞牌.mp4) | 1920×640、30 fps、4,575 帧、152.5 秒、85,314,710 字节 |
+| 视频核验与段落信息 | [verification.json](dist/previews/2026-11-14-yakuman-comparison/verification.json) | 全片解码及关键帧检查；SHA-256 `cc97c57a697733aab5bc54c32f0fce5b3f7c31624a70743aae79bfcd87032431` |
+| 上一版测试包 | [0.6.38 本机 APK](dist/yunjian-riichi-unity-0.6.38-local.apk) | 364,877,168 字节；不含 R40 起的修正，最新包见顶部 0.6.39 |
+| APK 报告 | [基础核验](dist/unity-0.6.38-local-verification.json)、[画面资源核验](dist/unity-0.6.38-visual-verification.json) | 0.6.38 原有签名和包内容核验 |
+| 全手型图集 | [260 张浏览入口](dist/previews/2026-11-14-all-hands/index.html)、[ZIP](dist/previews/2026-11-14-all-hands.zip) | 21 套专属手型及普通／旧手型的实际渲染 |
+| 立直／开局立绘对照 | [预览入口](dist/previews/2026-11-14-effects-and-portraits/index.html) | 0.6.38 的虚影祝祷和立绘清晰度修正 |
+
+APK SHA-256：`1eb4fda5e279afc8e0e1e102729a4d27d08e23c040f4c68e4a185f97fe391871`。视频和 APK 摘要在本次文档交接中重新读取文件核对。
+
+对照视频为**静音画面对照**，不能证明音效通过。两侧均为 16:9、同速，只调整起点；原片片段超出区间处标明定格。原片角色、牌桌、压缩及粒子随机不同，未宣称逐像素一致；Android 真机仍未验证。
+
+## 验证结果与已知问题
+
+以下是上轮实际执行的结果，本次仅重新核对其磁盘报告，未重新运行测试。
+
+| 验证 | 结果 | 证据 |
+| --- | --- | --- |
+| Unity 役满编辑器检查 | 23 场景，1,433 项通过；包含向上飞牌、2.15 秒切换和结算恢复 | `build/yakuman-alignment-r40/final-review/report.json` |
+| Node 默认隔离模式 | 202/202 通过 | `build/yakuman-alignment-r40/node-default.log` |
+| Node `--test-isolation=none` | 当时 200 通过、2 失败（`session-flow`；原因已在 22:44 查明为 `ai.test.cjs` 未恢复共享 AI，已修复） | `build/yakuman-alignment-r40/node-no-isolation.log` |
+| Python 角色输入 | 8/8 通过 | 上轮 `python -m unittest discover -s tests -p test_character_inputs.py` 的实际输出 |
+| 对照视频 | 全部 4,575 帧解码、尺寸／时间戳及关键帧通过 | 交付目录的 `verification.json` 和 `成片飞牌与四暗刻核验.jpg` |
+| Android 真机 | 未运行 | 编辑器录像和包验证不能代替真机验证 |
+
+- R39 旧 `build/feedback-1114-r39/yakuman-review/report.json` 在调试时被旧脚本清理逻辑移除，现以 R40 最终报告复验。旧截图、0.6.38 APK 及 APK 报告保留；测试脚本已改为只清理实际指定输出目录。不要再引用不存在的旧报告。
+- 其余角色手部材质尚未逐套完成亚丝娜级别的 MatCap／PBR 适配；赤麟不在当前角色目录，旧猫爪资源不在可装备列表，图集已有说明。
+- 本项目仍为立直麻将；角色每套 133 条语音中 110 条已接入已有事件，其余 23 条缺少对应玩法／养成事件，保留试听，没有新增四川麻将玩法。
+- 旧轮次的冷启动、资源准备、多响、拔北、流局、左右家喊话背景等真机待测项继续保留，详见下方历史归档，不代表已取消或已验证。
+
+## Claude 接手顺序
+
+1. 先读取 `AGENTS.md`、`CLAUDE.md`、本页和本轮详细说明，运行共享规则中的 Git 只读检查；从当前共享根目录继续，不切到 `.publish`。当前任务已完成编辑器和视频交付，先结合用户对成片的新反馈决定开发范围。
+2. 优先打开视频目录逐项查看，特别是国士无双／小四喜的牌面、四暗刻斜向牌列、桌面飞起到天空的连续过程。需要改动时先检查 `unity/Assets/Scripts/YakumanCinematic.cs` 和三份修正 motion；完整路径见详细说明。
+3. 代码或资源变化后使用详细说明中的复验命令，输出到新的 review 子目录，保留现有最终报告与视频；区分自动测试、编辑器预览和真机测试。
+4. 若用户要求新 APK，先把 `ProjectSetup.cs` 改为 0.6.40／88，同步暂存工程后构建、签名，再用 `scripts/verify-character-audio-apk.py` 与 `scripts/verify-feedback-apk-r41.py` 核验（命令见顶部 0.6.39 一节）。
+5. 完成后更新本页和详细说明。提交、推送、切分支、发布资源、修改公开 URL／摘要、Release 均按 `AGENTS.md` 的授权规则执行；本轮没有这些操作。
+
+## 暂存工程与下次构建
+
+- 编辑器：`D:\Unity\Lib\6000.6.4f1\Editor\Unity.exe`；缓存工程：`build/phone-test-r24/stage/unity`。本次核对 `YakumanCinematic.cs`、`Characters/framing.json` 和三份修正 motion 在主／暂存工程中逐字节一致。
+- **保留暂存工程 `CharacterPackService.cs` 的 LocalSaberPart 临时覆盖，不能整文件覆盖。** 当前 SHA-256 为 `3fb23e2ad7253463cfb8eb408c46a2b3882494aee250d184d1435ab77641f6d3`，本次再次核对不变。新素材、运行代码、资源和 `.meta` 要按修改清单同步，不执行覆盖整个工程的同步。
+- 当前 `unity/Assets/Editor/ProjectSetup.cs` 和暂存工程均为 0.6.39／87；主 `ProjectSettings.asset` 仍记旧 0.6.22／70。以 `ProjectSetup` 常量和实际 APK 为准，不能只看旧 YAML；`ProjectSetup.BuildAndroid()` 会先调用 `Configure()` 设置包名、显示名和版本。
+- 构建入口：`YunJian.Riichi.Editor.ProjectSetup.BuildAndroid`；签名入口：`scripts/sign-unity-apk.ps1`。核验用 `scripts/verify-character-audio-apk.py <apk> <报告>`（签名、对齐、清单版本、宿主输入、音频、手型），以及 `scripts/verify-feedback-apk-r41.py <apk> <报告>`（版本从清单读取，检查役满、Profile、段位代码，并确认编辑器测试代码未入包）。旧的 `verify-feedback-apk-r39.py` 版本写死为 0.6.38，不再使用。新功能如需核验，应在 r41 脚本上追加检查。
+- Python 可使用 Codex 运行时自带解释器（详细说明有命令），旧历史中「没有系统 Python」不代表当前无法运行脚本。Unity／Node 受限环境若出现 IPC 或 `spawn EPERM`，应区分环境失败与代码失败。
+- 出包后沿用既有缓存清理约定：只处理核验过的旧 Gradle transforms，保留 `modules-2`；不要直接运行含 D 盘旧固定删除路径的 `clear-project-generated-cache.ps1`。0.6.39 出包后已按此清理（释放 1.24 GB）。
+
+## 前几批成果与历史入口
+
+| 批次 | 已实现内容 | 详细说明 |
+| --- | --- | --- |
+| 0.6.33／81 | 补 50 份特效音频；角色已有语音触发 | [音效核对](docs/特效音效核对-2026-11-11.md)、[语音触发](docs/角色语音触发适配-2026-11-13.md) |
+| 0.6.34／82 | 修正神火坠霄等真实装扮预览无声和循环生命周期 | [预览音效修正](docs/预览音效修正-2026-11-14.md) |
+| 0.6.35／83 | 大厅／宿舍语音字幕及清理生命周期 | [字幕说明](docs/角色语音字幕-2026-11-14.md) |
+| 0.6.36／84、0.6.37／85 | 角色专属默认手型、亚丝娜材质补全 | [手型与材质](docs/角色专属默认手型-2026-11-14.md) |
+| 0.6.38／86 | 虚影祝祷黑牌、开局立绘清晰度、原生役满演出和全手型图集 | [1114 反馈修复](docs/1114反馈修复与役满演出-2026-11-14.md) |
+| 0.6.39／87 | R40 役满牌面光照与飞牌、R41 爆点／水波圈／划光，以及玩家信息页与段位 | [役满对照](docs/役满牌面与飞牌对照-2026-11-14.md)、[玩家信息与段位](docs/玩家信息与段位-2026-11-14.md) |
+
+整理前的完整进度页逐字节保存在 [历史归档](docs/DEVELOPMENT-history-2026-11-14.md)，包含旧版 APK、旧轮次待测清单和完整协作记录。归档中的「最新」「下一版」均是当时状态，以本页当前版本为准。[旧协同手册](docs/CODEX-HANDOFF.md) 保留 2026-11-06 基线，不能替代当前交接。

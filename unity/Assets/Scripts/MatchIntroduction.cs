@@ -11,7 +11,7 @@ namespace YunJian.Riichi
         public const float Duration=3.5f;
         readonly HashSet<string> seen=new HashSet<string>();readonly NativeUiEffect effect=new NativeUiEffect();
         readonly Dictionary<string,Texture2D> art=new Dictionary<string,Texture2D>();
-        readonly Dictionary<string,Texture2D> characterCards=new Dictionary<string,Texture2D>();
+        readonly Dictionary<string,RenderTexture> characterCards=new Dictionary<string,RenderTexture>();
         string observedRoom;int observedMatch;bool observedLobby;
         RoomView view;Config config;GUIStyle nameStyle,titleStyle;string key;float began;bool running,sound;
         public int Started {get;private set;}
@@ -35,7 +35,7 @@ namespace YunJian.Riichi
             if(!validation){PlayerPrefs.SetInt(pref,1);PlayerPrefs.Save();}
             began=Time.unscaledTime;running=true;sound=false;Started++;
         }
-        public void Tick(GameAudio audio){if(!Active){if(running){running=false;effect.Dispose();}return;}if(!sound && Age>=1.2f && audio!=null)sound=audio.Cue("winlose");}
+        public void Tick(GameAudio audio){if(!Active){if(running){running=false;effect.Dispose();ReleaseCards();}return;}if(!sound && Age>=1.2f && audio!=null)sound=audio.Cue("winlose");}
         public void Reenter(RoomView next)
         {
             if(next==null||next.players==null||next.phase=="lobby")return;
@@ -43,34 +43,47 @@ namespace YunJian.Riichi
             Reset();view=next;key=next.audioRoom+":"+next.matchSeq;observedRoom=next.audioRoom;observedMatch=next.matchSeq;
             began=Time.unscaledTime;running=true;sound=false;Started++;
         }
-        public void Reset(){running=false;key=null;observedRoom=null;observedMatch=0;observedLobby=false;Freeze=false;effect.Dispose();}
+        void ReleaseCards(){foreach(var t in characterCards.Values){t.Release();UnityEngine.Object.Destroy(t);}characterCards.Clear();}
+        public void Reset(){running=false;key=null;observedRoom=null;observedMatch=0;observedLobby=false;Freeze=false;effect.Dispose();ReleaseCards();}
         Texture2D Art(string name){if(!art.TryGetValue(name,out var t))art[name]=t=Resources.Load<Texture2D>("Majsoul/MatchIntro/"+name)??Resources.Load<Texture2D>("Majsoul/Presentation0535/"+name)??Resources.Load<Texture2D>("Majsoul/Review1012c/"+name)??Resources.Load<Texture2D>("Majsoul/TableLook/Sprites/"+name);return t;}
         void BadgeImage(string name,Vector2 center,Vector2 offset,Vector2 size,float unit,float px=.5f,float py=.5f){
             var t=Art(name);var at=center+new Vector2(offset.x,-offset.y)*unit;
             if(t!=null)GUI.DrawTexture(new Rect(at.x-size.x*unit*px,at.y-size.y*unit*(1-py),size.x*unit,size.y*unit),t);
         }
-        void NamePanel(Rect r,string name){
+        void NamePanel(Rect r,PlayerView player,int players){
             GUI.DrawTexture(r,Art("namebg"));const float u=2f/3;
             // UI_FightBegin/container_name: native label 45 px; rank scale .55.
             var rank=r.center+new Vector2(-283,-9)*u;
             BadgeImage("rank_bg",rank,new Vector2(-127.5f,126.5f),new Vector2(245,228),.55f*u,0,1);
-            BadgeImage("sima_queshi",rank,new Vector2(3.9f,10.6f),new Vector2(160,160),.55f*u);
-            foreach(var p in new[]{new Vector2(-36.5f,-75.5f),new Vector2(-71.5f,-54.5f),new Vector2(-102.5f,-7.5f)})BadgeImage("starbg",rank,p,new Vector2(67,64),.55f*u);
-            BadgeImage("star",rank,new Vector2(-36.5f,-75.5f),new Vector2(67,64),.55f*u);
+            // Published rank of a human seat; AI seats keep the empty rank disc.
+            if(RankRules.Known(player)){
+                int level=RankRules.Level(player,players);var badge=RankRules.Badge(level,players);var at=rank+new Vector2(3.9f,-10.6f)*.55f*u;float size=160*.55f*u;
+                if(badge!=null)GUI.DrawTexture(new Rect(at.x-size/2,at.y-size/2,size,size),badge,ScaleMode.ScaleToFit);
+                if(!RankRules.Soul(level)){var slots=new[]{new Vector2(-36.5f,-75.5f),new Vector2(-71.5f,-54.5f),new Vector2(-102.5f,-7.5f)};for(int i=0;i<3;i++)BadgeImage(i<RankRules.Stars(level)?"star":"starbg",rank,slots[i],new Vector2(67,64),.55f*u);}
+            }
             // Keep a small gap between the title and the player name.
-            BadgeImage("notitle",r.center,new Vector2(-236,64),new Vector2(263,50),u,0,.5f);
-            GUI.Label(new Rect(r.center.x-209.9f*u,r.center.y-26*u,r.width*.65f,45*u),name,nameStyle);
+            string titleName=RankRules.TitleOf(player);
+            if(string.IsNullOrEmpty(titleName))BadgeImage("notitle",r.center,new Vector2(-236,64),new Vector2(263,50),u,0,.5f);
+            else{var at=r.center+new Vector2(-236,-64)*u;PlayerTitles.DrawPill(new Rect(at.x+12*u,at.y-20*u,239*u,40*u),titleName,nameStyle);}
+            GUI.Label(new Rect(r.center.x-209.9f*u,r.center.y-26*u,r.width*.65f,45*u),player.name,nameStyle);
         }
         static Rect RectAt(float[] d,Vector2 offset)=>new Rect(offset.x+d[0]*2/3,offset.y+d[1]*2/3,d[2]*2/3,d[3]*2/3);
-        Texture2D CharacterCard(Cell cell,PlayerView player){
-            string key=cell.seat+":"+CharacterRoster.Skin(player.character,player.skin).id;if(characterCards.TryGetValue(key,out var ready))return ready;
-            if(characterCards.Count>=12){foreach(var t in characterCards.Values)UnityEngine.Object.Destroy(t);characterCards.Clear();}
-            var bg=Art(cell.images[0].name);var portrait=CharacterFraming.SceneTexture(CharacterRoster.Skin(player.character,player.skin).id,"I0",cell.seat);var b=cell.images[0].rect;var body=cell.body;
+        Texture CharacterCard(Cell cell,PlayerView player,float pixelScale){
+            var b=cell.images[0].rect;
+            // The 605–801px background is art, not the output resolution. Compose
+            // the portrait at its actual screen size, so high-density phones do
+            // not magnify a second low-resolution raster of the whole card.
+            float density=pixelScale*2f/3;int max=Mathf.Min(SystemInfo.maxTextureSize,4096);
+            float reduction=Mathf.Min(1,max/(Mathf.Max(b[2],b[3])*density));
+            int width=Mathf.Max(1,Mathf.CeilToInt(b[2]*density*reduction)),height=Mathf.Max(1,Mathf.CeilToInt(b[3]*density*reduction));
+            string key=cell.seat+":"+CharacterRoster.Skin(player.character,player.skin).id+":"+width+"x"+height+":"+CharacterPackService.Revision;if(characterCards.TryGetValue(key,out var ready))return ready;
+            if(characterCards.Count>=8)ReleaseCards();
+            var bg=Art(cell.images[0].name);var portrait=CharacterFraming.SceneTexture(CharacterRoster.Skin(player.character,player.skin).id,"I0",cell.seat);var body=cell.body;
             var placed=CharacterFraming.Intro(CharacterRoster.Skin(player.character,player.skin).id,cell.seat,new Rect(body[0],body[1],body[2],body[3]),new Vector2(cell.anchor[0],cell.anchor[1]),cell.flip,out var flip);
             var rect=new Vector4((placed.x-b[0])/b[2],1-(placed.y-b[1]+placed.height)/b[3],placed.width/b[2],placed.height/b[3]);
             var material=new Material(Shader.Find("YunJian/CharacterIntro"));material.SetTexture("_Background",bg);material.SetTexture("_Portrait",portrait);material.SetVector("_PortraitRect",rect);material.SetFloat("_Flip",flip?1:0);
-            var target=RenderTexture.GetTemporary(bg.width,bg.height,0,RenderTextureFormat.ARGB32);var previous=RenderTexture.active;Graphics.Blit(Texture2D.whiteTexture,target,material);RenderTexture.active=target;
-            ready=new Texture2D(bg.width,bg.height,TextureFormat.RGBA32,false){name="Native match character "+key};ready.ReadPixels(new Rect(0,0,bg.width,bg.height),0,0);ready.Apply(false,true);RenderTexture.active=previous;RenderTexture.ReleaseTemporary(target);UnityEngine.Object.Destroy(material);characterCards[key]=ready;return ready;
+            ready=new RenderTexture(width,height,0,RenderTextureFormat.ARGB32){name="Native match character "+key,filterMode=FilterMode.Bilinear,wrapMode=TextureWrapMode.Clamp};ready.Create();var previous=RenderTexture.active;
+            try{Graphics.Blit(Texture2D.whiteTexture,ready,material);}finally{RenderTexture.active=previous;UnityEngine.Object.Destroy(material);}characterCards[key]=ready;return ready;
         }
         public void Draw()
         {
@@ -80,8 +93,8 @@ namespace YunJian.Riichi
             if(nameStyle==null){var font=Resources.Load<Font>("Majsoul/Font/game");nameStyle=new GUIStyle(GUI.skin.label){font=font,fontSize=30,alignment=TextAnchor.MiddleLeft,padding=new RectOffset(),clipping=TextClipping.Overflow};nameStyle.normal.textColor=Color.white;}
             foreach(var c in config.cells){int seat=view.n==4?(view.you+c.seat)%4:c.seat==0?view.you:c.seat==1?(view.you+1)%3:c.seat==3?(view.you+2)%3:-1;if(seat<0)continue;
                 float enter=Mathf.Pow(Mathf.Clamp01((Age-.5f)/.4f),5),exit=Mathf.Pow(Mathf.Clamp01((Age-3)/.4f),5);var from=new Vector2(c.start[0],c.start[1]);var to=new Vector2(c.end[0],c.end[1]);var offset=Vector2.LerpUnclamped(Vector2.LerpUnclamped(from,to,enter),from,exit)*2/3;
-                var bg=c.images[0];GUI.DrawTexture(RectAt(bg.rect,offset),CharacterCard(c,view.players[seat]),ScaleMode.StretchToFill,true);
-                var r=RectAt(c.name,offset);NamePanel(r,view.players[seat].name);
+                var bg=c.images[0];GUI.DrawTexture(RectAt(bg.rect,offset),CharacterCard(c,view.players[seat],viewport.Scale),ScaleMode.StretchToFill,true);
+                var r=RectAt(c.name,offset);NamePanel(r,view.players[seat],view.n);
                 if(c.seat==0 && c.images.Length>1)GUI.DrawTexture(RectAt(c.images[1].rect,offset),Art("myself"),ScaleMode.ScaleToFit,true);
             }
             if(Age>=1.2f && Age<3){

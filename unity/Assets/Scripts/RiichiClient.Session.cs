@@ -64,8 +64,11 @@ namespace YunJian.Riichi
             bool changed=handChanged||State==null||State.version!=view.version||State.phase!=view.phase;
             State=view;ObserveHandDrag();SettlementAudio.BindCharacters(view);ObserveWaitState();yakuman.Observe(State);
             introduction.Observe(State,validationSession);voice.Observe(State);gameAudio.SetScene(State);allLast.Observe(State);
+            GetComponent<CharacterVoicePlayback>()?.Observe(State,returning);
             if(State.phase=="empty"||State.phase=="join"){active=false;page="home";table.Clear();return;}
             active=true;if(returning)page="home";
+            // The host restarts the match once every seat confirms the final page, so record now.
+            if(State.phase=="result"&&State.result?.matchOver==true&&State.result.standings?.Length>0){string recorded=PlayerRecord.LastMatchKey;PlayerRecord.Record(State);if(PlayerRecord.LastMatchKey!=recorded)PublishRankProfile();}
             if(!State.options.Any(x=>x.kind=="riichi"))RiichiMode=false;
             RebindSelection();if(changed)table.Render(State);effects.Accept(State);
             if(choosingKind!=null&&!State.options.Any(x=>x.kind==choosingKind))choosingKind=null;

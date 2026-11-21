@@ -22,7 +22,7 @@ function wardrobeSelection(value){const out={};if(value==null)return out;check(t
 function characterSelection(req){
  const active=req.character?characterChoice(req):{character:'yiji',skin:400101},pool=req.characterPool||[];
  check(Array.isArray(pool)&&pool.length<=1024,'随机雀士列表无效');const choices=pool.map(characterChoice),unique=[...new Map(choices.map(c=>[c.character+':'+c.skin,c])).values()];
- check(req.randomCharacters!==true||unique.length>0,'请先选择随机雀士');return {...active,characterPool:unique,randomCharacters:req.randomCharacters===true,wardrobe:wardrobeSelection(req.wardrobe)};
+ check(req.randomCharacters!==true||unique.length>0,'请先选择随机雀士');const profile=rankProfile(req.profile);return {...active,characterPool:unique,randomCharacters:req.randomCharacters===true,wardrobe:wardrobeSelection(req.wardrobe),...(profile?{profile}:{})};
 }
 // A random selection is rolled once when it is applied, so the room already shows
 // the character this player will bring into the match.
@@ -37,6 +37,12 @@ function freezeCharacter(p){
  p.matchCharacter=c.character;p.matchSkin=c.skin;p.matchWardrobe={...(p.wardrobe||{})};
 }
 function publicCharacter(p,phase,prepared=false){const lobby=phase==='lobby'&&!prepared,pick=lobby&&pickedCharacter(p);return {wardrobe:{...(lobby?p.wardrobe:p.matchWardrobe||p.wardrobe||{})},character:lobby?(pick?pick.character:p.character||'yiji'):(p.matchCharacter||p.character||'yiji'),skin:lobby?(pick?pick.skin:p.skin||400101):(p.matchSkin||p.skin||400101)}}
+// Each device keeps its own ranked record; rooms only relay the published level
+// (0-14: 初心1..雀圣3, 15+: 魂天 Lv) and the equipped title for display.
+function rankProfile(v){const level=x=>Number.isInteger(x)&&x>=0&&x<=64?x:0;return v&&typeof v==='object'&&v.set!==false?{set:true,rank4:level(v.rank4),rank3:level(v.rank3),title:String(v.title||'').slice(0,32)}:undefined}
+function emptyStats(){return {hands:0,wins:0,tsumo:0,dealIns:0,riichi:0,calls:0,winTurns:0,winPoints:0,ura:0,best:null,highlights:{yakuman:0,kazoe:0,sanbaiman:0,baiman:0,nagashi:0,doubleRiichi:0}}}
+function bestKey(d){return [d.damanguan||0,d.fanshu||0,d.fu||0,d.defen||0]}
+function better(a,b){const x=bestKey(a),y=bestKey(b);for(let i=0;i<x.length;i++)if(x[i]!==y[i])return x[i]>y[i];return false}
 function player(name,token){return {name,avatar:"",token:token||randomHex(18),recovery:randomHex(6),score:0,hand:'',river:[],riichi:0,ippatsu:false,nuki:0,temp:false,permanent:false,kans:0,ready:false,requests:[]}}
 class Room{
  constructor(host,save,snapshot){this.host=host;this.save=save||(()=>{});this.s=snapshot?JSON.parse(snapshot):null;this.seen={};this._bootAt=Date.now();this._waiting={};this._aiNow=()=>Date.now();this._aiPlan=null;if(this.s?.resourceSetup){this.s.resourceSetup.revision=++this.s.resourceRevision;this.s.resourceSetup.confirmations={};}}
@@ -64,7 +70,7 @@ class Room{
  }
  advanceResult(){
   const s=this.s;
-  if(s.result.matchOver){s.matchSeq=(s.matchSeq||0)+1;s.matchStartedAt=Date.now();s.matchOpeningUntil=s.matchStartedAt+6000;s.round=0;s.dealer=s.initialDealer;s.honba=0;s.sticks=0;s.players.forEach(p=>p.score=s.n===3?35000:25000);}
+  if(s.result.matchOver){s.matchSeq=(s.matchSeq||0)+1;s.matchStartedAt=Date.now();s.matchOpeningUntil=s.matchStartedAt+6000;s.round=0;s.dealer=s.initialDealer;s.honba=0;s.sticks=0;s.players.forEach(p=>p.score=s.n===3?35000:25000);s.matchStats=s.players.map(emptyStats);}
   else {s.honba=s.result.draw||s.result.repeat?s.honba+1:0;if(!s.result.repeat){s.dealer=(s.dealer+1)%s.n;s.round++;}}
   this.newHand();
  }
@@ -182,11 +188,15 @@ class Room{
   const s=this.s,p=s.players[i],waits=this.waits(h);
   const furiten=!!(p.temp||p.permanent||p.river.some(r=>waits.includes(norm(r.tile)))||(discard&&waits.includes(norm(discard))));
   const param=M.Util.hule_param({rule:RULE,menfeng:this.wind(i),zhuangfeng:Math.floor(s.round/s.n),lizhi:p.riichi||(riichi?1:0),haidi:this.remain()===0?2:0});
+  // Voice hints use visible dora only. Ura and every other player's waits stay private.
+  const indicators=(s.indicators||[]).slice(0,1+this.totalKans());
+  param.baopai=indicators.map(t=>s.n===3&&t==='m1'?'m8':t);
+  param.nuki=(p.nuki||0)*(1+indicators.filter(t=>M.Shan.zhenbaopai(t)==='z4').length);
   const details=waits.map(tile=>{
    const ron=M.Util.hule(h,tile+this.dir(i,(i+1)%s.n),param);
    const tsumoParam={...param,hupai:{...param.hupai,haidi:this.remain()===0?1:0}};
    const tsumo=M.Util.hule(h.clone().zimo(tile),null,tsumoParam);
-   return {tile,ron:!!(ron&&ron.hupai),tsumo:!!(tsumo&&tsumo.hupai),yakumanRon:ron&&ron.damanguan||0,yakumanTsumo:tsumo&&tsumo.damanguan||0,remaining:this.unseen(i,tile)};
+   return {tile,ron:!!(ron&&ron.hupai),tsumo:!!(tsumo&&tsumo.hupai),yakumanRon:ron&&ron.damanguan||0,yakumanTsumo:tsumo&&tsumo.damanguan||0,ronHan:ron&&ron.fanshu||0,tsumoHan:tsumo&&tsumo.fanshu||0,remaining:this.unseen(i,tile)};
   });
   return {furiten,waits:details};
  }
@@ -337,7 +347,28 @@ class Room{
   result.matchOver=s.players.some(p=>p.score<0)||(!result.abort&&last&&((!result.repeat&&top>=target)||(result.repeat&&s.players[s.dealer].score>=target&&s.players[s.dealer].score===top)));
   // At most one extra wind, with North as the final wind for a full match.
   if(s.round>=Math.min(s.rounds+1,4)*s.n-1&&!result.repeat)result.matchOver=true;
-  if(result.matchOver&&s.sticks){const leader=s.players.findIndex(p=>p.score===top);s.players[leader].score+=s.sticks*1000;result.delta[leader]+=s.sticks*1000;s.sticks=0;}
+  this.recordHand(result);
+  if(!result.matchOver)return;
+  // Equal scores rank by seat order from the first dealer; leftover deposits go to first place.
+  const order=s.players.map((p,seat)=>seat).sort((a,b)=>s.players[b].score-s.players[a].score||(a-s.initialDealer+s.n)%s.n-(b-s.initialDealer+s.n)%s.n);
+  if(s.sticks){const leader=order[0];s.players[leader].score+=s.sticks*1000;result.delta[leader]+=s.sticks*1000;s.sticks=0;}
+  result.rules={n:s.n,rounds:s.rounds,start:s.n===3?35000:25000,category:s.lobbyCategory||'friend',initialDealer:s.initialDealer};
+  result.standings=s.players.map((p,seat)=>({seat,place:order.indexOf(seat)+1,score:p.score,bot:!!p.bot,stats:s.matchStats?.[seat]||null}));
+ }
+ // Per-seat statistics for the finished match; profiles keep only their own seat.
+ recordHand(result){
+  const s=this.s;if(!s.matchStats||s.matchStats.length!==s.n)s.matchStats=s.players.map(emptyStats);
+  const dealIns=new Set();
+  s.players.forEach((p,i)=>{const x=s.matchStats[i];x.hands++;if(p.riichi)x.riichi++;if(p.riichi===2)x.highlights.doubleRiichi++;if(p.hand&&this.h(i)._fulou.some(m=>/[+=-]/.test(m)))x.calls++;});
+  for(const d of result.details||[]){
+   const x=s.matchStats[d.seat],r=d.score||{};x.wins++;if(!d.ron)x.tsumo++;else dealIns.add(d.from);
+   x.winTurns+=s.players[d.seat].river.length+(d.ron?0:1);x.winPoints+=r.defen||0;if(d.yaku.some(y=>y.name==='里宝牌'&&y.han>0))x.ura++;
+   if(r.damanguan)x.highlights.yakuman++;else if(d.limit==='累计役满')x.highlights.kazoe++;else if(d.limit==='三倍满')x.highlights.sanbaiman++;else if(d.limit==='倍满')x.highlights.baiman++;
+   const hand={tiles:d.tiles.slice(),melds:d.melds.slice(),tile:d.tile,ron:d.ron,limit:d.limit,yaku:d.yaku.map(y=>({...y})),fanshu:typeof r.fanshu==='number'?r.fanshu:0,fu:r.fu||0,damanguan:r.damanguan||0,defen:r.defen||0};
+   if(!x.best||better(hand,x.best))x.best=hand;
+  }
+  for(const i of dealIns)s.matchStats[i].dealIns++;
+  for(const i of result.nagashi||[])s.matchStats[i].highlights.nagashi++;
  }
  act(i,id){
   const s=this.s;check(this.options(i).some(a=>a.id===id),'此操作当前不可用');
@@ -363,11 +394,11 @@ class Room{
   const hints=['play','reaction'].includes(s.phase)?this.hints(i,h,options):{waitDetails:[],discardHints:[],furiten:false};
   return {resourceProtocol:s.resourceProtocol||0,resourceSetup:this.resourceView(),resourcePeers:s.players.filter(p=>!p.bot&&p.resourceShare).map(p=>({...p.resourceShare,name:p.name,seat:s.players.indexOf(p)})),phase:s.phase,version:s.version,you:i,host:i===0,n:s.n,pin:s.pin,round:s.round,rounds:s.rounds,idleSeconds:s.idleSeconds===0?0:120,dealer:s.dealer,honba:s.honba,sticks:s.sticks,turn:s.turn,lobby:{category:s.lobbyCategory||'friend',red:s.red!==false,managed:!!s.lobbyFlow},
    audioRoom:s.audioRoom||s.pin,audioSeq:s.audioSeq||0,audioEvents:s.audioEvents||[],emoteSeq:s.emoteSeq||0,emotes:(s.emotes||[]).filter(e=>Date.now()-e.at<5000).map(e=>({...e,ageMs:Math.max(0,Date.now()-e.at)})),emoteCooldownMs:Math.max(0,5000-(Date.now()-(s.players[i].lastEmoteAt||0))),remaining:s.wall?s.wall.length:0,indicators:s.indicators?s.indicators.slice(0,1+this.totalKans()):[],last:s.last,
-   players:s.players.map((p,j)=>({...publicCharacter(p,s.phase,!!s.resourceSetup),name:p.name,avatar:p.avatar||"",bot:!!p.bot,auto:!!p.auto,autoReason:p.autoReason||'',takeoverMask:!!p.departed||!!p.auto&&['offline','timeout'].includes(p.autoReason),score:p.score,wind:this.wind(j),riichi:p.riichi,nuki:p.nuki,river:p.river,melds:p.hand?this.h(j)._fulou:[],count:p.hand?tiles(this.h(j)).length:0,ready:p.ready,online:p.bot||!p.away&&Date.now()-(this.seen[p.token]||0)<12000})),
+   players:s.players.map((p,j)=>({...publicCharacter(p,s.phase,!!s.resourceSetup),name:p.name,avatar:p.avatar||"",profile:!p.bot&&p.profile||null,bot:!!p.bot,auto:!!p.auto,autoReason:p.autoReason||'',takeoverMask:!!p.departed||!!p.auto&&['offline','timeout'].includes(p.autoReason),score:p.score,wind:this.wind(j),riichi:p.riichi,nuki:p.nuki,river:p.river,melds:p.hand?this.h(j)._fulou:[],count:p.hand?tiles(this.h(j)).length:0,ready:p.ready,online:p.bot||!p.away&&Date.now()-(this.seen[p.token]||0)<12000})),
    handSeq:s.handSeq||0,dealtAt:s.dealtAt||0,matchSeq:s.matchSeq||0,matchStartedAt:s.matchStartedAt||0,openingHand:(s.players[i].dealt||[]).slice(),
    hand:h?tiles(h):[],drawn:h&&h._zimo&&h._zimo.length===2?h._zimo:null,options,furiten:hints.furiten,waits:h?this.waits(h):[],waitDetails:hints.waitDetails,discardHints:hints.discardHints,yakumanIndicator:hints.yakumanIndicator||0,
    recovery:s.players[i].recovery,log:s.log||[],result:s.result,pending:s.pending?{from:s.pending.from,tile:s.pending.tile,kind:s.pending.kind,riichi:!!s.pending.riichi,waiting:Object.keys(s.pending.options).filter(k=>!s.pending.replies[k]).map(Number)}:null,
-   ...(s.phase==='lobby'?{lobby:{category:s.lobbyCategory||'friend',red:s.red!==false,managed:!!s.lobbyFlow},players:s.players.map((p,j)=>({...publicCharacter(p,s.phase,!!s.resourceSetup),name:p.name,avatar:p.avatar||'',bot:!!p.bot,score:p.score,wind:this.wind(j),riichi:p.riichi,nuki:p.nuki,river:p.river,melds:[],count:0,ready:p.bot||j===0||!!p.lobbyReady,online:p.bot||Date.now()-(this.seen[p.token]||0)<12000}))}:{})};
+   ...(s.phase==='lobby'?{lobby:{category:s.lobbyCategory||'friend',red:s.red!==false,managed:!!s.lobbyFlow},players:s.players.map((p,j)=>({...publicCharacter(p,s.phase,!!s.resourceSetup),name:p.name,avatar:p.avatar||'',profile:!p.bot&&p.profile||null,bot:!!p.bot,score:p.score,wind:this.wind(j),riichi:p.riichi,nuki:p.nuki,river:p.river,melds:[],count:0,ready:p.bot||j===0||!!p.lobbyReady,online:p.bot||Date.now()-(this.seen[p.token]||0)<12000}))}:{})};
  }
  dispatch(req){
   const before=this.s?JSON.stringify(this.s):null,waitingBefore={...this._waiting};
@@ -457,14 +488,14 @@ class Room{
    }
    if(req.op==='start'&&s.lobbyFlow)check(s.players.every((p,j)=>p.bot||j===0||p.lobbyReady),'请等待所有玩家准备');
    if(req.op==='character'){check(!s.resourceSetup,'请先取消开局准备再切换雀士');check(s.phase==='lobby','出战雀士在本局结束前固定');Object.assign(s.players[i],characterSelection(req));rollCharacter(s.players[i]);}
-   else if(req.op==='profile'){s.players[i].avatar=avatar(req.avatar);}
+   else if(req.op==='profile'){if(req.avatar!==undefined)s.players[i].avatar=avatar(req.avatar);const profile=rankProfile(req.profile);if(profile)s.players[i].profile=profile;}
    else if(req.op==='addBot'||req.op==='fillBots'){delete s.resourceSetup;check(i===0&&s.phase==='lobby','仅房主可在开局前添加 AI');this.configureBots(req);this.addBot();if(req.op==='fillBots')while(s.players.length<s.n)this.addBot();}
    else if(req.op==='removeBot'){delete s.resourceSetup;check(i===0&&s.phase==='lobby','仅房主可在开局前移除 AI');check(Number.isInteger(req.seat)&&s.players[req.seat]?.bot,'该座位不是 AI');s.players.splice(req.seat,1);}
    else if(req.op==='start'){check(i===0&&s.phase==='lobby','仅房主可开局');const prepared=s.resourceSetup;if(s.resourceProtocol===1){check(prepared&&req.setupRevision===prepared.revision,'请先完成资源准备');check(this.resourcesReady(),'请等待资源下载或选择一姬替代');}if(req.fillBots===true){this.configureBots(req);while(s.players.length<s.n)this.addBot();}check(s.players.length===s.n,'还有空位，可添加 AI 后开局');s.players=shuffle(s.players); // Keep host identity separate from seat ordering.
     // Host remains player 0; randomize dealer instead, so management rights never move.
     const hostIndex=s.players.findIndex(p=>p.token===req.token);[s.players[0],s.players[hostIndex]]=[s.players[hostIndex],s.players[0]];
     s.matchSeq=(s.matchSeq||0)+1;s.matchStartedAt=Date.now();s.matchOpeningUntil=s.matchStartedAt+6000;s.players.forEach(p=>{p.lastInputAt=s.matchOpeningUntil;if(!prepared)freezeCharacter(p);});
-    delete s.resourceSetup;s.dealer=parseInt(randomHex(2),16)%s.n;s.initialDealer=s.dealer;s.players.forEach(p=>p.score=s.n===3?35000:25000);this.newHand();
+    delete s.resourceSetup;s.dealer=parseInt(randomHex(2),16)%s.n;s.initialDealer=s.dealer;s.players.forEach(p=>p.score=s.n===3?35000:25000);s.matchStats=s.players.map(emptyStats);this.newHand();
    }else if(req.op==='action'){this.act(i,req.action);s.players[i].auto=false;s.players[i].autoReason='';s.players[i].lastInputAt=Date.now();s.players[i].away=false;delete this._waiting[req.token];}
    else if(req.op==='ready'){check(s.phase==='result','当前不在结算阶段');check(!req.handSeq||req.handSeq===s.handSeq,'结算已更新');s.players[i].ready=true;this.advanceIfReady();}
    else if(req.op==='next'){

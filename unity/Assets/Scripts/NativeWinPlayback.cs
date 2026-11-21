@@ -125,7 +125,7 @@ namespace YunJian.Riichi {
     // of the transformed game mesh basis. A poll only replaces the hidden source.
     public sealed class NativeWinTileModel:MonoBehaviour {
         Transform anchor,holder,target;Matrix4x4 bindPose;int mode;float queueStart,queueEnd;bool hidesSource;
-        readonly List<MeshRenderer> originals=new List<MeshRenderer>();readonly List<bool> enabledBefore=new List<bool>();readonly List<Material> copies=new List<Material>();readonly List<int> queues=new List<int>();
+        readonly List<MeshRenderer> originals=new List<MeshRenderer>(),renderers=new List<MeshRenderer>();readonly List<bool> enabledBefore=new List<bool>(),outlines=new List<bool>();readonly List<Material> copies=new List<Material>();readonly List<int> queues=new List<int>();
         public void Initialize(Transform node,int queueMode,float begin,float end){anchor=node;bindPose=node.localToWorldMatrix;if(Mathf.Abs(bindPose.determinant)<1e-20f){var scale=node.lossyScale;for(int axis=0;axis<3;axis++)if(Mathf.Abs(scale[axis])<1e-6f)scale[axis]=1;bindPose=Matrix4x4.TRS(node.position,node.rotation,scale);}mode=queueMode;queueStart=begin;queueEnd=end;}
         public void Bind(Transform tile){
             if(tile==target)return;Restore();Clear();target=tile;if(tile==null)return;var model=tile.Find("Original tile");if(model==null)return;
@@ -135,13 +135,13 @@ namespace YunJian.Riichi {
                 var part=new GameObject(source.name).transform;part.SetParent(holder,false);part.gameObject.layer=NativeEffectCamera.Layer;
                 Matrix4x4 world=Matrix4x4.TRS(source.transform.position/TableTileGeometry.SourceUnits,source.transform.rotation,source.transform.lossyScale/TableTileGeometry.SourceUnits);var local=bindPose.inverse*world;part.localPosition=local.GetColumn(3);part.localRotation=local.rotation;part.localScale=local.lossyScale;
                 part.gameObject.AddComponent<MeshFilter>().sharedMesh=filter.sharedMesh;var renderer=part.gameObject.AddComponent<MeshRenderer>();var materials=new List<Material>();
-                foreach(var material in source.sharedMaterials){var clone=new Material(material);materials.Add(clone);copies.Add(clone);queues.Add(material.renderQueue);}renderer.sharedMaterials=materials.ToArray();renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;var block=new MaterialPropertyBlock();source.GetPropertyBlock(block);renderer.SetPropertyBlock(block);originals.Add(source);enabledBefore.Add(source.enabled);
+                foreach(var material in source.sharedMaterials){var clone=new Material(material);materials.Add(clone);copies.Add(clone);queues.Add(material.renderQueue);}renderer.sharedMaterials=materials.ToArray();renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;var block=new MaterialPropertyBlock();source.GetPropertyBlock(block);renderer.SetPropertyBlock(block);originals.Add(source);enabledBefore.Add(source.enabled);renderers.Add(renderer);outlines.Add(source.sharedMaterials.Any(m=>m.shader.name=="YunJian/OriginalTileOutline"));
             }
             holder.gameObject.SetActive(false);
         }
-        public void Sample(float age){if(holder==null)return;bool active=age>=0;holder.gameObject.SetActive(active);if(!active){Restore();return;}hidesSource=true;for(int i=0;i<originals.Count;i++)if(originals[i]!=null)originals[i].enabled=false;bool queue=age>=queueStart&&age<queueEnd&&mode>0;for(int i=0;i<copies.Count;i++){copies[i].renderQueue=queue?mode==3?3006:3090:queues[i];if(copies[i].HasProperty("_ZTest"))copies[i].SetFloat("_ZTest",queue&&mode==2?8:4);}}
+        public void Sample(float age){if(holder==null)return;bool active=age>=0;holder.gameObject.SetActive(active);if(!active){Restore();return;}hidesSource=true;for(int i=0;i<originals.Count;i++)if(originals[i]!=null)originals[i].enabled=false;bool queue=age>=queueStart&&age<queueEnd&&mode>0;for(int i=0;i<renderers.Count;i++)renderers[i].enabled=enabledBefore[i]&&(!queue||mode==3||!outlines[i]);for(int i=0;i<copies.Count;i++){copies[i].renderQueue=queue?mode==3?3006:3090:queues[i];if(copies[i].HasProperty("_ZTest"))copies[i].SetFloat("_ZTest",queue&&mode==2?8:4);}}
         void Restore(){if(!hidesSource)return;for(int i=0;i<originals.Count;i++)if(originals[i]!=null)originals[i].enabled=enabledBefore[i];hidesSource=false;}
-        void Clear(){if(holder!=null){holder.gameObject.SetActive(false);Destroy(holder.gameObject);}holder=null;foreach(var m in copies)Destroy(m);copies.Clear();queues.Clear();originals.Clear();enabledBefore.Clear();}
+        void Clear(){if(holder!=null){holder.gameObject.SetActive(false);Destroy(holder.gameObject);}holder=null;foreach(var m in copies)Destroy(m);copies.Clear();queues.Clear();originals.Clear();enabledBefore.Clear();renderers.Clear();outlines.Clear();}
         void OnDisable(){Restore();if(holder!=null)holder.gameObject.SetActive(false);}
         void OnDestroy(){Restore();Clear();}
     }

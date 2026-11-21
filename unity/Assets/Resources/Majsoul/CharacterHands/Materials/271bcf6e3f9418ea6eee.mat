@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: m_metal_13
+  m_Shader: {fileID: 4800000, guid: 984a45c9bcdd422a83054276b13c3876, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 2800000, guid: bfdd3e2428704a24e84780012d5694be, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: f7506db9e9f8ca34282558152bdaeba9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MatCapTex:
+        m_Texture: {fileID: 2800000, guid: 781632a17b7c35e4095d8190753d5fd2, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ORMMap:
+        m_Texture: {fileID: 2800000, guid: 3af932085a383f244a9f5f3babedf25b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RampMap:
+        m_Texture: {fileID: 2800000, guid: 7633e09dfd25a1844a6511ac62594915, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _CUBERMAP: 1
+    - _CubeStrength: 1.64
+    - _LightStrength: 1
+    - _NormalScale: 1
+    - _RAMP_ON: 1
+    - _RampOffset: 0
+    - _RimIntensity: 1.67
+    - _RimPower: 0.4
+    - _RimSoftness: 0.9
+    - _SourceBRDF: 1
+    - _SpecMetalScale: 2.92
+    - _SpecMetalScale2: 2.08
+    m_Colors:
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _HandLightColor: {r: 1.5411766, g: 1.5411766, b: 1.5411766, a: 1.6}
+    - _HandLightDir: {r: 0, g: 0.893769, b: 0.44852746, a: 0}
+    - _RimColor: {r: 0.20784314, g: 0.08832105, b: 0.070588246, a: 1}
+    - _SpecDirection2: {r: 0.52, g: 1, b: 0.46, a: 1}
+    - _SpecMetalColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SpecMetalColor2: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

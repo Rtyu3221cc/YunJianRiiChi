@@ -61,7 +61,7 @@ namespace YunJian.Riichi
             Observe(v);
             if(v.players[v.you].ready)return Action.None;
             if(finalPage)return Age>=9?Action.Ready:Action.None;
-            if(drawStage){if(autoPlay&&Age>=1.7f)Advance(v);return Action.None;}
+            if(drawStage){if(autoPlay&&Age>=Mathf.Max(1.7f,SettlementAudio.DrawDuration(v)))Advance(v);return Action.None;}
             if(!scores){if(YakuConfirmRemaining(v)==0)Advance(v);return Action.None;}
             if(ScoreConfirmRemaining(v)>0)return Action.None;
             if(v.result.matchOver){Advance(v);return Action.None;}
@@ -115,6 +115,26 @@ namespace YunJian.Riichi
                 if(glyph!=null)names.Add("word_"+glyph);else if(char.IsDigit(c))names.Add("h_"+c);
             }
             return names.ToArray();
+        }
+        // Shared with the lobby profile: brush limit glyphs and a flat winning-hand row.
+        static readonly Dictionary<string,Texture2D> sharedArt=new Dictionary<string,Texture2D>();
+        static Texture2D SharedArt(string name){if(!sharedArt.TryGetValue(name,out var t))sharedArt[name]=t=Resources.Load<Texture2D>("Majsoul/Settlement/"+name)??Resources.Load<Texture2D>("Majsoul/Results/"+name);return t;}
+        public static void DrawLimit(Rect r,string limit,TextAnchor align=TextAnchor.MiddleRight){
+            var textures=LimitGlyphs(limit).Select(SharedArt).Where(t=>t!=null).ToArray();if(textures.Length==0)return;
+            float height=r.height,width=textures.Sum(t=>height*t.width/t.height);float scale=Mathf.Min(1,r.width/Mathf.Max(1,width));height*=scale;width*=scale;
+            float x=align==TextAnchor.MiddleRight?r.xMax-width:align==TextAnchor.MiddleLeft?r.x:r.center.x-width/2;
+            foreach(var t in textures){float w=height*t.width/t.height;GUI.DrawTexture(new Rect(x,r.center.y-height/2,w,height),t);x+=w;}
+        }
+        public static void DrawHand(Rect area,string[] concealed,string[] melds,string winning,TableRenderer table){
+            concealed??=new string[0];melds??=new string[0];if(table==null)return;
+            bool hasMelds=melds.Any(m=>m.Skip(1).Any(char.IsDigit));int count=concealed.Length+melds.Sum(m=>m.Skip(1).Count(char.IsDigit))+1;
+            float gaps=.5f+(hasMelds&&concealed.Length>0?.5f:0);
+            float pitch=Mathf.Min(area.height*OriginalTiles.HandWidth/OriginalTiles.HandHeight,area.width/(count+gaps)),height=pitch*OriginalTiles.HandHeight/OriginalTiles.HandWidth,x=area.x,y=area.center.y-height/2;
+            void Draw(string tile){var t=table.HandTexture(tile);if(t!=null)GUI.DrawTexture(new Rect(x,y,pitch,height),t,ScaleMode.ScaleToFit);x+=pitch;}
+            foreach(var tile in concealed)Draw(tile);
+            if(hasMelds&&concealed.Length>0)x+=pitch*.5f;
+            foreach(var meld in melds){var digits=meld.Skip(1).Where(char.IsDigit).ToArray();bool closed=digits.Length==4&&!meld.Any(ch=>ch=='+'||ch=='-'||ch=='=');for(int n=0;n<digits.Length;n++)Draw(closed&&(n==0||n==3)?null:meld[0].ToString()+digits[n]);}
+            x+=pitch*.5f;Draw(winning);
         }
         void Tile(TableRenderer table,string tile,Rect r)
         {
@@ -271,7 +291,8 @@ namespace YunJian.Riichi
         public static int Before(RoomView v,int seat) => v.players[seat].score-(v.result?.delta!=null&&seat<v.result.delta.Length?v.result.delta[seat]:0);
         public static int RiichiAward(RoomView v,int seat)=>Mathf.Max(0,(v.result?.details??new WinDetail[0]).Where(d=>d.seat==seat && d.score?.delta?.Length==v.n).Sum(d=>d.score.delta.Sum()));
         public static string ScoreBreakdown(RoomView v,int seat){int award=RiichiAward(v,seat);if(award==0)return null;int delta=v.result.delta[seat];return "和牌 "+(delta-award>=0?"+":"")+(delta-award)+"  供托 +"+award;}
-        public static int Rank(RoomView v,int seat,bool before) => 1+Enumerable.Range(0,v.n).Count(i=>{
+        // The terminal standing is authoritative: equal scores rank from the first dealer.
+        public static int Rank(RoomView v,int seat,bool before) => !before&&v.result?.matchOver==true&&v.result.standings?.FirstOrDefault(s=>s.seat==seat) is StandingView standing&&standing.place>0?standing.place:1+Enumerable.Range(0,v.n).Count(i=>{
             int a=before?Before(v,i):v.players[i].score,b=before?Before(v,seat):v.players[seat].score;
             return a>b || (a==b && i<seat);
         });
@@ -368,13 +389,33 @@ namespace YunJian.Riichi
                 while(nameSize>24 && nameStyle.CalcSize(new GUIContent(v.players[seat].name)).x>name.width)nameStyle.fontSize=--nameSize;
                 Label(name,v.players[seat].name,nameSize,white,TextAnchor.MiddleLeft);
                 var points=FinalRect(card,"container_score");Glyphs(points,Digits(v.players[seat].score,"ww_"),points.height,TextAnchor.MiddleLeft);
-                var rewardColor=new Color(.28f,.76f,.45f);
-                FinalValue(card,"val","+0.0",rewardColor);
-                Image("gold0",FinalRect(card,"img_g0"));Image("PT",FinalRect(card,"img_g1"));
-                FinalValue(card,"img_g0/val","+0",rewardColor);FinalValue(card,"img_g1/val","+0",rewardColor);
+                var rewardColor=new Color(.28f,.76f,.45f);var lossColor=new Color(.9f,.33f,.3f);
+                // 素点: final points against the starting points, in thousands.
+                int start=v.result.rules!=null&&v.result.rules.start>0?v.result.rules.start:v.n==3?35000:25000;float soten=(v.players[seat].score-start)/1000f;
+                FinalValue(card,"val",(soten>=0?"+":"")+soten.ToString("0.0"),soten>=0?rewardColor:lossColor);
+                // Rank points are known only for this device's own seat.
+                var change=seat==v.you&&PlayerRecord.LastMatchKey==(v.audioRoom??"")+":"+v.matchSeq?PlayerRecord.LastChange:null;
+                if(change!=null){Image("PT",FinalRect(card,"img_g1"));FinalValue(card,"img_g1/val",RankRules.Delta(change),change.delta>=0?rewardColor:lossColor);}
                 if(seat==v.you)Image("myself",self);
                 GUI.matrix=matrix;
             }
+            FinalRankBand(v);
+        }
+        public static Rect FinalRankRect=>new Rect(590,634,284,52);
+        void FinalRankBand(RoomView v){
+            float entrance=Mathf.Clamp01((Age-.4f-v.n*.22f)/.3f);if(entrance<=0)return;
+            var old=GUI.color;GUI.color=new Color(1,1,1,entrance);var r=FinalRankRect;
+            GUI.DrawTexture(r,Texture2D.whiteTexture,ScaleMode.StretchToFill,true,0,new Color(0,0,0,.45f),0,8);
+            string category=v.result.rules?.category??v.lobby?.category??"friend";
+            var change=PlayerRecord.LastMatchKey==(v.audioRoom??"")+":"+v.matchSeq?PlayerRecord.LastChange:null;
+            if(category!="ranked"||change==null){Label(r,category=="competition"?"比赛场不计段位":"友人场不计段位",20,white);GUI.color=old;return;}
+            string level=RankRules.Name(change.after.level),head=change.promoted?"升段！":change.demoted?"降段":"段位分 "+RankRules.Delta(change);
+            Label(new Rect(r.x+12,r.y+2,r.width-24,r.height/2),head,20,change.promoted?gold:change.demoted?new Color(.95f,.5f,.45f):white,TextAnchor.MiddleLeft);
+            Label(new Rect(r.x+12,r.y+r.height/2-2,r.width-24,r.height/2),level+"  "+RankRules.Progress(change.after),18,white,TextAnchor.MiddleLeft);
+            float bar=Mathf.Clamp01(change.after.points/(float)RankRules.Promote(change.after.level));var track=new Rect(r.xMax-112,r.center.y-4,100,8);
+            GUI.DrawTexture(track,Texture2D.whiteTexture,ScaleMode.StretchToFill,true,0,new Color(1,1,1,.18f),0,4);
+            if(bar>0)GUI.DrawTexture(new Rect(track.x,track.y,track.width*bar,track.height),Texture2D.whiteTexture,ScaleMode.StretchToFill,true,0,new Color(.35f,.78f,.95f),0,4);
+            GUI.color=old;
         }
         public static Rect FinalHomeRect=>new Rect(886.2606f,630.8333f,175.4927f,58.3333f);
         public static Rect FinalNextRect=>new Rect(1075.194f,630.8333f,175.4927f,58.3333f);

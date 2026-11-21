@@ -80,6 +80,7 @@ namespace YunJian.Riichi
         {
             client=owner;brush=Resources.Load<Font>("Majsoul/Lobby/Fonts/brush");body=Resources.Load<Font>("Majsoul/Font/game");
             if(GetComponent<CharacterVoices>()==null)gameObject.AddComponent<CharacterVoices>();
+            if(GetComponent<CharacterVoicePlayback>()==null)gameObject.AddComponent<CharacterVoicePlayback>();
             motion=JsonUtility.FromJson<MotionBank>(Resources.Load<TextAsset>("Majsoul/Lobby/motion").text);
             gardenMotion=JsonUtility.FromJson<GardenMotion>(Resources.Load<TextAsset>("Majsoul/Lobby/garden-motion").text);
             signEntry=JsonUtility.FromJson<SignEntryMotion>(Resources.Load<TextAsset>("Majsoul/Lobby/sign-entry-motion").text);
@@ -108,6 +109,7 @@ namespace YunJian.Riichi
             UpdateQrFlow();
             if(modalClosing&&Now-closeStarted>=.15f){Modal="";modalClosing=false;}
             bool visible=Visible;
+            GetComponent<CharacterVoicePlayback>()?.Home(visible&&!client.LobbyActive&&Page==ScreenPage.Home&&!StartupCovered&&!dormOpen&&!roleOpen&&!OverlayActive&&!DressTableOpen,CharacterRoster.Active.character);
             if(visible&&!wasVisible)Home();
             if(!visible){music.Stop();if(!OverlayActive)sounds.Stop();if(Searching)CancelSearch();}
             else {
@@ -168,6 +170,7 @@ namespace YunJian.Riichi
             if(client.Busy)return;
             if(CharacterBack())return;
             if(client.LobbyCloseSettings())return;
+            if(PlayerInfoBack())return;
             if(Modal!=""){CloseModal();return;}
             if(Page==ScreenPage.Room){OpenModal("leave");return;}
             Home();Cue("btn_cancel");
@@ -343,6 +346,8 @@ namespace YunJian.Riichi
             else if(age<signEntry.exitDuration)DrawMainSigns(x,age,true);
             if(Page==ScreenPage.Modes&&age>=signEntry.exitDuration){DrawModeHeading(x,age-signEntry.exitDuration,false);DrawModeCards(x,age-signEntry.exitDuration,false);}
             if(Page==ScreenPage.Home&&outgoing==ScreenPage.Modes&&age<.3333334f){DrawModeHeading(x,age,true);DrawModeCards(x,age,true);}
+            if(Page==ScreenPage.Home&&!StartupCovered&&Hit(new Rect(85,260,Mathf.Max(200,width*.37f-85),630),"home-character-touch"))GetComponent<CharacterVoicePlayback>()?.Interact(CharacterRoster.Active.character);
+            DrawCharacterSubtitle(false);
         }
         void DrawGardenTopButtons()
         {
@@ -411,18 +416,21 @@ namespace YunJian.Riichi
             // UI_Lobby/lefttop: preserve the background, icon and decoration
             // coordinates rather than centring the icon in the whole nameplate.
             Image(new Rect(28,14,472,178),"Sprites/Main/bg_2");
-            var rank=Resources.Load<Texture2D>("Majsoul/Review1012c/sima_queshi");if(rank!=null)GUI.DrawTexture(new Rect(50.1f,38.2f,127,127),rank,ScaleMode.ScaleToFit);
-            Image(new Rect(12.6f,99.6f,46,46),"Sprites/Necessary/starbg");Image(new Rect(39.9f,143.8f,36,36),"Sprites/Necessary/starbg");Image(new Rect(73.8f,162.4f,28,28),"Sprites/Necessary/star");
-            Image(new Rect(139.3f,123.6f,92,92),"Sprites/Main/bg_6");Image(new Rect(154.4f,136.5f,60,60),"Sprites/Common/sanma_fish",ScaleMode.ScaleToFit);
+            // Four-player rank with its stars, the three-player rank in the small disc.
+            var rank4=PlayerRecord.Rank(4);var rank3=PlayerRecord.Rank(3);RankBadge(new Rect(50.1f,38.2f,127,127),rank4.level,4);
+            if(!RankRules.Soul(rank4.level)){int stars=RankRules.Stars(rank4.level);var slots=new[]{new Rect(12.6f,99.6f,46,46),new Rect(39.9f,143.8f,36,36),new Rect(73.8f,162.4f,28,28)};for(int i=0;i<3;i++)Image(slots[i],i<stars?"Sprites/Necessary/star":"Sprites/Necessary/starbg");}
+            Image(new Rect(139.3f,123.6f,92,92),"Sprites/Main/bg_6");RankBadge(new Rect(152.4f,134.5f,66,66),rank3.level,3);
             var noTitle=Resources.Load<Texture2D>("Majsoul/TableLook/Sprites/notitle");
-            if(noTitle!=null)GUI.DrawTexture(new Rect(191,48.9f,240,44),noTitle,ScaleMode.ScaleToFit,true);
+            var titleRect=new Rect(191,48.9f,240,44);string titleName=PlayerRecord.TitleName;
+            if(string.IsNullOrEmpty(titleName)){if(noTitle!=null)GUI.DrawTexture(titleRect,noTitle,ScaleMode.ScaleToFit,true);}
+            else{GUI.DrawTexture(titleRect,Texture2D.whiteTexture,ScaleMode.StretchToFill,true,0,new Color(.27f,.16f,.38f,.92f),0,22);Label(titleRect,titleName,new GUIStyle(text){fontSize=24,wordWrap=false},new Color(.97f,.9f,1f));}
             var nameBounds=new Rect(196,100.5f,230,46);
             var playerName=new GUIStyle(text){fontSize=26,wordWrap=false,clipping=TextClipping.Clip,alignment=TextAnchor.MiddleCenter};
             float nameWidth=playerName.CalcSize(new GUIContent(client.LobbyNickname)).x;
             if(nameWidth>nameBounds.width-8)playerName.fontSize=Mathf.FloorToInt(26*(nameBounds.width-8)/nameWidth);
             Label(nameBounds,client.LobbyNickname,playerName,Color.white);
             Image(new Rect(424.4f,55.4f,85,85),"Sprites/Main/selfinfo",ScaleMode.ScaleToFit);
-            if(Hit(new Rect(5,5,510,215),"profile")){profileName=client.LobbyNickname;OpenModal("profile");}
+            if(Hit(new Rect(5,5,510,215),"profile"))OpenPlayerInfo();
         }
         void DrawModeCards(float x,float time,bool leaving)
         {
@@ -667,11 +675,15 @@ namespace YunJian.Riichi
             GUI.BeginGroup(new Rect(card.x,card.y+673*scale,496.8f*scale,98*scale));
             Image(new Rect(0,0,496.8f*scale,105.6f*scale),"Sprites/Common/namebg");GUI.EndGroup();
             var rankBg=Resources.Load<Texture2D>("Majsoul/Review1012c/rank_bg");if(rankBg!=null)GUI.DrawTexture(new Rect(card.x-13.44f*scale,card.y+667.06f*scale,117.6f*scale,109.44f*scale),rankBg,ScaleMode.ScaleToFit);
-            Image(new Rect(card.x+11.23f*scale,card.y+684.29f*scale,76.8f*scale,76.8f*scale),"Sprites/Common/sanma_fish",ScaleMode.ScaleToFit);
-            Image(new Rect(card.x-17.52f*scale,card.y+716.02f*scale,32.16f*scale,30.72f*scale),"Sprites/Necessary/"+(player.bot?"starbg":"star"));
-            Image(new Rect(card.x+2.18f*scale,card.y+743.19f*scale,22.51f*scale,21.5f*scale),"Sprites/Necessary/"+(player.bot?"starbg":"star"));
-            Image(new Rect(card.x+22.2f*scale,card.y+756.34f*scale,16.08f*scale,15.36f*scale),"Sprites/Necessary/star");
-            var noTitle=Resources.Load<Texture2D>("Majsoul/TableLook/Sprites/notitle");if(noTitle!=null)GUI.DrawTexture(new Rect(card.x+91.8f*scale,card.y+640*scale,263.64f*scale,50.7f*scale),noTitle,ScaleMode.ScaleToFit,true);
+            // Published rank and title of a human seat; AI seats show neither.
+            int players=client.State?.n??4;
+            if(RankRules.Known(player)){
+                int level=RankRules.Level(player,players);var badge=RankRules.Badge(level,players);if(badge!=null)GUI.DrawTexture(new Rect(card.x+11.23f*scale,card.y+684.29f*scale,76.8f*scale,76.8f*scale),badge,ScaleMode.ScaleToFit);
+                if(!RankRules.Soul(level)){int stars=RankRules.Stars(level);var slots=new[]{new Rect(card.x-17.52f*scale,card.y+716.02f*scale,32.16f*scale,30.72f*scale),new Rect(card.x+2.18f*scale,card.y+743.19f*scale,22.51f*scale,21.5f*scale),new Rect(card.x+22.2f*scale,card.y+756.34f*scale,16.08f*scale,15.36f*scale)};for(int i=0;i<3;i++)Image(slots[i],"Sprites/Necessary/"+(i<stars?"star":"starbg"));}
+            }
+            var titleRect=new Rect(card.x+91.8f*scale,card.y+640*scale,263.64f*scale,50.7f*scale);string titleName=RankRules.TitleOf(player);
+            if(string.IsNullOrEmpty(titleName)){var noTitle=Resources.Load<Texture2D>("Majsoul/TableLook/Sprites/notitle");if(noTitle!=null)GUI.DrawTexture(titleRect,noTitle,ScaleMode.ScaleToFit,true);}
+            else PlayerTitles.DrawPill(new Rect(titleRect.x+8*scale,titleRect.y+5*scale,titleRect.width-16*scale,titleRect.height-10*scale),titleName,text);
             var nameStyle=new GUIStyle(text){fontSize=Mathf.RoundToInt(28.8f*scale),alignment=TextAnchor.MiddleLeft,wordWrap=false,clipping=TextClipping.Clip};
             string name=player.bot?"电脑（简单）":player.name;var bounds=new Rect(card.x+97.2f*scale,card.y+705.1f*scale,283.8f*scale,34.92f*scale);
             float pixels=nameStyle.CalcSize(new GUIContent(name)).x;if(pixels>bounds.width)nameStyle.fontSize=Mathf.FloorToInt(nameStyle.fontSize*bounds.width/pixels);
@@ -734,10 +746,11 @@ namespace YunJian.Riichi
             else if(current=="yaku")logical=new Rect(width/2-925,24,1802,1032);
             else if(current=="advanced-number")logical=new Rect(width/2-89.94f-384.16f,193.81f,768.32f,748.05f);
             else if(current=="advanced-help"||current=="qr-invalid")logical=new Rect((width-852.3f)/2,285,852.3f,510);
+            else if(current==PlayerInfoModal)logical=PlayerInfoBounds;
             else logical=new Rect((width-1100)/2,240,1100,600);
-            if(!modalClosing&&NativePanel.DismissOutside(logical,CloseModal))return;
+            if(!modalClosing&&NativePanel.DismissOutside(logical,current==PlayerInfoModal?PlayerInfoDismiss:CloseModal))return;
             var matrix=GUI.matrix;var color=GUI.color;
-            if(current=="scan")DrawScanner();else if(current=="invite")DrawInvitation();else if(current=="qr-invalid")DrawQrNotice();else if(current=="join")DrawJoin();else if(current=="rules")DrawRules();else if(current=="yaku")DrawYaku();else if(current=="friend-help")DrawFriendHelp();else if(current=="session"||current=="match-exit")DrawSessionDialog(current=="match-exit");else if(current=="leave")DrawRoomDialog(false);else if(current=="advanced-number")DrawAdvancedNumber();else if(current=="advanced-help")DrawAdvancedHelp();else{
+            if(current==PlayerInfoModal)DrawPlayerInfo();else if(current=="scan")DrawScanner();else if(current=="invite")DrawInvitation();else if(current=="qr-invalid")DrawQrNotice();else if(current=="join")DrawJoin();else if(current=="rules")DrawRules();else if(current=="yaku")DrawYaku();else if(current=="friend-help")DrawFriendHelp();else if(current=="session"||current=="match-exit")DrawSessionDialog(current=="match-exit");else if(current=="leave")DrawRoomDialog(false);else if(current=="advanced-number")DrawAdvancedNumber();else if(current=="advanced-help")DrawAdvancedHelp();else{
                 var r=Popup(1100,600);string heading=current=="profile"?"个人设置":current=="invite"?"邀请牌友":current=="leave"?"返回大厅":current=="kick"?"移除座位":"说明";
                 Label(new Rect(r.x+100,r.y+28,r.width-200,80),heading,title);
                 if(current=="profile"){

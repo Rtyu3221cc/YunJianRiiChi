@@ -37,6 +37,8 @@ namespace YunJian.Riichi
         public WardrobeLoadout wardrobe;
         public string name, avatar, autoReason, character;
         public int skin;
+        // Published by the player's own device; bots and old clients leave set=false.
+        public PlayerRankProfile profile;
         public bool bot, auto, ready, online, takeoverMask;
         public int score, wind, riichi, nuki, count;
         public string[] melds = new string[0];
@@ -45,14 +47,24 @@ namespace YunJian.Riichi
     [Serializable] public class RiverTile { public string tile; public bool riichi, called, tsumogiri; }
     [Serializable] public class LastDiscard { public int from; public string tile; }
     [Serializable] public class PendingView { public int from; public string tile, kind; public bool riichi; public int[] waiting; }
-    [Serializable] public class WaitDetail { public string tile; public bool ron, tsumo; public int remaining, yakumanRon, yakumanTsumo; }
+    [Serializable] public class WaitDetail { public string tile; public bool ron, tsumo; public int remaining, yakumanRon, yakumanTsumo, ronHan, tsumoHan; }
     [Serializable] public class DiscardHint { public string id; public bool furiten; public WaitDetail[] waits = new WaitDetail[0]; }
     [Serializable] public class DrawDetail { public int seat; public bool tenpai; public string[] tiles = new string[0], waits = new string[0]; }
     [Serializable] public class Choice { public string id, kind, tile, meld; }
     // 'riichi' marks the declaration discard so the client plays the sideways clip.
     [Serializable] public class PublicSound { public int id, seat, nuki, from, riverIndex, meldIndex; public string kind, tile, winSource, meld, meldKind; public bool riichi; }
     [Serializable] public class PublicEmote {public int id,seat,emoji,skin,ageMs;public string character;public long at;}
-    [Serializable] public class ResultView { public string title; public int[] delta; public bool matchOver, repeat; public WinDetail[] details; public bool draw, abort; public DrawDetail abortHand; public DrawDetail[] drawDetails = new DrawDetail[0]; }
+    [Serializable] public class ResultView { public string title; public int[] delta; public bool matchOver, repeat; public WinDetail[] details; public bool draw, abort; public DrawDetail abortHand; public DrawDetail[] drawDetails = new DrawDetail[0];
+        // Present only on the terminal result of a match.
+        public StandingView[] standings = new StandingView[0]; public ResultRules rules; }
+    [Serializable] public class PlayerRankProfile { public bool set; public int rank4, rank3; public string title; }
+    [Serializable] public class ResultRules { public int n, rounds, start, initialDealer; public string category; }
+    [Serializable] public class StandingView { public int seat, place, score; public bool bot; public SeatStats stats; }
+    [Serializable] public class SeatStats { public int hands, wins, tsumo, dealIns, riichi, calls, winTurns, winPoints, ura; public BestHand best; public HighlightCounts highlights; }
+    [Serializable] public class HighlightCounts { public int yakuman, kazoe, sanbaiman, baiman, nagashi, doubleRiichi; }
+    // A JSON null deserializes as an empty instance; an empty winning tile means none.
+    [Serializable] public class BestHand { public string[] tiles = new string[0], melds = new string[0]; public string tile, limit; public bool ron; public YakuDetail[] yaku = new YakuDetail[0]; public int fanshu, fu, damanguan, defen;
+        public bool Exists => !string.IsNullOrEmpty(tile); }
     [Serializable] public class WinDetail { public int seat, from; public string name, hand, tile, winSource; public bool ron; public ScoreDetail score; public int nuki; public string limit; public string[] tiles, melds, ura; public YakuDetail[] yaku; }
     [Serializable] public class YakuDetail { public string name; public int han, yakuman; }
     // Normalized presentation yaku never contain mixed numeric/string fields.
@@ -60,6 +72,7 @@ namespace YunJian.Riichi
     [Serializable] public class RequestBody
     {
         public WardrobeLoadout wardrobe;
+        public PlayerRankProfile profile;
         public string op, token, host, name, pin, recovery, action, id, category, room;
         public string character; public int skin;public bool randomCharacters;public CharacterChoice[] characterPool;
         public int emoji;public bool randomBotAppearance;public CharacterChoice[] botCharacters;

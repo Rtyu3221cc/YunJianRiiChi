@@ -1,0 +1,23 @@
+--- a/unity/Assets/Scripts/CharacterPackService.cs
++++ b/unity/Assets/Scripts/CharacterPackService.cs
+@@ -99,7 +99,12 @@
+         public static bool ContainsSkin(string key,int skin)=>Find(key)?.skins?.Contains(skin)==true;
+         public static bool Supports(string key,int skin)=>Installed(key)&&ContainsSkin(key,skin);
+         public static string Owner(string relative){if(owners.TryGetValue(relative,out var owner))return owner;var parts=relative.Split('/');if(parts.Length<2)return null;if(parts[0]=="Voice"||parts[0]=="Emoji")owner=parts[1];else if((parts[0]=="Skins"||parts[0]=="Spine")&&int.TryParse(parts[1],out int skin))owner=All.FirstOrDefault(p=>p.skins.Contains(skin))?.key;owners[relative]=owner;return owner;}
++        // Local phone-test overlay: retain the installed Saber bundle and its receipt.
++        static T LocalSaberPart<T>(string relative)where T:UnityEngine.Object =>
++            relative.StartsWith("Spine/40011003/2/",StringComparison.Ordinal)&&Installed("saber")
++                ?Resources.Load<T>("Majsoul/Characters/"+relative):null;
+         public static T Asset<T>(string relative)where T:UnityEngine.Object {
++            var local=LocalSaberPart<T>(relative);if(local!=null)return local;
+             string owner=Owner(relative);if(owner==null||Protected(owner))return Resources.Load<T>("Majsoul/Characters/"+relative);
+ #if UNITY_EDITOR
+             if(CharacterRoster.PreviewOnly&&!RespectPreviewAvailability)return UnityEditor.AssetDatabase.LoadAssetAtPath<T>("Assets/CharacterPacks/Source/"+owner+"/"+relative+Extension<T>(relative));
+@@ -115,6 +120,7 @@
+         // UI requests return immediately. The single queue bounds disk/texture
+         // upload work and gives the entrance transition a frame before loading.
+         public static T DisplayAsset<T>(string relative)where T:UnityEngine.Object {
++            var local=LocalSaberPart<T>(relative);if(local!=null)return local;
+             string owner=Owner(relative);if(owner==null||Protected(owner)||Instance==null||!Application.isPlaying||CharacterRoster.PreviewOnly&&!RespectPreviewAvailability)return Asset<T>(relative);
+             Touch(relative);if(displayAssets.TryGetValue(relative,out var cached)&&cached!=null)return cached as T;
+             if(!Installed(owner))return null;

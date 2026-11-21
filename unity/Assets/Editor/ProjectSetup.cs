@@ -6,8 +6,8 @@ namespace YunJian.Riichi.Editor
 {
     [InitializeOnLoad] public static class ProjectSetup
     {
-        public const string ReleaseVersion="0.6.32";
-        public const int ReleaseCode=80;
+        public const string ReleaseVersion="0.6.40";
+        public const int ReleaseCode=88;
         static ProjectSetup() { EditorApplication.delayCall += EnsureScene; }
         static void EnsureScene()
         {
@@ -102,6 +102,17 @@ namespace YunJian.Riichi.Editor
             if(assetPath.StartsWith("Assets/Resources/Majsoul/Actions/riichi-fire-")) {
                 t.mipmapEnabled=false;t.npotScale=TextureImporterNPOTScale.None;t.wrapMode=TextureWrapMode.Clamp;
             }
+            // Profile badges and sliced frame UVs require original PNG dimensions.
+            if(assetPath.StartsWith("Assets/Resources/Majsoul/Profile/TitleIcons/") ||
+                assetPath=="Assets/Resources/Majsoul/Profile/Native/using.png" ||
+                assetPath=="Assets/Resources/Majsoul/Profile/Native/illustFrame.png" ||
+                assetPath=="Assets/Resources/Majsoul/Profile/Native/illustBg.png" ||
+                assetPath=="Assets/Resources/Majsoul/Profile/Native/tabInsideNormal.png" ||
+                assetPath=="Assets/Resources/Majsoul/Profile/Native/tabInsideSelected.png" ||
+                assetPath=="Assets/Resources/Majsoul/Profile/Native/waitingroom_mask.png") {
+                t.mipmapEnabled=false;t.npotScale=TextureImporterNPOTScale.None;
+            }
+            if(assetPath=="Assets/Resources/Majsoul/Profile/Native/waitingroom_mask.png")t.isReadable=true;
             if(assetPath.StartsWith("Assets/Resources/Majsoul/Settings/")) {
                 t.mipmapEnabled=false;t.npotScale=TextureImporterNPOTScale.None;t.wrapMode=TextureWrapMode.Clamp;
             }

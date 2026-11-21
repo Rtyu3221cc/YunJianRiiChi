@@ -18,6 +18,7 @@ namespace YunJian.Riichi
         bool enabledVoice = true, suspended;
         float last;
         public bool HasYiji { get; private set; }
+        public bool Speaking=>output!=null&&output.isPlaying;
         void Awake()
         {
             output = gameObject.AddComponent<AudioSource>(); output.spatialBlend = 0; output.playOnAwake = false;
@@ -50,6 +51,7 @@ namespace YunJian.Riichi
         }
         public void QueuePresented(string key,PublicSound e){
             if(room!=key || e.id<=cursor)return;cursor=e.id;if(!enabledVoice || suspended)return;
+            GetComponent<CharacterVoicePlayback>()?.Presented(e);
             Speak(ClipFor(e),Priority(e));
         }
         public void Accept(RoomView state)

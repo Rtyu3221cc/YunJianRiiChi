@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -8,7 +9,7 @@ namespace YunJian.Riichi {
     // in that same pass while its ordinary table renderer is temporarily hidden.
     public sealed class NativeWinningTileQueue:MonoBehaviour {
         Transform target,root;readonly List<MeshRenderer> originals=new List<MeshRenderer>(),clones=new List<MeshRenderer>();
-        readonly List<bool> enabledBefore=new List<bool>();readonly List<Material> materials=new List<Material>();
+        readonly List<bool> enabledBefore=new List<bool>(),outlines=new List<bool>();readonly List<Material> materials=new List<Material>();
         public bool Active {get;private set;}
         public int Queue=>3090;
         public float Begin,End=5.3f;public int DepthTest=4;public bool LegacyQueues;
@@ -23,7 +24,9 @@ namespace YunJian.Riichi {
                 foreach(var material in source.sharedMaterials){int q=LegacyQueues?(source.name.Contains("outline")?3004:copies.Count==0?3005:3006):3090;var copy=new Material(material){renderQueue=q};if(copy.HasProperty("_ZTest"))copy.SetFloat("_ZTest",DepthTest);materials.Add(copy);copies.Add(copy);}
                 renderer.sharedMaterials=copies.ToArray();renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;
                 var block=new MaterialPropertyBlock();source.GetPropertyBlock(block);renderer.SetPropertyBlock(block);
-                originals.Add(source);enabledBefore.Add(source.enabled);clones.Add(renderer);
+                bool outline=source.sharedMaterials.Any(m=>m.shader.name=="YunJian/OriginalTileOutline");
+                renderer.enabled=source.enabled&&(LegacyQueues||!outline);
+                originals.Add(source);enabledBefore.Add(source.enabled);clones.Add(renderer);outlines.Add(outline);
             }
             root.gameObject.SetActive(false);
         }
@@ -33,13 +36,15 @@ namespace YunJian.Riichi {
             if(!active&&!wasActive)return;
             var scale=transform.lossyScale;root.position=Vector3.zero;root.rotation=Quaternion.identity;root.localScale=new Vector3(1/scale.x,1/scale.y,1/scale.z);
             for(int i=0;i<originals.Count;i++){
-                var source=originals[i];if(source==null)continue;
+                var source=originals[i];if(source==null){clones[i].enabled=false;continue;}
                 var part=clones[i].transform;part.position=source.transform.position/TableTileGeometry.SourceUnits;part.rotation=source.transform.rotation;part.localScale=source.transform.lossyScale/TableTileGeometry.SourceUnits;
-                clones[i].enabled=enabledBefore[i];source.enabled=active?false:enabledBefore[i];
+                // SetPaopaiZtestNew replaces the source materials with body and
+                // face only. An Always-tested expanded outline covers that face.
+                clones[i].enabled=enabledBefore[i]&&(LegacyQueues||!outlines[i]);source.enabled=active?false:enabledBefore[i];
             }
         }
         void Restore(){if(!Active)return;for(int i=0;i<originals.Count;i++)if(originals[i]!=null)originals[i].enabled=enabledBefore[i];Active=false;}
-        void ClearCopies(){if(root!=null){root.gameObject.SetActive(false);Destroy(root.gameObject);}root=null;foreach(var material in materials)Destroy(material);materials.Clear();originals.Clear();enabledBefore.Clear();clones.Clear();}
+        void ClearCopies(){if(root!=null){root.gameObject.SetActive(false);Destroy(root.gameObject);}root=null;foreach(var material in materials)Destroy(material);materials.Clear();originals.Clear();enabledBefore.Clear();clones.Clear();outlines.Clear();}
         void OnDisable(){Restore();if(root!=null)root.gameObject.SetActive(false);}
         void OnDestroy(){Restore();ClearCopies();}
     }

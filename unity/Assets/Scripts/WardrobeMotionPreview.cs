@@ -13,6 +13,7 @@ namespace YunJian.Riichi {
         [Serializable] class Model {public Node[] nodes;}
         [Serializable] class HandData {public int vertices,frames,fps;public float duration;public float[] uv;public int[] body,nails;}
         GameObject root;Camera camera;RenderTexture image;string key;NativeParticleEffect native;WinTileEffect effect;OriginalTiles previewTiles;WardrobeModelVisual modelVisual;HandData hand;Mesh handMesh;float[] handFrames;Vector3[] vertices,normals;
+        CharacterHandVisual characterHand;CharacterHandClip characterClip;
         readonly List<Material> materials=new List<Material>();readonly List<Mesh> meshes=new List<Mesh>();
         Material composite;
         public Texture Image=>image;
@@ -32,6 +33,7 @@ namespace YunJian.Riichi {
             if(item==null)return;if(key!=item.id){Build(item);key=item.id;}
             float sample=age%Mathf.Max(1,item.duration);
             if(hand!=null)HandFrame(Mathf.Min(hand.duration,Mathf.Max(0,sample-.15f)));
+            if(characterHand!=null)characterHand.SampleFrame(Mathf.Clamp01(sample/characterClip.duration)*(characterClip.frames-1));
             effect?.Sample(sample);native?.Sample(sample);modelVisual?.Sample(sample);
             var active=RenderTexture.active;camera.Render();RenderTexture.active=active;
         }
@@ -39,7 +41,8 @@ namespace YunJian.Riichi {
             Hide();root=new GameObject("Original decoration preview "+item.id);root.transform.position=new Vector3(600,600,600);
             camera=new GameObject("Decoration model camera").AddComponent<Camera>();camera.transform.SetParent(root.transform,false);camera.enabled=false;camera.orthographic=true;camera.nearClipPlane=.001f;camera.farClipPlane=200;camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=Color.clear;camera.cullingMask=1<<27;camera.allowMSAA=true;
             image=new RenderTexture(1024,1024,24,RenderTextureFormat.ARGB32){name="Original animated decoration",antiAliasing=4};image.Create();camera.targetTexture=image;
-            if(item.standardStick)BuildStandardStick();
+            if(!string.IsNullOrEmpty(item.nativeHand))BuildCharacterHand(item);
+            else if(item.standardStick)BuildStandardStick();
             else if(item.HasModel)BuildModel(item);
             else if(!string.IsNullOrEmpty(item.motion))BuildHand(item);
             else{
@@ -93,10 +96,15 @@ namespace YunJian.Riichi {
             handMesh=new Mesh{name="Original hand motion",subMeshCount=2};handMesh.vertices=vertices;handMesh.uv=uv;handMesh.SetTriangles(hand.body,0);handMesh.SetTriangles(hand.nails??new int[0],1);handMesh.MarkDynamic();meshes.Add(handMesh);var go=new GameObject("Original hand surface");go.transform.SetParent(root.transform,false);go.AddComponent<MeshFilter>().sharedMesh=handMesh;go.AddComponent<MeshRenderer>().sharedMaterials=new[]{Material(item.texture,false),Material(string.IsNullOrEmpty(item.nailTexture)?item.texture:item.nailTexture,false)};
             HandFrame(hand.duration*.5f);var bounds=handMesh.bounds;float size=Mathf.Max(bounds.size.x,bounds.size.y,bounds.size.z);var center=root.transform.position+bounds.center;camera.orthographicSize=size*.57f;camera.transform.position=center+new Vector3(size*.15f,size*.8f,-size*1.6f);camera.transform.LookAt(center);
         }
+        void BuildCharacterHand(WardrobeItem item){
+            characterClip=CharacterHands.Clip(item,0,"LiZhi");var go=new GameObject("Character default hand preview");go.transform.SetParent(root.transform,false);go.layer=27;characterHand=go.AddComponent<CharacterHandVisual>();characterHand.Initialize(characterClip);characterHand.SampleFrame((characterClip.frames-1)*.5f);
+            var bounds=new Bounds();bool first=true;var baked=new Mesh();foreach(var skin in go.GetComponentsInChildren<SkinnedMeshRenderer>()){if(!skin.enabled)continue;skin.BakeMesh(baked,false);foreach(var point in baked.vertices){var world=skin.transform.TransformPoint(point);if(first){bounds=new Bounds(world,Vector3.zero);first=false;}else bounds.Encapsulate(world);}}UnityEngine.Object.Destroy(baked);
+            float size=Mathf.Max(bounds.size.x,bounds.size.y,bounds.size.z);camera.orthographicSize=size*.57f;camera.transform.position=bounds.center+new Vector3(size*.15f,size*.8f,-size*1.6f);camera.transform.LookAt(bounds.center);
+        }
         void HandFrame(float time){
             int f=Mathf.Clamp(Mathf.RoundToInt(time*hand.fps),0,hand.frames-1);for(int i=0;i<vertices.Length;i++){int p=(f*2*hand.vertices+i)*3,n=p+hand.vertices*3;vertices[i]=new Vector3(handFrames[p],handFrames[p+1],handFrames[p+2]);normals[i]=new Vector3(handFrames[n],handFrames[n+1],handFrames[n+2]);}handMesh.vertices=vertices;handMesh.normals=normals;handMesh.RecalculateBounds();
         }
-        public void Hide(){if(root!=null){root.SetActive(false);UnityEngine.Object.Destroy(root);}previewTiles?.Dispose();previewTiles=null;foreach(var m in materials)UnityEngine.Object.Destroy(m);foreach(var m in meshes)UnityEngine.Object.Destroy(m);materials.Clear();meshes.Clear();if(image!=null){image.Release();UnityEngine.Object.Destroy(image);}root=null;camera=null;image=null;key=null;effect=null;native=null;modelVisual=null;hand=null;handMesh=null;handFrames=null;vertices=null;normals=null;}
+        public void Hide(){if(root!=null){root.SetActive(false);UnityEngine.Object.Destroy(root);}previewTiles?.Dispose();previewTiles=null;foreach(var m in materials)UnityEngine.Object.Destroy(m);foreach(var m in meshes)UnityEngine.Object.Destroy(m);materials.Clear();meshes.Clear();if(image!=null){image.Release();UnityEngine.Object.Destroy(image);}root=null;camera=null;image=null;key=null;effect=null;native=null;modelVisual=null;hand=null;handMesh=null;handFrames=null;vertices=null;normals=null;characterHand=null;characterClip=null;}
         public void Dispose(){Hide();if(composite!=null)UnityEngine.Object.Destroy(composite);composite=null;}
     }
 }

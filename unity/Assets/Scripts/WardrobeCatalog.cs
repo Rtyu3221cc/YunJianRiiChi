@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace YunJian.Riichi {
     [Serializable] public sealed class WardrobeItem {
-        public string id,category,name,icon,texture,hand,table,preview,model,modelPrefab,effect,nativeEffect,motion,motionSet,nailTexture,audio,cue;
+        public string id,category,name,icon,texture,hand,table,preview,model,modelPrefab,effect,nativeEffect,motion,motionSet,nailTexture,audio,cue,nativeHand;
         public int sourceItemId;
         public bool HasModel=>!string.IsNullOrEmpty(model)||!string.IsNullOrEmpty(modelPrefab);
         public float effectScale;
@@ -37,6 +37,7 @@ namespace YunJian.Riichi {
         public static WardrobeItem ResolveHand(WardrobeItem item,string character){
             if(item==null||item.category!="hand")return item;
             if(WardrobeCatalog.CanonicalHand(item.id)=="hand-cat-orange")return WardrobeCatalog.Find("hand-cat-orange");
+            var special=CharacterHands.Default(character);if(special!=null)return special;
             return WardrobeCatalog.Find(character=="wangcilang"?"hand-dog":CharacterRoster.Find(character)?.sex==2?"hand-man":"hand-human");
         }
         public static string Motion(WardrobeItem item,string action){

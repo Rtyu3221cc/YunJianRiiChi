@@ -13,7 +13,7 @@ namespace YunJian.Riichi
         [Serializable] class HandData { public int vertices, frames, fps; public float duration, landTime; public float[] uv, tilePoints,tileRotations; public int[] body, nails; }
         // Every clip is baked from the same public mesh, UVs and triangle groups; only
         // the sampled frames, the carried-object path and the timing differ.
-        sealed class Clip { public HandData data; public Vector3[][] vertices, normals; public Vector3[] frameVertices, frameNormals; public float[] armWeight; public int[] armNear, armFar; }
+        sealed class Clip { public HandData data; public CharacterHandClip native; public Vector3[][] vertices, normals; public Vector3[] frameVertices, frameNormals; public float[] armWeight; public int[] armNear, armFar; }
         // The authored forearm stops ~.47 source units from the palm. On 20:9 phones
         // the side players' sleeve end comes into view, so the far forearm is pushed
         // further along its own axis each frame; palm and wrist stay as authored.
@@ -71,6 +71,7 @@ namespace YunJian.Riichi
         Clip clip;
         Mesh mesh;
         Material body, nails;
+        CharacterHandVisual characterHand;
         Transform motion, animatedTile, targetTile, targetStick, meldTarget, northTarget, impact;
         TableRenderer.MeldVisual movingMeld;Vector3 meldFinal;Quaternion meldRotation;
         bool GroupCall=>current!=null && (current.kind=="chi" || current.kind=="pon" || current.kind=="kan");
@@ -82,12 +83,14 @@ namespace YunJian.Riichi
         public bool BurstFired(string key)=>firedBursts.Contains(key);
         readonly HashSet<string> riichiCalls=new HashSet<string>();
         readonly WinCutIn winCutIn=new WinCutIn();
+        YakumanCinematic yakumanCinematic;float yakumanStartedAt;
+        public YakumanCinematic Cinematic=>yakumanCinematic;
         float winResultReadyAt;
         readonly NativeCallouts nativeCallouts=new NativeCallouts();
         public WinCutIn CutIn=>winCutIn;
         public int SpawnedWinEffects { get; private set; }
         static bool IsWin(PublicSound e) => e!=null && (e.kind=="ron" || e.kind=="tsumo");
-        public bool ShowWinPresentation => IsWin(current) || IsWin(call) || cutIns.Count>0 || handEvents.Any(IsWin) || callEvents.Any(IsWin) || (ValidationFreeze?ValidationTime:Time.unscaledTime)<winResultReadyAt || winCutIn.Active || WinEffectPlaying;
+        public bool ShowWinPresentation => yakumanCinematic!=null || IsWin(current) || IsWin(call) || cutIns.Count>0 || handEvents.Any(IsWin) || callEvents.Any(IsWin) || (ValidationFreeze?ValidationTime:Time.unscaledTime)<winResultReadyAt || winCutIn.Active || WinEffectPlaying;
         // The source opens the settlement 3.3 s into new-style effects such as
         // 咒层界 while the effect itself runs to its 6 s lifetime; players saw it cut
         // off. Keep the table for each effect's own playback length. Waiting for the
@@ -102,7 +105,7 @@ namespace YunJian.Riichi
         public bool WinActionStarted=>IsWin(current) || call?.kind=="ron";
         readonly List<NorthPetals> northEffects = new List<NorthPetals>();
         bool handedOff,impactQueued;
-        SourceHandAction tsumoPlan;float tsumoContact;bool tsumoSoundPlayed;
+        SourceHandAction tsumoPlan,nativeHandPlan;float tsumoContact;bool tsumoSoundPlayed;
         public int SpawnedNorthEffects { get; private set; }
         float impactStarted;
         NativeParticleEffect nativeImpact;
@@ -145,10 +148,10 @@ namespace YunJian.Riichi
         bool SidewaysDeclaration=>IsDeclaration&&DeclarationPlan.action=="LiQiPai";
         WardrobeItem DeclarationHand=>WardrobeRuntime.Item(table.Client.State,current.seat,"hand");
         float DeclarationSpeed=>DeclarationPlan?.speed??1;
-        float ClipLength => current?.kind=="kan"?.45f:(PlainDiscard || clip == null || clip.data.duration <= 0) ? .62f : clip.data.duration/(tsumoPlan?.speed??DeclarationSpeed);
+        float ClipLength => current?.kind=="kan"?.45f:(PlainDiscard || clip == null || clip.data.duration <= 0) ? .62f : clip.data.duration/(tsumoPlan?.speed??nativeHandPlan?.speed??DeclarationSpeed);
         // The carried object stops moving when the real river tile / stick / meld takes over.
-        float SourceHandoff => current?.kind=="tsumo"?tsumoContact:DeclarationPlan?.release??(current?.kind=="kan"?.35f:(PlainDiscard || clip == null || clip.data.landTime <= 0) ? .40f : clip.data.landTime/DeclarationSpeed);
-        float PlayLength => tsumoPlan?.lifetime??DeclarationPlan?.lifetime??ClipLength;
+        float SourceHandoff => current?.kind=="tsumo"?tsumoContact:DeclarationPlan?.release??nativeHandPlan?.release??(current?.kind=="kan"?.35f:(PlainDiscard || clip == null || clip.data.landTime <= 0) ? .40f : clip.data.landTime/DeclarationSpeed);
+        float PlayLength => tsumoPlan?.lifetime??DeclarationPlan?.lifetime??nativeHandPlan?.lifetime??ClipLength;
         float Handoff => SourceHandoff;
         float RiichiEffectAt {
             get {if(DeclarationPlan!=null)return DeclarationPlan.cue;return Mathf.Max(0,Handoff-.32f);}
@@ -236,8 +239,15 @@ namespace YunJian.Riichi
         void LoadClip(string stem)
         {
             var choice=WardrobeRuntime.Item(table.Client.State,current.seat,"hand");
+            nativeHandPlan=null;
             tsumoPlan=current.kind=="tsumo"?SourcePlaybackContracts.HandAction(choice,"Zimo"):null;
             if(IsDeclaration)stem=DeclarationPlan.action=="Dapai"?NormalClip:RiichiClip;
+            if(!string.IsNullOrEmpty(choice.nativeHand)){
+                string action=stem==NormalClip?"Dapai":stem==RiichiClip?"LiQiPai":stem==StickClip?"LiZhi":stem==TsumoClip?"Zimo":"Fulu";
+                if(!PlainDiscard&&!IsDeclaration&&current.kind!="tsumo")nativeHandPlan=CharacterHands.Action(choice,action);
+                var state=table.Client.State;int physical=NativeReviewLayout.Physical(table.RelativeSeat(current.seat),state.n);var native=CharacterHands.Clip(choice,physical,action);
+                clip=new Clip{native=native,data=new HandData{frames=native.frames,fps=native.fps,duration=native.duration,landTime=native.landTime,tilePoints=native.tilePoints,tileRotations=native.tileRotations}};activeMotionResource=native.prefab+"-"+action;return;
+            }
             stem=WardrobeRuntime.Motion(choice,stem);
             activeMotionResource=stem;
             if (!clips.TryGetValue(stem, out clip)) {
@@ -272,7 +282,7 @@ namespace YunJian.Riichi
         }
         int spokenEvent=-1;
         void StartQueued(){
-            if(current!=null || call!=null || cutIns.Count>0 || winCutIn.Active || winEffects.Count>0 || table.ArrangingHand)return;
+            if(current!=null || call!=null || cutIns.Count>0 || winCutIn.Active || winEffects.Count>0 || yakumanCinematic!=null || table.ArrangingHand)return;
             int hand=handEvents.Count>0?handEvents.Peek().id:int.MaxValue,shout=callEvents.Count>0?callEvents.Peek().id:int.MaxValue,id=Math.Min(hand,shout);
             if(id==int.MaxValue)return;
             if(hand==id && shout==id && handEvents.Peek().kind=="tsumo"){
@@ -310,8 +320,11 @@ namespace YunJian.Riichi
             // with the event's North tile, including the inward-facing glyph.
             if (item.kind=="discard" || item.kind=="riichi-stick" || item.kind=="nuki" || item.kind=="tsumo") motion.position -= motion.TransformVector(TilePoint(SourceHandoff));
             var hand=new GameObject("Source hand mesh");hand.layer=14;hand.transform.SetParent(motion,false);
+            if(clip.native!=null){characterHand=hand.AddComponent<CharacterHandVisual>();characterHand.Initialize(clip.native);}
+            else{
             hand.AddComponent<MeshFilter>().sharedMesh=mesh;
             var renderer=hand.AddComponent<MeshRenderer>();renderer.sharedMaterials=new[]{body,nails};renderer.shadowCastingMode=ShadowCastingMode.Off;
+            }
             movingMeld=GroupCall?table.EventMeld(item):null;
             animatedTile = GroupCall?null:stick ? table.CreateEffectStick(item.seat)
                         : item.kind=="nuki" ? table.CreateEffectTile("z4",table.NorthTarget(item.seat,item.nuki))
@@ -323,7 +336,7 @@ namespace YunJian.Riichi
                 foreach(var child in animatedTile.GetComponentsInChildren<Transform>())child.gameObject.layer=item.kind=="tsumo"||item.kind=="discard"?0:14;
                 foreach(var collider in animatedTile.GetComponentsInChildren<Collider>())collider.enabled=false;
             }
-            mesh.vertices=clip.vertices[0];mesh.normals=clip.normals[0];mesh.RecalculateBounds();
+            if(clip.native==null){mesh.vertices=clip.vertices[0];mesh.normals=clip.normals[0];mesh.RecalculateBounds();}
             if(animatedTile!=null){
                 PositionCarriedTile(TilePoint(0));
                 animatedTile.rotation=item.kind=="nuki"?table.NorthTarget(item.seat,item.nuki).rotation:Quaternion.Euler(0,table.SeatAngle(item.seat)+(!stick&&item.riichi?90:0),0);
@@ -360,7 +373,7 @@ namespace YunJian.Riichi
             if (northTarget!=null) northTarget.gameObject.SetActive(true);
             if (motion!=null) { motion.gameObject.SetActive(false); Destroy(motion.gameObject); }
             if (animatedTile!=null) { animatedTile.gameObject.SetActive(false); Destroy(animatedTile.gameObject); }
-            motion=null;animatedTile=null;targetTile=null;targetStick=null;meldTarget=null;northTarget=null;movingMeld=null;current=null;
+            motion=null;characterHand=null;animatedTile=null;targetTile=null;targetStick=null;meldTarget=null;northTarget=null;movingMeld=null;current=null;
             if(overlay!=null)overlay.enabled=false;
         }
         Vector3 TilePoint(float elapsed)
@@ -471,11 +484,16 @@ namespace YunJian.Riichi
             // from the hand's start. Prefab destruction (six seconds) is separate.
             float hold=effect.PlaybackDuration;if(effect.SourceResultDelay.HasValue){float lead=2;if(item.kind=="tsumo"){var hand=WardrobeRuntime.Item(table.Client.State,item.seat,"hand");lead=2.8f-SourcePlaybackContracts.HandAction(hand,"Zimo").release-.1f;}hold=Mathf.Max(0,lead)+effect.SourceResultDelay.Value;}winResultReadyAt=Mathf.Max(winResultReadyAt,effect.StartedAt+hold);
             winEffects.Add(effect);SpawnedWinEffects++;
+            if(!SuppressShouts&&yakumanCinematic==null){
+                var detail=YakumanCinematic.Select(table.Client.State);
+                if(detail!=null){var action=new PublicSound{seat=detail.seat,from=detail.from,tile=detail.tile,kind=detail.ron?"ron":"tsumo",winSource=detail.winSource};yakumanCinematic=new YakumanCinematic();yakumanCinematic.Play(table,detail,action);yakumanStartedAt=effect.StartedAt+2+(effect.SourceResultDelay??0);winResultReadyAt=Mathf.Max(winResultReadyAt,yakumanStartedAt+YakumanCinematic.Duration);}
+            }
         }
-        void EndWinEffects(){foreach(var e in winEffects)if(e!=null){e.gameObject.SetActive(false);Destroy(e.gameObject);}winEffects.Clear();winResultReadyAt=0;}
+        void EndWinEffects(){yakumanCinematic?.Dispose();yakumanCinematic=null;foreach(var e in winEffects)if(e!=null){e.gameObject.SetActive(false);Destroy(e.gameObject);}winEffects.Clear();winResultReadyAt=0;}
         void UpdateWinEffects()
         {
             float now=ValidationFreeze?ValidationTime:Time.unscaledTime;
+            if(yakumanCinematic!=null){float age=now-yakumanStartedAt;if(age>=YakumanCinematic.Duration){yakumanCinematic.Dispose();yakumanCinematic=null;}else yakumanCinematic.Sample(age);}
             for(int i=winEffects.Count-1;i>=0;i--){
                 var e=winEffects[i];if(e==null){winEffects.RemoveAt(i);continue;}
                 float age=now-e.StartedAt;
@@ -571,6 +589,7 @@ namespace YunJian.Riichi
         void LateUpdate() {
             if(overlay!=null && current!=null)ConfigureOverlay();
             winCutIn.Render();
+            yakumanCinematic?.Render();
         }
         public void RenderOverlay(RenderTexture texture)
         {
@@ -608,9 +627,12 @@ namespace YunJian.Riichi
                 Vector3 delta=motion.TransformVector(TilePoint(Mathf.Min(elapsed,Handoff))-TilePoint(SourceHandoff));meldTarget.position=meldFinal+delta;meldTarget.rotation=meldRotation;
             }
             float frame=Mathf.Clamp01(elapsed/ClipLength)*(clip.data.frames-1);int a=(int)frame,b=Mathf.Min(a+1,clip.data.frames-1);float t=frame-a;
+            if(characterHand!=null)characterHand.SampleFrame(frame);
+            else{
             for(int i=0;i<clip.data.vertices;i++) {clip.frameVertices[i]=Vector3.Lerp(clip.vertices[a][i],clip.vertices[b][i],t);clip.frameNormals[i]=Vector3.Lerp(clip.normals[a][i],clip.normals[b][i],t);}
             ExtendArm(clip);
             mesh.vertices=clip.frameVertices;mesh.normals=clip.frameNormals;mesh.RecalculateBounds();
+            }
             if(animatedTile!=null&&(!handedOff||current.kind!="tsumo"))
             {
                 // A frame can cross the handoff time. Clamp every carried object
@@ -640,6 +662,7 @@ namespace YunJian.Riichi
         }
         public void DrawCall(float width,float height,int n)
         {
+            if(yakumanCinematic?.Fullscreen==true){yakumanCinematic.Draw();return;}
             if(winCutIn.Active){winCutIn.Draw();return;}
             if (call==null) return;
             if(IsWin(call)){

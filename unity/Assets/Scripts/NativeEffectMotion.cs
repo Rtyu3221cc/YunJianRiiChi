@@ -15,6 +15,7 @@ namespace YunJian.Riichi {
         public NativeNamedColor[] colors;
         public NativeNamedTexture[] extraTextures;
         public string[] keywords;
+        public bool hasSourceQueue;public int sourceQueue;
     }
     [Serializable] public class NativeMotionCurve {
         public int node,kind,material,components;
@@ -60,6 +61,8 @@ namespace YunJian.Riichi {
                     else if(curve.kind==6)target.gameObject.SetActive(v(0)>.5f);
                     else if(curve.kind==7)renderers[curve.node].enabled=v(0)>.5f;
                     else if(curve.kind==8){var materials=renderers[curve.node].sharedMaterials;if(materials.Length<=curve.material)Array.Resize(ref materials,curve.material+1);materials[curve.material]=swappedMaterials[swap++][Mathf.Clamp(Mathf.RoundToInt(curve.values[a]),0,curve.assets.Length-1)];renderers[curve.node].sharedMaterials=materials;if(blocks[curve.node].Length<materials.Length){int old=blocks[curve.node].Length;Array.Resize(ref blocks[curve.node],materials.Length);for(int m=old;m<materials.Length;m++)blocks[curve.node][m]=new MaterialPropertyBlock();}}
+                    else if(curve.kind==9)target.GetComponent<Camera>().fieldOfView=v(0);
+                    else if(curve.kind==10)target.GetComponent<CanvasGroup>().alpha=v(0);
                     else {
                         var block=blocks[curve.node][curve.material];
                         if(curve.kind==3)block.SetColor(curve.property,new Color(v(0),v(1),v(2),v(3)));

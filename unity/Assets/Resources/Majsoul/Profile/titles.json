@@ -1,0 +1,144 @@
+{
+  "titles": [
+    {
+      "id": "traveler",
+      "name": "无称号",
+      "description": "初入云间的牌友",
+      "condition": "default",
+      "value": 0,
+      "sourceId": 600001,
+      "resource": "TitleIcons/notitle",
+      "priority": 1
+    },
+    {
+      "id": "queshi",
+      "name": "原初之火",
+      "description": "任一模式段位到达雀士",
+      "condition": "rank",
+      "value": 3,
+      "sourceId": 600002,
+      "resource": "TitleIcons/yuanchuzhihuo",
+      "priority": 2
+    },
+    {
+      "id": "quejie",
+      "name": "萤火之光",
+      "description": "任一模式段位到达雀杰",
+      "condition": "rank",
+      "value": 6,
+      "sourceId": 600003,
+      "resource": "TitleIcons/yinghuozhiguang",
+      "priority": 3
+    },
+    {
+      "id": "quehao",
+      "name": "成长之旅",
+      "description": "任一模式段位到达雀豪",
+      "condition": "rank",
+      "value": 9,
+      "sourceId": 600031,
+      "resource": "TitleIcons/achievementgroup1",
+      "priority": 20099
+    },
+    {
+      "id": "quesheng",
+      "name": "最初的雀圣",
+      "description": "任一模式段位到达雀圣",
+      "condition": "rank",
+      "value": 12,
+      "sourceId": 600004,
+      "resource": "TitleIcons/zuichuquesheng",
+      "priority": 4
+    },
+    {
+      "id": "hunTian",
+      "name": "最初的魂天",
+      "description": "任一模式段位到达魂天",
+      "condition": "rank",
+      "value": 15,
+      "sourceId": 600016,
+      "resource": "TitleIcons/zuichuhuntian",
+      "priority": 5
+    },
+    {
+      "id": "firstYakuman",
+      "name": "天选之证",
+      "description": "和出第一次役满",
+      "condition": "yakuman",
+      "value": 1,
+      "sourceId": 600034,
+      "resource": "TitleIcons/achievementgroup4",
+      "priority": 20096
+    },
+    {
+      "id": "hundred",
+      "name": "千锤百炼",
+      "description": "累计完成 100 场对局",
+      "condition": "matches",
+      "value": 100,
+      "sourceId": 600035,
+      "resource": "TitleIcons/achievementgroup5",
+      "priority": 20095
+    },
+    {
+      "id": "600005",
+      "name": "魂之契约者·初阶",
+      "description": "与雀魂签订契约的初阶学徒",
+      "condition": "manual",
+      "value": 0,
+      "sourceId": 600005,
+      "resource": "TitleIcons/hunzhiqiyuezhe1",
+      "priority": 10001
+    },
+    {
+      "id": "600006",
+      "name": "魂之契约者·中阶",
+      "description": "与雀魂签订契约的中阶学徒",
+      "condition": "manual",
+      "value": 0,
+      "sourceId": 600006,
+      "resource": "TitleIcons/hunzhiqiyuezhe2",
+      "priority": 10002
+    },
+    {
+      "id": "600007",
+      "name": "魂之契约者·高阶",
+      "description": "与雀魂签订契约的高阶学徒",
+      "condition": "manual",
+      "value": 0,
+      "sourceId": 600007,
+      "resource": "TitleIcons/hunzhiqiyuezhe3",
+      "priority": 10003
+    },
+    {
+      "id": "600008",
+      "name": "魂之启迪者·初阶",
+      "description": "促进了雀魂成长的初阶导师",
+      "condition": "manual",
+      "value": 0,
+      "sourceId": 600008,
+      "resource": "TitleIcons/hunzhiqidizhe1",
+      "priority": 10004
+    },
+    {
+      "id": "600009",
+      "name": "魂之启迪者·中阶",
+      "description": "促进了雀魂成长的中阶导师",
+      "condition": "manual",
+      "value": 0,
+      "sourceId": 600009,
+      "resource": "TitleIcons/hunzhiqidizhe2",
+      "priority": 10005
+    },
+    {
+      "id": "600010",
+      "name": "魂之启迪者·高阶",
+      "description": "促进了雀魂成长的高阶导师",
+      "condition": "manual",
+      "value": 0,
+      "sourceId": 600010,
+      "resource": "TitleIcons/hunzhiqidizhe3",
+      "priority": 10006
+    }
+  ]
+}

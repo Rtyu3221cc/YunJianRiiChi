@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 namespace YunJian.Riichi {
+ [Serializable] public class NativeCameraSource {public float fov,near,far,depth;public bool enabled;}
+ [Serializable] public class NativeRectSource {public float[] size,anchorMin,anchorMax,pivot;}
  [Serializable] public class NativeEffectNode {
   public string name,particle,renderer,texture,mesh,shaderBundle,shaderName;public int parent,renderMode;public float[] position,rotation,scale,tint,textureScale,textureOffset,uvScroll;public float srcBlend,dstBlend,sortingFudge,lengthScale;
   public NativeMaterialSource[] materials;public string[] meshes,animations;public bool staticMesh,active,skinnedMesh;public int sortingOrder,rootBone;public int[] bones;
   public string spineSkeleton,spineAtlas,spineAnimation;public string[] spineTextures;public float spineScale,spineSpeed;public bool spineLoop;
+  public NativeCameraSource camera;public NativeRectSource rect;public bool canvas,canvasGroup,image;public float canvasAlpha;
  }
  [Serializable] public class NativeExtraMaterial {public string name,source,asset;}
  [Serializable] public class NativeEffectSource {public NativeEffectNode[] nodes;public bool preserveActiveState;public NativeExtraMaterial[] extraMaterials;}
@@ -138,7 +141,7 @@ namespace YunJian.Riichi {
    var clone=Instantiate(prefab,transform,false);particles=clone.GetComponentsInChildren<ParticleSystem>(true);
    if(name=="WardrobeR30/effect_liqi_nanfenghua")RestoreCompressedSkin(clone);
    luaNewWin=name.StartsWith("FateR19/");
-   var table=GetComponentInParent<TableRenderer>();if((name.StartsWith("EffectsR11/")||name.StartsWith("WinsR22/")||name.StartsWith("WardrobeR30/effect_liqi_")||contract!=null||luaNewWin)&&table!=null){authoredSpace=clone.transform;SyncSpace();foreach(var child in clone.GetComponentsInChildren<Transform>(true))child.gameObject.layer=NativeEffectCamera.Layer;sourceCamera=NativeEffectCamera.Ensure(table);sourceCamera.Register(this);}
+   var table=GetComponentInParent<TableRenderer>();if((name.StartsWith("EffectsR11/")||name.StartsWith("WinsR22/")||name.StartsWith("WardrobeR30/effect_liqi_")||name.StartsWith("YakumanR39/effect_")||contract!=null||luaNewWin)&&table!=null){authoredSpace=clone.transform;SyncSpace();foreach(var child in clone.GetComponentsInChildren<Transform>(true))child.gameObject.layer=NativeEffectCamera.Layer;sourceCamera=NativeEffectCamera.Ensure(table);sourceCamera.Register(this);}
    motions=clone.GetComponentsInChildren<NativeEffectMotion>(true);
    skeletons=clone.GetComponentsInChildren<NativeSpineEffect>(true);
    // Imported prefabs have a neutral wrapper and an authored root. Some roots

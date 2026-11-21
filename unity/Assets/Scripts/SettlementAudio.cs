@@ -20,7 +20,7 @@ namespace YunJian.Riichi
         static string Character(WinDetail detail)=>characters.TryGetValue(detail,out var c)?c:"yiji";
         AudioSource output;
         bool enabledVoice=true,suspended;
-        string key;float previous=-1;int winner=-1,skipSerial;bool wasScores,wasFinal;
+        string key;float previous=-1;int winner=-1,skipSerial;bool wasScores,wasFinal,drawSpoken;
         public int VoicesPlayed {get;private set;}
         public readonly List<string> PlayedKeys=new List<string>();
         public bool HasResources=>Data.clips.All(c=>Clip(c.key)!=null);
@@ -55,12 +55,18 @@ namespace YunJian.Riichi
         void Awake(){output=gameObject.AddComponent<AudioSource>();output.playOnAwake=false;output.spatialBlend=0;}
         public void Configure(bool enabled,float volume){enabledVoice=enabled;output.volume=Mathf.Clamp01(volume);if(!enabled)output.Stop();}
         public void Suspend(bool flag){suspended=flag;if(flag)output.Stop();}
-        public void Reset(){output.Stop();key=null;previous=-1;winner=-1;wasScores=false;wasFinal=false;}
-        void Voice(string name,string character="yiji"){if(string.IsNullOrEmpty(name))return;PlayedKeys.Add(name);var clip=CharacterVoices.Clip(character,name);if(clip==null&&character=="yiji")clip=Clip(name);if(enabledVoice && !suspended && clip!=null){output.clip=clip;output.Play();VoicesPlayed++;}}
+        public void Reset(){output.Stop();key=null;previous=-1;winner=-1;wasScores=false;wasFinal=false;drawSpoken=false;}
+        public static string DrawVoice(RoomView view){
+            if(view.result.abort)return view.result.title=="九种九牌"?"gameend_jiuzhongjiupai":view.result.title=="四风连打"?"gameend_sifenglianda":view.result.title=="四家立直"?"gameend_sijializhi":view.result.title=="四杠散了"?"gameend_sigangliuju":null;
+            if(view.result.title=="流局满贯"&&(view.result.delta?[view.you]??0)>0)return "fan_liujumanguan";
+            var local=view.result.drawDetails?.FirstOrDefault(d=>d.seat==view.you);return local==null?null:local.tenpai?"gameend_tingpai":"gameend_noting";
+        }
+        public static float DrawDuration(RoomView view){int seat=view.result.abortHand?.seat??view.you;return .15f+(CharacterVoices.Clip(view.players[seat].character,DrawVoice(view))?.length??0)+.25f;}
+        void Voice(string name,string character="yiji"){if(string.IsNullOrEmpty(name))return;PlayedKeys.Add(name);var clip=CharacterVoices.Clip(character,name);if(clip==null&&name.StartsWith("game_top_"))clip=CharacterVoices.Clip(character,"game_top");if(clip==null&&character=="yiji")clip=Clip(name);if(enabledVoice && !suspended && clip!=null){GetComponent<CharacterVoicePlayback>()?.Cancel();output.clip=clip;output.Play();VoicesPlayed++;}}
         // Called once per frame from the client, never from repeated GUI passes.
         public void Tick(RoomView view,ResultPresentation display,bool visible,GameAudio audio,bool validation=false){
             if(view?.result==null || view.phase!="result"){if(key!=null)Reset();return;}
-            string next=view.audioRoom+":"+view.round+":"+view.honba+":"+view.result.title+":"+string.Join(",",view.result.delta??new int[0]);
+            string next=view.audioRoom+":"+view.matchSeq+":"+view.handSeq+":"+view.round+":"+view.honba+":"+view.result.title+":"+string.Join(",",view.result.delta??new int[0]);
             if(key!=next){Reset();key=next;}
             if(!visible || suspended)return;
             float age=display.ElapsedAge;
@@ -71,9 +77,9 @@ namespace YunJian.Riichi
             bool jump=display.SkipSerial!=skipSerial || previous<0 && age>.35f;skipSerial=display.SkipSerial;
             if(jump)output.Stop();
             if(!jump){
-                if(display.ShowingDraw){
-                    if(crossed(0)){string abort=view.result.title=="九种九牌"?"gameend_jiuzhongjiupai":view.result.title=="四风连打"?"gameend_sifenglianda":view.result.title=="四家立直"?"gameend_sijializhi":view.result.title=="四杠散了"?"gameend_sigangliuju":null;Voice(abort,view.players[view.result.abortHand?.seat??view.you].character);}
-                }else if(display.ShowingFinal){}
+                if(view.result.draw&&!drawSpoken&&crossed(.15f)&&!display.ShowingFinal){drawSpoken=true;Voice(DrawVoice(view),view.players[view.result.abortHand?.seat??view.you].character);}
+                if(display.ShowingDraw){}
+                else if(display.ShowingFinal){}
                 else if(display.ShowingScores){
                     const float step=.15f;
                     int beat=Mathf.FloorToInt((age-ResultPresentation.ScoreCountStart)/step),priorBeat=Mathf.FloorToInt((previous-ResultPresentation.ScoreCountStart)/step);
@@ -85,6 +91,7 @@ namespace YunJian.Riichi
                     if(plan.titleVoice!=null){if(crossed(plan.titleAt+(plan.drum=="yakuman"?.15f:.3f)))audio.Cue(plan.drum);if(crossed(plan.titleAt+.5f))Voice(plan.titleVoice,character);}
                 }
             }
+            if(display.ShowingFinal&&crossed(.4f)){int top=Enumerable.Range(0,view.n).First(i=>ResultPresentation.Rank(view,i,false)==1);Voice(CharacterVoiceTriggers.TopKey(view,top),view.players[top].character);}
             // Rank arrival is still audible when the player skips its entrance.
             if(display.ShowingScores&&!display.ShowingFinal&&crossed(ResultPresentation.RankAt(view.n,1)))audio.Cue("rank1");
             previous=age;

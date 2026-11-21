@@ -24,7 +24,7 @@ namespace YunJian.Riichi {
             float[] xs={r.x,r.x+l,r.xMax-rr,r.xMax},ys={r.y,r.y+tt,r.yMax-bb,r.yMax},us={0,b[0]/t.width,1-b[2]/t.width,1},vs={0,b[3]/t.height,1-b[1]/t.height,1};
             for(int y=0;y<3;y++)for(int x=0;x<3;x++)GUI.DrawTextureWithTexCoords(Rect.MinMaxRect(xs[x],ys[y],xs[x+1],ys[y+1]),t,new Rect(us[x],1-vs[y+1],us[x+1]-us[x],vs[y+1]-vs[y]));
         }
-        GUIStyle CText(int size=30,TextAnchor align=TextAnchor.MiddleCenter,bool calligraphy=false)=>new GUIStyle(text){fontSize=size,font=calligraphy?brush:body,alignment=align,wordWrap=true};
+        GUIStyle CText(int size=30,TextAnchor align=TextAnchor.MiddleCenter,bool calligraphy=false)=>new GUIStyle(text??GUIStyle.none){fontSize=size,font=calligraphy?brush:body,alignment=align,wordWrap=true};
         GUIStyle CharacterNameText(int size,TextAnchor align=TextAnchor.MiddleCenter)=>NText("character-name-display",size,align,true);
         bool CButton(Rect r,string label,string id,bool blue=true){CSlice(r,blue?"button":"button_light");Label(r,label,CText(36,TextAnchor.MiddleCenter,true),blue?CharacterGold:new Color(.2f,.1f,.05f));return Hit(r,id);}
 #if UNITY_EDITOR

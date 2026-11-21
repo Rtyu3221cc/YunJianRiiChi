@@ -53,7 +53,9 @@ namespace YunJian.Riichi {
             if(!dressTableReady)return;
             float t=Now-dressTableCycleBegan;
             if(dressTableStep==0&&dressTableCategory!="callout"&&t>=DressTableStepAt){dressTableStep=1;client.ShowDressPreviewState(DressTableState(true));}
-            if(t>=DressTableCycleLength)BeginDressTableCycle();
+            // Switching the scripted room stops its one-shots. Let long effect
+            // sounds finish before moving the preview to the next seat.
+            if(t>=DressTableCycleLength&&!client.DressPreviewAudioPlaying)BeginDressTableCycle();
         }
         void CloseDressTable(){if(DressTableOpen&&dressTableClosing<0){dressTableClosing=Now;Cue("btn_cancel");}}
         void FinishDressTable(){dressTableCategory=null;dressTableClosing=-1;dressTableReady=false;client.EndDressPreview();}

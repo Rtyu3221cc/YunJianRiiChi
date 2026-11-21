@@ -22,6 +22,7 @@ namespace YunJian.Riichi
         AudioSource[] channels; AudioSource audition,riichi;string riichiKey;
         public bool RiichiPlaying=>riichi!=null&&riichi.isPlaying;
         public bool ExternalAudition {get;set;}
+        public bool ContextVoicePlaying {get;set;}
         // The voice page refreshes this every frame it is the visible page. If a
         // page transition or an unexpected exit stops refreshing it, the duck
         // releases on its own instead of staying at the preview level.
@@ -129,7 +130,7 @@ namespace YunJian.Riichi
             get {
                 if (AuditionPlaying || RiichiPlaying || ExternalAudition) return 0;
                 // Voice preview keeps music at no more than 0.1 absolute volume.
-                if (CharacterVoicePreview) { float base_ = AppPreferences.Gain(1) * RoundMusicGain; return base_ <= .1f ? 1 : .1f / base_; }
+                if (CharacterVoicePreview || ContextVoicePlaying) { float base_ = AppPreferences.Gain(1) * RoundMusicGain; return base_ <= .1f ? 1 : .1f / base_; }
                 return 1;
             }
         }

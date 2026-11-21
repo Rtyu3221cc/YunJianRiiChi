@@ -6,6 +6,7 @@ namespace YunJian.Riichi
     public partial class RiichiClient
     {
         public bool DressPreviewing { get; private set; }
+        public bool DressPreviewAudioPlaying=>DressPreviewing&&gameAudio.EffectsPlaying;
         public bool BeginDressPreview()
         {
             if(active||Busy||DressPreviewing)return false;
@@ -17,7 +18,7 @@ namespace YunJian.Riichi
         public void ShowDressPreviewState(RoomView view)
         {
             if(!DressPreviewing||view==null)return;
-            view.Normalize();State=view;ObserveHandDrag();ClearSelection();
+            view.Normalize();State=view;gameAudio.SetScene(view);ObserveHandDrag();ClearSelection();
             table.Render(view);effects.Accept(view);
         }
         // The match-entry intro covers loading the previewed pack and the first table render.
@@ -25,7 +26,7 @@ namespace YunJian.Riichi
         public void PlayDressIntro(RoomView view)
         {
             if(!DressPreviewing||view==null)return;
-            view.Normalize();introduction.Reenter(view);
+            view.Normalize();gameAudio.SetScene(view);introduction.Reenter(view);
         }
         public void EndDressPreview()
         {

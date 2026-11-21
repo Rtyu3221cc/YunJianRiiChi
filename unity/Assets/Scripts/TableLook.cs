@@ -7,7 +7,7 @@ namespace YunJian.Riichi
     // scripts/import-table-look.py. See TableLook/source.json for provenance.
     public static class TableLook
     {
-        [Serializable] public class Light { public float[] rotation; }
+        [Serializable] public class Light { public float[] rotation,color; public float intensity; }
         [Serializable] public class Toon { public float splitThreshold; public float[] colorLight, colorUnlight, tileTexScale, tileTexOffset; }
         [Serializable] public class Toons { public Toon body, face; }
         [Serializable] public class Outline { public float[] tint; }
@@ -21,6 +21,7 @@ namespace YunJian.Riichi
         public static Toon Face => Source.toon.face;
         public static Color OutlineColor { get { var c = ColorOf(Source.outline.tint); c.a = 1; return c; } }
         public static Shadow TileShadow => Source.shadow;
+        public static Color LightColor => ColorOf(Source.light.color)*Source.light.intensity;
         // _WorldSpaceLightPos0 of a directional light points towards the light. Source
         // scene axes map to ours by a half turn about Y: (-x, y, -z).
         public static Vector3 LightDirection

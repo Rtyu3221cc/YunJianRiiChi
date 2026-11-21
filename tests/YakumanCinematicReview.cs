@@ -1,0 +1,65 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
+using System.Reflection;
+using UnityEngine;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+namespace YunJian.Riichi.Editor {
+ [InitializeOnLoad] public static class YakumanCinematicReview {
+  const string Key="YakumanCinematicReview";public static readonly List<string> Errors=new List<string>();
+  static YakumanCinematicReview(){EditorApplication.update+=()=>{if(Environment.GetEnvironmentVariable("YUNJIAN_YAKUMAN_ALIGNMENT")=="1"&&EditorApplication.isPlaying&&EditorApplication.isPaused)EditorApplication.isPaused=false;if(EditorApplication.isPlaying&&!EditorApplication.isCompiling&&SessionState.GetBool(Key,false)){SessionState.SetBool(Key,false);UnityEngine.Object.FindAnyObjectByType<RiichiClient>().gameObject.AddComponent<YakumanCinematicCapture>();}};}
+  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)] static void Bootstrap(){if(!SessionState.GetBool(Key,false))return;string repo=Environment.GetEnvironmentVariable("YUNJIAN_1114_REPO");CharacterRoster.PreviewOnly=true;CharacterPackService.RootOverride=repo+"/build/character-voice-r34/roles";CharacterPackService.RespectPreviewAvailability=true;CharacterPackService.ResetForReview();WardrobePackService.RootOverride=repo+"/build/feedback-1114-r39/wardrobes";WardrobePackService.RespectPreviewAvailability=true;WardrobePackService.ResetForReview();Application.logMessageReceived+=(m,s,t)=>{if((t==LogType.Error||t==LogType.Exception)&&!(s??"").Contains("UnityEditor.Search"))Errors.Add(m);};}
+  public static void Run(){NativeEffectR11Import.RestoreYakumanQueues();PlayerSettings.companyName="YunJianReview";PlayerSettings.productName="Yakuman1114";EditorSceneManager.OpenScene("Assets/Scenes/Table.unity");SessionState.SetBool(Key,true);EditorApplication.isPlaying=true;}
+ }
+ public sealed class YakumanCinematicCapture:MonoBehaviour {
+  [Serializable] class Case{public string key,hand;public int tiles,visibleSlots,motions,particles;public List<string> screenshots=new List<string>();}
+  [Serializable] class Report{public int checks;public bool androidDeviceTested;public List<Case> cases=new List<Case>();}
+  const BindingFlags Private=BindingFlags.Instance|BindingFlags.NonPublic;
+  string output;RiichiClient client;TableRenderer table;TableEffects effects;Report report=new Report();
+  void Check(bool ok,string why){if(!ok)throw new Exception(why);report.checks++;}
+  IEnumerator Start(){output=Environment.GetEnvironmentVariable("YUNJIAN_YAKUMAN_REVIEW_OUTPUT")??Environment.GetEnvironmentVariable("YUNJIAN_1114_REPO")+"/build/feedback-1114-r39/yakuman-review";Directory.CreateDirectory(output);client=GetComponent<RiichiClient>();client.SessionPreviewOnly=true;client.BeginLobbyValidation("yakuman-review");GetComponent<CharacterPackService>().StopAllCoroutines();GetComponent<ResourceRoomCoordinator>().enabled=false;CharacterRoster.BeginPreview();WardrobeSelection.BeginPreview();AudioListener.volume=0;table=GetComponent<TableRenderer>();effects=GetComponent<TableEffects>();
+   var stack=new Stack<IEnumerator>();stack.Push(Run());while(stack.Count>0){object next;try{var task=stack.Peek();if(!task.MoveNext()){stack.Pop();continue;}next=task.Current;if(next is IEnumerator nested){stack.Push(nested);continue;}}catch(Exception e){File.WriteAllText(output+"/failed.txt",e.ToString());Debug.LogException(e);EditorApplication.Exit(1);yield break;}yield return next;}
+   Check(YakumanCinematicReview.Errors.Count==0,string.Join("\n",YakumanCinematicReview.Errors));File.WriteAllText(output+"/report.json",JsonUtility.ToJson(report,true));Debug.Log("YAKUMAN REVIEW PASS "+report.checks);EditorApplication.Exit(0);
+  }
+  IEnumerator Size(int w,int h){var view=EditorWindow.GetWindow(Type.GetType("UnityEditor.GameView,UnityEditor"));view.GetType().GetMethod("SetCustomResolution",Private).Invoke(view,new object[]{new Vector2(w,h),"Yakuman review"});for(int i=0;i<6;i++)yield return null;}
+  static WinDetail Detail(string name,bool kan=false){return new WinDetail{seat=0,from=0,ron=false,tile=kan?"p5":"z7",tiles=kan?new[]{"p5"}:new[]{"m1","m2","m3","p1","p1","z5","z5","z5","z6","z6","z6","z7","z7"},melds=kan?new[]{"m1111","p2222","s3333","z4444"}:Array.Empty<string>(),yaku=new[]{new YakuDetail{name=name,yakuman=1}},limit="役满",score=new ScoreDetail{damanguan=1}};}
+  RoomView View(WinDetail detail){var view=DressPreviewStates.Tsumo("yakuman-"+detail.yaku[0].name,new WardrobeLoadout(),"yiji",400101,"役满实测");view.players[0].melds=detail.melds;view.players[0].count=detail.tiles.Length+1;view.hand=detail.tiles.Concat(new[]{detail.tile}).ToArray();view.drawn=detail.tile;view.result.details=new[]{detail};view.audioEvents=Array.Empty<PublicSound>();return view;}
+  void Save(Texture texture,string name){var prior=RenderTexture.active;RenderTexture.active=(RenderTexture)texture;var t=new Texture2D(texture.width,texture.height,TextureFormat.RGBA32,false);t.ReadPixels(new Rect(0,0,t.width,t.height),0,0);File.WriteAllBytes(output+"/"+name+".png",t.EncodeToPNG());Destroy(t);RenderTexture.active=prior;}
+  void FaceQuads(YakumanCinematic cinematic,Transform row){
+   var camera=(Camera)typeof(YakumanCinematic).GetField("camera",Private).GetValue(cinematic);var lines=new List<string>();
+   foreach(Transform tile in row){var filter=tile.GetComponent<MeshFilter>();if(filter==null)continue;var mesh=filter.sharedMesh;var ids=mesh.GetTriangles(1).Distinct().OrderByDescending(i=>mesh.uv[i].y).ThenBy(i=>mesh.uv[i].x).ToArray();var corners=new[]{ids[0],ids[2],ids[3],ids[1]};var points=corners.Select(i=>camera.WorldToViewportPoint(tile.TransformPoint(mesh.vertices[i]))).ToArray();lines.Add(string.Join(",",points.SelectMany(v=>new[]{v.x,1-v.y}).Select(v=>v.ToString("R",System.Globalization.CultureInfo.InvariantCulture))));}
+   File.WriteAllLines(output+"/"+cinematic.SourceKey+"-quads.csv",lines);
+  }
+  IEnumerator Run(){
+   Debug.Log("YAKUMAN REVIEW begin size; paused="+EditorApplication.isPaused+" scale="+Time.timeScale);
+   yield return Environment.GetEnvironmentVariable("YUNJIAN_YAKUMAN_ALIGNMENT")=="1"?Size(1280,720):Size(1800,810);
+   Debug.Log("YAKUMAN REVIEW sized "+Screen.width+"x"+Screen.height);
+   var names=new[]{"天和","地和","大三元","四暗刻","字一色","绿一色","清老头","国士无双","小四喜","四杠子","九莲宝灯","纯正九莲宝灯","四暗刻单骑","国士无双十三面","大四喜"};
+   var cumulative=Detail("清一色");cumulative.yaku[0].yakuman=0;cumulative.yaku[0].han=13;cumulative.score.damanguan=0;Check(YakumanCinematic.Resolve(cumulative)==null,"Counted yakuman does not acquire a native fan scene");
+   var priority=Detail("大三元");priority.yaku=new[]{new YakuDetail{name="大三元",yakuman=1},new YakuDetail{name="字一色",yakuman=1},new YakuDetail{name="大四喜",yakuman=2}};Check(YakumanCinematic.Resolve(priority).name=="大四喜","Source rarity picks the first eligible fan");
+   var multi=View(Detail("大三元"));multi.you=2;multi.result.details=new[]{Detail("天和"),Detail("四暗刻")};multi.result.details[1].seat=2;Check(YakumanCinematic.Select(multi).seat==2,"Own yakuman has precedence in multiple ron");
+   foreach(string name in names.Where(n=>string.IsNullOrEmpty(Environment.GetEnvironmentVariable("YUNJIAN_1114_FAN"))||n==Environment.GetEnvironmentVariable("YUNJIAN_1114_FAN")))foreach(bool kan in name=="四杠子"?new[]{true}:new[]{false,true}){
+    Debug.Log("YAKUMAN REVIEW scene "+name+" kan="+kan);
+    var detail=Detail(name,kan);var plan=YakumanCinematic.Resolve(detail);bool has18=Resources.Load<GameObject>("Majsoul/NativeReview/YakumanR39/"+plan.key+"18")!=null;if(kan&&!has18)continue;
+    var view=View(detail);client.ShowValidationFixture(view);for(int i=0;i<3;i++)yield return null;var sound=new PublicSound{kind="tsumo",seat=0,from=0,tile=detail.tile,winSource="tsumo"};
+    using(var cinematic=new YakumanCinematic()){
+     cinematic.Play(table,detail,sound);var scene=(GameObject)typeof(YakumanCinematic).GetField("scene",Private).GetValue(cinematic);var row=(Transform)typeof(YakumanCinematic).GetField("row",Private).GetValue(cinematic);var result=new Case{key=cinematic.SourceKey,hand=string.Join(" ",cinematic.ActualTiles),tiles=cinematic.ActualTiles.Length,motions=scene.GetComponentsInChildren<NativeEffectMotion>(true).Length,particles=scene.GetComponentsInChildren<ParticleSystem>(true).Length};Check(result.tiles==(kan?18:14),"Actual hand plus melds and winning tile "+result.key);Check(result.motions>0&&result.particles>60,"Complete source graph "+result.key);
+     var ghost=(GameObject)typeof(YakumanCinematic).GetField("ghost",Private).GetValue(cinematic);Check(ghost!=null,"Winning table model exists "+result.key);cinematic.Sample(1.45f);var settled=ghost.transform.position;Check(ghost.activeSelf&&!cinematic.Fullscreen,"Visible table launch before scene "+result.key);cinematic.Sample(2.13f);var launched=ghost.transform.position;Check(launched.y-settled.y>5&&Vector2.Distance(new Vector2(launched.x,launched.z),new Vector2(settled.x,settled.z))<.001f,"Winning tile flies upward rather than toward camera "+result.key);cinematic.Sample(2.14f);Check(!cinematic.Fullscreen,"Table launch retains complete two seconds after .15 delay "+result.key);cinematic.Sample(2.15f);Check(cinematic.Fullscreen&&!ghost.activeSelf,"Launch hands over to native sky scene "+result.key);
+     var outlines=scene.GetComponentsInChildren<MeshRenderer>(true).Where(r=>r.name=="maque_outline").ToArray();Check(outlines.Length==result.tiles&&outlines.All(r=>r.sharedMaterials.Length==1&&r.sharedMaterial.shader.name=="YunJian/OriginalTileOutline"),"Tile binding preserves independent outline renderers "+result.key);
+     if(new[]{"字一色","清老头","九莲宝灯","纯正九莲宝灯"}.Contains(name)){var sweeps=scene.GetComponentsInChildren<MeshRenderer>(true).Where(r=>r.name=="huaguang").ToArray();Check(sweeps.Length==1&&sweeps.All(r=>r.sharedMaterial.GetFloat("_SrcBlend")==5&&r.sharedMaterial.GetFloat("_DstBlend")==1&&r.sharedMaterial.GetColor("_TintColor").a<.5f),"Native sweep blends over visible tile faces "+result.key);}
+     foreach(float at in new[]{0f,1f,3.2f,5f,8.5f}){cinematic.Sample(at);cinematic.Render();if(at>=2){Check(cinematic.Fullscreen&&cinematic.Image!=null,"Source camera renders "+result.key);result.visibleSlots=row.Cast<Transform>().Count(t=>t.GetComponent<MeshFilter>()!=null&&t.gameObject.activeSelf);Check(result.visibleSlots==result.tiles,"Only actual hand slots visible "+result.key);for(int i=0;i<result.tiles;i++){var renderer=row.GetChild(i).GetComponent<MeshRenderer>();Check(renderer.sharedMaterials[1].mainTexture!=null,"Live tile face material "+result.key+"/"+i);}string shot=result.key+"-"+at.ToString("F1",System.Globalization.CultureInfo.InvariantCulture);Save(cinematic.Image,shot);result.screenshots.Add(shot);if(at==5&&name=="大三元"&&!kan)File.WriteAllLines(output+"/particle-debug.txt",scene.GetComponentsInChildren<ParticleSystem>(true).Select(p=>p.name+" active="+p.gameObject.activeInHierarchy+" count="+p.particleCount+" rate="+p.emission.rateOverTime.constantMax+" delay="+p.main.startDelay.constantMax+" duration="+p.main.duration+" bounds="+p.GetComponent<ParticleSystemRenderer>().bounds+" renderer="+p.GetComponent<Renderer>().enabled+" texture="+p.GetComponent<Renderer>().sharedMaterial.mainTexture.name));}yield return null;}
+     if(Environment.GetEnvironmentVariable("YUNJIAN_YAKUMAN_ALIGNMENT")=="1")FaceQuads(cinematic,row);
+     Check(GetComponent<GameAudio>().PlayedCues.Contains(plan.key),"Native fan sound reached its source timestamp "+plan.key);report.cases.Add(result);
+    }yield return null;
+   }
+   // A second real hand must replace every face, including red fives.
+   var alternate=Detail("四暗刻");alternate.tiles=new[]{"m0","m5","m5","p2","p2","p2","s3","s3","s3","z4","z4","z4","z2"};alternate.tile="z2";client.ShowValidationFixture(View(alternate));yield return null;
+   using(var cinematic=new YakumanCinematic()){cinematic.Play(table,alternate,new PublicSound{kind="tsumo",seat=0,from=0,tile="z2"});Check(cinematic.ActualTiles[0]=="m0"&&cinematic.ActualTiles.Last()=="z2","Red five and actual winning tile preserved");cinematic.Sample(5);cinematic.Render();Save(cinematic.Image,"alternate-actual-hand");}
+   yield return null;
+   var live=Detail("大三元");client.ShowValidationFixture(View(live));yield return null;effects.ValidationFreeze=true;effects.ValidationTime=0;effects.SuppressShouts=false;typeof(TableEffects).GetMethod("SpawnWin",Private).Invoke(effects,new object[]{new PublicSound{kind="tsumo",seat=0,from=0,tile=live.tile,winSource="tsumo"},0f});Check(effects.Cinematic!=null,"Actual table win schedules native cinematic");float began=(float)typeof(TableEffects).GetField("yakumanStartedAt",Private).GetValue(effects);effects.ValidationTime=began+5;yield return null;yield return null;Check(effects.ShowWinPresentation&&effects.Cinematic.Fullscreen,"Settlement remains blocked during cinematic");effects.ValidationTime=began+10.2f;yield return null;yield return null;Check(effects.Cinematic==null&&!effects.ShowWinPresentation,"Settlement resumes after the full source presentation");effects.Reset();
+  }
+ }
+}

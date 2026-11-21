@@ -86,7 +86,7 @@ namespace YunJian.Riichi
         public bool SessionPreviewOnly;
         public void BeginLobbyValidation(string hostSecret)
         {
-            EnterHome();validationSession=true;secret=hostSecret;token="";endpoint="http://127.0.0.1:8765";nickname="大厅验证";lobby.Home();
+            EnterHome();validationSession=true;PlayerRecord.PreviewOnly=true;secret=hostSecret;token="";endpoint="http://127.0.0.1:8765";nickname="大厅验证";lobby.Home();
         }
         public void BeginValidationPractice(string hostSecret)
         {
@@ -206,7 +206,8 @@ namespace YunJian.Riichi
         {
             if (Busy) yield break;
             if(req.op=="start"&&State?.resourceProtocol==1&&State.resourceSetup==null)req.op="prepareResources";
-            if(req.op=="create"||req.op=="join"||req.op=="character"){CharacterRoster.FillRequest(req);req.wardrobe=WardrobeLoadout.Local();}
+            if(req.op=="create"||req.op=="join"||req.op=="character"){CharacterRoster.FillRequest(req);req.wardrobe=WardrobeLoadout.Local();req.profile=PlayerRecord.Profile;}
+            else if(req.op=="profile")req.profile=PlayerRecord.Profile;
             if(req.op=="create"||req.op=="addBot"||req.op=="fillBots"||req.fillBots)CharacterRoster.FillBotRequest(req);
             if (!ValidEndpoint(endpoint)) {if(req.op=="action")RestoreSubmittedHand(); message = "请输入局域网 IPv4 地址，端口固定为 8765"; yield break; }
             if(active&&pendingUserActivity){req.userActive=true;pendingUserActivity=false;}
@@ -254,6 +255,10 @@ namespace YunJian.Riichi
             }
         }
         public void PublishCharacterSelection(){if(active&&State?.phase=="lobby"&&!Busy)StartCoroutine(Send(new RequestBody{op="character"}));}
+        // Rank and title shown to the other seats; refreshed after each recorded match.
+        bool profileDirty;
+        public void PublishRankProfile(){profileDirty=true;}
+        void FlushRankProfile(){if(profileDirty&&active&&State!=null&&State.phase!="empty"&&State.phase!="join"&&!Busy){profileDirty=false;StartCoroutine(Send(new RequestBody{op="profile"}));}}
         public bool SendResourceRequest(RequestBody request,Action done=null){if(Busy||!active)return false;StartCoroutine(Send(request,done));return true;}
         void ResetWaitPress()
         {waitPressCaptured=false;waitPressCancelled=false;waitHoldVisible=false;}
@@ -302,6 +307,7 @@ namespace YunJian.Riichi
             if(!resourceStartupOffered&&!validationSession&&!CharacterRoster.PreviewOnly&&!active&&Time.timeSinceLevelLoad>3&&lobby.Page==LobbyController.ScreenPage.Home){resourceStartupOffered=true;CharacterResourceUi.Current.OfferStartup();}
             ApplyAudioSettings();
             introduction.Tick(gameAudio);
+            GetComponent<CharacterVoicePlayback>()?.Tick(introduction.Active,DressPreviewing||lobby.OverlayActive||page=="settings");
             if(active&&(Input.anyKeyDown||Input.GetMouseButton(0)||Input.mouseScrollDelta.sqrMagnitude>0))pendingUserActivity=true;
             yakuman.Tick(active&&State!=null&&(State.phase=="play"||State.phase=="reaction")&&!introduction.Active&&!lobby.OverlayActive&&!showRoom&&page!="settings"&&!AutoPlaying,gameAudio);
             // Every press, on the table or the HUD, gets Majsoul's sakura tap burst.
@@ -323,6 +329,10 @@ namespace YunJian.Riichi
             if(!validationWaitInput)
 #endif
             waitInputConsumed=UpdateWaitPointer(new Vector2(Input.mousePosition.x,Screen.height-Input.mousePosition.y),Input.GetMouseButtonDown(0),Input.GetMouseButton(0),Input.GetMouseButtonUp(0),Time.unscaledTime);
+#if UNITY_EDITOR
+            if(!SessionPreviewOnly)
+#endif
+            FlushRankProfile();
             if (active && !Busy && Time.unscaledTime >= nextPoll) { nextPoll = Time.unscaledTime + .65f;
 #if UNITY_EDITOR
                 if(!SessionPreviewOnly)
@@ -345,6 +355,7 @@ namespace YunJian.Riichi
             CancelHandDrag(false);
             generation++; active = false; State = null;tableEmotes.Observe(null); ClearSelection();localHand.Reset(); RiichiMode = false;showRoom=false;
             page = "home";introduction.Reset();allLast.Reset();ResetWaitPress();waitDecisionKey=null;table.Clear(); voice.Reset();gameAudio.Reset();settlementAudio.Reset();effects.Reset();resultDisplay.Reset();choosingKind=null;
+            GetComponent<CharacterVoicePlayback>()?.ResetRoom();
         }
         void StartRoom(bool practice)
         {
@@ -586,7 +597,8 @@ namespace YunJian.Riichi
                 float cx=anchor.x+31;var nameRect=new Rect(cx-162*k/2,anchor.y+66,162*k,27*k);GUI.DrawTexture(nameRect,Skin("bg_name_1"),ScaleMode.StretchToFill);
                 namePlateText.fontSize=p.v.name.Length>11?9:p.v.name.Length>8?10:11;ShadowLabel(nameRect,p.v.name,namePlateText,Color.white);
                 // Players without a title show the official extendRes/title/notitle image.
-                GUI.DrawTexture(new Rect(cx-187*k/2,nameRect.yMax,187*k,36*k),Skin("notitle"),ScaleMode.ScaleToFit);
+                string titleName=RankRules.TitleOf(p.v);var titleRect=new Rect(cx-187*k/2,nameRect.yMax,187*k,36*k);
+                if(string.IsNullOrEmpty(titleName))GUI.DrawTexture(titleRect,Skin("notitle"),ScaleMode.ScaleToFit);else PlayerTitles.DrawPill(new Rect(titleRect.x+titleRect.width*.08f,titleRect.y+titleRect.height*.12f,titleRect.width*.84f,titleRect.height*.76f),titleName,namePlateText);
             }
             if(passive)return;
             tableEmotes.Draw(State,w,h,TrySendEmote,Busy,r=>{var a=GUI.matrix.MultiplyPoint3x4(r.position);var b=GUI.matrix.MultiplyPoint3x4(new Vector3(r.xMax,r.yMax));uiButtons.Add(Rect.MinMaxRect(a.x,a.y,b.x,b.y));});
@@ -744,7 +756,7 @@ namespace YunJian.Riichi
         {
             switch (kind) { case "ron": return "荣和"; case "tsumo": return "自摸"; case "pon": return "碰"; case "chi": return "吃"; case "kan": case "minkan": return "杠"; case "nuki": return "拔北"; case "abort9": return "九种九牌"; case "pass": return "过"; default: return kind; }
         }
-        void OnApplicationPause(bool pause) { if(pause){CancelHandDrag(false);introduction.Reset();resultDisplay.ClearEffects();ResetWaitPress();tap.Clear();}voice.Suspend(pause);settlementAudio.Suspend(pause);gameAudio.Suspend(pause);if(pause)table.Opening.Cancel();effects.Reset();SessionPause(pause); }
+        void OnApplicationPause(bool pause) { if(pause){CancelHandDrag(false);introduction.Reset();resultDisplay.ClearEffects();ResetWaitPress();tap.Clear();}GetComponent<CharacterVoicePlayback>()?.Suspend(pause);voice.Suspend(pause);settlementAudio.Suspend(pause);gameAudio.Suspend(pause);if(pause)table.Opening.Cancel();effects.Reset();SessionPause(pause); }
         void OnDestroy() { tableEmotes.Dispose();introduction.Reset();resultDisplay.Reset();yakuman.Reset();bridge?.Dispose(); }
     }
 }

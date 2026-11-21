@@ -34,7 +34,9 @@ test('changed room version restarts bot thinking and consecutive actions get ind
  const r=create();assert(op(r,'start').ok);r.s.players.forEach(p=>p.bot=true);let now=1000;r._aiNow=()=>now;let first=r.tick();now+=first.waitMs;r.s.version++;const second=r.tick();assert(second.idle&&second.waitMs>=700&&second.waitMs<=1000);now+=second.waitMs;assert(r.tick().action);const third=r.tick();if(third.waitMs)assert(third.waitMs>=700&&third.waitMs<=1000);
 });
 
-test('AI waits for the riichi presentation on clients before reacting',()=>{
+test('AI waits for the riichi presentation on clients before reacting',t=>{
+ // Restore the shared AI module: other files run in this process with --test-isolation=none.
+ const choose=globalThis.RiichiAI.choose;t.after(()=>{globalThis.RiichiAI.choose=choose;});
  const r=create();assert(op(r,'start').ok);r.s.players.forEach(p=>p.bot=true);let now=1000;r._aiNow=()=>now;let acted=0;globalThis.RiichiAI.choose=()=>'pass';r.act=()=>acted++;
  r.s.audioEvents=[{id:99,kind:'discard',seat:1,tile:'z1',riichi:true,at:Date.now()}];r.s.audioSeq=99;
  const first=r.tick();assert(first.waitMs>=3000&&first.waitMs<=3200,'riichi hold '+first.waitMs);now+=first.waitMs-1;assert(r.tick().idle);assert.equal(acted,0);now++;r.tick();assert.equal(acted,1);
