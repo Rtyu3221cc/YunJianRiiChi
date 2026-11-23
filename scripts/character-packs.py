@@ -9,6 +9,7 @@ parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('mode',choices=['finalize','stage','publish','verify','auth'])
 parser.add_argument('--build-root',type=Path,default=R/'build/character-resources-all')
 parser.add_argument('--workers',type=int,default=2)
+parser.add_argument('--kind',choices=['character','wardrobe'],default='character')
 args=parser.parse_args();B=args.build_root.resolve()
 assert B.is_relative_to(R.resolve())
 
@@ -88,8 +89,12 @@ def publish(stage_only=False):
     g=github();plan=json.loads((B/'build-plan.json').read_text('utf8'));summary=json.loads((B/'catalog-summary.json').read_text('utf8'))
     release=find_release(g,plan['tag'])
     if release is None:
-        release=g.api(g.BASE+'/releases','POST',dict(tag_name=plan['tag'],target_commitish='main',name='云间日麻 · 全角色资源 '+plan['tag'],draft=True,prerelease=True,
-            body=f"当前固定资源目录包含{summary['roles']}名角色、{summary['skins']}套服饰（{summary['dynamics']}套动态）。本版本补充其他角色及更新皮肤；旧资源版本与下载地址保留。Android与Windows编辑器分别打包，新包采用LZ4分块。完整目录给出每个角色的实际版本、大小、SHA-256和固定URL，可同时引用旧版本包。一姬、二阶堂美树继续内置且不可删除。配合Unity {summary['clientVersion']}或后续兼容客户端使用。"))
+        if args.kind=='wardrobe':
+            release=g.api(g.BASE+'/releases','POST',dict(tag_name=plan['tag'],target_commitish='main',name='云间日麻 · 2026年11月联动装扮资源',draft=True,prerelease=True,
+                body='补充《葬送的芙莉莲》联动六件装扮、泠星主题音乐《弦上华章》《未完诗篇》。Android 与 Windows 分开打包；每个目录项均包含固定地址、实际大小和 SHA-256。已发布旧包保留原版本与原地址，0.6.41 或后续兼容客户端可在资源管理界面下载。此 Release 仅包含可选资源，不包含 APK。'))
+        else:
+            release=g.api(g.BASE+'/releases','POST',dict(tag_name=plan['tag'],target_commitish='main',name='云间日麻 · 全角色资源 '+plan['tag'],draft=True,prerelease=True,
+                body=f"当前固定资源目录包含{summary['roles']}名角色、{summary['skins']}套服饰（{summary['dynamics']}套动态）。本版本补充其他角色及更新皮肤；旧资源版本与下载地址保留。Android与Windows编辑器分别打包，新包采用LZ4分块。完整目录给出每个角色的实际版本、大小、SHA-256和固定URL，可同时引用旧版本包。一姬、二阶堂美树继续内置且不可删除。配合Unity {summary['clientVersion']}或后续兼容客户端使用。"))
     js(B/'release-state.json',dict(tag=plan['tag'],id=release['id']))
     known={a['name']:a for a in assets(g,release)}
     rows=json.loads((B/'publish-assets.json').read_text('utf8'))

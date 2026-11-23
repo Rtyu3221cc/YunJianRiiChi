@@ -21,8 +21,12 @@ def merge_config(original,patch):
         assert re.fullmatch(r'[a-z0-9_-]+',c['sound_folder']),'Unsafe character key'
         for field in ['init_skin','full_fetter_skin']:assert c[field]in skins and skins[c[field]]['character_id']==c['id'],'Default/bond skin owner mismatch'
     for s in skins.values():
-        assert s['character_id']in characters,'Unknown character owner'
-        assert s['path'].startswith('extendRes/charactor/')and'..'not in s['path'].split('/'),'Unsafe upstream asset path'
+        assert s['character_id']in characters or (s['character_id']==0 and s['id']in (400000,400001)),'Unknown character owner'
+        source=s['path']
+        if s.get('assetLayout')=='native':
+            assert source in ('','deco/character/'+str(s['id'])),'Unsafe native asset path'
+        else:
+            assert source.startswith('extendRes/charactor/')and'..'not in source.split('/'),'Unsafe upstream asset path'
     return result
 
 def main():

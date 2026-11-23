@@ -1,0 +1,4777 @@
+{
+ "clientVersion": "4.0.51",
+ "resourceVersion": "0.16.289",
+ "effects": [
+  {
+   "sourceKey": "ron_26fll",
+   "id": "ron_26fll",
+   "category": "winEffect",
+   "group": "effect_hupai",
+   "name": "和牌-变出花田的魔法",
+   "sourceId": 308058,
+   "sargs": [
+    "1500",
+    "1"
+   ],
+   "legacy": false,
+   "iconSource": "MyAssets/deco/effect_hupai/ron_26fll/pic/ron_26fll.jpg",
+   "allPrefabs": [
+    "myassets/deco/effect_hupai/ron_26fll/3d/prefab/ron_26fll.prefab"
+   ],
+   "particleLayers": 54,
+   "prefab": "myassets/deco/effect_hupai/ron_26fll/3d/prefab/ron_26fll.prefab",
+   "nativeEffect": "NovR10/ron_26fll",
+   "icon": "Majsoul/NativeReview/NovR10/Icons/ron_26fll"
+  },
+  {
+   "sourceKey": "effect_liqi_26fll",
+   "id": "effect_liqi_26fll",
+   "category": "riichiEffect",
+   "group": "effect_lizhi",
+   "name": "立直-普通攻击魔法",
+   "sourceId": 308059,
+   "sargs": [
+    "shu",
+    "1"
+   ],
+   "legacy": false,
+   "iconSource": "MyAssets/deco/effect_lizhi/effect_liqi_26fll/pic/effect_liqi_26fll.jpg",
+   "allPrefabs": [
+    "myassets/deco/effect_lizhi/effect_liqi_26fll/3d/prefab/effect_liqi_26fll.prefab"
+   ],
+   "particleLayers": 131,
+   "prefab": "myassets/deco/effect_lizhi/effect_liqi_26fll/3d/prefab/effect_liqi_26fll.prefab",
+   "nativeEffect": "NovR10/effect_liqi_26fll",
+   "icon": "Majsoul/NativeReview/NovR10/Icons/effect_liqi_26fll"
+  },
+  {
+   "sourceKey": "liqi_26fll",
+   "id": "liqi_26fll",
+   "category": "stick",
+   "group": "lizhibang",
+   "name": "立直棒-菲伦的法杖",
+   "sourceId": 308060,
+   "sargs": [],
+   "legacy": false,
+   "iconSource": "MyAssets/deco/lizhibang/liqi_26fll/pic/liqi_26fll.jpg",
+   "allPrefabs": [
+    "myassets/deco/lizhibang/liqi_26fll/3d/prefab/liqi_26fll.prefab"
+   ],
+   "prefab": "myassets/deco/lizhibang/liqi_26fll/3d/prefab/liqi_26fll.prefab",
+   "nativeEffect": "NovR10/liqi_26fll",
+   "icon": "Majsoul/NativeReview/NovR10/Icons/liqi_26fll"
+  }
+ ],
+ "records": [
+  {
+   "output": "NovR10/Animations/ron_26fll-712490003179003343-controller.json",
+   "sha256": "d01759bfa4e8f2c0281016a5ec98db74c6f6a10d9121695cedbae8cae5de0499",
+   "pathID": 7531978851435903463,
+   "cab": "CAB-beb48bc7ba24b5dba1adf56cc247ae8b"
+  },
+  {
+   "output": "NovR10/Animations/ron_26fll--8502186313956981244.json",
+   "sha256": "8e92baa5c3cfa8b7afbd85a400c64e24c497f4180a6b46f167e3e5f47c678bbe",
+   "pathID": -8502186313956981244,
+   "cab": "CAB-beb48bc7ba24b5dba1adf56cc247ae8b"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-8068190095505490686.json",
+   "sha256": "02bfd104b0aafb6eab6d6e753031e97ef8c9fa460749789921773facff35118f",
+   "pathID": 8068190095505490686,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-8068190095505490686-renderer.json",
+   "sha256": "3db1a96ac9e16d1a7825ae32b6913760d758c3f2f11de709147334de1e1f326b",
+   "pathID": -6623000032497974221,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--8772120569745294258.png",
+   "sha256": "7e90f5026937f328523da14d1706f0a6e12ba9364aa5dfac63599eec57b693cb",
+   "pathID": -8772120569745294258,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--8896128440872485766.png",
+   "sha256": "04cef5be72c320ef51c100c03d3381d9d2f6a148bd3fc2310bbc3c6f1caf6917",
+   "pathID": -8896128440872485766,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--3633991289489587119.png",
+   "sha256": "b26d5b33bd1bee7633f6501a731b7b7f4aae744f085e6b0d0b7d1f26fabadb2c",
+   "pathID": -3633991289489587119,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-8068190095505490686-4406050794660944923-mesh.json",
+   "sha256": "723141a015c6976e5b9e699a4590a2cfa2a22a48156bef7047e3c6d06323708c",
+   "pathID": 4406050794660944923,
+   "cab": "CAB-37bbb036c489a596063b8f50bbb71599"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--2635229009910996642.json",
+   "sha256": "bf6257581f121b9b91c05e4d9d8d468fbcc6676e72736803658aa8857d8acbb9",
+   "pathID": -2635229009910996642,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--2635229009910996642-renderer.json",
+   "sha256": "3db1a96ac9e16d1a7825ae32b6913760d758c3f2f11de709147334de1e1f326b",
+   "pathID": -4828156141358299424,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--3640844660041314968.png",
+   "sha256": "f7ac32eebc01379255a7b31410b54dd0d9f10aeb561d3755f3991d1c1e23c1dd",
+   "pathID": -3640844660041314968,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85-6541185043633936175.png",
+   "sha256": "6d249e9810ebd4cb275ee387911d33b671b3d4e412c9b3f5c75f21df37d0a3bc",
+   "pathID": 6541185043633936175,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85-56631608532593581.png",
+   "sha256": "813c4d2e0074fdb56c43c4d64739032cb0ba29b6b9f12814dfdd2051c2ff55fe",
+   "pathID": 56631608532593581,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--2635229009910996642-4406050794660944923-mesh.json",
+   "sha256": "723141a015c6976e5b9e699a4590a2cfa2a22a48156bef7047e3c6d06323708c",
+   "pathID": 4406050794660944923,
+   "cab": "CAB-37bbb036c489a596063b8f50bbb71599"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-8968237412346477627.json",
+   "sha256": "76a9a7a45736c8b551fba9d00ebd650d371d5b9d6f9d6722cd891e6f028c0df5",
+   "pathID": 8968237412346477627,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-8968237412346477627-renderer.json",
+   "sha256": "3db1a96ac9e16d1a7825ae32b6913760d758c3f2f11de709147334de1e1f326b",
+   "pathID": -8188290174159514933,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-8968237412346477627-4406050794660944923-mesh.json",
+   "sha256": "723141a015c6976e5b9e699a4590a2cfa2a22a48156bef7047e3c6d06323708c",
+   "pathID": 4406050794660944923,
+   "cab": "CAB-37bbb036c489a596063b8f50bbb71599"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-3203988893569723931.json",
+   "sha256": "17183952888694b7b17e996a05b7859a5e0222e7d5950b40e28b83f110737efd",
+   "pathID": 3203988893569723931,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-3203988893569723931-renderer.json",
+   "sha256": "3db1a96ac9e16d1a7825ae32b6913760d758c3f2f11de709147334de1e1f326b",
+   "pathID": -7360251735189908696,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-3203988893569723931-4406050794660944923-mesh.json",
+   "sha256": "723141a015c6976e5b9e699a4590a2cfa2a22a48156bef7047e3c6d06323708c",
+   "pathID": 4406050794660944923,
+   "cab": "CAB-37bbb036c489a596063b8f50bbb71599"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--5103681031179998717.json",
+   "sha256": "773268d20de4b2a098d3072dd44e978031ce79a899dcf82bcf32569e8fcf8eeb",
+   "pathID": -5103681031179998717,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--5103681031179998717-renderer.json",
+   "sha256": "3db1a96ac9e16d1a7825ae32b6913760d758c3f2f11de709147334de1e1f326b",
+   "pathID": 2256202345866387818,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--5103681031179998717-4406050794660944923-mesh.json",
+   "sha256": "723141a015c6976e5b9e699a4590a2cfa2a22a48156bef7047e3c6d06323708c",
+   "pathID": 4406050794660944923,
+   "cab": "CAB-37bbb036c489a596063b8f50bbb71599"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--5825233765066697025.json",
+   "sha256": "1ab9bf18c05ad78af6c205a7770b8d900c676dcb911a049b512bb905ba3eb57d",
+   "pathID": -5825233765066697025,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--5825233765066697025-renderer.json",
+   "sha256": "3db1a96ac9e16d1a7825ae32b6913760d758c3f2f11de709147334de1e1f326b",
+   "pathID": -8569565767790089636,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--3293815753446067880.png",
+   "sha256": "28e3f6a20e93f18ce6f2d2bf6ce9e9c1214d47528224d8292f3a00f15af438f7",
+   "pathID": -3293815753446067880,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--5825233765066697025-4406050794660944923-mesh.json",
+   "sha256": "723141a015c6976e5b9e699a4590a2cfa2a22a48156bef7047e3c6d06323708c",
+   "pathID": 4406050794660944923,
+   "cab": "CAB-37bbb036c489a596063b8f50bbb71599"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--6417147441224527893.json",
+   "sha256": "ccede48fff9053526463731fdc86303473548738d5af5e8b2b35a92529537633",
+   "pathID": -6417147441224527893,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--6417147441224527893-renderer.json",
+   "sha256": "5be5d131cd8f89d3a48032604b4618e7b0c3e39c800b8f7bb9096732c9bfe7cb",
+   "pathID": -2954961291164067260,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85-759848337347808570.png",
+   "sha256": "2c0071aeb1a3c593f8ad4dcb5af7845f44977e2110fd3d4b467f9cbc515cfd79",
+   "pathID": 759848337347808570,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--6607794438686210626.json",
+   "sha256": "d534df34ec153fb1bd31b1d59ccd999bbfca8ca4585687c5f5fbd79d483eb2ee",
+   "pathID": -6607794438686210626,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--6607794438686210626-renderer.json",
+   "sha256": "5be5d131cd8f89d3a48032604b4618e7b0c3e39c800b8f7bb9096732c9bfe7cb",
+   "pathID": 6963696757434852965,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--8658653226616284552.json",
+   "sha256": "9a6150dd7777e58130dd85cc96237e1b8c283bc3f4ff0ea960c5af30b63bef24",
+   "pathID": -8658653226616284552,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--8658653226616284552-renderer.json",
+   "sha256": "597de98f367ed7727ed9e49cc1b85506af5ce63d83359d025f29c832f55c0c09",
+   "pathID": 8280596390711329311,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--7215615194939293018.json",
+   "sha256": "6277fe3efa471e97eb4c3816fe7e601f51bbd4b7b3bf3f949846589e5a443953",
+   "pathID": -7215615194939293018,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--7215615194939293018-renderer.json",
+   "sha256": "c92d9eb98b08d98e7177adec9c325f0f2c26ecef33da138c848b472fc32a08d5",
+   "pathID": -5532809560530934341,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--6900444003292779580.png",
+   "sha256": "569696c36a955ff0a9da81c3491e5b925d3966e3d83dc081afc3b90d170468b9",
+   "pathID": -6900444003292779580,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--5737556668272528468.png",
+   "sha256": "b2c0fa3e5a4ac76fe68a46f6aab22b84032f00e3172f4653629eea624c733392",
+   "pathID": -5737556668272528468,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--5335433557391708376.png",
+   "sha256": "31bc7019e7caa417d49a1b63f1fb8aea2ea4196d12097475fe0ed31b7bcd2e4a",
+   "pathID": -5335433557391708376,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85-6082357813327760400.png",
+   "sha256": "50ea6ee830a30774f4edcb6a6af1af37990d840fb9088230e145df257221dcfa",
+   "pathID": 6082357813327760400,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-715321992935880154.json",
+   "sha256": "d86717e55e79749a081f5080518a148090adb33f5465760f443bd40e9812149f",
+   "pathID": 715321992935880154,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-715321992935880154-renderer.json",
+   "sha256": "c92d9eb98b08d98e7177adec9c325f0f2c26ecef33da138c848b472fc32a08d5",
+   "pathID": 6037583504251955687,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--8113320373802315150.png",
+   "sha256": "c3185fa955fcb2a159f67da5e9753d6ad03f8aedae2178b33d00089acce7fa8d",
+   "pathID": -8113320373802315150,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--4258651275360306078.png",
+   "sha256": "22e0a3995ab30cba9ee9d1d3447e4384d04270d9dbac38b7a3c76f407872d63d",
+   "pathID": -4258651275360306078,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85-9027940306905310649.png",
+   "sha256": "0c816171e23c88cb7764de41245309f0fefb937d11e945ed9e654fb8ce5de2ad",
+   "pathID": 9027940306905310649,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--7827337866728759748.json",
+   "sha256": "912b99aa4b2c1a9b142844a8817fcfb53b60bab33e70c28d827cc7f9b6f361d2",
+   "pathID": -7827337866728759748,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--7827337866728759748-renderer.json",
+   "sha256": "5be5d131cd8f89d3a48032604b4618e7b0c3e39c800b8f7bb9096732c9bfe7cb",
+   "pathID": 4664379660113815660,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85-5098477622556702478.png",
+   "sha256": "88405b9a1af26492f2b62413e2d1cafb68bff96818367d949c14ceb03906bf15",
+   "pathID": 5098477622556702478,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--1579642963713462305.json",
+   "sha256": "20822f6e35dd57c1f4a26828818069d43bd35e29f0fb5062c93648b263c335a2",
+   "pathID": -1579642963713462305,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--1579642963713462305-renderer.json",
+   "sha256": "5be5d131cd8f89d3a48032604b4618e7b0c3e39c800b8f7bb9096732c9bfe7cb",
+   "pathID": -3309228898747442868,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--8338693255839895252.json",
+   "sha256": "cc15466f8369d4fbd15871c35a269b821a5b0aa4f36b93a74d60d165fa5beac1",
+   "pathID": -8338693255839895252,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--8338693255839895252-renderer.json",
+   "sha256": "1f6b7d625b96b36b7f712453d8ca51ccd9bed0703f856dacf9999f7e6cdd0551",
+   "pathID": 4467936489383268195,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--1646131776829517791.png",
+   "sha256": "650c76f6ccaa6543ac7598774a95c8c7206bfa856d4f4c06c862aaae495e7acc",
+   "pathID": -1646131776829517791,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85-6963030145462413393.png",
+   "sha256": "af3834535e5a447e2d1cb4b2fe270fd67676ef43ef4283a0fada4cb94b6e7c79",
+   "pathID": 6963030145462413393,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-8902196986972015462.json",
+   "sha256": "95ac74b4f711c79578e5d1e447c214f72b7c75ebd0de07410af3dec7d012dab2",
+   "pathID": 8902196986972015462,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-8902196986972015462-renderer.json",
+   "sha256": "1f6b7d625b96b36b7f712453d8ca51ccd9bed0703f856dacf9999f7e6cdd0551",
+   "pathID": 3813626131373716690,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--8126719774587178047.json",
+   "sha256": "54da93b7ed1c2a2cf567cf77714b21e0e9c9665630bb7753f3e0a66a07bcaa79",
+   "pathID": -8126719774587178047,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--8126719774587178047-renderer.json",
+   "sha256": "1f6b7d625b96b36b7f712453d8ca51ccd9bed0703f856dacf9999f7e6cdd0551",
+   "pathID": -2642270684397667346,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-7291081332028687750.json",
+   "sha256": "a7ce71149dd04e23fa1f03d0cc2a280d8aed41a446c997e84ef88681a6087203",
+   "pathID": 7291081332028687750,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-7291081332028687750-renderer.json",
+   "sha256": "1f6b7d625b96b36b7f712453d8ca51ccd9bed0703f856dacf9999f7e6cdd0551",
+   "pathID": 7939118643824091271,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-7238992447235253267.json",
+   "sha256": "a8a6835e3a15659e6c4a5da243dd2cb795c4560bb320dbea9f315f78d73b9c22",
+   "pathID": 7238992447235253267,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-7238992447235253267-renderer.json",
+   "sha256": "1f6b7d625b96b36b7f712453d8ca51ccd9bed0703f856dacf9999f7e6cdd0551",
+   "pathID": 2355512132284175583,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-9183796909722748036.json",
+   "sha256": "3b688d8e865c009207ecbe87511ab7c0a56cd18d53fe43493b11ced7d497ae8a",
+   "pathID": 9183796909722748036,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-9183796909722748036-renderer.json",
+   "sha256": "1f6b7d625b96b36b7f712453d8ca51ccd9bed0703f856dacf9999f7e6cdd0551",
+   "pathID": 3105478056074266833,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-4279440874490720307.json",
+   "sha256": "45e442dfa0f80319c46a14d323543589be92a69861dfd38f41487baeeb14cc98",
+   "pathID": 4279440874490720307,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-4279440874490720307-renderer.json",
+   "sha256": "5be5d131cd8f89d3a48032604b4618e7b0c3e39c800b8f7bb9096732c9bfe7cb",
+   "pathID": -190192519494756575,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85-8706043469759546109.png",
+   "sha256": "35bf398cc5388fa9fc294ef799e1fc3eea8fe3ac694fa7ad28a67750d817c58c",
+   "pathID": 8706043469759546109,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--3558376203716360302.json",
+   "sha256": "2f8a9e98a9693d940cad46118d453881ecc638a7efef61fd299bdee4ca050a4d",
+   "pathID": -3558376203716360302,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--3558376203716360302-renderer.json",
+   "sha256": "5be5d131cd8f89d3a48032604b4618e7b0c3e39c800b8f7bb9096732c9bfe7cb",
+   "pathID": 1408391879847348486,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--7942690862115652261.png",
+   "sha256": "3353be9b910817d16e508b7d0d47673d6b8706212be8e8aaf0674c5050b66166",
+   "pathID": -7942690862115652261,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-3235296882831615502.json",
+   "sha256": "a60037b2b3127169bbd2c35885d4131f96af32c926d1dfc236f6e130f6e3b6b6",
+   "pathID": 3235296882831615502,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-3235296882831615502-renderer.json",
+   "sha256": "5be5d131cd8f89d3a48032604b4618e7b0c3e39c800b8f7bb9096732c9bfe7cb",
+   "pathID": -1699165938131296840,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--411073971331149483.png",
+   "sha256": "46c207f85cc90e570702febafc45f1fea8448518a1b92d0a9dbbade47b53fad4",
+   "pathID": -411073971331149483,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--1904779630267700927.json",
+   "sha256": "af2f93bcdc03db932d009948f8671f23413db7289f7d397b01d664d2fcbd1a45",
+   "pathID": -1904779630267700927,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--1904779630267700927-renderer.json",
+   "sha256": "5be5d131cd8f89d3a48032604b4618e7b0c3e39c800b8f7bb9096732c9bfe7cb",
+   "pathID": 5456393513811863131,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--5896383991726335384.json",
+   "sha256": "22e29dfa13a61e4043933e3ea7a39152869bf8124fd7bc368b51ac102948ac6f",
+   "pathID": -5896383991726335384,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--5896383991726335384-renderer.json",
+   "sha256": "ed1b9f01f974f685234601ae1eb6d1bb060bcd26c479401800d258c8e260474e",
+   "pathID": -6547185321195243663,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85-8560372188195509359.png",
+   "sha256": "4b166c8c9888eed153d97090e8b7a3ee6264913498bac5281e1018f3bd9c1a30",
+   "pathID": 8560372188195509359,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85-2666029522730737901.png",
+   "sha256": "f614577bbffba71d8faf0a5c948bfa8a0b42e7359def857cec210d81d4665565",
+   "pathID": 2666029522730737901,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-3922093926060978887.json",
+   "sha256": "948ca891e570732333c40bb13887812a3afc243faf9b2a8c802195e7ff77ee49",
+   "pathID": 3922093926060978887,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-3922093926060978887-renderer.json",
+   "sha256": "ed1b9f01f974f685234601ae1eb6d1bb060bcd26c479401800d258c8e260474e",
+   "pathID": -303208634509154590,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-4473526859091582917.json",
+   "sha256": "5383468ff2fb3bc865b5409b3ad46657199fe5d8e30f5b4ac9d9cf1fcdd53513",
+   "pathID": 4473526859091582917,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-4473526859091582917-renderer.json",
+   "sha256": "0daec42f08d43185399b7c97d7f6de217ba9509486b492da19db71470c36aabd",
+   "pathID": -8275164721559710232,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-7404616551252610867.json",
+   "sha256": "9c22f243708504a26562ce4b5c3e3ceac9a0f99628e9aa18bd6a457b293dffeb",
+   "pathID": 7404616551252610867,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-7404616551252610867-renderer.json",
+   "sha256": "1f6b7d625b96b36b7f712453d8ca51ccd9bed0703f856dacf9999f7e6cdd0551",
+   "pathID": -8112012182614797313,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--4003464497127336484.png",
+   "sha256": "e0b4e39be3edecb5b8d849508e462eea41576d7c87330a12a3aa1b1ef47fd658",
+   "pathID": -4003464497127336484,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-4532625573856362998.json",
+   "sha256": "fcab01c42238815e49558aeaefe8878c391028ae584d0b72aed70edacecc3b67",
+   "pathID": 4532625573856362998,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-4532625573856362998-renderer.json",
+   "sha256": "1f6b7d625b96b36b7f712453d8ca51ccd9bed0703f856dacf9999f7e6cdd0551",
+   "pathID": -3811687021301762625,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85-1426231245106299747.png",
+   "sha256": "ac539916a8e46315864afd80e7c05f0fedfa45c456e349727538093849f232e2",
+   "pathID": 1426231245106299747,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-3029891864873198457.json",
+   "sha256": "8d6c03957a293e328b06fa1ef4fb434454c29c0f144ea9316baddccf0920b6e6",
+   "pathID": 3029891864873198457,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-3029891864873198457-renderer.json",
+   "sha256": "1f6b7d625b96b36b7f712453d8ca51ccd9bed0703f856dacf9999f7e6cdd0551",
+   "pathID": -8263169687422919621,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--8671761423753924225.json",
+   "sha256": "9f3b7a1f9d96b7f99d7b6cee6b353ba8b48274ef0f12cbb06ee37952dba0e962",
+   "pathID": -8671761423753924225,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--8671761423753924225-renderer.json",
+   "sha256": "d7207dea84aea5b381bd38172e46fc0bd64e7f1b84cbb2795f4055096f762909",
+   "pathID": -16290062772402909,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85-2315831604502298051.png",
+   "sha256": "9f264ee1f24cdedb3d49da126b96ef971b026e98112e42f42cb543f77d59dc3a",
+   "pathID": 2315831604502298051,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--1375756987155301223.json",
+   "sha256": "c154eccc3721edbbfad957ff636d11c0f58fd58c2ce27daaa2754a551107619b",
+   "pathID": -1375756987155301223,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--1375756987155301223-renderer.json",
+   "sha256": "ef26493f633998ee6a5c7bda9d01dea5bb95ab92fea9803654215b1231e14cc6",
+   "pathID": -1178198463869862539,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85-79082184002824889.png",
+   "sha256": "b3b719825c3bd4490fb09d4347ac2641a66b1d3af167cbde70ad3a740df20aaa",
+   "pathID": 79082184002824889,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--1375756987155301223-3654299565750816624-mesh.json",
+   "sha256": "bc2bad209f8422ef8407681dafc06fc906253bb420c1fd193aacd809c38f658e",
+   "pathID": 3654299565750816624,
+   "cab": "CAB-37bbb036c489a596063b8f50bbb71599"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--1002618765452964134.json",
+   "sha256": "02deb1cc2568fa8a833903200d2ce4834d3c561f664f05789feaf7a5d1b97f75",
+   "pathID": -1002618765452964134,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--1002618765452964134-renderer.json",
+   "sha256": "1f6b7d625b96b36b7f712453d8ca51ccd9bed0703f856dacf9999f7e6cdd0551",
+   "pathID": -3751241879856760783,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-2817881133340026530.json",
+   "sha256": "dea3b7d14790f44d85311cd18934ee980c913d19435f93ef1fba4750557e240c",
+   "pathID": 2817881133340026530,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-2817881133340026530-renderer.json",
+   "sha256": "ef26493f633998ee6a5c7bda9d01dea5bb95ab92fea9803654215b1231e14cc6",
+   "pathID": 8069789164024283429,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-2817881133340026530-3654299565750816624-mesh.json",
+   "sha256": "bc2bad209f8422ef8407681dafc06fc906253bb420c1fd193aacd809c38f658e",
+   "pathID": 3654299565750816624,
+   "cab": "CAB-37bbb036c489a596063b8f50bbb71599"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-3959481657970011614.json",
+   "sha256": "3e05d4614a8a7c4a9dac533ba369268948aeeb97b578710c6de5afe25afc11d3",
+   "pathID": 3959481657970011614,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-3959481657970011614-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 8548029543110001856,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--7664736823570217899.png",
+   "sha256": "ab71665531fef09a0d5d4b12a9dd1e228992b54ecce60f0a905f7e9f77676393",
+   "pathID": -7664736823570217899,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-3959481657970011614-3654299565750816624-mesh.json",
+   "sha256": "bc2bad209f8422ef8407681dafc06fc906253bb420c1fd193aacd809c38f658e",
+   "pathID": 3654299565750816624,
+   "cab": "CAB-37bbb036c489a596063b8f50bbb71599"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--4673821993980184440.json",
+   "sha256": "128f47ef75b299245af1a7d27197d9d400f7bf931d3ac9a8b7485a2de277b0c0",
+   "pathID": -4673821993980184440,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--4673821993980184440-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 7487612412780831614,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--4673821993980184440-3654299565750816624-mesh.json",
+   "sha256": "bc2bad209f8422ef8407681dafc06fc906253bb420c1fd193aacd809c38f658e",
+   "pathID": 3654299565750816624,
+   "cab": "CAB-37bbb036c489a596063b8f50bbb71599"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--2369973473179150354.json",
+   "sha256": "63f7c44bafbb376030da86b96b518429c4874383f414abf47c2d8a0ff0a15982",
+   "pathID": -2369973473179150354,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--2369973473179150354-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": -1085555399535796050,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--2369973473179150354-3654299565750816624-mesh.json",
+   "sha256": "bc2bad209f8422ef8407681dafc06fc906253bb420c1fd193aacd809c38f658e",
+   "pathID": 3654299565750816624,
+   "cab": "CAB-37bbb036c489a596063b8f50bbb71599"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--160172889394395733.json",
+   "sha256": "deff50e0913653b3ef9de9055466ab768f9ec041b0e012d61de371f045c8bc5a",
+   "pathID": -160172889394395733,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--160172889394395733-renderer.json",
+   "sha256": "6ab183aa20e531d74e3a313bae714e05b5f1f5f1664ff9bc192dc6a243bbca39",
+   "pathID": -2427502846400467521,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-4793321697316338207.json",
+   "sha256": "7d34fb541165853a60d4448dfc8b3492a521076572c1f8084470161987537828",
+   "pathID": 4793321697316338207,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-4793321697316338207-renderer.json",
+   "sha256": "a767755510c263e745715a6ce44031812d4b380a7a9a71996c6f2f1a51e51e27",
+   "pathID": -8648300876223908884,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--6528567577535855057.png",
+   "sha256": "1fe79c382e65ac8c880a39d70afe36057fc1fb24bcd6a501848e55dd36fa4f5b",
+   "pathID": -6528567577535855057,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85-690015316635688105.png",
+   "sha256": "b402ea01b4cc37000c9dff2f7ba2beb8a09111b7623c4eba56d6204aaac84d77",
+   "pathID": 690015316635688105,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85-4684417465858173653.png",
+   "sha256": "1193b74f9f705db4adba5affdea29bd0927f32c55128a83e2ad4cbc5581eb660",
+   "pathID": 4684417465858173653,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--4243212129351538343.png",
+   "sha256": "bd7e65ed65942f50918103b57e49a7b7647d6ddd17b169d2a72db80d25363191",
+   "pathID": -4243212129351538343,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-4793321697316338207-1942945985838384504-mesh.json",
+   "sha256": "c180cf9d361791b5c338c1f14619b9f32961edb60edd5ff52f4db04a38f763fc",
+   "pathID": 1942945985838384504,
+   "cab": "CAB-37bbb036c489a596063b8f50bbb71599"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--4709633465941566938.json",
+   "sha256": "a467e0d170a186546471874a537a4d5796b5524870049628134f71cdc1f827db",
+   "pathID": -4709633465941566938,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--4709633465941566938-renderer.json",
+   "sha256": "ba2e6b150f06769c578e7789cf875e24520972d65fa57223d29703ec64b339a2",
+   "pathID": 3494508999397966068,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--1938421655461224423.png",
+   "sha256": "23c4d9ffc69221047cc1e8edfaf38008920d2641dbc9ac038030f612baf93ed0",
+   "pathID": -1938421655461224423,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-14237556501574495.json",
+   "sha256": "b080277f858ab6972323ca1876f70f139b763777049614395910e89bba68c091",
+   "pathID": 14237556501574495,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-14237556501574495-renderer.json",
+   "sha256": "ba2e6b150f06769c578e7789cf875e24520972d65fa57223d29703ec64b339a2",
+   "pathID": 2056969884509675355,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85-7242848883018150644.png",
+   "sha256": "48ed208bf91d6be5213c2811c013b0fa3790b6c0d680a47ecf498a25e7b62920",
+   "pathID": 7242848883018150644,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-7504606458807329071.json",
+   "sha256": "644cb69f89a5713b2e3555df24e2cd4fa853662569296e58b60b7c1b7c20d4f0",
+   "pathID": 7504606458807329071,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-7504606458807329071-renderer.json",
+   "sha256": "d7207dea84aea5b381bd38172e46fc0bd64e7f1b84cbb2795f4055096f762909",
+   "pathID": -2556338719699019110,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--2558907938073863146.png",
+   "sha256": "772909799eac47d5061e5bcc96530b8ddf4eaf586b30202ded243b095f089c89",
+   "pathID": -2558907938073863146,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--5298407199207040770.json",
+   "sha256": "537b086eae222400edd9a56b90ef6a7ebeff65c12d8c2cb581dc80ac931d1caf",
+   "pathID": -5298407199207040770,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--5298407199207040770-renderer.json",
+   "sha256": "1f6b7d625b96b36b7f712453d8ca51ccd9bed0703f856dacf9999f7e6cdd0551",
+   "pathID": 4268788804540244542,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--6353599887394239457.json",
+   "sha256": "f3c7e3c0703353f9fa0365535cbda98938f8d48d5aea36aab5603f432c1653bc",
+   "pathID": -6353599887394239457,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--6353599887394239457-renderer.json",
+   "sha256": "1f6b7d625b96b36b7f712453d8ca51ccd9bed0703f856dacf9999f7e6cdd0551",
+   "pathID": 329689067775726541,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-5792141698317462922.json",
+   "sha256": "88262b559582f7969858ae5be623709623da31a49d8fcdd66cafba687988bb0b",
+   "pathID": 5792141698317462922,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-5792141698317462922-renderer.json",
+   "sha256": "1f6b7d625b96b36b7f712453d8ca51ccd9bed0703f856dacf9999f7e6cdd0551",
+   "pathID": 7055852203872333167,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--8130889501214979567.png",
+   "sha256": "e089d741dfe76eb52feeedf6f9780b9491530350f4d8d8289c317313c16e5f1a",
+   "pathID": -8130889501214979567,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-516066280183025566.json",
+   "sha256": "efdb6b0797fefc439c9f99911b4b333eabc8236731692e28d6a713cb6e139c6e",
+   "pathID": 516066280183025566,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-516066280183025566-renderer.json",
+   "sha256": "1f6b7d625b96b36b7f712453d8ca51ccd9bed0703f856dacf9999f7e6cdd0551",
+   "pathID": -1853846292892032807,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-1742611557281223548.json",
+   "sha256": "651996cec22f36597c0de1525fba1713c035fbbfccd0d4e2d7e6c358ee9e8986",
+   "pathID": 1742611557281223548,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-1742611557281223548-renderer.json",
+   "sha256": "1f6b7d625b96b36b7f712453d8ca51ccd9bed0703f856dacf9999f7e6cdd0551",
+   "pathID": -1632137248600937086,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--3426225595766715765.png",
+   "sha256": "cfdc9376cf4b6a09368ca6bfddf86ec8527d9ce7946835564c36833cb3551ec0",
+   "pathID": -3426225595766715765,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-1562843344978345660.json",
+   "sha256": "4660e399e4ba59a6a07e329b6862e00b3e6fdb0f5433fccb4b0efa6aa5a99047",
+   "pathID": 1562843344978345660,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-1562843344978345660-renderer.json",
+   "sha256": "1f6b7d625b96b36b7f712453d8ca51ccd9bed0703f856dacf9999f7e6cdd0551",
+   "pathID": 3904166592938336811,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-5253233381198997197.json",
+   "sha256": "ab60d097df240f7739d17758ae6a6596023e3d0f9196c4bc90e0e4333bcfb0c0",
+   "pathID": 5253233381198997197,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-5253233381198997197-renderer.json",
+   "sha256": "1f6b7d625b96b36b7f712453d8ca51ccd9bed0703f856dacf9999f7e6cdd0551",
+   "pathID": 3913702489513005663,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--7339106664290430203.png",
+   "sha256": "4bcc857818c90db763bc4fb125dd4de29875bb579adb036e08bfb32b0d1f5dcb",
+   "pathID": -7339106664290430203,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85-4235206367234559012.png",
+   "sha256": "ae9cf689f6932a804f6bd246b57e328cc6cda23110dafc3c1b615f89e2205b26",
+   "pathID": 4235206367234559012,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--1855104222188608736.json",
+   "sha256": "74a1bd69d1955790efcc7c8950428c581a6dcf34781771d986b697abd927ad5e",
+   "pathID": -1855104222188608736,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--1855104222188608736-renderer.json",
+   "sha256": "d7c087507a56fb9cea807f55e207195b6b16e4ffe5e06f299259ae18017afa35",
+   "pathID": -5658243495746140891,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85-3034860505020580882.png",
+   "sha256": "bc89f1a361f0f114b441d2f38f8841e19204eb0a7707d0c9cb4d44426029ecdd",
+   "pathID": 3034860505020580882,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85-2045004427672467897.png",
+   "sha256": "5c0b847e39a814bf600b2296f3a4109af8eeda1c9832a916119975a2f35ad378",
+   "pathID": 2045004427672467897,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85-5173967591561808152.png",
+   "sha256": "ffb0bbf97c273990974488e9b652b6dfab087e328f169943fbb44077c3d161ad",
+   "pathID": 5173967591561808152,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--2622028035641735666.png",
+   "sha256": "974fc42a147540db378d34000db66363c8dd3a7f8ed00cd1c3e5deadfda6bed3",
+   "pathID": -2622028035641735666,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--1855104222188608736-2648549831397775005-mesh.json",
+   "sha256": "b7d638600cc5c71e12e769d482a9c391ea477be8a422eaaf90bb8a695203e85d",
+   "pathID": 2648549831397775005,
+   "cab": "CAB-37bbb036c489a596063b8f50bbb71599"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-2429263146808143250.json",
+   "sha256": "0049500840d10a8bf360bcca92133b4b5481625938eebea40bed4aeee03c9967",
+   "pathID": 2429263146808143250,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-2429263146808143250-renderer.json",
+   "sha256": "de10f898332b3833db691d38ba7fb3f9c422399b3dfe0ddbe32d853978b03ef4",
+   "pathID": -2177318500480958210,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/builtin-white.png",
+   "sha256": "803f3b73e9e4960c1b25d25b1dcb493de6cb51a001fbcc7f604e4dfe62c8c26e",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-2429263146808143250--2633244155849772075-mesh.json",
+   "sha256": "3e198988c445c0313264bc7cadf7a66a5c79a8e88eb79e2f7637cad123614c89",
+   "pathID": -2633244155849772075,
+   "cab": "CAB-37bbb036c489a596063b8f50bbb71599"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-7690819500851086844.json",
+   "sha256": "7e6bee783e6e48e446a32a74697aeb5fa88eb5b4a56292129580a7be191a65e8",
+   "pathID": 7690819500851086844,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-7690819500851086844-renderer.json",
+   "sha256": "5be5d131cd8f89d3a48032604b4618e7b0c3e39c800b8f7bb9096732c9bfe7cb",
+   "pathID": 59021977183348175,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--3803149942450377994.json",
+   "sha256": "64739e2eb01a36fe98bd3950491d98992178b364587cda7faffab1f576cc0f55",
+   "pathID": -3803149942450377994,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--3803149942450377994-renderer.json",
+   "sha256": "5be5d131cd8f89d3a48032604b4618e7b0c3e39c800b8f7bb9096732c9bfe7cb",
+   "pathID": -8553546940051905207,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85-4600063027900459309.png",
+   "sha256": "e0e485f0c458e862d8ce9905010b239c20f2e9547e29a18910fec28f61265287",
+   "pathID": 4600063027900459309,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--215700326742397215.json",
+   "sha256": "3f455a9f4aa119c56c0a70e2802fcf60b8d74d1613c33ec73a133298a46630bf",
+   "pathID": -215700326742397215,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll--215700326742397215-renderer.json",
+   "sha256": "5be5d131cd8f89d3a48032604b4618e7b0c3e39c800b8f7bb9096732c9bfe7cb",
+   "pathID": 3891735726601272928,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Textures/CAB-c667f7e00d35aca929544fe16dea7e85--278114410639085886.png",
+   "sha256": "15666fc669ecd57adc10c8109b1f64fde4156c45827a38a81eb97577688dfe51",
+   "pathID": -278114410639085886,
+   "cab": "CAB-c667f7e00d35aca929544fe16dea7e85"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-617818025903601205.json",
+   "sha256": "7fbfd39dfce11ff2ea0b8f21d42f2a7f915077e0573d468a642aef2f35ecb8b3",
+   "pathID": 617818025903601205,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Data/ron_26fll-617818025903601205-renderer.json",
+   "sha256": "5be5d131cd8f89d3a48032604b4618e7b0c3e39c800b8f7bb9096732c9bfe7cb",
+   "pathID": -2225264889819527262,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Icons/ron_26fll.png",
+   "sha256": "679908589d71f7fee5f20996f7c4e8bb1e81ec2182179782533305bb033b9584",
+   "pathID": 8598946790986704921,
+   "cab": "CAB-fa7a3dc253fb7a6c264fcfc47d07ccc1"
+  },
+  {
+   "output": "NovR10/ron_26fll-source.json",
+   "sha256": "c5c9eb68d7c59e3e8e0974102bb7602768d67353fe6c55a85dc58911726edc93",
+   "pathID": 4493195611702786982,
+   "cab": "CAB-a6ac7af05569f768cf95c1f26158362e"
+  },
+  {
+   "output": "NovR10/Animations/effect_liqi_26fll-6798535266590344341-controller.json",
+   "sha256": "fdaa6ae60e1228e52f3bc7912cf73f5713bc7e5755b50df0317f905fe16942e9",
+   "pathID": -100057086478935381,
+   "cab": "CAB-eaa2163826906b7c2026dcbdc5f2c397"
+  },
+  {
+   "output": "NovR10/Animations/effect_liqi_26fll-4221803796299130430.json",
+   "sha256": "fc5fe2dc17a0f015fca234b63f03bad516037e4043bae635db54af19cf2ac45e",
+   "pathID": 4221803796299130430,
+   "cab": "CAB-eaa2163826906b7c2026dcbdc5f2c397"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1683767371955804804-static-mesh.json",
+   "sha256": "3e198988c445c0313264bc7cadf7a66a5c79a8e88eb79e2f7637cad123614c89",
+   "pathID": -1683767371955804804,
+   "cab": "CAB-4d1478acf7cd81b1d8c70a6a841f7ff7"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-8030364913030980606.json",
+   "sha256": "05f9c022c233ea6567c67478e9a20c9704734f2894f7b9abaa2a87bcb5a33c11",
+   "pathID": 8030364913030980606,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-8030364913030980606-renderer.json",
+   "sha256": "37463ce1b7d235827f1d1a9e0160c351733b415bf719d7c7105d66ddd203a04a",
+   "pathID": -3186207963346456246,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded-8955399534951291473.png",
+   "sha256": "fa617424a2e7af3c4031eaab612e5f9384ca9198051ccd4a7f1f0139044c9734",
+   "pathID": 8955399534951291473,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6477707075942628873.json",
+   "sha256": "e315666b4b8a7919f4b6b3dd251b93aff973481e67b9a7b6390f0fa921bed656",
+   "pathID": 6477707075942628873,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6477707075942628873-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 827436909839713300,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded--55294032869908380.png",
+   "sha256": "cd1ec5a8d5b340be461e0962a8eb9360acd726b6ec7401b4f2e9d3426761003f",
+   "pathID": -55294032869908380,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6477707075942628873-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--8257792864944578332.json",
+   "sha256": "5cf692c8322e4626ba1b5d636d261ad9d15c6f823ede2219db1ffe6d770801ae",
+   "pathID": -8257792864944578332,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--8257792864944578332-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": -7029188999648763495,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded--259438226581275396.png",
+   "sha256": "021b5eedc8264abf7f55fd7d35454cded8fcbaaa4ff53faff87749cf1f795098",
+   "pathID": -259438226581275396,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--8257792864944578332-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-393714099506343514.json",
+   "sha256": "0d35e865388999779f7d0b9850baf8f2c8b29255fc50ecea2d87b922903a57c5",
+   "pathID": 393714099506343514,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-393714099506343514-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 2945541270023202091,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded--2578947088156402877.png",
+   "sha256": "3a54c417f1789faf84293aa335e95ce7247b4c1c5c8a94f35797816b329687fc",
+   "pathID": -2578947088156402877,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-393714099506343514-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-7079630158071049438.json",
+   "sha256": "5689a510be84993fc88b20f024af758b11ca54165f322b6b6044b28e9d9a4cd7",
+   "pathID": 7079630158071049438,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-7079630158071049438-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": -8776533004503077130,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded-3382268240966461173.png",
+   "sha256": "55e69b23f38e4b890cfd235c52f61a5b5f0a799d4d36625d77de4f544cbb16fa",
+   "pathID": 3382268240966461173,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-7079630158071049438-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-2712124761420228863.json",
+   "sha256": "49de0d685b1ff98d051dd2a8f78b7072a9e571fa9a92332bb385bb9942feac83",
+   "pathID": 2712124761420228863,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-2712124761420228863-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 8256283741155629466,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded-8164971534108768776.png",
+   "sha256": "feffceb2752f0cf56d7d66127c1bd5a79aa9f4e2f4356e8c757574fad07ae4c1",
+   "pathID": 8164971534108768776,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-2712124761420228863-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-1928958946986128032.json",
+   "sha256": "fbcced1db7bf751408c48754f55c3cd8bbad8a9b8d9b3852b890d0b2cf1b1cdf",
+   "pathID": 1928958946986128032,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-1928958946986128032-renderer.json",
+   "sha256": "37463ce1b7d235827f1d1a9e0160c351733b415bf719d7c7105d66ddd203a04a",
+   "pathID": -8464156854452179659,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1600958903622429173.json",
+   "sha256": "489443c40ca0010b1c13685068802e5a01655e6e8e0b80f52d2cc3922799896d",
+   "pathID": -1600958903622429173,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1600958903622429173-renderer.json",
+   "sha256": "e84f76b25fd5e825b68bd7230606f8b3c7058ab3074add8ac84a44d399a0bc0c",
+   "pathID": -8009533623543791920,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded-5068711021603660601.png",
+   "sha256": "99620c7af0e0892ad26c523288fde33a2a5671c77cbf276508fc10ad3ba90f86",
+   "pathID": 5068711021603660601,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-7338827735696585407.json",
+   "sha256": "31843d4da7bfe7cc89650def53f1eb58ab00c1ed0da8ff10bc3aeffa9aa8bb06",
+   "pathID": 7338827735696585407,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-7338827735696585407-renderer.json",
+   "sha256": "94574034ad9e1302eed33bb860438ea2f636ff4b3cb36f6101514e4daf009f12",
+   "pathID": 4823752040114879209,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded--8042529367851554044.png",
+   "sha256": "dcba85b11158cf2ecbe94aa99af2f5340f0aa6ba03674c3e79a451d9dfac4c07",
+   "pathID": -8042529367851554044,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded--4497776922656568664.png",
+   "sha256": "f4db1dd884c5bd7db0799d9f2e07fd049c109ce23614ffda663ecb25365586a4",
+   "pathID": -4497776922656568664,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded--1044622911383459206.png",
+   "sha256": "3da561a04ba722ff91d68549eab45ddd6032a3c03ee1c077ac5d1a42d4db95ab",
+   "pathID": -1044622911383459206,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--5893754711910659351.json",
+   "sha256": "4e0668bcbf4aecf0d6a6d5d62f0d0b81473677b40b69c751b506d034b682d8c7",
+   "pathID": -5893754711910659351,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--5893754711910659351-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": 2024168651131604876,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded-7680239595262169718.png",
+   "sha256": "17babee64b4d80350456ac3e8fe43a9245227b65b187dfc93ce7766834a61034",
+   "pathID": 7680239595262169718,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded--7866349003460173042.png",
+   "sha256": "57e8a3eb416e34e65d37d39287c639ce728e4e067dfd9a37b34cceb79a9600cc",
+   "pathID": -7866349003460173042,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--4204180590062543753.json",
+   "sha256": "d2571b60eeb410b3faf21d191e8f568e292e1d01ff046edea6cb01bf51bf41be",
+   "pathID": -4204180590062543753,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--4204180590062543753-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": 7657819985418943322,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded--6707269338953919449.png",
+   "sha256": "a964bda0e85578e647f997cafc00824a389395e23abed55781f8e37f37fa5464",
+   "pathID": -6707269338953919449,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-4694515464165264577.json",
+   "sha256": "c72aa6a7b9f3e9b239b06a648da2f7b9edc6eb5c5fa0ddac1951dcaf063381b4",
+   "pathID": 4694515464165264577,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-4694515464165264577-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": -5555827782045809741,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded-1302062730949137632.png",
+   "sha256": "482d8fb169da84291a9c9a929582298374656111be71d9bd5c236f131aaa35ec",
+   "pathID": 1302062730949137632,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-4449359792898160233.json",
+   "sha256": "de8ca616448b2c30188134237479bdf5db8038f7de7f2f903aad6d389f030e8c",
+   "pathID": 4449359792898160233,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-4449359792898160233-renderer.json",
+   "sha256": "2125bb517378c6b8fb50dafc57d042b0a57bd8492f9e410d4cd10072d508ed17",
+   "pathID": 5777674210150007736,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded-6460925982538840215.png",
+   "sha256": "532679f435f4331f972f75bc1acdb85e009c598205127b482c8a319626525e24",
+   "pathID": 6460925982538840215,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--4499939335839399427.json",
+   "sha256": "de8ca616448b2c30188134237479bdf5db8038f7de7f2f903aad6d389f030e8c",
+   "pathID": -4499939335839399427,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--4499939335839399427-renderer.json",
+   "sha256": "2125bb517378c6b8fb50dafc57d042b0a57bd8492f9e410d4cd10072d508ed17",
+   "pathID": -2864161376046639651,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded--7638240884990383206.png",
+   "sha256": "fa617424a2e7af3c4031eaab612e5f9384ca9198051ccd4a7f1f0139044c9734",
+   "pathID": -7638240884990383206,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7300527019102778790.json",
+   "sha256": "712e336ef1b46ec9d550a242e51e492c7db9da51211de7dbd598df1f07acae90",
+   "pathID": -7300527019102778790,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7300527019102778790-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": -7721839850369997973,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7300527019102778790-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--4560455453957313719.json",
+   "sha256": "c41abd56e2af283c477abc97dc3f17678a1fb5205e6baf6cb416f9447e1acbb6",
+   "pathID": -4560455453957313719,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--4560455453957313719-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 937660906268463146,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--4560455453957313719-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-4808625327438107159.json",
+   "sha256": "6ae9b0db95ab0b8a3da6387d1c4886a870d28bd884b2edcb26388f48d4bfe07c",
+   "pathID": 4808625327438107159,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-4808625327438107159-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": -859700014963438474,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-4808625327438107159-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--3969593082826185691.json",
+   "sha256": "fcad98154b263f48ac96539e0b6409ec41ebbfc2a9dfb36045416e1c51d74cab",
+   "pathID": -3969593082826185691,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--3969593082826185691-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": -2125854216481939648,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--3969593082826185691-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--2894536513823745364.json",
+   "sha256": "2f514dd23b28cfbaa66de51b40185c55f321e36fab03a4afe338e9fcb74b05e6",
+   "pathID": -2894536513823745364,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--2894536513823745364-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": -1097075605165794836,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--2894536513823745364-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6406990976329657810.json",
+   "sha256": "32c48969cf43e392b9625702519174445f2295ea5f47a1092753e679da7775ae",
+   "pathID": 6406990976329657810,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6406990976329657810-renderer.json",
+   "sha256": "37463ce1b7d235827f1d1a9e0160c351733b415bf719d7c7105d66ddd203a04a",
+   "pathID": -3337004699194060792,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-5312813419137478286.json",
+   "sha256": "1f43bc617beeca5bc46cb431b6c58985d91bd68e38436bbbef09fca32dc63cda",
+   "pathID": 5312813419137478286,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-5312813419137478286-renderer.json",
+   "sha256": "94574034ad9e1302eed33bb860438ea2f636ff4b3cb36f6101514e4daf009f12",
+   "pathID": 6610126691680764017,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-3710559777757270622.json",
+   "sha256": "2a866d547271c48672fab23b8eaa467a9035fca7d349d5dff2b31a870bc393eb",
+   "pathID": 3710559777757270622,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-3710559777757270622-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": 4281624729397013352,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--2813066897620083845.json",
+   "sha256": "7a8b08078022751967b03d4f847a6df596af8aa5443e0fb33a5aae2b9a894ccf",
+   "pathID": -2813066897620083845,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--2813066897620083845-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": 2382672845061387365,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-5048739808815126729.json",
+   "sha256": "382444857944f6ad3e6b124f0ac8cb37864673fbd82648566dd440f9c46ca86d",
+   "pathID": 5048739808815126729,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-5048739808815126729-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": 2256684885704274415,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-8739250630562060789.json",
+   "sha256": "984117d7e8ebf3aa048c9ea06e2303117f963ca3aabf2ae98887c8a588396e09",
+   "pathID": 8739250630562060789,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-8739250630562060789-renderer.json",
+   "sha256": "2125bb517378c6b8fb50dafc57d042b0a57bd8492f9e410d4cd10072d508ed17",
+   "pathID": 30430293406811394,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--4453927068269321038.json",
+   "sha256": "bdee80447b618f29fdb4241eeaa0a47091a76cc568e74bcf8e8f423fb7d643a6",
+   "pathID": -4453927068269321038,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--4453927068269321038-renderer.json",
+   "sha256": "2125bb517378c6b8fb50dafc57d042b0a57bd8492f9e410d4cd10072d508ed17",
+   "pathID": -9105487799979079580,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-367342476551758043.json",
+   "sha256": "36d96764e0d4b23cbc190adca4c9181b431c6efe4974b9d7b42035e905b175be",
+   "pathID": 367342476551758043,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-367342476551758043-renderer.json",
+   "sha256": "e84f76b25fd5e825b68bd7230606f8b3c7058ab3074add8ac84a44d399a0bc0c",
+   "pathID": -2588642451277510234,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--211738000744941000.json",
+   "sha256": "a632b2d49a28567d6211e417b296817bf20151b613e6725a60050a382973b847",
+   "pathID": -211738000744941000,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--211738000744941000-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 4186616718557844019,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--211738000744941000-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-4594635828782819508.json",
+   "sha256": "c9b491cedc34bf6fcafd6e9d1677936c864802736138b555098a9c0d0b218089",
+   "pathID": 4594635828782819508,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-4594635828782819508-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": -753579440611034094,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-4594635828782819508-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--6633823692607328476.json",
+   "sha256": "d073c51af8816a0bf51ab77179cf217b152ac8a3394e807c98ba834fc9b4dde9",
+   "pathID": -6633823692607328476,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--6633823692607328476-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 2795607799142721806,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--6633823692607328476-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-586266449725562040.json",
+   "sha256": "6affab28eec2cf56a982c9dba472c7e1c8b48c1f373d401085fd6f6fdacc99ef",
+   "pathID": 586266449725562040,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-586266449725562040-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 6007138347858135287,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-586266449725562040-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--6389473850088045428.json",
+   "sha256": "3aa49d53fbccfd89286924d1f3dbf33d560c84ad8f1bc6826e5c5caacbbb5488",
+   "pathID": -6389473850088045428,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--6389473850088045428-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": -1841891260645491227,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--6389473850088045428-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7549066163059810561.json",
+   "sha256": "23833cc69089a40e752bbfb58da521e16dc0dfcd61ea651154089a34c8c2bfd8",
+   "pathID": -7549066163059810561,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7549066163059810561-renderer.json",
+   "sha256": "37463ce1b7d235827f1d1a9e0160c351733b415bf719d7c7105d66ddd203a04a",
+   "pathID": -5907320179064576640,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-4976717282188207998.json",
+   "sha256": "3a7a1409e10c539773918ade473bc7c175b64c58da6b11a17029cdf8436af700",
+   "pathID": 4976717282188207998,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-4976717282188207998-renderer.json",
+   "sha256": "94574034ad9e1302eed33bb860438ea2f636ff4b3cb36f6101514e4daf009f12",
+   "pathID": 2165404864846554673,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--8693255850437599760.json",
+   "sha256": "8fe2634aaf468bc0a0f97afa3bfaa756337e4016e01a8cd2f9fc16e649ac12d2",
+   "pathID": -8693255850437599760,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--8693255850437599760-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": -6419205839211489236,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1620731452161735590.json",
+   "sha256": "8ce8ce1e4508ee73b0030d2f388a00dd955afc5fc0f12880ca37f7525b5bb95f",
+   "pathID": -1620731452161735590,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1620731452161735590-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": 6945415975112440588,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6872337597984198405.json",
+   "sha256": "e29c778123807e189b78c6719a49f304bf873d452603e650d9dee337282d976b",
+   "pathID": 6872337597984198405,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6872337597984198405-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": 4390927658087128914,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--4454874965511917544.json",
+   "sha256": "0a85027f2853441c9bb75be977a3927fc5970df5a53ee3af00e28eb288c672de",
+   "pathID": -4454874965511917544,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--4454874965511917544-renderer.json",
+   "sha256": "2125bb517378c6b8fb50dafc57d042b0a57bd8492f9e410d4cd10072d508ed17",
+   "pathID": 3454259086358606090,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-1794622618191034397.json",
+   "sha256": "0a85027f2853441c9bb75be977a3927fc5970df5a53ee3af00e28eb288c672de",
+   "pathID": 1794622618191034397,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-1794622618191034397-renderer.json",
+   "sha256": "2125bb517378c6b8fb50dafc57d042b0a57bd8492f9e410d4cd10072d508ed17",
+   "pathID": -3457328187543650756,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1892191036366515637.json",
+   "sha256": "1a24e2a28bd9f21334768babcccfff3c389a30f5dcecd9e94e18cc00b0e7c065",
+   "pathID": -1892191036366515637,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1892191036366515637-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 7356174578491612012,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1892191036366515637-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--6048961640856051424.json",
+   "sha256": "607a8c3924f75720fef93c0e2675defa68c0f752454980dcd059d98d3966a6e0",
+   "pathID": -6048961640856051424,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--6048961640856051424-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 9154118257679104133,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--6048961640856051424-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--8255515537556020911.json",
+   "sha256": "be6ba5751095a404812d4847258554b83a75f2a35a75f69aab6f40d24ff964f5",
+   "pathID": -8255515537556020911,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--8255515537556020911-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 8946357966820595146,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--8255515537556020911-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1777900588577849282.json",
+   "sha256": "927d6d7c36a181f6daf1a626902215d690f5daf151abb4163af2a403d95cbf5a",
+   "pathID": -1777900588577849282,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1777900588577849282-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 384366234927918515,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1777900588577849282-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--6581466079728035890.json",
+   "sha256": "eba87dfa46a03e564f9ea0eec871a9a4e711bdbc1806b7dc46f2436ff4da2eb4",
+   "pathID": -6581466079728035890,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--6581466079728035890-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 6151561425031115581,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--6581466079728035890-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-1830703994480781607.json",
+   "sha256": "8404c412ade833639ce02fcfe1e197a7aa00a301ddfdd231d2924c714b2c3f45",
+   "pathID": 1830703994480781607,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-1830703994480781607-renderer.json",
+   "sha256": "37463ce1b7d235827f1d1a9e0160c351733b415bf719d7c7105d66ddd203a04a",
+   "pathID": -8516278737382037622,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-1142572681391115769.json",
+   "sha256": "aac54e5319b96c7038ad0037f0daf873f9fdf1fed629482c555b9f08d698a9cd",
+   "pathID": 1142572681391115769,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-1142572681391115769-renderer.json",
+   "sha256": "94574034ad9e1302eed33bb860438ea2f636ff4b3cb36f6101514e4daf009f12",
+   "pathID": -1903242479082231418,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7697959753128090395.json",
+   "sha256": "f03a153105df65fa58745e6231247b29abb51a44eefe4ef348a3dfebd3a96bf0",
+   "pathID": -7697959753128090395,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7697959753128090395-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": -7446252845729127739,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6435328657150247048.json",
+   "sha256": "7e98122b5f95b1a94800a3678284727fbf29f8e0b6f6d29c6ac2d0bb0bfabfc8",
+   "pathID": 6435328657150247048,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6435328657150247048-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": 5060768840267553017,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--9136248381193059198.json",
+   "sha256": "a0318bb779075bd243a5a8629719f1661fa2bb557762b3c128329e8fe3bc2c76",
+   "pathID": -9136248381193059198,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--9136248381193059198-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": -3667521481654839003,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--5633637860515164155.json",
+   "sha256": "a323fe8d113a9ae73e053ec49cab3dd7aa9c6f5258ce66d58f165ba90025bdea",
+   "pathID": -5633637860515164155,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--5633637860515164155-renderer.json",
+   "sha256": "2125bb517378c6b8fb50dafc57d042b0a57bd8492f9e410d4cd10072d508ed17",
+   "pathID": 6290897163654701165,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-9011741823694283522.json",
+   "sha256": "a323fe8d113a9ae73e053ec49cab3dd7aa9c6f5258ce66d58f165ba90025bdea",
+   "pathID": 9011741823694283522,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-9011741823694283522-renderer.json",
+   "sha256": "2125bb517378c6b8fb50dafc57d042b0a57bd8492f9e410d4cd10072d508ed17",
+   "pathID": -6224733037994295900,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--465067756186877650.json",
+   "sha256": "14f7cfbb87b8f836a792059aa793dbef50e5257305e70aa8c8993519860aa8c2",
+   "pathID": -465067756186877650,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--465067756186877650-renderer.json",
+   "sha256": "e84f76b25fd5e825b68bd7230606f8b3c7058ab3074add8ac84a44d399a0bc0c",
+   "pathID": -3524450837612858064,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-1870743065553079548.json",
+   "sha256": "9644621a36741b38a0d51e67bfdd1845ed9f14b5405128957da6f2c5a5d4cf7e",
+   "pathID": 1870743065553079548,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-1870743065553079548-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": -3434101501262183486,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-1870743065553079548-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--9034131575901932846.json",
+   "sha256": "8c196e683433ea5aaa053ac6f1daba51a01209e0d37bf401a68e85aac190bb63",
+   "pathID": -9034131575901932846,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--9034131575901932846-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": -4062796893144899671,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--9034131575901932846-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-5471152582117135623.json",
+   "sha256": "019320c05719f9ebb77cee86308ee4ab517a6d75565bce5d8da98e8ba4b4ec24",
+   "pathID": 5471152582117135623,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-5471152582117135623-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": -7724374176384292834,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-5471152582117135623-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1563015524257665275.json",
+   "sha256": "359e644e8bf3afa73b3573157edc47d2e507e53697f7e1028e350ca022c42871",
+   "pathID": -1563015524257665275,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1563015524257665275-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 8445716618138370494,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1563015524257665275-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--6118733124175735692.json",
+   "sha256": "3519ec9490954bf1e30fc4c225a3363a5681aca04492b29418694ab9be8fcae6",
+   "pathID": -6118733124175735692,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--6118733124175735692-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 7634886995145838266,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--6118733124175735692-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-4619938475301677588.json",
+   "sha256": "ebba7093455ad103e91bd6df95a51dc8ded458079bc4ba9891dabe2551fc9bda",
+   "pathID": 4619938475301677588,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-4619938475301677588-renderer.json",
+   "sha256": "37463ce1b7d235827f1d1a9e0160c351733b415bf719d7c7105d66ddd203a04a",
+   "pathID": 5714791714463492166,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-1180656313186546393.json",
+   "sha256": "9804cfcd3111d7c48a040b3031b194d087155045b9a5d128d3ccce4c4f63ca57",
+   "pathID": 1180656313186546393,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-1180656313186546393-renderer.json",
+   "sha256": "94574034ad9e1302eed33bb860438ea2f636ff4b3cb36f6101514e4daf009f12",
+   "pathID": 8693818177161907079,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--3198178359432134788.json",
+   "sha256": "fde3ddcc4747dd2853d8a1ea085299c921505d362df68480f97bec05f201dd66",
+   "pathID": -3198178359432134788,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--3198178359432134788-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": 2547265394352065897,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-3611280438912191113.json",
+   "sha256": "28cfc7e1609b3a9221e8b749e9ef0cb4e4bb2349ec6a004467324b07b05eeaa8",
+   "pathID": 3611280438912191113,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-3611280438912191113-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": 950253518429061193,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--8405292296634654866.json",
+   "sha256": "5b78cfad3f4eaf919d6e118e556ae6c3c334894f541e63ebce5c5993296571fd",
+   "pathID": -8405292296634654866,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--8405292296634654866-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": -4654494065237618682,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7772664528496513769.json",
+   "sha256": "01906f3cc3750d90ce6a7d8e221f17382aaab046d8b61450eb1c18bfd210e290",
+   "pathID": -7772664528496513769,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7772664528496513769-renderer.json",
+   "sha256": "2125bb517378c6b8fb50dafc57d042b0a57bd8492f9e410d4cd10072d508ed17",
+   "pathID": -4613227288892681648,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-1386009922165908002.json",
+   "sha256": "01906f3cc3750d90ce6a7d8e221f17382aaab046d8b61450eb1c18bfd210e290",
+   "pathID": 1386009922165908002,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-1386009922165908002-renderer.json",
+   "sha256": "2125bb517378c6b8fb50dafc57d042b0a57bd8492f9e410d4cd10072d508ed17",
+   "pathID": -3552611915633768672,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--4235243298570480417.json",
+   "sha256": "1ff06bbbd28d1a001d2a32b04d6b377e5f2da7bb578cdaec9eb49e0bd4ea7778",
+   "pathID": -4235243298570480417,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--4235243298570480417-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 5354220146035877926,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--4235243298570480417-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--433381467572771877.json",
+   "sha256": "897234538b9ab402d459df376e254445d84090a9a8c9e84acd7ac8ac1ebfa88b",
+   "pathID": -433381467572771877,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--433381467572771877-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 4055102011141868414,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--433381467572771877-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-1212028289781450270.json",
+   "sha256": "487b59cc1050bbf1bf16ff5961426e363823bb4cb50334e7cfb537c9687c1987",
+   "pathID": 1212028289781450270,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-1212028289781450270-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 3537161595553033215,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-1212028289781450270-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-160852056861004557.json",
+   "sha256": "be7b44797b37353ebd8f7b7fd2b64d86e9d2bd579cb3aa29aa16a9973ff881f1",
+   "pathID": 160852056861004557,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-160852056861004557-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 3679174140285870656,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-160852056861004557-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-5884186522518648259.json",
+   "sha256": "d9237c32f6c07320d6d94ad9d0634f5ac4d8ea6d5fcc1915b8b8ee21fa4c4d0a",
+   "pathID": 5884186522518648259,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-5884186522518648259-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": -5454725327993554430,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-5884186522518648259-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6443164211298704776.json",
+   "sha256": "b037aae2a7bc1229d4d5467fbe9b8048d300a91fb1852172592c0ecc95befd14",
+   "pathID": 6443164211298704776,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6443164211298704776-renderer.json",
+   "sha256": "37463ce1b7d235827f1d1a9e0160c351733b415bf719d7c7105d66ddd203a04a",
+   "pathID": -6580278184010621149,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--2606226554681085477.json",
+   "sha256": "2e75269367e79c6b55279d2bf314f7112e314d949d88affe3826ee6a26d5ebd5",
+   "pathID": -2606226554681085477,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--2606226554681085477-renderer.json",
+   "sha256": "94574034ad9e1302eed33bb860438ea2f636ff4b3cb36f6101514e4daf009f12",
+   "pathID": 1584644428269008882,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7204197893230388384.json",
+   "sha256": "5041a06212083d29e9063462d5f35a98b2a39b9a9a439a26616643537a6d337c",
+   "pathID": -7204197893230388384,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7204197893230388384-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": -4783823876724354253,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--3008673915890154633.json",
+   "sha256": "27f53d471c4a100af295653068bfe54ec192eb8ff0a2e102b818d94d5337ff25",
+   "pathID": -3008673915890154633,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--3008673915890154633-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": -8183571534134288298,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-5495736455151299739.json",
+   "sha256": "2d28dbd4a62e6ec68fd2bf2fc81fdabcc2d0a41e9c0f666fa1ae5ab7d0e3e16f",
+   "pathID": 5495736455151299739,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-5495736455151299739-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": -2695520306677264791,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-44668458165523168.json",
+   "sha256": "ddd5335b9d3d9fc279b4f4ee383382d51451d3c572b7d6ab0df651bb55f2cfa2",
+   "pathID": 44668458165523168,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-44668458165523168-renderer.json",
+   "sha256": "2125bb517378c6b8fb50dafc57d042b0a57bd8492f9e410d4cd10072d508ed17",
+   "pathID": 449645825412649771,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7940775488135534294.json",
+   "sha256": "ddd5335b9d3d9fc279b4f4ee383382d51451d3c572b7d6ab0df651bb55f2cfa2",
+   "pathID": -7940775488135534294,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7940775488135534294-renderer.json",
+   "sha256": "2125bb517378c6b8fb50dafc57d042b0a57bd8492f9e410d4cd10072d508ed17",
+   "pathID": 1315492731810467262,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-7707209466429608414.json",
+   "sha256": "5e791a742d29aa93844616d77542ad34f5b67ccddf3adb82498eebe2b306b0f9",
+   "pathID": 7707209466429608414,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-7707209466429608414-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 674574538520800757,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-7707209466429608414-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-333970501283562550.json",
+   "sha256": "9fb50e114ea58407cfeca7593c5eaaf6c94accd326fd1ef77a984a3af37947b6",
+   "pathID": 333970501283562550,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-333970501283562550-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": -5272782933363407315,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-333970501283562550-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--3981656642559106977.json",
+   "sha256": "109ab2eda42dade9ccd64ae4ad4ea7c4598b900f6bbda9bb03bebc1cbd3ee842",
+   "pathID": -3981656642559106977,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--3981656642559106977-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 3607246329640838869,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--3981656642559106977-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--5596942934877237659.json",
+   "sha256": "be7b44797b37353ebd8f7b7fd2b64d86e9d2bd579cb3aa29aa16a9973ff881f1",
+   "pathID": -5596942934877237659,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--5596942934877237659-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 85359109081548431,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--5596942934877237659-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1239252616406454180.json",
+   "sha256": "3421a1e5f7b2a272558d3e072bc1cb156d285bfdf797d7c0afdd93c004f7d8b3",
+   "pathID": -1239252616406454180,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1239252616406454180-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 943113927875777071,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1239252616406454180-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6461658039269084315.json",
+   "sha256": "67dc4d4b81aef0730bbf74a308d44fcfbd0e4a747365d74cb2d15b465b1a939d",
+   "pathID": 6461658039269084315,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6461658039269084315-renderer.json",
+   "sha256": "37463ce1b7d235827f1d1a9e0160c351733b415bf719d7c7105d66ddd203a04a",
+   "pathID": -6824349044276914068,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-7319903546495828484.json",
+   "sha256": "210209ee9f5d3ebd96ff75b7905fc9e5830d5dbdb4d8013be61feccd91443b6c",
+   "pathID": 7319903546495828484,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-7319903546495828484-renderer.json",
+   "sha256": "94574034ad9e1302eed33bb860438ea2f636ff4b3cb36f6101514e4daf009f12",
+   "pathID": -2885334326859079569,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7757814769957933075.json",
+   "sha256": "9708fe074bb74acc004c609a208a114f81e6c396185fa28ebd6d6a1da0c01b56",
+   "pathID": -7757814769957933075,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7757814769957933075-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": 3337535747757815740,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-2793037077037042451.json",
+   "sha256": "8a04f107f57ee6f7a441916042af6e55faa0a16915a3a7d9260c807c68af627d",
+   "pathID": 2793037077037042451,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-2793037077037042451-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": 4638029612965548599,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--4408449906865884768.json",
+   "sha256": "24b26ea132af2374150f94ae4f9c95544b6962b296baea0b61847dc350168063",
+   "pathID": -4408449906865884768,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--4408449906865884768-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": -4420930069991821621,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--8923090577653403761.json",
+   "sha256": "ea5a417c9c484a3480f2301e398ab0bcb030fe53c90c0bda4e2b8b33c480398f",
+   "pathID": -8923090577653403761,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--8923090577653403761-renderer.json",
+   "sha256": "2125bb517378c6b8fb50dafc57d042b0a57bd8492f9e410d4cd10072d508ed17",
+   "pathID": 4939526532459030095,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-7184234785276207892.json",
+   "sha256": "ea5a417c9c484a3480f2301e398ab0bcb030fe53c90c0bda4e2b8b33c480398f",
+   "pathID": 7184234785276207892,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-7184234785276207892-renderer.json",
+   "sha256": "2125bb517378c6b8fb50dafc57d042b0a57bd8492f9e410d4cd10072d508ed17",
+   "pathID": 5858646501332641709,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7371210516956929467.json",
+   "sha256": "36245662350c0d5991e39811e046e2245330d40e64bfd4fdeecbc06e2c92f863",
+   "pathID": -7371210516956929467,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7371210516956929467-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": -7427070261069121822,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7371210516956929467-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1628335304123588117.json",
+   "sha256": "ca7e104685eb068f66e5c932c1f461bde86f2df3da517386c1f550944e827ad8",
+   "pathID": -1628335304123588117,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1628335304123588117-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": -7518424733161776759,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1628335304123588117-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--974196898876295937.json",
+   "sha256": "9c59e228dba0a326cff44b137eb7c9f5b981a6ebcfe45965fe4b1e28ed8fff70",
+   "pathID": -974196898876295937,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--974196898876295937-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 242863288398752294,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--974196898876295937-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-794825282577079527.json",
+   "sha256": "72a56b9d8df0090edd838a50456bc814090a76e01ea3345471fdfcd417ddd76d",
+   "pathID": 794825282577079527,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-794825282577079527-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 5521544903376675205,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-794825282577079527-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-4476019881818628072.json",
+   "sha256": "a2dbaa09984844d3bc1dfed8e12380da0e2a44b68251f4d83c61aba07dbeaac1",
+   "pathID": 4476019881818628072,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-4476019881818628072-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": -50361759206564984,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-4476019881818628072-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-8399358010341712857.json",
+   "sha256": "baf9d7a533609d7ee1b545a61dd3f70720f3d621ce1157edbe9160a98b8050c4",
+   "pathID": 8399358010341712857,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-8399358010341712857-renderer.json",
+   "sha256": "37463ce1b7d235827f1d1a9e0160c351733b415bf719d7c7105d66ddd203a04a",
+   "pathID": -7864012375744094043,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--6297550618187376726.json",
+   "sha256": "ef946428c1d57b4789415931e7482b6770f7cd45a5f72efeca30d1f586fdb630",
+   "pathID": -6297550618187376726,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--6297550618187376726-renderer.json",
+   "sha256": "94574034ad9e1302eed33bb860438ea2f636ff4b3cb36f6101514e4daf009f12",
+   "pathID": -3725921389852615634,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-1588308042124306042.json",
+   "sha256": "9202239fb3bca073b9c60e56265378cc07f2a66bafeb4c379e68aab2a09c7c6e",
+   "pathID": 1588308042124306042,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-1588308042124306042-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": -7988476698553309075,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-601069218443159795.json",
+   "sha256": "c1c508930eb3352a353b04dfbaefc440d4673374af304547d7703613a014eaa7",
+   "pathID": 601069218443159795,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-601069218443159795-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": 8080133513471903773,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--5103191784522733328.json",
+   "sha256": "768c40cd6a5a75afd6e8cc5df68fc41f48f81b91726f59656e7336155bc81870",
+   "pathID": -5103191784522733328,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--5103191784522733328-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": -5904922420502634144,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-5522121947341732704.json",
+   "sha256": "97f2f3116fd28e18c9c1290cdb0de6d6efb77726194b98b4cb19ffc5b088372b",
+   "pathID": 5522121947341732704,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-5522121947341732704-renderer.json",
+   "sha256": "2125bb517378c6b8fb50dafc57d042b0a57bd8492f9e410d4cd10072d508ed17",
+   "pathID": -5625906172184283644,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--8299545499619287435.json",
+   "sha256": "97f2f3116fd28e18c9c1290cdb0de6d6efb77726194b98b4cb19ffc5b088372b",
+   "pathID": -8299545499619287435,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--8299545499619287435-renderer.json",
+   "sha256": "2125bb517378c6b8fb50dafc57d042b0a57bd8492f9e410d4cd10072d508ed17",
+   "pathID": -5163460059856513554,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--2594412665336422836.json",
+   "sha256": "f8bbf0bc7cf251704316019063ab322a89c8cbf7848c2ac54238e47dcf9c8708",
+   "pathID": -2594412665336422836,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--2594412665336422836-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": -287398522495274725,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--2594412665336422836-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1515180893760450340.json",
+   "sha256": "f14338fbba710803a5fb621f5b61fdbbcfbecd0cd35eb2e1649788901d9dedee",
+   "pathID": -1515180893760450340,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1515180893760450340-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 995117602107714739,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1515180893760450340-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6816035178671637291.json",
+   "sha256": "333e11f18c09337a7a9f86eae16164b8124470f24c51347ab8cde8853c8dfbcc",
+   "pathID": 6816035178671637291,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6816035178671637291-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": -1828709329269956581,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6816035178671637291-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--5870261740973051251.json",
+   "sha256": "be7b44797b37353ebd8f7b7fd2b64d86e9d2bd579cb3aa29aa16a9973ff881f1",
+   "pathID": -5870261740973051251,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--5870261740973051251-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 3948102213733305120,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--5870261740973051251-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7263649698706549808.json",
+   "sha256": "23bffe5b03eddd8610d42aafb255c624fdac7c879a00cae45fd2fe2407e94efb",
+   "pathID": -7263649698706549808,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7263649698706549808-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 5325831362384015739,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7263649698706549808-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--2664105194846946141.json",
+   "sha256": "c0f63a8bc70a40d9927380c4249988b6e238aa72a1e2be187c1bf7cea465c0ca",
+   "pathID": -2664105194846946141,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--2664105194846946141-renderer.json",
+   "sha256": "37463ce1b7d235827f1d1a9e0160c351733b415bf719d7c7105d66ddd203a04a",
+   "pathID": -5088760089140705750,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7396740321335593655.json",
+   "sha256": "08122236f9643f360b05a5966541a28868f01e68cd0ee8508ca1f91e48dbb792",
+   "pathID": -7396740321335593655,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7396740321335593655-renderer.json",
+   "sha256": "94574034ad9e1302eed33bb860438ea2f636ff4b3cb36f6101514e4daf009f12",
+   "pathID": 3274302657949676036,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-5873998831025527284.json",
+   "sha256": "bf445a767c5ebe7878f428ab5074809912f4c696aefd7a83cdaf4e4aa3d7ab18",
+   "pathID": 5873998831025527284,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-5873998831025527284-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": 3431436830528350715,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-5169751440331552175.json",
+   "sha256": "e64bb0261c7d796097a596e8dd515a09820a0ee7ad8e4bc9bf378364084191a6",
+   "pathID": 5169751440331552175,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-5169751440331552175-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": 4266921906330720891,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--679240955037003902.json",
+   "sha256": "dcf80b4c3d1e953a1312579cc842ac2d36efd8abed0a0427af55f5ac0882f655",
+   "pathID": -679240955037003902,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--679240955037003902-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": -2214724088694291006,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7993490997180535625.json",
+   "sha256": "985fa6484c82c11b50c757b63b5fbfcefc4c413064be47774c1ab6a042d49325",
+   "pathID": -7993490997180535625,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7993490997180535625-renderer.json",
+   "sha256": "2125bb517378c6b8fb50dafc57d042b0a57bd8492f9e410d4cd10072d508ed17",
+   "pathID": 1282714883452317704,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--747833440206206719.json",
+   "sha256": "985fa6484c82c11b50c757b63b5fbfcefc4c413064be47774c1ab6a042d49325",
+   "pathID": -747833440206206719,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--747833440206206719-renderer.json",
+   "sha256": "2125bb517378c6b8fb50dafc57d042b0a57bd8492f9e410d4cd10072d508ed17",
+   "pathID": -5007216294508529523,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--8135622351680231934.json",
+   "sha256": "6a4a9fd236b128b0c7b06a29355b287f12d39190254061a94a5a15ca46ada0cc",
+   "pathID": -8135622351680231934,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--8135622351680231934-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": -8598740885627770645,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--8135622351680231934-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-7479344035517228278.json",
+   "sha256": "f14d50f1ac2312ff5de87931c44676fdece9efe7bfdb37076ed05814bfd3f61b",
+   "pathID": 7479344035517228278,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-7479344035517228278-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": -2009584174974371480,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-7479344035517228278-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-2022133192751079326.json",
+   "sha256": "d675b75659aded49b8c61b256fb6aac4f423cc5979f90e71c51aad39156c3fde",
+   "pathID": 2022133192751079326,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-2022133192751079326-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": -4520508705228507491,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-2022133192751079326-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-8271606848370214610.json",
+   "sha256": "be7b44797b37353ebd8f7b7fd2b64d86e9d2bd579cb3aa29aa16a9973ff881f1",
+   "pathID": 8271606848370214610,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-8271606848370214610-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 5583302191735976112,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-8271606848370214610-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6412898139699173755.json",
+   "sha256": "b604f72d2e8f010b2708f046cea2a651570b097dfe029eb8952fe8bdb8cdfa2e",
+   "pathID": 6412898139699173755,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6412898139699173755-renderer.json",
+   "sha256": "73c967487e0601d3a60e435e7c6208fe8e2b6c74686b6badc67c67df4fe76506",
+   "pathID": 2490987361630496048,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6412898139699173755-10210-mesh.json",
+   "sha256": "18af3a46c9d5b1f0dc5923e80bd685da5d022e4cb825442651db6f35d9162430",
+   "pathID": null,
+   "cab": null
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7397109131867036804.json",
+   "sha256": "13684758b65a3be7e7f2c04028ccd8e630925e3b8628e30660ec11a507811c37",
+   "pathID": -7397109131867036804,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7397109131867036804-renderer.json",
+   "sha256": "37463ce1b7d235827f1d1a9e0160c351733b415bf719d7c7105d66ddd203a04a",
+   "pathID": 8347545927820168464,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--3050758728166607178.json",
+   "sha256": "08122236f9643f360b05a5966541a28868f01e68cd0ee8508ca1f91e48dbb792",
+   "pathID": -3050758728166607178,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--3050758728166607178-renderer.json",
+   "sha256": "94574034ad9e1302eed33bb860438ea2f636ff4b3cb36f6101514e4daf009f12",
+   "pathID": 5037171284832388126,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6914724531064583716.json",
+   "sha256": "bf445a767c5ebe7878f428ab5074809912f4c696aefd7a83cdaf4e4aa3d7ab18",
+   "pathID": 6914724531064583716,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6914724531064583716-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": -3944178434495215271,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--6803235474220003351.json",
+   "sha256": "e64bb0261c7d796097a596e8dd515a09820a0ee7ad8e4bc9bf378364084191a6",
+   "pathID": -6803235474220003351,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--6803235474220003351-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": -5129352099768066176,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-8883000638211882131.json",
+   "sha256": "dcf80b4c3d1e953a1312579cc842ac2d36efd8abed0a0427af55f5ac0882f655",
+   "pathID": 8883000638211882131,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-8883000638211882131-renderer.json",
+   "sha256": "16db4715dd9b3af37e5a126a8269e6b28b55173166e093c38046af26b42d35e8",
+   "pathID": -8247424499997814509,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--205923981880735875.json",
+   "sha256": "355e844ddf08e528c2c835427435fe047ab27402614c6b1ad6610d8c309a45c6",
+   "pathID": -205923981880735875,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--205923981880735875-renderer.json",
+   "sha256": "2125bb517378c6b8fb50dafc57d042b0a57bd8492f9e410d4cd10072d508ed17",
+   "pathID": -6227549771802101178,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-1725842422026201041.json",
+   "sha256": "355e844ddf08e528c2c835427435fe047ab27402614c6b1ad6610d8c309a45c6",
+   "pathID": 1725842422026201041,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-1725842422026201041-renderer.json",
+   "sha256": "2125bb517378c6b8fb50dafc57d042b0a57bd8492f9e410d4cd10072d508ed17",
+   "pathID": 5258824006038406895,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7726259276088436593.json",
+   "sha256": "feac4f923e51a6375976f681f025f4813e578764df754d3a77a8a8a828f2d991",
+   "pathID": -7726259276088436593,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7726259276088436593-renderer.json",
+   "sha256": "599520538ad02e77fac3fbd81e7b3128a546b2a518eeae43cd73227b9614162b",
+   "pathID": -3429878905030530483,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded--849810152530849135.png",
+   "sha256": "1d2cd7158faff1a287756b03d58012e31f1621e71cb8db4b487e1ec3ef611ab1",
+   "pathID": -849810152530849135,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded--7177582090555974971.png",
+   "sha256": "988b76c495fec58ff6352f284e4f0e527f9fbb3f2b11188a30f34ae6c7decce4",
+   "pathID": -7177582090555974971,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--5968806900700853806.json",
+   "sha256": "feac4f923e51a6375976f681f025f4813e578764df754d3a77a8a8a828f2d991",
+   "pathID": -5968806900700853806,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--5968806900700853806-renderer.json",
+   "sha256": "599520538ad02e77fac3fbd81e7b3128a546b2a518eeae43cd73227b9614162b",
+   "pathID": -1101042420059954167,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded--1542182630425848204.png",
+   "sha256": "06f39948fa50883e1c69d9d76182982fc482bdcbf877095a9dbc9727f00e22b0",
+   "pathID": -1542182630425848204,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-4109713585416516738.json",
+   "sha256": "feb7c9d3985eda444c84df328f3a3e85fadf806cbd5756a6815ad53f81ed72e8",
+   "pathID": 4109713585416516738,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-4109713585416516738-renderer.json",
+   "sha256": "37a084f890f1addc661e2967222141838fe9e866cdbc04557f49846e28a92fef",
+   "pathID": 7765189254838395181,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--4890527467118348931.json",
+   "sha256": "0aebd95ff0a4721a54ff9d6caefb91a2071057ba51ef881d1de92620d5a3a748",
+   "pathID": -4890527467118348931,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--4890527467118348931-renderer.json",
+   "sha256": "cf3f4bec4269161a55038a8edf20cf3342b0f5a7ee432a58cf4b8c97f14a9c31",
+   "pathID": 556650459667229550,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded--7700891986115039264.png",
+   "sha256": "aa5212b1aabe655dce8824795685b013af209b535c0431a1a82c8de4dbae6e9f",
+   "pathID": -7700891986115039264,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1079219864721704786.json",
+   "sha256": "2e75a52bb37f75fed0d544023660a9dc099cd50947a808344636cc4ffca3102f",
+   "pathID": -1079219864721704786,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--1079219864721704786-renderer.json",
+   "sha256": "cf3f4bec4269161a55038a8edf20cf3342b0f5a7ee432a58cf4b8c97f14a9c31",
+   "pathID": -7016866269898007828,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded--6595399613833089154.png",
+   "sha256": "7bdd67ae07755b78387a320066d38332974ff1384888e2f2221173be4919ffb7",
+   "pathID": -6595399613833089154,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7183308902130824549.json",
+   "sha256": "dd8b0bc07c31f45cad45a8f12d71fd2d225d628da1c6781b171bca29033af5c3",
+   "pathID": -7183308902130824549,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll--7183308902130824549-renderer.json",
+   "sha256": "e84f76b25fd5e825b68bd7230606f8b3c7058ab3074add8ac84a44d399a0bc0c",
+   "pathID": -8511759093100622879,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6413063997085900520.json",
+   "sha256": "9323cf6eb69f7260d94b679e483215dabc6f23f9e56b4bcb7c280b19008439b0",
+   "pathID": 6413063997085900520,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6413063997085900520-renderer.json",
+   "sha256": "3db1a96ac9e16d1a7825ae32b6913760d758c3f2f11de709147334de1e1f326b",
+   "pathID": -2770896706215578848,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded--5767997250204297134.png",
+   "sha256": "a63ce84ccd6016c3f40f6b6cf6f7c338a087c70890af42ccfd5833f82a57bcf7",
+   "pathID": -5767997250204297134,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded--5871574165817403471.png",
+   "sha256": "1a67a58ee72d9744a0365ed9d160846fca481296001a806056125b65dcbcef0e",
+   "pathID": -5871574165817403471,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded--8502638319143240524.png",
+   "sha256": "7100d81cd5e011cfa9732d7376441c4d667fe19366c5a220b78aca5704f9cf55",
+   "pathID": -8502638319143240524,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Textures/CAB-9d6f26c89ea42c3864d4d9b1d68a4ded-7183653146752648752.png",
+   "sha256": "6fab4de559aec882b3a0deac63dab7ddbbea0581af1a325f73e695fa2ba8599d",
+   "pathID": 7183653146752648752,
+   "cab": "CAB-9d6f26c89ea42c3864d4d9b1d68a4ded"
+  },
+  {
+   "output": "NovR10/Data/effect_liqi_26fll-6413063997085900520--8581312338268300760-mesh.json",
+   "sha256": "b9f5b4c6728759e6d6be8db4c9175ca54e92bae9ad0d8af247bf3cab61c29e37",
+   "pathID": -8581312338268300760,
+   "cab": "CAB-4d1478acf7cd81b1d8c70a6a841f7ff7"
+  },
+  {
+   "output": "NovR10/Icons/effect_liqi_26fll.png",
+   "sha256": "ea5c425c3926eb5b282aebaad45f50e1c792186e85480791eb58e5baea1a5d29",
+   "pathID": -1914012159203720371,
+   "cab": "CAB-c5e850955bb7b4fbf7e52671f31c8818"
+  },
+  {
+   "output": "NovR10/effect_liqi_26fll-source.json",
+   "sha256": "10d408cc701d6637e8307903b5ff569c38774bc641c5f4d4bff7bc7b81711155",
+   "pathID": 7683970081214830403,
+   "cab": "CAB-97568a1564f0d7823432f0f88122baea"
+  },
+  {
+   "output": "NovR10/Data/liqi_26fll-3125451799466922167-static-mesh.json",
+   "sha256": "2974479573e194f4909afc576e3f89b05e7b7d867bea4ec5a54e58153cd40964",
+   "pathID": 3125451799466922167,
+   "cab": "CAB-32bfe35c41d8189da014403da12502c4"
+  },
+  {
+   "output": "NovR10/Textures/CAB-b75c38de918f5626e9a9e5a9b62170fc-2441017684144507308.png",
+   "sha256": "7923c0a71b88a182eaf833e7dd4c9a82461e2e6ae465d5f2748ab8829e0bfd53",
+   "pathID": 2441017684144507308,
+   "cab": "CAB-b75c38de918f5626e9a9e5a9b62170fc"
+  },
+  {
+   "output": "NovR10/Data/liqi_26fll--1135699617524855056-static-mesh.json",
+   "sha256": "500df6555e4e4e63f198a4c6a00b4e54499bb285b396bb408d3a857d6c8f2313",
+   "pathID": -1135699617524855056,
+   "cab": "CAB-32bfe35c41d8189da014403da12502c4"
+  },
+  {
+   "output": "NovR10/Textures/CAB-b75c38de918f5626e9a9e5a9b62170fc--8335448949321842906.png",
+   "sha256": "471e52a80110d3ee9316e6ccfae5779fd58e6694730e7ed3ff35b3f43e281f94",
+   "pathID": -8335448949321842906,
+   "cab": "CAB-b75c38de918f5626e9a9e5a9b62170fc"
+  },
+  {
+   "output": "NovR10/Icons/liqi_26fll.png",
+   "sha256": "06627cc2e3412114f3002e0571d34bfd9a78fa5d138b382ab4b5f25ef454c75e",
+   "pathID": -131614568760786129,
+   "cab": "CAB-7377f68923e8689afe88a2b3c6758a70"
+  },
+  {
+   "output": "NovR10/liqi_26fll-source.json",
+   "sha256": "845e7c14136b0a9ad346018b172661df5a1e899cdc2221e8ad90fee0c8f6464f",
+   "pathID": 8382306293785067414,
+   "cab": "CAB-5b03172c0a35bed72d531318890a7806"
+  }
+ ],
+ "unsupported": [
+  {
+   "kind": "material",
+   "name": "fulilian_ron_001",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex",
+    "_Mask2Tex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_002",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_Mask2Tex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_002",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_Mask2Tex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_001",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex",
+    "_Mask2Tex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_002",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_Mask2Tex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_003",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_Mask2Tex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_006",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveMaskTex",
+    "_DissolveTex",
+    "_DistortMaskTex",
+    "_DistortTex",
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_007",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveMaskTex",
+    "_DissolveTex",
+    "_Distort2Tex",
+    "_DistortMaskTex",
+    "_DistortTex",
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_009",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_010",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_012",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_014",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_016",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_017",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_018",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_018",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_018",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_019",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_020",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_021",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_022",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_017",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_022",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_023",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_023",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_023",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_021",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_024",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_Mask2Tex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_025",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_026",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_027",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_028",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_028",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_029",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_030",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_031",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_DistortTex",
+    "_MainTex",
+    "_Mask2Tex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_032",
+   "shader": "FizzFX/Standard",
+   "textures": []
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_017",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_033",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_034",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_035",
+   "shader": "FizzFX/Standard",
+   "textures": []
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_002",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_003",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_005",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_006",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_007",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_008",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_009",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_010",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_012",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_014",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_003",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_005",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_006",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_007",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_008",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_012",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_014",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_009",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_010",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_003",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_005",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_006",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_007",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_008",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_012",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_014",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_003",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_005",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_006",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_007",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_008",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_012",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_014",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_009",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_010",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_003",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_005",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_006",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_007",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_008",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_012",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_014",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_003",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_005",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_006",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_007",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_008",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_012",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_014",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_003",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_005",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_006",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_007",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_008",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_012",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_014",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_003",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_005",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_006",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_007",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_008",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_012",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_014",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_003",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_005",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_006",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_007",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_008",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_012",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_014",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_003",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_005",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_006",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_007",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_008",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_012",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_014",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_017",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_018",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_019",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_020",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_021",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_009",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_010",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_025",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_Mask2Tex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "component",
+   "effect": "liqi_26fll",
+   "node": "riichistick",
+   "type": "BoxCollider"
+  },
+  {
+   "kind": "material",
+   "name": "riichistick_d",
+   "shader": "Catfood/Cartoon",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "yingzi_d",
+   "shader": "Catfood/Additive Transparent",
+   "textures": [
+    "_MainTex"
+   ]
+  }
+ ]
+}

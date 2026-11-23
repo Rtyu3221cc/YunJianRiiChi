@@ -33,7 +33,8 @@ Shader "YunJian/StaticDecoration" {
    struct v2f {float4 pos:SV_POSITION;float2 uv:TEXCOORD0;float3 normal:TEXCOORD1;};
    v2f vert(appdata v){v2f o;o.pos=UnityObjectToClipPos(v.vertex);o.uv=TRANSFORM_TEX(v.uv,_MainTex);o.normal=UnityObjectToWorldNormal(v.normal);return o;}
    float4 frag(v2f i):SV_Target {
-    float4 c=tex2D(_MainTex,i.uv)*_Color*_Tint;c.rgb*=_AlbedoIntensity;c.a*=_AlphaScale;
+    // Original Simple Texture, Cartoon and Unlit shaders do not read stale _Color.
+    float4 c=tex2D(_MainTex,i.uv)*_Tint;c.rgb*=_AlbedoIntensity;c.a*=_AlphaScale;
     if(_AlphaTest>.5)clip(c.a-_Cutoff);
     if(_Cartoon>.5)c.rgb*=lerp(_ColorUnlight.rgb,_ColorLight.rgb,step(_SplitThreshold,dot(normalize(i.normal),normalize(float3(.2,.8,-.4)))));
     return c;

@@ -14,8 +14,9 @@ namespace YunJian.Riichi
         public int LimitFireLayers=>limitFire.LayerCount;
         public void ClearEffects()=>limitFire.Dispose();
         readonly Dictionary<string,Texture2D> art=new Dictionary<string,Texture2D>();
-        string key; int winner; bool scores,drawStage,finalPage; float started, skipped;
+        string key; int winner; bool scores,drawStage,finalPage,rankPage; Action rankExit=Action.Ready; float started, skipped;
         public bool ShowingFinal=>finalPage;
+        public bool ShowingRank=>rankPage;
 #if UNITY_EDITOR
         public int EquippedAvatarFramesDrawn {get;private set;}
 #endif
@@ -32,18 +33,19 @@ namespace YunJian.Riichi
         float Age => Freeze?FrozenAge:Time.unscaledTime-started+skipped;
         public float ElapsedAge=>Age;
         public int SkipSerial {get;private set;}
-        public void Reset(){limitFire.Dispose();key=null;winner=0;scores=false;drawStage=false;finalPage=false;skipped=0;Freeze=false;}
+        public void Reset(){limitFire.Dispose();key=null;winner=0;scores=false;drawStage=false;finalPage=false;rankPage=false;skipped=0;Freeze=false;}
         public void Observe(RoomView v)
         {
             string next=v.audioRoom+":"+v.matchSeq+":"+v.handSeq+":"+v.round+":"+v.honba+":"+v.result?.title+":"+string.Join(",",v.result?.delta??new int[0]);
             if(next==key)return;
             limitFire.Dispose();key=next;winner=0;drawStage=v.result!=null && v.result.draw && ((!v.result.abort && (v.result.drawDetails?.Length??0)>0) || v.result.title=="九种九牌");
-            finalPage=false;scores=!drawStage && (v.result?.details==null || v.result.details.Length==0);started=Time.unscaledTime;skipped=0;
+            finalPage=false;rankPage=false;scores=!drawStage && (v.result?.details==null || v.result.details.Length==0);started=Time.unscaledTime;skipped=0;
         }
         float RevealEnd(WinDetail d) => SettlementAudio.Sequence(d).end;
         public void Advance(RoomView v)
         {
             limitFire.Dispose();
+            if(finalPage){BeginRank(v,Action.Ready);return;}
             if(drawStage){drawStage=false;scores=true;started=Time.unscaledTime;skipped=0;FrozenAge=0;return;}
             if(scores){if(Age<ScoreEnd(v.n)){if(Freeze)FrozenAge=ScoreEnd(v.n)+.1f;else skipped+=ScoreEnd(v.n)+.1f-Age;SkipSerial++;}else if(v.result.matchOver){finalPage=true;started=Time.unscaledTime;skipped=0;FrozenAge=0;}return;}
             var d=v.result.details[winner];
@@ -59,8 +61,9 @@ namespace YunJian.Riichi
         public Action Tick(RoomView v,bool autoPlay)
         {
             Observe(v);
+            if(rankPage)return autoPlay&&Age>=RankAnimationEnd(v)+3?rankExit:Action.None;
             if(v.players[v.you].ready)return Action.None;
-            if(finalPage)return Age>=9?Action.Ready:Action.None;
+            if(finalPage){if(Age>=9)return BeginRank(v,Action.Ready);return Action.None;}
             if(drawStage){if(autoPlay&&Age>=Mathf.Max(1.7f,SettlementAudio.DrawDuration(v)))Advance(v);return Action.None;}
             if(!scores){if(YakuConfirmRemaining(v)==0)Advance(v);return Action.None;}
             if(ScoreConfirmRemaining(v)>0)return Action.None;
@@ -408,7 +411,7 @@ namespace YunJian.Riichi
             GUI.DrawTexture(r,Texture2D.whiteTexture,ScaleMode.StretchToFill,true,0,new Color(0,0,0,.45f),0,8);
             string category=v.result.rules?.category??v.lobby?.category??"friend";
             var change=PlayerRecord.LastMatchKey==(v.audioRoom??"")+":"+v.matchSeq?PlayerRecord.LastChange:null;
-            if(category!="ranked"||change==null){Label(r,category=="competition"?"比赛场不计段位":"友人场不计段位",20,white);GUI.color=old;return;}
+            if(change==null){Label(r,category=="competition"?"比赛场不计段位":"本场段位记录已保存",20,white);GUI.color=old;return;}
             string level=RankRules.Name(change.after.level),head=change.promoted?"升段！":change.demoted?"降段":"段位分 "+RankRules.Delta(change);
             Label(new Rect(r.x+12,r.y+2,r.width-24,r.height/2),head,20,change.promoted?gold:change.demoted?new Color(.95f,.5f,.45f):white,TextAnchor.MiddleLeft);
             Label(new Rect(r.x+12,r.y+r.height/2-2,r.width-24,r.height/2),level+"  "+RankRules.Progress(change.after),18,white,TextAnchor.MiddleLeft);
@@ -417,6 +420,62 @@ namespace YunJian.Riichi
             if(bar>0)GUI.DrawTexture(new Rect(track.x,track.y,track.width*bar,track.height),Texture2D.whiteTexture,ScaleMode.StretchToFill,true,0,new Color(.35f,.78f,.95f),0,4);
             GUI.color=old;
         }
+        [Serializable] sealed class RankPageLayout {public FinalItem[] items;}
+        RankPageLayout rankLayout;
+        RankChange RankChangeFor(RoomView v)=>PlayerRecord.LastMatchKey==(v.audioRoom??"")+":"+v.matchSeq?PlayerRecord.LastChange:null;
+        Action BeginRank(RoomView v,Action exit){
+            if(RankChangeFor(v)==null)return exit;
+            if(rankPage)return Action.None;
+            rankExit=exit;rankPage=true;started=Time.unscaledTime;skipped=0;FrozenAge=0;SkipSerial++;
+            return Action.None;
+        }
+        public float RankAnimationEnd(RoomView v){
+            var c=RankChangeFor(v);if(c==null)return 0;
+            float before=c.before.points/(float)RankRules.Promote(c.before.level),after=c.after.points/(float)RankRules.Promote(c.after.level);
+            return .5f+(c.before.level==c.after.level?Mathf.Abs(after-before)/.3f:(c.promoted?1-before:before)/.3f+1.2f+(c.promoted?after:1-after)/.3f)+.15f;
+        }
+        public RankState RankDisplayState(RoomView v,float age){
+            var c=RankChangeFor(v);if(c==null)return null;
+            float time=Mathf.Max(0,age-.5f),oldMax=RankRules.Promote(c.before.level),newMax=RankRules.Promote(c.after.level);
+            if(c.before.level==c.after.level)return new RankState(c.before.level,Mathf.RoundToInt(Mathf.MoveTowards(c.before.points,c.after.points,time*oldMax*.3f)));
+            float boundary=c.promoted?oldMax:0,duration=Mathf.Abs(boundary-c.before.points)/(oldMax*.3f);
+            if(time<duration)return new RankState(c.before.level,Mathf.RoundToInt(Mathf.MoveTowards(c.before.points,boundary,time*oldMax*.3f)));
+            if(time<duration+1.2f)return new RankState(c.before.level,(int)boundary);
+            float start=c.promoted?0:newMax;
+            return new RankState(c.after.level,Mathf.RoundToInt(Mathf.MoveTowards(start,c.after.points,(time-duration-1.2f)*newMax*.3f)));
+        }
+        Rect RankRect(string name){
+            if(rankLayout==null)rankLayout=JsonUtility.FromJson<RankPageLayout>(Resources.Load<TextAsset>("Majsoul/Settlement/RankCalc/layout").text);
+            var r=rankLayout.items.First(i=>i.name==name).rect;return new Rect(r[0],r[1],r[2],r[3]);
+        }
+        void RankImage(string name,Rect r){var t=Resources.Load<Texture2D>("Majsoul/Settlement/RankCalc/"+name);if(t!=null)GUI.DrawTexture(r,t,ScaleMode.StretchToFill);}
+        void DrawRank(RoomView v){
+            var c=RankChangeFor(v);if(c==null)return;
+            var heading=new GUIStyle(roundText){fontSize=36,normal={textColor=white},padding=new RectOffset()};
+            GUI.Label(new Rect(470.7f,23.333f,313.274f,69.333f),"终局",heading);
+            var color=GUI.color;GUI.color=new Color(1,1,1,Mathf.Clamp01(Age/.2f));
+            CharacterFraming.DrawScene(new Rect(-15,80,600,755),v.players[v.you],"B2");
+            float entrance=Mathf.Clamp01((Age-.25f)/.2f);GUI.color=new Color(1,1,1,entrance);
+            var state=RankDisplayState(v,Age);RankImage("rank_bg",RankRect("rank/bg"));
+            var badge=RankRules.Badge(state.level,v.n);if(badge!=null)GUI.DrawTexture(RankRect("rank/icon_old"),badge,ScaleMode.ScaleToFit);
+            if(!RankRules.Soul(state.level)){
+                for(int i=1;i<=3;i++){
+                    var r=RankRect("rank/star"+i);var star=Resources.Load<Texture2D>("Majsoul/Lobby/Sprites/Necessary/"+(i<=RankRules.Stars(state.level)?"star":"starbg"));if(star!=null)GUI.DrawTexture(r,star,ScaleMode.ScaleToFit);
+                }
+                var bar=RankRect("bar");RankImage("expbar_base2",bar);RankImage("expbar_base",bar);
+                float fill=Mathf.Clamp01(state.points/(float)RankRules.Promote(state.level));
+                if(fill>0){var clip=new Rect(bar.x,bar.y+bar.height*(1-fill),bar.width,bar.height*fill);GUI.BeginGroup(clip);RankImage("expbar",new Rect(0,-bar.height*(1-fill),bar.width,bar.height));GUI.EndGroup();}
+            }else Label(new Rect(840,421,150,38),"Lv."+(state.level-14),24,gold);
+            float complete=Mathf.Clamp01((Age-RankAnimationEnd(v)+.15f)/.15f);
+            if(complete>0){
+                GUI.color=new Color(1,1,1,complete);Label(RankRect("score"),RankRules.Progress(c.after),25,new Color(.31f,.93f,1));
+                string sign=c.delta<0?"-":"+";RankImage("exp_line",RankRect(sign));Label(RankRect(sign+"/score"),RankRules.Delta(c),25,c.delta<0?new Color(.667f,.655f,.663f):new Color(.302f,.871f,1));
+                RankImage(c.delta<0?"star_down_arrow":"upgrade_arrow",RankRect(sign+"/arrow"));
+                if(c.promoted||c.demoted){Label(new Rect(786,180,200,40),c.promoted?"升段":"降段",30,c.promoted?gold:white);}
+            }
+            GUI.color=color;
+        }
+
         public static Rect FinalHomeRect=>new Rect(886.2606f,630.8333f,175.4927f,58.3333f);
         public static Rect FinalNextRect=>new Rect(1075.194f,630.8333f,175.4927f,58.3333f);
         bool FinalButton(Rect r,string value,bool primary,Func<Rect,string,bool> button){
@@ -445,15 +504,16 @@ namespace YunJian.Riichi
 #endif
             Observe(v);if(text==null){font=gameFont;text=new GUIStyle(GUI.skin.label){font=font,wordWrap=false,clipping=TextClipping.Clip};number=new GUIStyle(text){font=Resources.Load<Font>("Majsoul/Settlement/score-font"),fontSize=31,alignment=TextAnchor.MiddleLeft};
                 roundText=new GUIStyle(text){font=Resources.Load<Font>("Majsoul/Settlement/round-font-chs"),fontSize=31,alignment=TextAnchor.MiddleCenter};}
-            if(finalPage){
+            if(rankPage){DrawRank(v);if(Age>=RankAnimationEnd(v)&&FinalButton(FinalNextRect,"确认",true,button))return rankExit;}
+            else if(finalPage){
                 Final(v,table,effects);
                 int remaining=Mathf.Max(0,9-Mathf.FloorToInt(Age));
-                if(!v.players[v.you].ready && FinalButton(FinalNextRect,"下一局("+remaining+")",true,button))return Action.Ready;
+                if(!v.players[v.you].ready && FinalButton(FinalNextRect,"下一局("+remaining+")",true,button))return BeginRank(v,Action.Ready);
                 if(v.players[v.you].ready){
                     bool restart=v.host&&v.players.All(p=>p.ready);
                     if(FinalButton(FinalNextRect,restart?"再来一场":"等待牌友",true,restart?button:(r,caption)=>false)&&restart)return Action.Next;
                 }
-                if(FinalButton(FinalHomeRect,"返回大厅",false,button))return Action.Home;
+                if(FinalButton(FinalHomeRect,"返回大厅",false,button))return BeginRank(v,Action.Home);
             }
             else if(drawStage){DrawRound(v,table);if(NativeButton(new Rect(1125,648,128,50),Age<.7f?"跳过":"确认",button))Advance(v);}
             else if(!scores){Details(v,table,effects);if(NativeButton(new Rect(1125,648,128,50),Age<RevealEnd(v.result.details[winner])?"跳过":"确认("+YakuConfirmRemaining(v)+")",button))Advance(v);}

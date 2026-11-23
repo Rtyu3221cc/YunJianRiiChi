@@ -28,6 +28,15 @@ namespace YunJian.Riichi {
   NativeSpineEffect[] skeletons;
   Transform authoredSpace,authoredRoot;NativeEffectCamera sourceCamera;
   NativeWinContract winContract;public NativeWinPlayback Playback {get;private set;}
+  [Serializable] sealed class OriginalQueueEntry {public string key;public int queue;}
+  [Serializable] sealed class OriginalQueueBank {public OriginalQueueEntry[] items;}
+  static Dictionary<string,int> novemberQueues;
+  int SourceRenderQueue(NativeMaterialSource source,int previous){
+   if(source.hasSourceQueue&&source.sourceQueue>=0)return source.sourceQueue;
+   if(!sourceName.StartsWith("NovR10/"))return previous;
+   if(novemberQueues==null){var data=Resources.Load<TextAsset>("Majsoul/NativeReview/NovR10/render-queues");novemberQueues=data!=null?JsonUtility.FromJson<OriginalQueueBank>(data.text).items.ToDictionary(i=>i.key,i=>i.queue):new Dictionary<string,int>();}
+   return novemberQueues.TryGetValue(sourceName+"|"+source.materialName,out int queue)?queue:previous;
+  }
   string sourceName;
   Transform plumGround;
   readonly Dictionary<ParticleSystem,bool> activation=new Dictionary<ParticleSystem,bool>();
@@ -82,7 +91,7 @@ namespace YunJian.Riichi {
    var root=prefab.transform.childCount>0?prefab.transform.GetChild(0):prefab.transform;return Quaternion.FromToRotation(root.localRotation*Vector3.forward,Vector3.up);
   }
   void RestoreSourceMaterials(GameObject clone,NativeEffectSource descriptor){
-   var shader=Resources.Load<Shader>("Majsoul/NativeReview/WinsR22/WardrobeEffectParticle");
+   var shader=Resources.Load<Shader>(sourceName.StartsWith("NovR10/")?"Majsoul/NativeReview/NovR10/NovEffectParticle":"Majsoul/NativeReview/WinsR22/WardrobeEffectParticle");
    var nodes=clone.GetComponentsInChildren<Transform>(true).Skip(1).ToArray();
    for(int i=0;i<Mathf.Min(nodes.Length,descriptor.nodes.Length);i++){
     var source=descriptor.nodes[i].materials;
@@ -96,12 +105,18 @@ namespace YunJian.Riichi {
      float Field(string key,float fallback)=>original.floats?.FirstOrDefault(f=>f.name==key)?.value??fallback;
      var material=new Material(materials[j]);
      material.shader=shader;
+     // Switching shaders resets custom queues. Keep the authored mask/light/flower order.
+     material.renderQueue=SourceRenderQueue(original,materials[j].renderQueue);
      if(original.shaderName=="FizzFX/Standard"){
       foreach(var f in original.floats??Array.Empty<NativeNamedFloat>())if(material.HasProperty(f.name))material.SetFloat(f.name,f.value);
       foreach(var c in original.colors??Array.Empty<NativeNamedColor>())if(material.HasProperty(c.name))material.SetVector(c.name,new Vector4(c.value[0],c.value[1],c.value[2],c.value[3]));
-      foreach(var t in original.extraTextures??Array.Empty<NativeNamedTexture>())if(material.HasProperty(t.name)&&material.GetTexture(t.name)==null){var tex=WardrobePackService.Asset<Texture2D>("Majsoul/NativeReview/"+t.texture);if(tex!=null)material.SetTexture(t.name,tex);}
+      foreach(var t in original.extraTextures??Array.Empty<NativeNamedTexture>())if(material.HasProperty(t.name)&&(sourceName.StartsWith("NovR10/")||material.GetTexture(t.name)==null)){var tex=WardrobePackService.Asset<Texture2D>("Majsoul/NativeReview/"+t.texture);if(tex!=null)material.SetTexture(t.name,tex);}
       material.SetFloat("_SrcBlend",5);material.SetFloat("_DstBlend",Field("_BlendMode",10));
       material.SetFloat("_ZTest",Field("_ZTestMode",4));material.SetFloat("_SourceZWrite",Field("_ZWriteMode",0));material.SetFloat("_SourceCull",Field("_CullMode",0));
+      if(sourceName.StartsWith("NovR10/")){
+       string[] names={"_StandardDistort","_StandardDistort2","_StandardDistortMask"};string[] flags={"_DISTORTENABLE_ON","_DISTORT2ENABLE_ON","_DISTORTMASKENABLE_ON"};
+       for(int feature=0;feature<names.Length;feature++)material.SetFloat(names[feature],(original.keywords??Array.Empty<string>()).Contains(flags[feature])?1:0);
+      }
       material.SetFloat("_StandardDissolve",(original.keywords??Array.Empty<string>()).Contains("_DISSOLVEENABLE_ON")?1:0);
       if(renderer is ParticleSystemRenderer particle){
        var streams=new List<ParticleSystemVertexStream>();particle.GetActiveVertexStreams(streams);
@@ -135,13 +150,32 @@ namespace YunJian.Riichi {
     repairedSkins.Add(repaired);skin.sharedMesh=repaired;
    }
   }
+  void FitNovemberEnvironment(TableRenderer table){
+   if(sourceName!="NovR10/ron_26fll"||table?.Camera==null)return;
+   var environment=authoredRoot.Find("root_static");if(environment==null)return;
+   foreach(var particle in environment.GetComponentsInChildren<ParticleSystem>(true)){
+    var renderer=particle.GetComponent<ParticleSystemRenderer>();
+    if(renderer==null)continue;
+    // Source light/mask planes cover the original camera. Extend them to this
+    // camera's ground footprint so their outer rectangle cannot enter view.
+    Vector3 centre=particle.transform.position*TableTileGeometry.SourceUnits;
+    var plane=new Plane(Vector3.up,centre);float extent=0;bool valid=true;
+    foreach(var corner in new[]{Vector2.zero,Vector2.right,Vector2.up,Vector2.one}){
+     var ray=table.Camera.ViewportPointToRay(corner);
+     if(!plane.Raycast(ray,out float distance)){valid=false;break;}
+     var point=ray.GetPoint(distance)-centre;extent=Mathf.Max(extent,Mathf.Abs(point.x),Mathf.Abs(point.z));
+    }
+    var main=particle.main;main.startSize3D=false;
+    main.startSize=Mathf.Max(3f,main.startSize.constant,valid?4.08f*extent/TableTileGeometry.SourceUnits:0);
+   }
+  }
   public void Initialize(string name,uint seed=507,bool useApkShader=false,bool normalizeSurfaceOrigin=false,NativeWinContract contract=null){
    winContract=contract;sourceName=name;
    WardrobePackService.Lease("Majsoul/NativeReview/"+name,gameObject);var prefab=WardrobePackService.Asset<GameObject>("Majsoul/NativeReview/"+name);if(prefab==null)throw new InvalidOperationException("Missing imported APK prefab "+name);
    var clone=Instantiate(prefab,transform,false);particles=clone.GetComponentsInChildren<ParticleSystem>(true);
    if(name=="WardrobeR30/effect_liqi_nanfenghua")RestoreCompressedSkin(clone);
    luaNewWin=name.StartsWith("FateR19/");
-   var table=GetComponentInParent<TableRenderer>();if((name.StartsWith("EffectsR11/")||name.StartsWith("WinsR22/")||name.StartsWith("WardrobeR30/effect_liqi_")||name.StartsWith("YakumanR39/effect_")||contract!=null||luaNewWin)&&table!=null){authoredSpace=clone.transform;SyncSpace();foreach(var child in clone.GetComponentsInChildren<Transform>(true))child.gameObject.layer=NativeEffectCamera.Layer;sourceCamera=NativeEffectCamera.Ensure(table);sourceCamera.Register(this);}
+   var table=GetComponentInParent<TableRenderer>();if((name.StartsWith("EffectsR11/")||name.StartsWith("WinsR22/")||name.StartsWith("WardrobeR30/effect_liqi_")||name.StartsWith("NovR10/effect_liqi_")||name.StartsWith("YakumanR39/effect_")||contract!=null||luaNewWin)&&table!=null){authoredSpace=clone.transform;SyncSpace();foreach(var child in clone.GetComponentsInChildren<Transform>(true))child.gameObject.layer=NativeEffectCamera.Layer;sourceCamera=NativeEffectCamera.Ensure(table);sourceCamera.Register(this);}
    motions=clone.GetComponentsInChildren<NativeEffectMotion>(true);
    skeletons=clone.GetComponentsInChildren<NativeSpineEffect>(true);
    // Imported prefabs have a neutral wrapper and an authored root. Some roots
@@ -150,6 +184,8 @@ namespace YunJian.Riichi {
    if(contract!=null){authored.localPosition=Vector3.zero;Playback=gameObject.AddComponent<NativeWinPlayback>();Playback.Initialize(this,authored,clone.transform,contract);}
    if(luaNewWin){rootMove=authored.Find("root_move");rootRot=authored.Find("root_rot");rootAni=authored.Find("root_ani");rootAniTsumo=authored.Find("root_ani_zimo");rootStatic=authored.Find("root_static");BindLuaRoots();}
    if(normalizeSurfaceOrigin)authored.localPosition=Vector3.zero;
+   FitNovemberEnvironment(table);
+
    SurfaceMountRotation=Quaternion.FromToRotation(authored.localRotation*Vector3.forward,Vector3.up);
    for(int i=0;i<particles.Length;i++){particles[i].Stop(false,ParticleSystemStopBehavior.StopEmittingAndClear);particles[i].useAutoRandomSeed=false;particles[i].randomSeed=seed+(uint)i+1;}
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -161,8 +197,8 @@ namespace YunJian.Riichi {
    }
 #endif
    var descriptor=WardrobePackService.Asset<TextAsset>("Majsoul/NativeReview/"+name+"-source");
-   if(descriptor!=null&&name.StartsWith("WardrobeR30/"))RestoreSourceMaterials(clone,JsonUtility.FromJson<NativeEffectSource>(descriptor.text));
-   if(descriptor!=null&&!name.StartsWith("EffectsR11/")&&!name.StartsWith("WinsR22/")&&!name.StartsWith("WardrobeR30/")&&!luaNewWin){var sourceUv=JsonUtility.FromJson<NativeEffectSource>(descriptor.text);foreach(var node in sourceUv.nodes.Where(n=>n.uvScroll!=null&&n.uvScroll.Length==2&&(n.uvScroll[0]!=0||n.uvScroll[1]!=0))){
+   if(descriptor!=null&&(name.StartsWith("WardrobeR30/")||name.StartsWith("NovR10/")))RestoreSourceMaterials(clone,JsonUtility.FromJson<NativeEffectSource>(descriptor.text));
+   if(descriptor!=null&&!name.StartsWith("EffectsR11/")&&!name.StartsWith("WinsR22/")&&!name.StartsWith("WardrobeR30/")&&!name.StartsWith("NovR10/")&&!luaNewWin){var sourceUv=JsonUtility.FromJson<NativeEffectSource>(descriptor.text);foreach(var node in sourceUv.nodes.Where(n=>n.uvScroll!=null&&n.uvScroll.Length==2&&(n.uvScroll[0]!=0||n.uvScroll[1]!=0))){
     var renderer=clone.GetComponentsInChildren<ParticleSystemRenderer>(true).FirstOrDefault(r=>r.name==node.name);if(renderer==null)continue;var material=new Material(renderer.sharedMaterial);copies.Add(material);renderer.sharedMaterial=material;scrolls.Add(new Scroll{material=material,origin=material.mainTextureOffset,speed=new Vector2(node.uvScroll[0],node.uvScroll[1])});
    }}
    Sample(-1);

@@ -25,4 +25,39 @@ class CharacterInputs(unittest.TestCase):
         with self.assertRaises(AssertionError):module.merge_config(self.base,{'item_definition/skin':[{'id':101,'path':'extendRes/charactor/../escape'}]})
     def test_default_skin_must_belong_to_character(self):
         with self.assertRaises(AssertionError):module.merge_config(self.base,{'item_definition/character':[{'id':1,'init_skin':999}]})
+    def test_native_numeric_default_path_is_accepted(self):
+        result=module.merge_config(self.base,{'item_definition/skin':[{'id':103,'character_id':1,'path':'','assetLayout':'native'}]})
+        self.assertEqual(result['item_definition/skin'][-1]['id'],103)
+    def test_native_explicit_path_is_bound_to_skin_id(self):
+        row={'id':103,'character_id':1,'path':'deco/character/103','assetLayout':'native'}
+        self.assertEqual(module.merge_config(self.base,{'item_definition/skin':[row]})['item_definition/skin'][-1],row)
+        row['path']='deco/character/104'
+        with self.assertRaises(AssertionError):module.merge_config(self.base,{'item_definition/skin':[row]})
+    def test_native_path_cannot_escape(self):
+        with self.assertRaises(AssertionError):module.merge_config(self.base,{'item_definition/skin':[{'id':103,'character_id':1,'path':'../103','assetLayout':'native'}]})
+    def test_only_original_generic_gender_skins_can_have_zero_owner(self):
+        row={'id':400000,'character_id':0,'path':'extendRes/charactor/default_girl'}
+        module.merge_config(self.base,{'item_definition/skin':[row]})
+        row['id']=400002
+        with self.assertRaises(AssertionError):module.merge_config(self.base,{'item_definition/skin':[row]})
+    def test_native_v2_spine_matches_original_external_config(self):
+        import json
+        root=pathlib.Path(__file__).resolve().parents[1]
+        catalog=json.loads((root/'unity/Assets/Resources/Majsoul/CharacterDirectory/catalog.json').read_text('utf8'))
+        skins={skin['id']:skin for role in catalog['roles']for skin in role['skins']}
+        for sid in [40012803,40012903,40013003,40013103]:
+            with self.subTest(skin=sid):
+                config=json.loads((root/f'docs/reference/november-2026/spine-v2/{sid}_spine_offset.json').read_text('utf8'))
+                info=json.loads((root/f'docs/reference/november-2026/spine-v2/{sid}_info.json').read_text('utf8'))
+                for runtime,original in [('spineWidth','spine_width'),('spineHeight','spine_height'),('pivotX','pivot_x'),('pivotY','pivot_y')]:
+                    self.assertEqual(skins[sid][runtime],config[original])
+                self.assertEqual(skins[sid]['parts'],[f'Spine/{sid}/{layer}'for layer in info['layers']])
+    def test_rank_sprites_keep_original_logical_canvas(self):
+        import json
+        root=pathlib.Path(__file__).resolve().parents[1]
+        sources=json.loads((root/'docs/reference/november-2026/rank-ui-logical-canvas-r11.json').read_text('utf8'))
+        for row in sources:
+            with self.subTest(sprite=row['name']):
+                image=(root/f"unity/Assets/Resources/Majsoul/Settlement/RankCalc/{row['name']}.png").read_bytes()
+                self.assertEqual([int.from_bytes(image[16:20],'big'),int.from_bytes(image[20:24],'big')],row['logicalSize'])
 if __name__=='__main__':unittest.main()

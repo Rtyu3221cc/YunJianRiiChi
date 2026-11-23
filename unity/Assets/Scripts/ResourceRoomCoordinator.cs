@@ -7,7 +7,7 @@ using UnityEngine;
 using static YunJian.Riichi.NativePanel;
 namespace YunJian.Riichi {
     public sealed class ResourceRoomCoordinator:MonoBehaviour {
-        RiichiClient client;CharacterPackShareServer share;string room,offerSent,reportSent;int revision;float nextOffer,nextStart;bool downloading,preloaded,preloading;
+        RiichiClient client;CharacterPackShareServer share;string room,offerSent,reportSent;int revision;float nextOffer,nextStart,nextReport;bool downloading,preloaded,preloading;
         int promptRevision=-1;bool promptHidden;int preloadDone,preloadTotal;string preloadLabel;
         public bool PromptFolded=>(promptHidden&&enabled||ReviewFolded)&&client.State?.phase=="lobby"&&client.State.resourceSetup!=null&&(ReviewFolded||promptRevision==client.State.resourceSetup.revision);
         // Editor recordings keep this component disabled (it talks to the room host).
@@ -21,7 +21,7 @@ namespace YunJian.Riichi {
         public string[] MissingWardrobes=>WantedWardrobes.Where(id=>!declinedWardrobes.Contains(id)&&!WardrobePackService.Installed(id)).ToArray();
         bool Offered(string key)=>CharacterPackService.Find(key)?.available==true&&(client.State.resourceSetup?.choices??new CharacterChoice[0]).Where(c=>c.character==key).All(c=>CharacterPackService.ContainsSkin(key,c.skin));
         void Awake(){client=GetComponent<RiichiClient>();}
-        void ResetPreparation(){preparationGeneration++;foreach(var key in pinned)CharacterPackService.Unpin(key);foreach(var key in pinnedWardrobes)WardrobePackService.Unpin(key);pinnedWardrobes.Clear();WardrobePackService.RemoteFallbackIds.Clear();declinedWardrobes.Clear();pinned.Clear();declined.Clear();CharacterRoster.RemoteFallbackKeys.Clear();downloading=preloaded=preloading=false;reportSent=null;revision=0;}
+        void ResetPreparation(){preparationGeneration++;foreach(var key in pinned)CharacterPackService.Unpin(key);foreach(var key in pinnedWardrobes)WardrobePackService.Unpin(key);pinnedWardrobes.Clear();WardrobePackService.RemoteFallbackIds.Clear();declinedWardrobes.Clear();pinned.Clear();declined.Clear();CharacterRoster.RemoteFallbackKeys.Clear();downloading=preloaded=preloading=false;reportSent=null;nextReport=0;preloadDone=preloadTotal=0;revision=0;}
 #if UNITY_EDITOR
         // Recordings draw the panel without any host traffic and set progress directly.
         public bool ReviewDisplayOnly;
@@ -41,7 +41,11 @@ namespace YunJian.Riichi {
             foreach(string key in setup.choices.Select(c=>c.character).Distinct().Where(CharacterRoster.Available))if(pinned.Add(key))CharacterPackService.Pin(key);
             PinWardrobes();if(Missing.Length==0&&MissingWardrobes.Length==0&&!preloaded&&!preloading)StartCoroutine(Preload(setup));
             string report=Missing.Length==0&&MissingWardrobes.Length==0&&preloaded?(declined.Count+declinedWardrobes.Count>0?"fallback":"ready"):downloading?"downloading":"pending";
-            string signature=revision+":"+report+":"+string.Join(",",declined.OrderBy(k=>k))+":"+string.Join(",",declinedWardrobes.OrderBy(k=>k))+(report=="downloading"?":"+Mathf.FloorToInt(Time.unscaledTime/30):"");if(reportSent!=signature&&!client.Busy){if(client.SendResourceRequest(new RequestBody{op="resourceAck",setupRevision=revision,resourceStatus=report,fallbackCharacters=declined.ToArray(),fallbackWardrobes=declinedWardrobes.ToArray()}))reportSent=signature;}
+            int progress=PreparationPercent;
+            string signature=revision+":"+report+":"+progress+":"+string.Join(",",declined.OrderBy(k=>k))+":"+string.Join(",",declinedWardrobes.OrderBy(k=>k))+(report=="downloading"?":"+Mathf.FloorToInt(Time.unscaledTime/30):"");
+            if(reportSent!=signature&&!client.Busy&&(preloaded||Time.unscaledTime>=nextReport)){
+                if(client.SendResourceRequest(new RequestBody{op="resourceAck",setupRevision=revision,resourceStatus=report,resourceProgress=progress,fallbackCharacters=declined.ToArray(),fallbackWardrobes=declinedWardrobes.ToArray()})){reportSent=signature;nextReport=Time.unscaledTime+.25f;}
+            }
             if(state.host&&setup.ready&&preloaded&&!client.Busy&&Time.unscaledTime>=nextStart){nextStart=Time.unscaledTime+1.5f;client.SendResourceRequest(new RequestBody{op="start",setupRevision=revision});}
         }
         void PinWardrobes(){foreach(string key in WantedWardrobes.Where(WardrobePackService.Installed).Select(WardrobePackService.ForItem).Where(p=>p!=null).SelectMany(p=>WardrobePackService.Closure(p.key)).Distinct().Where(k=>!WardrobePackService.Find(k).builtin))if(pinnedWardrobes.Add(key))WardrobePackService.Pin(key);}
@@ -93,13 +97,26 @@ namespace YunJian.Riichi {
         // Every phone loads this match's characters, voices and outfits into memory
         // before the deal, so nobody stalls mid-hand. Show how far this phone is and
         // which players are still loading; AI seats need nothing.
+        public int PreparationPercent=>preloaded?100:preloadTotal>0?Mathf.Clamp(Mathf.RoundToInt(100f*preloadDone/preloadTotal),0,99):0;
         void DrawPreparationProgress(RoomView state){
             float p=preloaded?1:preloadTotal>0?Mathf.Clamp01(preloadDone/(float)preloadTotal):0;
             Label(preloaded?"本机已加载完成，等待其他玩家":"本机正在加载本场角色与装扮",960,375,38,Text,0,TextAnchor.MiddleCenter);
             var bar=new Rect(530,420,860,26);var c=GUI.color;GUI.color=new Color(0,0,0,.45f);GUI.DrawTexture(bar,Texture2D.whiteTexture);GUI.color=Gold;GUI.DrawTexture(new Rect(bar.x+3,bar.y+3,(bar.width-6)*p,bar.height-6),Texture2D.whiteTexture);GUI.color=c;
             Label(preloaded?"100%":Mathf.RoundToInt(p*100)+"%  ·  "+preloadDone+"/"+Mathf.Max(1,preloadTotal)+(string.IsNullOrEmpty(preloadLabel)?"":"  ·  "+preloadLabel),960,478,30,Muted,0,TextAnchor.MiddleCenter,1000,50);
-            var me=state.you;var rows=state.resourceSetup.players.OrderBy(x=>x.seat).Select(x=>{var player=x.seat<state.players.Length?state.players[x.seat]:null;string name=x.seat==me?"你":player?.name??"玩家"+(x.seat+1);string s=x.state=="ready"?"已就绪":x.state=="fallback"?"已就绪（部分用基础形象）":x.state=="downloading"?"正在下载":"正在加载";return name+"："+s;}).ToArray();
-            for(int i=0;i<rows.Length;i++)Label(rows[i],i%2==0?560:980,548+i/2*48,32,rows[i].EndsWith("就绪")||rows[i].Contains("就绪（")?Text:Gold,0,TextAnchor.MiddleLeft,400,46);
+            // Seat order is the room array order; never rotate the local player first.
+            var players=state.players??Array.Empty<PlayerView>();int count=Mathf.Min(4,players.Length);float pitch=192;
+            for(int seat=0;seat<count;seat++){
+                var player=players[seat];var peer=state.resourceSetup.players?.FirstOrDefault(x=>x.seat==seat);
+                bool mine=seat==state.you,ready=mine?preloaded:peer?.state=="ready"||peer?.state=="fallback";
+                int percent=mine?PreparationPercent:ready?100:Mathf.Clamp(peer?.progress??0,0,100);
+                float x=960+(seat-(count-1)/2f)*pitch;var avatar=new Rect(x-64,529,128,128);
+                var image=GetComponent<TableRenderer>().Portrait(player);
+                if(image!=null)GUI.DrawTexture(avatar,image,ScaleMode.ScaleToFit,true);
+                if(ready){var check=CharacterRoster.Texture("UI/skin_using");if(check!=null)GUI.DrawTexture(new Rect(avatar.xMax-30,avatar.yMax-30,43,43),check,ScaleMode.ScaleToFit,true);}
+                Color ink=mine?Gold:Color.white;
+                Label(player.name??"玩家"+(seat+1),x,689,25,ink,0,TextAnchor.MiddleCenter,180,40);
+                Label(percent+"%",x,725,25,ink,0,TextAnchor.MiddleCenter,180,34);
+            }
        }
         void OnDestroy(){ResetPreparation();share?.Dispose();}
     }

@@ -17,9 +17,9 @@ test('static decoration source records reconcile without advertising incomplete 
   }
  }
 });
-test('all 22 background tracks and 17 riichi tracks retain complete local source audio',()=>{
- const tracks=read('unity/Assets/Resources/Majsoul/Settings/music.json').tracks;assert.equal(tracks.length,22);assert.equal(new Set(tracks.map(t=>t.id)).size,22);
- assert.equal(tracks.filter(t=>t.group==='lobby').length,9);assert.equal(tracks.filter(t=>t.group==='mj').length,13);
+test('all 24 background tracks and 17 riichi tracks retain complete local source audio',()=>{
+ const tracks=read('unity/Assets/Resources/Majsoul/Settings/music.json').tracks;assert.equal(tracks.length,24);assert.equal(new Set(tracks.map(t=>t.id)).size,24);
+ assert.equal(tracks.filter(t=>t.group==='lobby').length,10);assert.equal(tracks.filter(t=>t.group==='mj').length,14);
  assert.equal(catalog.items.filter(i=>i.category==='music').length,17);
  for(const resource of [...tracks.map(t=>t.resource),...catalog.items.filter(i=>i.category==='music').map(i=>i.audio)]){
   const file=sourceFile(path.join(root,'unity/Assets/Resources',resource+'.mp3'));assert.ok(fs.statSync(file).size>10000,file);

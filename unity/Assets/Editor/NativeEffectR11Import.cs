@@ -102,6 +102,21 @@ namespace YunJian.Riichi.Editor {
             File.WriteAllLines(Reference+"native-import-failures.txt",failures);
             Debug.Log("R30 IMPORT COMPLETE "+checks.Count+" prefabs, "+failures.Count+" failures");EditorApplication.Exit(0);
         }
+        public static void RunNovR10(){
+            checks.Clear();AssetDatabase.Refresh();
+            referenceOverride=Environment.GetEnvironmentVariable("YUNJIAN_R22_REPO")+"/build/rank-stick-r10/native-export/";
+            var sources=JsonUtility.FromJson<AnimationSources>("{\"rows\":"+File.ReadAllText(Reference+"animation-sources.json")+"}").rows;
+            var manifest=JsonUtility.FromJson<Manifest>(ReadSource(Folder+"NovR10/manifest.json"));
+            var failures=new List<string>();
+            foreach(var entry in manifest.effects)foreach(string key in entry.nativeVariants??new[]{entry.nativeEffect}){
+                if(string.IsNullOrEmpty(key)||!File.Exists(Folder+key+"-source.json"))continue;
+                try{Import(key,sources);}catch(Exception error){failures.Add(key+" "+error);}
+            }
+            foreach(var bundle in bundles.Values)bundle.Unload(false);bundles.Clear();AssetDatabase.SaveAssets();
+            File.WriteAllLines(Reference+"native-import-checks.txt",checks);
+            File.WriteAllLines(Reference+"native-import-failures.txt",failures);
+            Debug.Log("NOV R10 IMPORT COMPLETE "+checks.Count+" prefabs, "+failures.Count+" failures");EditorApplication.Exit(failures.Count==0?0:1);
+        }
         public static void RunYakumanR39(){
             checks.Clear();string repo=Environment.GetEnvironmentVariable("YUNJIAN_1114_REPO");
             referenceOverride=repo+"/build/feedback-1114-r39/yakuman/source/";AssetDatabase.Refresh();
@@ -143,7 +158,8 @@ namespace YunJian.Riichi.Editor {
             var shader=Shader.Find("YunJian/NativeEffectParticle");if(shader==null)throw new Exception("Native effect shader did not compile");
             bool decoration=output.Contains("/StaticR16/");
             bool fate=output.Contains("/FateR19/");if(fate)shader=Resources.Load<Shader>("Majsoul/NativeReview/FateR19/FateParticle");
-            bool win=output.Contains("/WinsR22/")||output.Contains("/WardrobeR30/")||output.Contains("/YakumanR39/");if(win)shader=Resources.Load<Shader>("Majsoul/NativeReview/WinsR22/WardrobeEffectParticle");
+            bool win=output.Contains("/NovR10/")||output.Contains("/WinsR22/")||output.Contains("/WardrobeR30/")||output.Contains("/YakumanR39/");if(win)shader=Resources.Load<Shader>("Majsoul/NativeReview/WinsR22/WardrobeEffectParticle");
+            if(output.Contains("/NovR10/"))shader=Resources.Load<Shader>("Majsoul/NativeReview/NovR10/NovEffectParticle");
             bool outline=output.Contains("/YakumanR39/")&&source.shaderName=="Catfood/Outline";if(outline)shader=Shader.Find("YunJian/OriginalTileOutline");
             if(decoration)shader=Resources.Load<Shader>("Majsoul/Wardrobe/WardrobeParticle");
             if(decoration&&(source.shaderName.StartsWith("Catfood/")||source.shaderName.StartsWith("Unlit/")))shader=Resources.Load<Shader>("Majsoul/Wardrobe/StaticDecoration");
@@ -228,7 +244,7 @@ namespace YunJian.Riichi.Editor {
             var tracks=new List<NativeMotionTrack>();
             for(int index=0;index<nodes.Length;index++)foreach(string path in config.nodes[index].animations??new string[0]){
                 var row=animations.First(a=>a.output==Path.ChangeExtension(path,".anim"));
-                var track=Bake(root,nodes,index,row,name.StartsWith("FateR19/")||name.StartsWith("WinsR22/")||name.StartsWith("WardrobeR30/")||name.StartsWith("YakumanR39/"),swaps);tracks.Add(track);
+                var track=Bake(root,nodes,index,row,name.StartsWith("NovR10/")||name.StartsWith("FateR19/")||name.StartsWith("WinsR22/")||name.StartsWith("WardrobeR30/")||name.StartsWith("YakumanR39/"),swaps);tracks.Add(track);
                 string emptyAsset=Folder+row.output;if(AssetDatabase.LoadAssetAtPath<AnimationClip>(emptyAsset)!=null)AssetDatabase.DeleteAsset(emptyAsset);
             }
             if(tracks.Count>0){

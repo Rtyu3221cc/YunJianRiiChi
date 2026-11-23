@@ -11,12 +11,11 @@ def guid(p):return re.search(r'(?m)^guid: ([a-f0-9]{32})$',Path(str(p)+'.meta').
 checks=[]
 with ZipFile(apk) as archive:
     metadata=archive.read('assets/bin/Data/Managed/Metadata/global-metadata.dat')
-    for name in ['ProfilePortraitClips','DrawProfilePortrait','ProfileSourceLabel','ProfileAchievementNumber']:
+    for name in ['ProfilePortraitClips','DrawProfilePortrait','ProfileSourceLabel','DisposeProfileSlices']:
         assert name.encode() in metadata,'Missing current player-info runtime: '+name
     for name in ['PlayerInfoSourceR7Capture','PlayerInfoSourceR7Review','Release0640Build']:
         assert name.encode() not in metadata,'Editor-only review leaked into APK: '+name
-    paths=list((P/'TitleIcons').glob('*.png'))+[P/'Native'/(n+'.png') for n in ['using','illustFrame','illustBg','tabInsideNormal','tabInsideSelected','waitingroom_mask']]
-    assert len(paths)==20
+    paths=list((P/'TitleIcons').glob('*.png'))+list((P/'Native').glob('*.png'))
     for path in paths:
         payload=archive.read('assets/bin/Data/'+guid(path))
         textures=[o for o in UnityPy.load(payload).objects if o.type.name=='Texture2D'];assert len(textures)==1
@@ -30,4 +29,4 @@ with ZipFile(apk) as archive:
     assert len(fonts)==1 and bytes(fonts[0].read().m_FontData)==font.read_bytes(),'Achievement source font changed in APK'
 report=dict(apk=apk.name,bytes=apk.stat().st_size,sha256=hashlib.sha256(apk.read_bytes()).hexdigest(),profileTextures=checks,sourceAchievementFont=True,portraitMaskRuntime=True,editorFixtureExcluded=True,androidDeviceTested=False)
 output.parent.mkdir(parents=True,exist_ok=True);output.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n','utf8')
-print('PASS: 20 original-size APK textures, no mipmaps, readable native portrait mask, source achievement font, current runtime and no editor fixture.')
+print('PASS: all original-size Profile APK textures, no mipmaps, readable native portrait mask, source achievement font, current runtime and no editor fixture.')

@@ -1,0 +1,2933 @@
+{
+    "checks": 1170,
+    "passed": [
+        "small badge switches to sanma",
+        "badge does not open profile",
+        "badge switches back to yonma",
+        "friend awards rank 四麻加分",
+        "terminal poll is idempotent 四麻加分",
+        "standings before rank 四麻加分",
+        "independent rank page 四麻加分",
+        "rank animation final values 四麻加分",
+        "friend awards rank 三麻加分",
+        "terminal poll is idempotent 三麻加分",
+        "standings before rank 三麻加分",
+        "independent rank page 三麻加分",
+        "rank animation final values 三麻加分",
+        "friend awards rank 升段",
+        "terminal poll is idempotent 升段",
+        "standings before rank 升段",
+        "independent rank page 升段",
+        "rank animation final values 升段",
+        "friend awards rank 降段",
+        "terminal poll is idempotent 降段",
+        "standings before rank 降段",
+        "independent rank page 降段",
+        "rank animation final values 降段",
+        "friend awards rank 魂天",
+        "terminal poll is idempotent 魂天",
+        "standings before rank 魂天",
+        "independent rank page 魂天",
+        "rank animation final values 魂天",
+        "competition remains separate from rank",
+        "stick-default seat 0 deposited",
+        "stick-default seat 0 has body",
+        "stick-default shader Riichi 1000",
+        "stick-default shader Red dot",
+        "stick-default seat 1 deposited",
+        "stick-default seat 1 has body",
+        "stick-default shader Riichi 1000",
+        "stick-default shader Red dot",
+        "stick-default seat 2 deposited",
+        "stick-default seat 2 has body",
+        "stick-default shader Riichi 1000",
+        "stick-default shader Red dot",
+        "stick-default seat 3 deposited",
+        "stick-default seat 3 has body",
+        "stick-default shader Riichi 1000",
+        "stick-default shader Red dot",
+        "liqi_fish seat 0 deposited",
+        "liqi_fish seat 0 has body",
+        "liqi_fish shader fish",
+        "liqi_fish shader shadow",
+        "liqi_fish seat 1 deposited",
+        "liqi_fish seat 1 has body",
+        "liqi_fish shader fish",
+        "liqi_fish shader shadow",
+        "liqi_fish seat 2 deposited",
+        "liqi_fish seat 2 has body",
+        "liqi_fish shader fish",
+        "liqi_fish shader shadow",
+        "liqi_fish seat 3 deposited",
+        "liqi_fish seat 3 has body",
+        "liqi_fish shader fish",
+        "liqi_fish shader shadow",
+        "liqi_scallion seat 0 deposited",
+        "liqi_scallion seat 0 has body",
+        "liqi_scallion shader scallion",
+        "liqi_scallion shader shadow",
+        "liqi_scallion seat 1 deposited",
+        "liqi_scallion seat 1 has body",
+        "liqi_scallion shader scallion",
+        "liqi_scallion shader shadow",
+        "liqi_scallion seat 2 deposited",
+        "liqi_scallion seat 2 has body",
+        "liqi_scallion shader scallion",
+        "liqi_scallion shader shadow",
+        "liqi_scallion seat 3 deposited",
+        "liqi_scallion seat 3 has body",
+        "liqi_scallion shader scallion",
+        "liqi_scallion shader shadow",
+        "liqi_bone seat 0 deposited",
+        "liqi_bone seat 0 has body",
+        "liqi_bone shader bone",
+        "liqi_bone shader shadow",
+        "liqi_bone seat 1 deposited",
+        "liqi_bone seat 1 has body",
+        "liqi_bone shader bone",
+        "liqi_bone shader shadow",
+        "liqi_bone seat 2 deposited",
+        "liqi_bone seat 2 has body",
+        "liqi_bone shader bone",
+        "liqi_bone shader shadow",
+        "liqi_bone seat 3 deposited",
+        "liqi_bone seat 3 has body",
+        "liqi_bone shader bone",
+        "liqi_bone shader shadow",
+        "liqi_chocolate seat 0 deposited",
+        "liqi_chocolate seat 0 has body",
+        "liqi_chocolate shader liqi",
+        "liqi_chocolate shader shadow",
+        "liqi_chocolate seat 1 deposited",
+        "liqi_chocolate seat 1 has body",
+        "liqi_chocolate shader liqi",
+        "liqi_chocolate shader shadow",
+        "liqi_chocolate seat 2 deposited",
+        "liqi_chocolate seat 2 has body",
+        "liqi_chocolate shader liqi",
+        "liqi_chocolate shader shadow",
+        "liqi_chocolate seat 3 deposited",
+        "liqi_chocolate seat 3 has body",
+        "liqi_chocolate shader liqi",
+        "liqi_chocolate shader shadow",
+        "liqi_evil seat 0 deposited",
+        "liqi_evil seat 0 has body",
+        "liqi_evil shader liqi",
+        "liqi_evil shader shadow",
+        "liqi_evil seat 1 deposited",
+        "liqi_evil seat 1 has body",
+        "liqi_evil shader liqi",
+        "liqi_evil shader shadow",
+        "liqi_evil seat 2 deposited",
+        "liqi_evil seat 2 has body",
+        "liqi_evil shader liqi",
+        "liqi_evil shader shadow",
+        "liqi_evil seat 3 deposited",
+        "liqi_evil seat 3 has body",
+        "liqi_evil shader liqi",
+        "liqi_evil shader shadow",
+        "liqi_jade seat 0 deposited",
+        "liqi_jade seat 0 has body",
+        "liqi_jade shader liqi",
+        "liqi_jade shader shadow",
+        "liqi_jade seat 1 deposited",
+        "liqi_jade seat 1 has body",
+        "liqi_jade shader liqi",
+        "liqi_jade shader shadow",
+        "liqi_jade seat 2 deposited",
+        "liqi_jade seat 2 has body",
+        "liqi_jade shader liqi",
+        "liqi_jade shader shadow",
+        "liqi_jade seat 3 deposited",
+        "liqi_jade seat 3 has body",
+        "liqi_jade shader liqi",
+        "liqi_jade shader shadow",
+        "liqi_red seat 0 deposited",
+        "liqi_red seat 0 has body",
+        "liqi_red shader liqi",
+        "liqi_red shader shadow",
+        "liqi_red seat 1 deposited",
+        "liqi_red seat 1 has body",
+        "liqi_red shader liqi",
+        "liqi_red shader shadow",
+        "liqi_red seat 2 deposited",
+        "liqi_red seat 2 has body",
+        "liqi_red shader liqi",
+        "liqi_red shader shadow",
+        "liqi_red seat 3 deposited",
+        "liqi_red seat 3 has body",
+        "liqi_red shader liqi",
+        "liqi_red shader shadow",
+        "liqi_goldbar seat 0 deposited",
+        "liqi_goldbar seat 0 has body",
+        "liqi_goldbar shader liqi",
+        "liqi_goldbar shader shadow",
+        "liqi_goldbar seat 1 deposited",
+        "liqi_goldbar seat 1 has body",
+        "liqi_goldbar shader liqi",
+        "liqi_goldbar shader shadow",
+        "liqi_goldbar seat 2 deposited",
+        "liqi_goldbar seat 2 has body",
+        "liqi_goldbar shader liqi",
+        "liqi_goldbar shader shadow",
+        "liqi_goldbar seat 3 deposited",
+        "liqi_goldbar seat 3 has body",
+        "liqi_goldbar shader liqi",
+        "liqi_goldbar shader shadow",
+        "liqi_bianpao seat 0 deposited",
+        "liqi_bianpao seat 0 has body",
+        "liqi_bianpao shader polySurface2",
+        "liqi_bianpao shader shadow",
+        "liqi_bianpao seat 1 deposited",
+        "liqi_bianpao seat 1 has body",
+        "liqi_bianpao shader polySurface2",
+        "liqi_bianpao shader shadow",
+        "liqi_bianpao seat 2 deposited",
+        "liqi_bianpao seat 2 has body",
+        "liqi_bianpao shader polySurface2",
+        "liqi_bianpao shader shadow",
+        "liqi_bianpao seat 3 deposited",
+        "liqi_bianpao seat 3 has body",
+        "liqi_bianpao shader polySurface2",
+        "liqi_bianpao shader shadow",
+        "liqi_jiaozi seat 0 deposited",
+        "liqi_jiaozi seat 0 has body",
+        "liqi_jiaozi shader jiaozi",
+        "liqi_jiaozi shader shadow",
+        "liqi_jiaozi seat 1 deposited",
+        "liqi_jiaozi seat 1 has body",
+        "liqi_jiaozi shader jiaozi",
+        "liqi_jiaozi shader shadow",
+        "liqi_jiaozi seat 2 deposited",
+        "liqi_jiaozi seat 2 has body",
+        "liqi_jiaozi shader jiaozi",
+        "liqi_jiaozi shader shadow",
+        "liqi_jiaozi seat 3 deposited",
+        "liqi_jiaozi seat 3 has body",
+        "liqi_jiaozi shader jiaozi",
+        "liqi_jiaozi shader shadow",
+        "liqi_duane seat 0 deposited",
+        "liqi_duane seat 0 has body",
+        "liqi_duane shader xiangsu",
+        "liqi_duane shader shadow",
+        "liqi_duane seat 1 deposited",
+        "liqi_duane seat 1 has body",
+        "liqi_duane shader xiangsu",
+        "liqi_duane shader shadow",
+        "liqi_duane seat 2 deposited",
+        "liqi_duane seat 2 has body",
+        "liqi_duane shader xiangsu",
+        "liqi_duane shader shadow",
+        "liqi_duane seat 3 deposited",
+        "liqi_duane seat 3 has body",
+        "liqi_duane shader xiangsu",
+        "liqi_duane shader shadow",
+        "liqi_xuegao seat 0 deposited",
+        "liqi_xuegao seat 0 has body",
+        "liqi_xuegao shader binggun",
+        "liqi_xuegao shader shadow",
+        "liqi_xuegao seat 1 deposited",
+        "liqi_xuegao seat 1 has body",
+        "liqi_xuegao shader binggun",
+        "liqi_xuegao shader shadow",
+        "liqi_xuegao seat 2 deposited",
+        "liqi_xuegao seat 2 has body",
+        "liqi_xuegao shader binggun",
+        "liqi_xuegao shader shadow",
+        "liqi_xuegao seat 3 deposited",
+        "liqi_xuegao seat 3 has body",
+        "liqi_xuegao shader binggun",
+        "liqi_xuegao shader shadow",
+        "liqi_yijitiantong seat 0 deposited",
+        "liqi_yijitiantong seat 0 has body",
+        "liqi_yijitiantong shader yijilizhibang",
+        "liqi_yijitiantong shader shadow",
+        "liqi_yijitiantong seat 1 deposited",
+        "liqi_yijitiantong seat 1 has body",
+        "liqi_yijitiantong shader yijilizhibang",
+        "liqi_yijitiantong shader shadow",
+        "liqi_yijitiantong seat 2 deposited",
+        "liqi_yijitiantong seat 2 has body",
+        "liqi_yijitiantong shader yijilizhibang",
+        "liqi_yijitiantong shader shadow",
+        "liqi_yijitiantong seat 3 deposited",
+        "liqi_yijitiantong seat 3 has body",
+        "liqi_yijitiantong shader yijilizhibang",
+        "liqi_yijitiantong shader shadow",
+        "liqi_xiaoemofanbian seat 0 deposited",
+        "liqi_xiaoemofanbian seat 0 has body",
+        "liqi_xiaoemofanbian shader polySurface25",
+        "liqi_xiaoemofanbian shader shadow",
+        "liqi_xiaoemofanbian seat 1 deposited",
+        "liqi_xiaoemofanbian seat 1 has body",
+        "liqi_xiaoemofanbian shader polySurface25",
+        "liqi_xiaoemofanbian shader shadow",
+        "liqi_xiaoemofanbian seat 2 deposited",
+        "liqi_xiaoemofanbian seat 2 has body",
+        "liqi_xiaoemofanbian shader polySurface25",
+        "liqi_xiaoemofanbian shader shadow",
+        "liqi_xiaoemofanbian seat 3 deposited",
+        "liqi_xiaoemofanbian seat 3 has body",
+        "liqi_xiaoemofanbian shader polySurface25",
+        "liqi_xiaoemofanbian shader shadow",
+        "liqi_mofabang seat 0 deposited",
+        "liqi_mofabang seat 0 has body",
+        "liqi_mofabang shader mozhang",
+        "liqi_mofabang shader shadow",
+        "liqi_mofabang seat 1 deposited",
+        "liqi_mofabang seat 1 has body",
+        "liqi_mofabang shader mozhang",
+        "liqi_mofabang shader shadow",
+        "liqi_mofabang seat 2 deposited",
+        "liqi_mofabang seat 2 has body",
+        "liqi_mofabang shader mozhang",
+        "liqi_mofabang shader shadow",
+        "liqi_mofabang seat 3 deposited",
+        "liqi_mofabang seat 3 has body",
+        "liqi_mofabang shader mozhang",
+        "liqi_mofabang shader shadow",
+        "liqi_jinlongyu seat 0 deposited",
+        "liqi_jinlongyu seat 0 has body",
+        "liqi_jinlongyu shader model",
+        "liqi_jinlongyu shader shadow",
+        "liqi_jinlongyu seat 1 deposited",
+        "liqi_jinlongyu seat 1 has body",
+        "liqi_jinlongyu shader model",
+        "liqi_jinlongyu shader shadow",
+        "liqi_jinlongyu seat 2 deposited",
+        "liqi_jinlongyu seat 2 has body",
+        "liqi_jinlongyu shader model",
+        "liqi_jinlongyu shader shadow",
+        "liqi_jinlongyu seat 3 deposited",
+        "liqi_jinlongyu seat 3 has body",
+        "liqi_jinlongyu shader model",
+        "liqi_jinlongyu shader shadow",
+        "liqi_xhzy seat 0 deposited",
+        "liqi_xhzy seat 0 has body",
+        "liqi_xhzy shader shadow",
+        "liqi_xhzy shader zhouyin",
+        "liqi_xhzy seat 1 deposited",
+        "liqi_xhzy seat 1 has body",
+        "liqi_xhzy shader shadow",
+        "liqi_xhzy shader zhouyin",
+        "liqi_xhzy seat 2 deposited",
+        "liqi_xhzy seat 2 has body",
+        "liqi_xhzy shader shadow",
+        "liqi_xhzy shader zhouyin",
+        "liqi_xhzy seat 3 deposited",
+        "liqi_xhzy seat 3 has body",
+        "liqi_xhzy shader shadow",
+        "liqi_xhzy shader zhouyin",
+        "liqi_hl seat 0 deposited",
+        "liqi_hl seat 0 has body",
+        "liqi_hl shader chonglangban",
+        "liqi_hl seat 1 deposited",
+        "liqi_hl seat 1 has body",
+        "liqi_hl shader chonglangban",
+        "liqi_hl seat 2 deposited",
+        "liqi_hl seat 2 has body",
+        "liqi_hl shader chonglangban",
+        "liqi_hl seat 3 deposited",
+        "liqi_hl seat 3 has body",
+        "liqi_hl shader chonglangban",
+        "liqi_music seat 0 deposited",
+        "liqi_music seat 0 has body",
+        "liqi_music shader music",
+        "liqi_music shader music_shadow",
+        "liqi_music seat 1 deposited",
+        "liqi_music seat 1 has body",
+        "liqi_music shader music",
+        "liqi_music shader music_shadow",
+        "liqi_music seat 2 deposited",
+        "liqi_music seat 2 has body",
+        "liqi_music shader music",
+        "liqi_music shader music_shadow",
+        "liqi_music seat 3 deposited",
+        "liqi_music seat 3 has body",
+        "liqi_music shader music",
+        "liqi_music shader music_shadow",
+        "liqi_21chunjie seat 0 deposited",
+        "liqi_21chunjie seat 0 has body",
+        "liqi_21chunjie shader Object003",
+        "liqi_21chunjie shader Plane",
+        "liqi_21chunjie seat 1 deposited",
+        "liqi_21chunjie seat 1 has body",
+        "liqi_21chunjie shader Object003",
+        "liqi_21chunjie shader Plane",
+        "liqi_21chunjie seat 2 deposited",
+        "liqi_21chunjie seat 2 has body",
+        "liqi_21chunjie shader Object003",
+        "liqi_21chunjie shader Plane",
+        "liqi_21chunjie seat 3 deposited",
+        "liqi_21chunjie seat 3 has body",
+        "liqi_21chunjie shader Object003",
+        "liqi_21chunjie shader Plane",
+        "liqi_21cyber seat 0 deposited",
+        "liqi_21cyber seat 0 has body",
+        "liqi_21cyber shader liqi_21cyber",
+        "liqi_21cyber seat 1 deposited",
+        "liqi_21cyber seat 1 has body",
+        "liqi_21cyber shader liqi_21cyber",
+        "liqi_21cyber seat 2 deposited",
+        "liqi_21cyber seat 2 has body",
+        "liqi_21cyber shader liqi_21cyber",
+        "liqi_21cyber seat 3 deposited",
+        "liqi_21cyber seat 3 has body",
+        "liqi_21cyber shader liqi_21cyber",
+        "liqi_21catball seat 0 deposited",
+        "liqi_21catball seat 0 has body",
+        "liqi_21catball shader wan_1",
+        "liqi_21catball shader wan_1_shadow",
+        "liqi_21catball seat 1 deposited",
+        "liqi_21catball seat 1 has body",
+        "liqi_21catball shader wan_1",
+        "liqi_21catball shader wan_1_shadow",
+        "liqi_21catball seat 2 deposited",
+        "liqi_21catball seat 2 has body",
+        "liqi_21catball shader wan_1",
+        "liqi_21catball shader wan_1_shadow",
+        "liqi_21catball seat 3 deposited",
+        "liqi_21catball seat 3 has body",
+        "liqi_21catball shader wan_1",
+        "liqi_21catball shader wan_1_shadow",
+        "liqi_21magic seat 0 deposited",
+        "liqi_21magic seat 0 has body",
+        "liqi_21magic shader magicbook",
+        "liqi_21magic shader magicbook_shadow",
+        "liqi_21magic shader Object007",
+        "liqi_21magic seat 1 deposited",
+        "liqi_21magic seat 1 has body",
+        "liqi_21magic shader magicbook",
+        "liqi_21magic shader magicbook_shadow",
+        "liqi_21magic shader Object007",
+        "liqi_21magic seat 2 deposited",
+        "liqi_21magic seat 2 has body",
+        "liqi_21magic shader magicbook",
+        "liqi_21magic shader magicbook_shadow",
+        "liqi_21magic shader Object007",
+        "liqi_21magic seat 3 deposited",
+        "liqi_21magic seat 3 has body",
+        "liqi_21magic shader magicbook",
+        "liqi_21magic shader magicbook_shadow",
+        "liqi_21magic shader Object007",
+        "liqi_21zhounian seat 0 deposited",
+        "liqi_21zhounian seat 0 has body",
+        "liqi_21zhounian shader catknife001",
+        "liqi_21zhounian shader catknife_shadow",
+        "liqi_21zhounian seat 1 deposited",
+        "liqi_21zhounian seat 1 has body",
+        "liqi_21zhounian shader catknife001",
+        "liqi_21zhounian shader catknife_shadow",
+        "liqi_21zhounian seat 2 deposited",
+        "liqi_21zhounian seat 2 has body",
+        "liqi_21zhounian shader catknife001",
+        "liqi_21zhounian shader catknife_shadow",
+        "liqi_21zhounian seat 3 deposited",
+        "liqi_21zhounian seat 3 has body",
+        "liqi_21zhounian shader catknife001",
+        "liqi_21zhounian shader catknife_shadow",
+        "liqi_22chunjie seat 0 deposited",
+        "liqi_22chunjie seat 0 has body",
+        "liqi_22chunjie shader maoruyi",
+        "liqi_22chunjie shader yingzi",
+        "liqi_22chunjie seat 1 deposited",
+        "liqi_22chunjie seat 1 has body",
+        "liqi_22chunjie shader maoruyi",
+        "liqi_22chunjie shader yingzi",
+        "liqi_22chunjie seat 2 deposited",
+        "liqi_22chunjie seat 2 has body",
+        "liqi_22chunjie shader maoruyi",
+        "liqi_22chunjie shader yingzi",
+        "liqi_22chunjie seat 3 deposited",
+        "liqi_22chunjie seat 3 has body",
+        "liqi_22chunjie shader maoruyi",
+        "liqi_22chunjie shader yingzi",
+        "liqi_22rpg seat 0 deposited",
+        "liqi_22rpg seat 0 has body",
+        "liqi_22rpg shader muzhifazhang",
+        "liqi_22rpg shader yinzi",
+        "liqi_22rpg seat 1 deposited",
+        "liqi_22rpg seat 1 has body",
+        "liqi_22rpg shader muzhifazhang",
+        "liqi_22rpg shader yinzi",
+        "liqi_22rpg seat 2 deposited",
+        "liqi_22rpg seat 2 has body",
+        "liqi_22rpg shader muzhifazhang",
+        "liqi_22rpg shader yinzi",
+        "liqi_22rpg seat 3 deposited",
+        "liqi_22rpg seat 3 has body",
+        "liqi_22rpg shader muzhifazhang",
+        "liqi_22rpg shader yinzi",
+        "liqi_22summer seat 0 deposited",
+        "liqi_22summer seat 0 has body",
+        "liqi_22summer shader bozisoda",
+        "liqi_22summer shader Cylinder002",
+        "liqi_22summer seat 1 deposited",
+        "liqi_22summer seat 1 has body",
+        "liqi_22summer shader bozisoda",
+        "liqi_22summer shader Cylinder002",
+        "liqi_22summer seat 2 deposited",
+        "liqi_22summer seat 2 has body",
+        "liqi_22summer shader bozisoda",
+        "liqi_22summer shader Cylinder002",
+        "liqi_22summer seat 3 deposited",
+        "liqi_22summer seat 3 has body",
+        "liqi_22summer shader bozisoda",
+        "liqi_22summer shader Cylinder002",
+        "liqi_22winter seat 0 deposited",
+        "liqi_22winter seat 0 has body",
+        "liqi_22winter shader Cylinder001",
+        "liqi_22winter shader Plane007",
+        "liqi_22winter seat 1 deposited",
+        "liqi_22winter seat 1 has body",
+        "liqi_22winter shader Cylinder001",
+        "liqi_22winter shader Plane007",
+        "liqi_22winter seat 2 deposited",
+        "liqi_22winter seat 2 has body",
+        "liqi_22winter shader Cylinder001",
+        "liqi_22winter shader Plane007",
+        "liqi_22winter seat 3 deposited",
+        "liqi_22winter seat 3 has body",
+        "liqi_22winter shader Cylinder001",
+        "liqi_22winter shader Plane007",
+        "liqi_xzw22121 seat 0 deposited",
+        "liqi_xzw22121 seat 0 has body",
+        "liqi_xzw22121 shader wan_2",
+        "liqi_xzw22121 shader wan_2_shadow",
+        "liqi_xzw22121 seat 1 deposited",
+        "liqi_xzw22121 seat 1 has body",
+        "liqi_xzw22121 shader wan_2",
+        "liqi_xzw22121 shader wan_2_shadow",
+        "liqi_xzw22121 seat 2 deposited",
+        "liqi_xzw22121 seat 2 has body",
+        "liqi_xzw22121 shader wan_2",
+        "liqi_xzw22121 shader wan_2_shadow",
+        "liqi_xzw22121 seat 3 deposited",
+        "liqi_xzw22121 seat 3 has body",
+        "liqi_xzw22121 shader wan_2",
+        "liqi_xzw22121 shader wan_2_shadow",
+        "liqi_xzw22122 seat 0 deposited",
+        "liqi_xzw22122 seat 0 has body",
+        "liqi_xzw22122 shader liqi_xzw22122",
+        "liqi_xzw22122 shader Plane",
+        "liqi_xzw22122 seat 1 deposited",
+        "liqi_xzw22122 seat 1 has body",
+        "liqi_xzw22122 shader liqi_xzw22122",
+        "liqi_xzw22122 shader Plane",
+        "liqi_xzw22122 seat 2 deposited",
+        "liqi_xzw22122 seat 2 has body",
+        "liqi_xzw22122 shader liqi_xzw22122",
+        "liqi_xzw22122 shader Plane",
+        "liqi_xzw22122 seat 3 deposited",
+        "liqi_xzw22122 seat 3 has body",
+        "liqi_xzw22122 shader liqi_xzw22122",
+        "liqi_xzw22122 shader Plane",
+        "liqi_xzw22123 seat 0 deposited",
+        "liqi_xzw22123 seat 0 has body",
+        "liqi_xzw22123 shader qizi2",
+        "liqi_xzw22123 shader yinzi",
+        "liqi_xzw22123 seat 1 deposited",
+        "liqi_xzw22123 seat 1 has body",
+        "liqi_xzw22123 shader qizi2",
+        "liqi_xzw22123 shader yinzi",
+        "liqi_xzw22123 seat 2 deposited",
+        "liqi_xzw22123 seat 2 has body",
+        "liqi_xzw22123 shader qizi2",
+        "liqi_xzw22123 shader yinzi",
+        "liqi_xzw22123 seat 3 deposited",
+        "liqi_xzw22123 seat 3 has body",
+        "liqi_xzw22123 shader qizi2",
+        "liqi_xzw22123 shader yinzi",
+        "liqi_xzw22124 seat 0 deposited",
+        "liqi_xzw22124 seat 0 has body",
+        "liqi_xzw22124 shader jianyu_shadow",
+        "liqi_xzw22124 shader Plane",
+        "liqi_xzw22124 seat 1 deposited",
+        "liqi_xzw22124 seat 1 has body",
+        "liqi_xzw22124 shader jianyu_shadow",
+        "liqi_xzw22124 shader Plane",
+        "liqi_xzw22124 seat 2 deposited",
+        "liqi_xzw22124 seat 2 has body",
+        "liqi_xzw22124 shader jianyu_shadow",
+        "liqi_xzw22124 shader Plane",
+        "liqi_xzw22124 seat 3 deposited",
+        "liqi_xzw22124 seat 3 has body",
+        "liqi_xzw22124 shader jianyu_shadow",
+        "liqi_xzw22124 shader Plane",
+        "liqi_23chunjie seat 0 deposited",
+        "liqi_23chunjie seat 0 has body",
+        "liqi_23chunjie shader cola",
+        "liqi_23chunjie shader cola_shadow",
+        "liqi_23chunjie seat 1 deposited",
+        "liqi_23chunjie seat 1 has body",
+        "liqi_23chunjie shader cola",
+        "liqi_23chunjie shader cola_shadow",
+        "liqi_23chunjie seat 2 deposited",
+        "liqi_23chunjie seat 2 has body",
+        "liqi_23chunjie shader cola",
+        "liqi_23chunjie shader cola_shadow",
+        "liqi_23chunjie seat 3 deposited",
+        "liqi_23chunjie seat 3 has body",
+        "liqi_23chunjie shader cola",
+        "liqi_23chunjie shader cola_shadow",
+        "liqi_23rpg seat 0 deposited",
+        "liqi_23rpg seat 0 has body",
+        "liqi_23rpg shader Cylinder002",
+        "liqi_23rpg shader juanzhou_shadow",
+        "liqi_23rpg shader Object001",
+        "liqi_23rpg seat 1 deposited",
+        "liqi_23rpg seat 1 has body",
+        "liqi_23rpg shader Cylinder002",
+        "liqi_23rpg shader juanzhou_shadow",
+        "liqi_23rpg shader Object001",
+        "liqi_23rpg seat 2 deposited",
+        "liqi_23rpg seat 2 has body",
+        "liqi_23rpg shader Cylinder002",
+        "liqi_23rpg shader juanzhou_shadow",
+        "liqi_23rpg shader Object001",
+        "liqi_23rpg seat 3 deposited",
+        "liqi_23rpg seat 3 has body",
+        "liqi_23rpg shader Cylinder002",
+        "liqi_23rpg shader juanzhou_shadow",
+        "liqi_23rpg shader Object001",
+        "liqi_23newface seat 0 deposited",
+        "liqi_23newface seat 0 has body",
+        "liqi_23newface shader doumiaopenzhai",
+        "liqi_23newface shader yinzi",
+        "liqi_23newface seat 1 deposited",
+        "liqi_23newface seat 1 has body",
+        "liqi_23newface shader doumiaopenzhai",
+        "liqi_23newface shader yinzi",
+        "liqi_23newface seat 2 deposited",
+        "liqi_23newface seat 2 has body",
+        "liqi_23newface shader doumiaopenzhai",
+        "liqi_23newface shader yinzi",
+        "liqi_23newface seat 3 deposited",
+        "liqi_23newface seat 3 has body",
+        "liqi_23newface shader doumiaopenzhai",
+        "liqi_23newface shader yinzi",
+        "liqi_23summer seat 0 deposited",
+        "liqi_23summer seat 0 has body",
+        "liqi_23summer shader polySurface4_polySurface1",
+        "liqi_23summer shader shadow",
+        "liqi_23summer seat 1 deposited",
+        "liqi_23summer seat 1 has body",
+        "liqi_23summer shader polySurface4_polySurface1",
+        "liqi_23summer shader shadow",
+        "liqi_23summer seat 2 deposited",
+        "liqi_23summer seat 2 has body",
+        "liqi_23summer shader polySurface4_polySurface1",
+        "liqi_23summer shader shadow",
+        "liqi_23summer seat 3 deposited",
+        "liqi_23summer seat 3 has body",
+        "liqi_23summer shader polySurface4_polySurface1",
+        "liqi_23summer shader shadow",
+        "liqi_23ex_fagun seat 0 deposited",
+        "liqi_23ex_fagun seat 0 has body",
+        "liqi_23ex_fagun shader fagunmianbao",
+        "liqi_23ex_fagun shader yinzi",
+        "liqi_23ex_fagun seat 1 deposited",
+        "liqi_23ex_fagun seat 1 has body",
+        "liqi_23ex_fagun shader fagunmianbao",
+        "liqi_23ex_fagun shader yinzi",
+        "liqi_23ex_fagun seat 2 deposited",
+        "liqi_23ex_fagun seat 2 has body",
+        "liqi_23ex_fagun shader fagunmianbao",
+        "liqi_23ex_fagun shader yinzi",
+        "liqi_23ex_fagun seat 3 deposited",
+        "liqi_23ex_fagun seat 3 has body",
+        "liqi_23ex_fagun shader fagunmianbao",
+        "liqi_23ex_fagun shader yinzi",
+        "liqi_23ex_gaoguai seat 0 deposited",
+        "liqi_23ex_gaoguai seat 0 has body",
+        "liqi_23ex_gaoguai shader gaoguaiyanjing",
+        "liqi_23ex_gaoguai shader yinzi",
+        "liqi_23ex_gaoguai seat 1 deposited",
+        "liqi_23ex_gaoguai seat 1 has body",
+        "liqi_23ex_gaoguai shader gaoguaiyanjing",
+        "liqi_23ex_gaoguai shader yinzi",
+        "liqi_23ex_gaoguai seat 2 deposited",
+        "liqi_23ex_gaoguai seat 2 has body",
+        "liqi_23ex_gaoguai shader gaoguaiyanjing",
+        "liqi_23ex_gaoguai shader yinzi",
+        "liqi_23ex_gaoguai seat 3 deposited",
+        "liqi_23ex_gaoguai seat 3 has body",
+        "liqi_23ex_gaoguai shader gaoguaiyanjing",
+        "liqi_23ex_gaoguai shader yinzi",
+        "liqi_23ex_qiubang seat 0 deposited",
+        "liqi_23ex_qiubang seat 0 has body",
+        "liqi_23ex_qiubang shader bangqiugun1",
+        "liqi_23ex_qiubang shader yinzi",
+        "liqi_23ex_qiubang seat 1 deposited",
+        "liqi_23ex_qiubang seat 1 has body",
+        "liqi_23ex_qiubang shader bangqiugun1",
+        "liqi_23ex_qiubang shader yinzi",
+        "liqi_23ex_qiubang seat 2 deposited",
+        "liqi_23ex_qiubang seat 2 has body",
+        "liqi_23ex_qiubang shader bangqiugun1",
+        "liqi_23ex_qiubang shader yinzi",
+        "liqi_23ex_qiubang seat 3 deposited",
+        "liqi_23ex_qiubang seat 3 has body",
+        "liqi_23ex_qiubang shader bangqiugun1",
+        "liqi_23ex_qiubang shader yinzi",
+        "liqi_23ex_yuanjihua seat 0 deposited",
+        "liqi_23ex_yuanjihua seat 0 has body",
+        "liqi_23ex_yuanjihua shader polySurface7",
+        "liqi_23ex_yuanjihua shader Plane",
+        "liqi_23ex_yuanjihua seat 1 deposited",
+        "liqi_23ex_yuanjihua seat 1 has body",
+        "liqi_23ex_yuanjihua shader polySurface7",
+        "liqi_23ex_yuanjihua shader Plane",
+        "liqi_23ex_yuanjihua seat 2 deposited",
+        "liqi_23ex_yuanjihua seat 2 has body",
+        "liqi_23ex_yuanjihua shader polySurface7",
+        "liqi_23ex_yuanjihua shader Plane",
+        "liqi_23ex_yuanjihua seat 3 deposited",
+        "liqi_23ex_yuanjihua seat 3 has body",
+        "liqi_23ex_yuanjihua shader polySurface7",
+        "liqi_23ex_yuanjihua shader Plane",
+        "liqi_23wansheng seat 0 deposited",
+        "liqi_23wansheng seat 0 has body",
+        "liqi_23wansheng shader maomaoxingchenbang",
+        "liqi_23wansheng shader yinzi",
+        "liqi_23wansheng shader 1",
+        "liqi_23wansheng shader gow",
+        "liqi_23wansheng shader r",
+        "liqi_23wansheng seat 1 deposited",
+        "liqi_23wansheng seat 1 has body",
+        "liqi_23wansheng shader maomaoxingchenbang",
+        "liqi_23wansheng shader yinzi",
+        "liqi_23wansheng shader 1",
+        "liqi_23wansheng shader gow",
+        "liqi_23wansheng shader r",
+        "liqi_23wansheng seat 2 deposited",
+        "liqi_23wansheng seat 2 has body",
+        "liqi_23wansheng shader maomaoxingchenbang",
+        "liqi_23wansheng shader yinzi",
+        "liqi_23wansheng shader 1",
+        "liqi_23wansheng shader gow",
+        "liqi_23wansheng shader r",
+        "liqi_23wansheng seat 3 deposited",
+        "liqi_23wansheng seat 3 has body",
+        "liqi_23wansheng shader maomaoxingchenbang",
+        "liqi_23wansheng shader yinzi",
+        "liqi_23wansheng shader 1",
+        "liqi_23wansheng shader gow",
+        "liqi_23wansheng shader r",
+        "liqi_24chunjie seat 0 deposited",
+        "liqi_24chunjie seat 0 has body",
+        "liqi_24chunjie shader chunsun001",
+        "liqi_24chunjie shader chunsun_shadow",
+        "liqi_24chunjie seat 1 deposited",
+        "liqi_24chunjie seat 1 has body",
+        "liqi_24chunjie shader chunsun001",
+        "liqi_24chunjie shader chunsun_shadow",
+        "liqi_24chunjie seat 2 deposited",
+        "liqi_24chunjie seat 2 has body",
+        "liqi_24chunjie shader chunsun001",
+        "liqi_24chunjie shader chunsun_shadow",
+        "liqi_24chunjie seat 3 deposited",
+        "liqi_24chunjie seat 3 has body",
+        "liqi_24chunjie shader chunsun001",
+        "liqi_24chunjie shader chunsun_shadow",
+        "liqi_24summer seat 0 deposited",
+        "liqi_24summer seat 0 has body",
+        "liqi_24summer shader shadow",
+        "liqi_24summer shader xiaoeyu",
+        "liqi_24summer seat 1 deposited",
+        "liqi_24summer seat 1 has body",
+        "liqi_24summer shader shadow",
+        "liqi_24summer shader xiaoeyu",
+        "liqi_24summer seat 2 deposited",
+        "liqi_24summer seat 2 has body",
+        "liqi_24summer shader shadow",
+        "liqi_24summer shader xiaoeyu",
+        "liqi_24summer seat 3 deposited",
+        "liqi_24summer seat 3 has body",
+        "liqi_24summer shader shadow",
+        "liqi_24summer shader xiaoeyu",
+        "liqi_24sanliou seat 0 deposited",
+        "liqi_24sanliou seat 0 has body",
+        "liqi_24sanliou shader liqi_24sanliou",
+        "liqi_24sanliou seat 1 deposited",
+        "liqi_24sanliou seat 1 has body",
+        "liqi_24sanliou shader liqi_24sanliou",
+        "liqi_24sanliou seat 2 deposited",
+        "liqi_24sanliou seat 2 has body",
+        "liqi_24sanliou shader liqi_24sanliou",
+        "liqi_24sanliou seat 3 deposited",
+        "liqi_24sanliou seat 3 has body",
+        "liqi_24sanliou shader liqi_24sanliou",
+        "liqi_24imas seat 0 deposited",
+        "liqi_24imas seat 0 has body",
+        "liqi_24imas shader fbx_huatong",
+        "liqi_24imas shader fbx_hutong_yingzi",
+        "liqi_24imas seat 1 deposited",
+        "liqi_24imas seat 1 has body",
+        "liqi_24imas shader fbx_huatong",
+        "liqi_24imas shader fbx_hutong_yingzi",
+        "liqi_24imas seat 2 deposited",
+        "liqi_24imas seat 2 has body",
+        "liqi_24imas shader fbx_huatong",
+        "liqi_24imas shader fbx_hutong_yingzi",
+        "liqi_24imas seat 3 deposited",
+        "liqi_24imas seat 3 has body",
+        "liqi_24imas shader fbx_huatong",
+        "liqi_24imas shader fbx_hutong_yingzi",
+        "liqi_24winter seat 0 deposited",
+        "liqi_24winter seat 0 has body",
+        "liqi_24winter shader liqi_24winter",
+        "liqi_24winter shader qiaokelibang_yingzi",
+        "liqi_24winter seat 1 deposited",
+        "liqi_24winter seat 1 has body",
+        "liqi_24winter shader liqi_24winter",
+        "liqi_24winter shader qiaokelibang_yingzi",
+        "liqi_24winter seat 2 deposited",
+        "liqi_24winter seat 2 has body",
+        "liqi_24winter shader liqi_24winter",
+        "liqi_24winter shader qiaokelibang_yingzi",
+        "liqi_24winter seat 3 deposited",
+        "liqi_24winter seat 3 has body",
+        "liqi_24winter shader liqi_24winter",
+        "liqi_24winter shader qiaokelibang_yingzi",
+        "liqi_25chunjie seat 0 deposited",
+        "liqi_25chunjie seat 0 has body",
+        "liqi_25chunjie shader yinzi",
+        "liqi_25chunjie shader youzhisan",
+        "liqi_25chunjie seat 1 deposited",
+        "liqi_25chunjie seat 1 has body",
+        "liqi_25chunjie shader yinzi",
+        "liqi_25chunjie shader youzhisan",
+        "liqi_25chunjie seat 2 deposited",
+        "liqi_25chunjie seat 2 has body",
+        "liqi_25chunjie shader yinzi",
+        "liqi_25chunjie shader youzhisan",
+        "liqi_25chunjie seat 3 deposited",
+        "liqi_25chunjie seat 3 has body",
+        "liqi_25chunjie shader yinzi",
+        "liqi_25chunjie shader youzhisan",
+        "liqi_25xila seat 0 deposited",
+        "liqi_25xila seat 0 has body",
+        "liqi_25xila shader fbx_xila",
+        "liqi_25xila shader fbx_xila_yingzi",
+        "liqi_25xila seat 1 deposited",
+        "liqi_25xila seat 1 has body",
+        "liqi_25xila shader fbx_xila",
+        "liqi_25xila shader fbx_xila_yingzi",
+        "liqi_25xila seat 2 deposited",
+        "liqi_25xila seat 2 has body",
+        "liqi_25xila shader fbx_xila",
+        "liqi_25xila shader fbx_xila_yingzi",
+        "liqi_25xila seat 3 deposited",
+        "liqi_25xila seat 3 has body",
+        "liqi_25xila shader fbx_xila",
+        "liqi_25xila shader fbx_xila_yingzi",
+        "liqi_25dongri seat 0 deposited",
+        "liqi_25dongri seat 0 has body",
+        "liqi_25dongri shader riichistick",
+        "liqi_25dongri shader yingzi",
+        "liqi_25dongri seat 1 deposited",
+        "liqi_25dongri seat 1 has body",
+        "liqi_25dongri shader riichistick",
+        "liqi_25dongri shader yingzi",
+        "liqi_25dongri seat 2 deposited",
+        "liqi_25dongri seat 2 has body",
+        "liqi_25dongri shader riichistick",
+        "liqi_25dongri shader yingzi",
+        "liqi_25dongri seat 3 deposited",
+        "liqi_25dongri seat 3 has body",
+        "liqi_25dongri shader riichistick",
+        "liqi_25dongri shader yingzi",
+        "liqi_saki seat 0 deposited",
+        "liqi_saki seat 0 has body",
+        "liqi_saki shader juanbin",
+        "liqi_saki shader shadow",
+        "liqi_saki seat 1 deposited",
+        "liqi_saki seat 1 has body",
+        "liqi_saki shader juanbin",
+        "liqi_saki shader shadow",
+        "liqi_saki seat 2 deposited",
+        "liqi_saki seat 2 has body",
+        "liqi_saki shader juanbin",
+        "liqi_saki shader shadow",
+        "liqi_saki seat 3 deposited",
+        "liqi_saki seat 3 has body",
+        "liqi_saki shader juanbin",
+        "liqi_saki shader shadow",
+        "liqi_kuangdu seat 0 deposited",
+        "liqi_kuangdu seat 0 has body",
+        "liqi_kuangdu shader Object006",
+        "liqi_kuangdu shader shengsijian_shadow",
+        "liqi_kuangdu seat 1 deposited",
+        "liqi_kuangdu seat 1 has body",
+        "liqi_kuangdu shader Object006",
+        "liqi_kuangdu shader shengsijian_shadow",
+        "liqi_kuangdu seat 2 deposited",
+        "liqi_kuangdu seat 2 has body",
+        "liqi_kuangdu shader Object006",
+        "liqi_kuangdu shader shengsijian_shadow",
+        "liqi_kuangdu seat 3 deposited",
+        "liqi_kuangdu seat 3 has body",
+        "liqi_kuangdu shader Object006",
+        "liqi_kuangdu shader shengsijian_shadow",
+        "liqi_akagi seat 0 deposited",
+        "liqi_akagi seat 0 has body",
+        "liqi_akagi shader needletube",
+        "liqi_akagi shader needletube_shadow",
+        "liqi_akagi seat 1 deposited",
+        "liqi_akagi seat 1 has body",
+        "liqi_akagi shader needletube",
+        "liqi_akagi shader needletube_shadow",
+        "liqi_akagi seat 2 deposited",
+        "liqi_akagi seat 2 has body",
+        "liqi_akagi shader needletube",
+        "liqi_akagi shader needletube_shadow",
+        "liqi_akagi seat 3 deposited",
+        "liqi_akagi seat 3 has body",
+        "liqi_akagi shader needletube",
+        "liqi_akagi shader needletube_shadow",
+        "liqi_kaguya seat 0 deposited",
+        "liqi_kaguya seat 0 has body",
+        "liqi_kaguya shader zhedieshan",
+        "liqi_kaguya shader shadow",
+        "liqi_kaguya seat 1 deposited",
+        "liqi_kaguya seat 1 has body",
+        "liqi_kaguya shader zhedieshan",
+        "liqi_kaguya shader shadow",
+        "liqi_kaguya seat 2 deposited",
+        "liqi_kaguya seat 2 has body",
+        "liqi_kaguya shader zhedieshan",
+        "liqi_kaguya shader shadow",
+        "liqi_kaguya seat 3 deposited",
+        "liqi_kaguya seat 3 has body",
+        "liqi_kaguya shader zhedieshan",
+        "liqi_kaguya shader shadow",
+        "liqi_2211saki seat 0 deposited",
+        "liqi_2211saki seat 0 has body",
+        "liqi_2211saki shader Box005",
+        "liqi_2211saki shader Plane008",
+        "liqi_2211saki seat 1 deposited",
+        "liqi_2211saki seat 1 has body",
+        "liqi_2211saki shader Box005",
+        "liqi_2211saki shader Plane008",
+        "liqi_2211saki seat 2 deposited",
+        "liqi_2211saki seat 2 has body",
+        "liqi_2211saki shader Box005",
+        "liqi_2211saki shader Plane008",
+        "liqi_2211saki seat 3 deposited",
+        "liqi_2211saki seat 3 has body",
+        "liqi_2211saki shader Box005",
+        "liqi_2211saki shader Plane008",
+        "liqi_llx seat 0 deposited",
+        "liqi_llx seat 0 has body",
+        "liqi_llx shader Plane008",
+        "liqi_llx shader yaoshixingguazhui001",
+        "liqi_llx seat 1 deposited",
+        "liqi_llx seat 1 has body",
+        "liqi_llx shader Plane008",
+        "liqi_llx shader yaoshixingguazhui001",
+        "liqi_llx seat 2 deposited",
+        "liqi_llx seat 2 has body",
+        "liqi_llx shader Plane008",
+        "liqi_llx shader yaoshixingguazhui001",
+        "liqi_llx seat 3 deposited",
+        "liqi_llx seat 3 has body",
+        "liqi_llx shader Plane008",
+        "liqi_llx shader yaoshixingguazhui001",
+        "liqi_yly seat 0 deposited",
+        "liqi_yly seat 0 has body",
+        "liqi_yly shader fazhang",
+        "liqi_yly shader shadow",
+        "liqi_yly seat 1 deposited",
+        "liqi_yly seat 1 has body",
+        "liqi_yly shader fazhang",
+        "liqi_yly shader shadow",
+        "liqi_yly seat 2 deposited",
+        "liqi_yly seat 2 has body",
+        "liqi_yly shader fazhang",
+        "liqi_yly shader shadow",
+        "liqi_yly seat 3 deposited",
+        "liqi_yly seat 3 has body",
+        "liqi_yly shader fazhang",
+        "liqi_yly shader shadow",
+        "liqi_24ba seat 0 deposited",
+        "liqi_24ba seat 0 has body",
+        "liqi_24ba shader 001",
+        "liqi_24ba shader 002",
+        "liqi_24ba shader 1",
+        "liqi_24ba shader 2",
+        "liqi_24ba shader 3",
+        "liqi_24ba shader 1",
+        "liqi_24ba shader 2",
+        "liqi_24ba shader 3",
+        "liqi_24ba shader 1",
+        "liqi_24ba shader 2",
+        "liqi_24ba shader 3",
+        "liqi_24ba seat 1 deposited",
+        "liqi_24ba seat 1 has body",
+        "liqi_24ba shader 001",
+        "liqi_24ba shader 002",
+        "liqi_24ba shader 1",
+        "liqi_24ba shader 2",
+        "liqi_24ba shader 3",
+        "liqi_24ba shader 1",
+        "liqi_24ba shader 2",
+        "liqi_24ba shader 3",
+        "liqi_24ba shader 1",
+        "liqi_24ba shader 2",
+        "liqi_24ba shader 3",
+        "liqi_24ba seat 2 deposited",
+        "liqi_24ba seat 2 has body",
+        "liqi_24ba shader 001",
+        "liqi_24ba shader 002",
+        "liqi_24ba shader 1",
+        "liqi_24ba shader 2",
+        "liqi_24ba shader 3",
+        "liqi_24ba shader 1",
+        "liqi_24ba shader 2",
+        "liqi_24ba shader 3",
+        "liqi_24ba shader 1",
+        "liqi_24ba shader 2",
+        "liqi_24ba shader 3",
+        "liqi_24ba seat 3 deposited",
+        "liqi_24ba seat 3 has body",
+        "liqi_24ba shader 001",
+        "liqi_24ba shader 002",
+        "liqi_24ba shader 1",
+        "liqi_24ba shader 2",
+        "liqi_24ba shader 3",
+        "liqi_24ba shader 1",
+        "liqi_24ba shader 2",
+        "liqi_24ba shader 3",
+        "liqi_24ba shader 1",
+        "liqi_24ba shader 2",
+        "liqi_24ba shader 3",
+        "liqi_25hf seat 0 deposited",
+        "liqi_25hf seat 0 has body",
+        "liqi_25hf shader yz",
+        "liqi_25hf shader fbx_fate",
+        "liqi_25hf shader glow01",
+        "liqi_25hf shader glow02",
+        "liqi_25hf seat 1 deposited",
+        "liqi_25hf seat 1 has body",
+        "liqi_25hf shader yz",
+        "liqi_25hf shader fbx_fate",
+        "liqi_25hf shader glow01",
+        "liqi_25hf shader glow02",
+        "liqi_25hf seat 2 deposited",
+        "liqi_25hf seat 2 has body",
+        "liqi_25hf shader yz",
+        "liqi_25hf shader fbx_fate",
+        "liqi_25hf shader glow01",
+        "liqi_25hf shader glow02",
+        "liqi_25hf seat 3 deposited",
+        "liqi_25hf seat 3 has body",
+        "liqi_25hf shader yz",
+        "liqi_25hf shader fbx_fate",
+        "liqi_25hf shader glow01",
+        "liqi_25hf shader glow02",
+        "liqi_25yh seat 0 deposited",
+        "liqi_25yh seat 0 has body",
+        "liqi_25yh shader fbx_yingzi",
+        "liqi_25yh shader fbx_riichistick",
+        "liqi_25yh shader g03",
+        "liqi_25yh shader g04",
+        "liqi_25yh shader g05",
+        "liqi_25yh shader g06",
+        "liqi_25yh shader g03",
+        "liqi_25yh shader g04",
+        "liqi_25yh shader g05",
+        "liqi_25yh shader g06",
+        "liqi_25yh seat 1 deposited",
+        "liqi_25yh seat 1 has body",
+        "liqi_25yh shader fbx_yingzi",
+        "liqi_25yh shader fbx_riichistick",
+        "liqi_25yh shader g03",
+        "liqi_25yh shader g04",
+        "liqi_25yh shader g05",
+        "liqi_25yh shader g06",
+        "liqi_25yh shader g03",
+        "liqi_25yh shader g04",
+        "liqi_25yh shader g05",
+        "liqi_25yh shader g06",
+        "liqi_25yh seat 2 deposited",
+        "liqi_25yh seat 2 has body",
+        "liqi_25yh shader fbx_yingzi",
+        "liqi_25yh shader fbx_riichistick",
+        "liqi_25yh shader g03",
+        "liqi_25yh shader g04",
+        "liqi_25yh shader g05",
+        "liqi_25yh shader g06",
+        "liqi_25yh shader g03",
+        "liqi_25yh shader g04",
+        "liqi_25yh shader g05",
+        "liqi_25yh shader g06",
+        "liqi_25yh seat 3 deposited",
+        "liqi_25yh seat 3 has body",
+        "liqi_25yh shader fbx_yingzi",
+        "liqi_25yh shader fbx_riichistick",
+        "liqi_25yh shader g03",
+        "liqi_25yh shader g04",
+        "liqi_25yh shader g05",
+        "liqi_25yh shader g06",
+        "liqi_25yh shader g03",
+        "liqi_25yh shader g04",
+        "liqi_25yh shader g05",
+        "liqi_25yh shader g06",
+        "liqi_26dj seat 0 deposited",
+        "liqi_26dj seat 0 has body",
+        "liqi_26dj shader fbx_yingzi",
+        "liqi_26dj shader fbx_riichistick",
+        "liqi_26dj seat 1 deposited",
+        "liqi_26dj seat 1 has body",
+        "liqi_26dj shader fbx_yingzi",
+        "liqi_26dj shader fbx_riichistick",
+        "liqi_26dj seat 2 deposited",
+        "liqi_26dj seat 2 has body",
+        "liqi_26dj shader fbx_yingzi",
+        "liqi_26dj shader fbx_riichistick",
+        "liqi_26dj seat 3 deposited",
+        "liqi_26dj seat 3 has body",
+        "liqi_26dj shader fbx_yingzi",
+        "liqi_26dj shader fbx_riichistick",
+        "liqi_25summer seat 0 deposited",
+        "liqi_25summer seat 0 has body",
+        "liqi_25summer shader fbx_riichistick",
+        "liqi_25summer shader fbx_yingzi",
+        "liqi_25summer shader m01",
+        "liqi_25summer shader m02",
+        "liqi_25summer shader q01",
+        "liqi_25summer shader q02",
+        "liqi_25summer seat 1 deposited",
+        "liqi_25summer seat 1 has body",
+        "liqi_25summer shader fbx_riichistick",
+        "liqi_25summer shader fbx_yingzi",
+        "liqi_25summer shader m01",
+        "liqi_25summer shader m02",
+        "liqi_25summer shader q01",
+        "liqi_25summer shader q02",
+        "liqi_25summer seat 2 deposited",
+        "liqi_25summer seat 2 has body",
+        "liqi_25summer shader fbx_riichistick",
+        "liqi_25summer shader fbx_yingzi",
+        "liqi_25summer shader m01",
+        "liqi_25summer shader m02",
+        "liqi_25summer shader q01",
+        "liqi_25summer shader q02",
+        "liqi_25summer seat 3 deposited",
+        "liqi_25summer seat 3 has body",
+        "liqi_25summer shader fbx_riichistick",
+        "liqi_25summer shader fbx_yingzi",
+        "liqi_25summer shader m01",
+        "liqi_25summer shader m02",
+        "liqi_25summer shader q01",
+        "liqi_25summer shader q02",
+        "liqi_26summer seat 0 deposited",
+        "liqi_26summer seat 0 has body",
+        "liqi_26summer shader fbx_riichistick",
+        "liqi_26summer shader fbx_yingzi",
+        "liqi_26summer seat 1 deposited",
+        "liqi_26summer seat 1 has body",
+        "liqi_26summer shader fbx_riichistick",
+        "liqi_26summer shader fbx_yingzi",
+        "liqi_26summer seat 2 deposited",
+        "liqi_26summer seat 2 has body",
+        "liqi_26summer shader fbx_riichistick",
+        "liqi_26summer shader fbx_yingzi",
+        "liqi_26summer seat 3 deposited",
+        "liqi_26summer seat 3 has body",
+        "liqi_26summer shader fbx_riichistick",
+        "liqi_26summer shader fbx_yingzi",
+        "liqi_26shuiyi seat 0 deposited",
+        "liqi_26shuiyi seat 0 has body",
+        "liqi_26shuiyi shader fbx_riichistick",
+        "liqi_26shuiyi shader fbx_yingzi",
+        "liqi_26shuiyi seat 1 deposited",
+        "liqi_26shuiyi seat 1 has body",
+        "liqi_26shuiyi shader fbx_riichistick",
+        "liqi_26shuiyi shader fbx_yingzi",
+        "liqi_26shuiyi seat 2 deposited",
+        "liqi_26shuiyi seat 2 has body",
+        "liqi_26shuiyi shader fbx_riichistick",
+        "liqi_26shuiyi shader fbx_yingzi",
+        "liqi_26shuiyi seat 3 deposited",
+        "liqi_26shuiyi seat 3 has body",
+        "liqi_26shuiyi shader fbx_riichistick",
+        "liqi_26shuiyi shader fbx_yingzi",
+        "liqi_26wansheng seat 0 deposited",
+        "liqi_26wansheng seat 0 has body",
+        "liqi_26wansheng shader shadow",
+        "liqi_26wansheng shader fbx_riichistick",
+        "liqi_26wansheng seat 1 deposited",
+        "liqi_26wansheng seat 1 has body",
+        "liqi_26wansheng shader shadow",
+        "liqi_26wansheng shader fbx_riichistick",
+        "liqi_26wansheng seat 2 deposited",
+        "liqi_26wansheng seat 2 has body",
+        "liqi_26wansheng shader shadow",
+        "liqi_26wansheng shader fbx_riichistick",
+        "liqi_26wansheng seat 3 deposited",
+        "liqi_26wansheng seat 3 has body",
+        "liqi_26wansheng shader shadow",
+        "liqi_26wansheng shader fbx_riichistick",
+        "video encoded"
+    ],
+    "sticks": [
+        {
+            "id": "stick-default",
+            "name": "普通立直棒",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 478.9987487792969,
+                    "z": 13.014650344848633
+                },
+                {
+                    "x": 903.5264892578125,
+                    "y": 553.500732421875,
+                    "z": 13.58251953125
+                },
+                {
+                    "x": 800.0,
+                    "y": 620.12353515625,
+                    "z": 14.134010314941406
+                },
+                {
+                    "x": 698.4644165039063,
+                    "y": 553.500732421875,
+                    "z": 13.58251953125
+                }
+            ]
+        },
+        {
+            "id": "liqi_fish",
+            "name": "咸鱼立直棒",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 476.4153137207031,
+                    "z": 12.995808601379395
+                },
+                {
+                    "x": 903.3666381835938,
+                    "y": 550.9100952148438,
+                    "z": 13.561943054199219
+                },
+                {
+                    "x": 800.0,
+                    "y": 617.5350952148438,
+                    "z": 14.111747741699219
+                },
+                {
+                    "x": 698.6211547851563,
+                    "y": 550.9100952148438,
+                    "z": 13.561943054199219
+                }
+            ]
+        },
+        {
+            "id": "liqi_scallion",
+            "name": "大葱立直棒",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 476.7546081542969,
+                    "z": 12.99828052520752
+                },
+                {
+                    "x": 903.3876342773438,
+                    "y": 551.25048828125,
+                    "z": 13.564643859863281
+                },
+                {
+                    "x": 800.0,
+                    "y": 617.8751831054688,
+                    "z": 14.114667892456055
+                },
+                {
+                    "x": 698.6005859375,
+                    "y": 551.25048828125,
+                    "z": 13.564643859863281
+                }
+            ]
+        },
+        {
+            "id": "liqi_bone",
+            "name": "狗骨头立直棒",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 477.47650146484375,
+                    "z": 13.003541946411133
+                },
+                {
+                    "x": 903.4322509765625,
+                    "y": 551.974365234375,
+                    "z": 13.570388793945313
+                },
+                {
+                    "x": 800.0,
+                    "y": 618.5984497070313,
+                    "z": 14.12088394165039
+                },
+                {
+                    "x": 698.5568237304688,
+                    "y": 551.974365234375,
+                    "z": 13.570388793945313
+                }
+            ]
+        },
+        {
+            "id": "liqi_chocolate",
+            "name": "巧克力立直棒",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 478.4864501953125,
+                    "z": 13.010909080505371
+                },
+                {
+                    "x": 903.4947509765625,
+                    "y": 552.9871215820313,
+                    "z": 13.578435897827148
+                },
+                {
+                    "x": 800.0,
+                    "y": 619.6104736328125,
+                    "z": 14.12959098815918
+                },
+                {
+                    "x": 698.4954833984375,
+                    "y": 552.9871215820313,
+                    "z": 13.578435897827148
+                }
+            ]
+        },
+        {
+            "id": "liqi_evil",
+            "name": "邪眼立直棒",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 478.4864501953125,
+                    "z": 13.010909080505371
+                },
+                {
+                    "x": 903.4947509765625,
+                    "y": 552.9871215820313,
+                    "z": 13.578435897827148
+                },
+                {
+                    "x": 800.0,
+                    "y": 619.6104736328125,
+                    "z": 14.12959098815918
+                },
+                {
+                    "x": 698.4954833984375,
+                    "y": 552.9871215820313,
+                    "z": 13.578435897827148
+                }
+            ]
+        },
+        {
+            "id": "liqi_jade",
+            "name": "翡翠立直棒",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 478.4864501953125,
+                    "z": 13.010909080505371
+                },
+                {
+                    "x": 903.4947509765625,
+                    "y": 552.9871215820313,
+                    "z": 13.578435897827148
+                },
+                {
+                    "x": 800.0,
+                    "y": 619.6104736328125,
+                    "z": 14.12959098815918
+                },
+                {
+                    "x": 698.4954833984375,
+                    "y": 552.9871215820313,
+                    "z": 13.578435897827148
+                }
+            ]
+        },
+        {
+            "id": "liqi_red",
+            "name": "猩红立直棒",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 478.4864501953125,
+                    "z": 13.010909080505371
+                },
+                {
+                    "x": 903.4947509765625,
+                    "y": 552.9871215820313,
+                    "z": 13.578435897827148
+                },
+                {
+                    "x": 800.0,
+                    "y": 619.6104736328125,
+                    "z": 14.12959098815918
+                },
+                {
+                    "x": 698.4954833984375,
+                    "y": 552.9871215820313,
+                    "z": 13.578435897827148
+                }
+            ]
+        },
+        {
+            "id": "liqi_goldbar",
+            "name": "24K金棒",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 478.4864501953125,
+                    "z": 13.010909080505371
+                },
+                {
+                    "x": 903.4947509765625,
+                    "y": 552.9871215820313,
+                    "z": 13.578435897827148
+                },
+                {
+                    "x": 800.0,
+                    "y": 619.6104736328125,
+                    "z": 14.12959098815918
+                },
+                {
+                    "x": 698.4954833984375,
+                    "y": 552.9871215820313,
+                    "z": 13.578435897827148
+                }
+            ]
+        },
+        {
+            "id": "liqi_bianpao",
+            "name": "立直棒-爆竹",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 472.9245300292969,
+                    "z": 12.970437049865723
+                },
+                {
+                    "x": 903.150634765625,
+                    "y": 547.4092407226563,
+                    "z": 13.534235000610352
+                },
+                {
+                    "x": 800.0,
+                    "y": 614.0364990234375,
+                    "z": 14.081769943237305
+                },
+                {
+                    "x": 698.8330078125,
+                    "y": 547.4092407226563,
+                    "z": 13.534235000610352
+                }
+            ]
+        },
+        {
+            "id": "liqi_jiaozi",
+            "name": "立直棒-饺子",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 466.22161865234375,
+                    "z": 12.921995162963867
+                },
+                {
+                    "x": 902.7359008789063,
+                    "y": 540.684814453125,
+                    "z": 13.481331825256348
+                },
+                {
+                    "x": 800.0,
+                    "y": 607.3150634765625,
+                    "z": 14.024532318115234
+                },
+                {
+                    "x": 699.2398071289063,
+                    "y": 540.684814453125,
+                    "z": 13.481331825256348
+                }
+            ]
+        },
+        {
+            "id": "liqi_duane",
+            "name": "立直棒-断恶",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 478.2829895019531,
+                    "z": 13.009424209594727
+                },
+                {
+                    "x": 903.4822387695313,
+                    "y": 552.7830810546875,
+                    "z": 13.576813697814941
+                },
+                {
+                    "x": 800.0,
+                    "y": 619.4065551757813,
+                    "z": 14.127836227416992
+                },
+                {
+                    "x": 698.5078125,
+                    "y": 552.7830810546875,
+                    "z": 13.576813697814941
+                }
+            ]
+        },
+        {
+            "id": "liqi_xuegao",
+            "name": "立直棒-雪糕",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 476.3011474609375,
+                    "z": 12.994977951049805
+                },
+                {
+                    "x": 903.359619140625,
+                    "y": 550.7957153320313,
+                    "z": 13.561036109924316
+                },
+                {
+                    "x": 800.0,
+                    "y": 617.4207763671875,
+                    "z": 14.11076545715332
+                },
+                {
+                    "x": 698.6281127929688,
+                    "y": 550.7957153320313,
+                    "z": 13.561036109924316
+                }
+            ]
+        },
+        {
+            "id": "liqi_yijitiantong",
+            "name": "立直棒-炎夏型一姬甜筒",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 478.0849304199219,
+                    "z": 13.007978439331055
+                },
+                {
+                    "x": 903.469970703125,
+                    "y": 552.58447265625,
+                    "z": 13.575235366821289
+                },
+                {
+                    "x": 800.0,
+                    "y": 619.2080688476563,
+                    "z": 14.126128196716309
+                },
+                {
+                    "x": 698.5198974609375,
+                    "y": 552.58447265625,
+                    "z": 13.575235366821289
+                }
+            ]
+        },
+        {
+            "id": "liqi_xiaoemofanbian",
+            "name": "立直棒-小恶魔蝙蝠",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 476.55712890625,
+                    "z": 12.996841430664063
+                },
+                {
+                    "x": 903.3754272460938,
+                    "y": 551.0523071289063,
+                    "z": 13.563071250915527
+                },
+                {
+                    "x": 800.0,
+                    "y": 617.67724609375,
+                    "z": 14.112968444824219
+                },
+                {
+                    "x": 698.6126098632813,
+                    "y": 551.0523071289063,
+                    "z": 13.563071250915527
+                }
+            ]
+        },
+        {
+            "id": "liqi_mofabang",
+            "name": "立直棒-魔法棒",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 476.2406921386719,
+                    "z": 12.994537353515625
+                },
+                {
+                    "x": 903.3558959960938,
+                    "y": 550.7350463867188,
+                    "z": 13.560554504394531
+                },
+                {
+                    "x": 800.0,
+                    "y": 617.360107421875,
+                    "z": 14.110244750976563
+                },
+                {
+                    "x": 698.6317749023438,
+                    "y": 550.7350463867188,
+                    "z": 13.560554504394531
+                }
+            ]
+        },
+        {
+            "id": "liqi_jinlongyu",
+            "name": "立直棒-金龙鱼",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 476.188720703125,
+                    "z": 12.994158744812012
+                },
+                {
+                    "x": 903.3526611328125,
+                    "y": 550.682861328125,
+                    "z": 13.560140609741211
+                },
+                {
+                    "x": 800.0,
+                    "y": 617.3080444335938,
+                    "z": 14.109798431396484
+                },
+                {
+                    "x": 698.6348876953125,
+                    "y": 550.682861328125,
+                    "z": 13.560140609741211
+                }
+            ]
+        },
+        {
+            "id": "liqi_xhzy",
+            "name": "立直棒-绯月荆棘",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 477.04534912109375,
+                    "z": 13.000398635864258
+                },
+                {
+                    "x": 903.4056396484375,
+                    "y": 551.5419921875,
+                    "z": 13.566956520080566
+                },
+                {
+                    "x": 800.0,
+                    "y": 618.1664428710938,
+                    "z": 14.117171287536621
+                },
+                {
+                    "x": 698.5829467773438,
+                    "y": 551.5419921875,
+                    "z": 13.566956520080566
+                }
+            ]
+        },
+        {
+            "id": "liqi_hl",
+            "name": "立直棒-乘风破浪",
+            "meshes": 4,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 478.1702880859375,
+                    "z": 13.008602142333984
+                },
+                {
+                    "x": 903.4752197265625,
+                    "y": 552.6701049804688,
+                    "z": 13.575915336608887
+                },
+                {
+                    "x": 800.0,
+                    "y": 619.2935791015625,
+                    "z": 14.126863479614258
+                },
+                {
+                    "x": 698.5147094726563,
+                    "y": 552.6701049804688,
+                    "z": 13.575915336608887
+                }
+            ]
+        },
+        {
+            "id": "liqi_music",
+            "name": "立直棒-应援棒",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 475.5929870605469,
+                    "z": 12.989823341369629
+                },
+                {
+                    "x": 903.3158569335938,
+                    "y": 550.08544921875,
+                    "z": 13.55540657043457
+                },
+                {
+                    "x": 800.0,
+                    "y": 616.7110595703125,
+                    "z": 14.10467529296875
+                },
+                {
+                    "x": 698.6710815429688,
+                    "y": 550.08544921875,
+                    "z": 13.55540657043457
+                }
+            ]
+        },
+        {
+            "id": "liqi_21chunjie",
+            "name": "立直棒-冰糖葫芦(咸)",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 472.1820373535156,
+                    "z": 12.96505355834961
+                },
+                {
+                    "x": 903.1047973632813,
+                    "y": 546.6643676757813,
+                    "z": 13.52835464477539
+                },
+                {
+                    "x": 800.0,
+                    "y": 613.2920532226563,
+                    "z": 14.075407028198242
+                },
+                {
+                    "x": 698.8780517578125,
+                    "y": 546.6643676757813,
+                    "z": 13.52835464477539
+                }
+            ]
+        },
+        {
+            "id": "liqi_21cyber",
+            "name": "立直棒-仿生喵",
+            "meshes": 4,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 477.05877685546875,
+                    "z": 13.000495910644531
+                },
+                {
+                    "x": 903.4064331054688,
+                    "y": 551.5554809570313,
+                    "z": 13.567063331604004
+                },
+                {
+                    "x": 800.0,
+                    "y": 618.1799926757813,
+                    "z": 14.117286682128906
+                },
+                {
+                    "x": 698.5821533203125,
+                    "y": 551.5554809570313,
+                    "z": 13.567063331604004
+                }
+            ]
+        },
+        {
+            "id": "liqi_21catball",
+            "name": "立直棒-夹心猫团子",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 469.15997314453125,
+                    "z": 12.943185806274414
+                },
+                {
+                    "x": 902.9177856445313,
+                    "y": 543.6329345703125,
+                    "z": 13.504474639892578
+                },
+                {
+                    "x": 800.0,
+                    "y": 610.2620849609375,
+                    "z": 14.049571990966797
+                },
+                {
+                    "x": 699.0614624023438,
+                    "y": 543.6329345703125,
+                    "z": 13.504474639892578
+                }
+            ]
+        },
+        {
+            "id": "liqi_21magic",
+            "name": "立直棒-虚无传送门",
+            "meshes": 12,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 473.4756164550781,
+                    "z": 12.974435806274414
+                },
+                {
+                    "x": 903.184814453125,
+                    "y": 547.9618530273438,
+                    "z": 13.538601875305176
+                },
+                {
+                    "x": 800.0,
+                    "y": 614.5888061523438,
+                    "z": 14.086494445800781
+                },
+                {
+                    "x": 698.7994995117188,
+                    "y": 547.9618530273438,
+                    "z": 13.538601875305176
+                }
+            ]
+        },
+        {
+            "id": "liqi_21zhounian",
+            "name": "立直棒-喵切丸",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 474.56207275390625,
+                    "z": 12.98232650756836
+                },
+                {
+                    "x": 903.2520141601563,
+                    "y": 549.0516357421875,
+                    "z": 13.547220230102539
+                },
+                {
+                    "x": 800.0,
+                    "y": 615.6778564453125,
+                    "z": 14.095817565917969
+                },
+                {
+                    "x": 698.733642578125,
+                    "y": 549.0516357421875,
+                    "z": 13.547220230102539
+                }
+            ]
+        },
+        {
+            "id": "liqi_22chunjie",
+            "name": "立直棒-如意",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 474.349853515625,
+                    "z": 12.98078441619873
+                },
+                {
+                    "x": 903.2388916015625,
+                    "y": 548.838623046875,
+                    "z": 13.54553508758545
+                },
+                {
+                    "x": 800.0,
+                    "y": 615.4650268554688,
+                    "z": 14.093996047973633
+                },
+                {
+                    "x": 698.7464599609375,
+                    "y": 548.838623046875,
+                    "z": 13.54553508758545
+                }
+            ]
+        },
+        {
+            "id": "liqi_22rpg",
+            "name": "立直棒-陨石法杖",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 475.94451904296875,
+                    "z": 12.99238109588623
+                },
+                {
+                    "x": 903.3375854492188,
+                    "y": 550.43798828125,
+                    "z": 13.55820083618164
+                },
+                {
+                    "x": 800.0,
+                    "y": 617.0632934570313,
+                    "z": 14.107698440551758
+                },
+                {
+                    "x": 698.6497192382813,
+                    "y": 550.43798828125,
+                    "z": 13.55820083618164
+                }
+            ]
+        },
+        {
+            "id": "liqi_22summer",
+            "name": "立直棒-波子汽水",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 466.8642883300781,
+                    "z": 12.926624298095703
+                },
+                {
+                    "x": 902.7756958007813,
+                    "y": 541.3296508789063,
+                    "z": 13.486387252807617
+                },
+                {
+                    "x": 800.0,
+                    "y": 607.959716796875,
+                    "z": 14.03000259399414
+                },
+                {
+                    "x": 699.2007446289063,
+                    "y": 541.3296508789063,
+                    "z": 13.486387252807617
+                }
+            ]
+        },
+        {
+            "id": "liqi_22winter",
+            "name": "立直棒-仙境密匙",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 475.12554931640625,
+                    "z": 12.98642349243164
+                },
+                {
+                    "x": 903.286865234375,
+                    "y": 549.6166381835938,
+                    "z": 13.551692962646484
+                },
+                {
+                    "x": 800.0,
+                    "y": 616.2425537109375,
+                    "z": 14.100658416748047
+                },
+                {
+                    "x": 698.6994018554688,
+                    "y": 549.6166381835938,
+                    "z": 13.551692962646484
+                }
+            ]
+        },
+        {
+            "id": "liqi_xzw22121",
+            "name": "立直棒-柴犬团子",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 468.5357360839844,
+                    "z": 12.938678741455078
+                },
+                {
+                    "x": 902.879150390625,
+                    "y": 543.006591796875,
+                    "z": 13.499551773071289
+                },
+                {
+                    "x": 800.0,
+                    "y": 609.6360473632813,
+                    "z": 14.044244766235352
+                },
+                {
+                    "x": 699.099365234375,
+                    "y": 543.006591796875,
+                    "z": 13.499551773071289
+                }
+            ]
+        },
+        {
+            "id": "liqi_xzw22122",
+            "name": "立直棒-魔法扫帚",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 475.09136962890625,
+                    "z": 12.986173629760742
+                },
+                {
+                    "x": 903.2847290039063,
+                    "y": 549.5823974609375,
+                    "z": 13.551422119140625
+                },
+                {
+                    "x": 800.0,
+                    "y": 616.2083129882813,
+                    "z": 14.100364685058594
+                },
+                {
+                    "x": 698.7014770507813,
+                    "y": 549.5823974609375,
+                    "z": 13.551422119140625
+                }
+            ]
+        },
+        {
+            "id": "liqi_xzw22123",
+            "name": "立直棒-王者风范",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 466.5577087402344,
+                    "z": 12.924415588378906
+                },
+                {
+                    "x": 902.7567138671875,
+                    "y": 541.0220336914063,
+                    "z": 13.48397445678711
+                },
+                {
+                    "x": 800.0,
+                    "y": 607.6522216796875,
+                    "z": 14.027393341064453
+                },
+                {
+                    "x": 699.2193603515625,
+                    "y": 541.0220336914063,
+                    "z": 13.48397445678711
+                }
+            ]
+        },
+        {
+            "id": "liqi_xzw22124",
+            "name": "立直棒-猫神剑玉",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 466.4107666015625,
+                    "z": 12.923357009887695
+                },
+                {
+                    "x": 902.7476196289063,
+                    "y": 540.8746337890625,
+                    "z": 13.482818603515625
+                },
+                {
+                    "x": 800.0,
+                    "y": 607.5047607421875,
+                    "z": 14.026142120361328
+                },
+                {
+                    "x": 699.2283325195313,
+                    "y": 540.8746337890625,
+                    "z": 13.482818603515625
+                }
+            ]
+        },
+        {
+            "id": "liqi_23chunjie",
+            "name": "立直棒-可口喵乐",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 468.77154541015625,
+                    "z": 12.94038200378418
+                },
+                {
+                    "x": 902.8937377929688,
+                    "y": 543.2432250976563,
+                    "z": 13.501411437988281
+                },
+                {
+                    "x": 800.0,
+                    "y": 609.87255859375,
+                    "z": 14.046257019042969
+                },
+                {
+                    "x": 699.0850219726563,
+                    "y": 543.2432250976563,
+                    "z": 13.501411437988281
+                }
+            ]
+        },
+        {
+            "id": "liqi_23rpg",
+            "name": "立直棒-秘传之卷",
+            "meshes": 12,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 459.71173095703125,
+                    "z": 12.87529468536377
+                },
+                {
+                    "x": 902.3328857421875,
+                    "y": 534.1519775390625,
+                    "z": 13.430328369140625
+                },
+                {
+                    "x": 800.0,
+                    "y": 600.7828979492188,
+                    "z": 13.969352722167969
+                },
+                {
+                    "x": 699.635009765625,
+                    "y": 534.1519775390625,
+                    "z": 13.430328369140625
+                }
+            ]
+        },
+        {
+            "id": "liqi_23newface",
+            "name": "立直棒-盆栽",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 472.6558837890625,
+                    "z": 12.968488693237305
+                },
+                {
+                    "x": 903.134033203125,
+                    "y": 547.1397705078125,
+                    "z": 13.53210735321045
+                },
+                {
+                    "x": 800.0,
+                    "y": 613.7671508789063,
+                    "z": 14.0794677734375
+                },
+                {
+                    "x": 698.8493041992188,
+                    "y": 547.1397705078125,
+                    "z": 13.53210735321045
+                }
+            ]
+        },
+        {
+            "id": "liqi_23summer",
+            "name": "立直棒-包甜好瓜",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.904541015625,
+                    "y": 478.0636291503906,
+                    "z": 13.007823944091797
+                },
+                {
+                    "x": 903.3554077148438,
+                    "y": 553.10546875,
+                    "z": 13.579376220703125
+                },
+                {
+                    "x": 799.1669921875,
+                    "y": 619.0843505859375,
+                    "z": 14.125062942504883
+                },
+                {
+                    "x": 698.5626220703125,
+                    "y": 551.9093627929688,
+                    "z": 13.56987190246582
+                }
+            ]
+        },
+        {
+            "id": "liqi_23ex_fagun",
+            "name": "立直棒-法棍面包",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 473.92047119140625,
+                    "z": 12.977665901184082
+                },
+                {
+                    "x": 903.2123413085938,
+                    "y": 548.4080810546875,
+                    "z": 13.542129516601563
+                },
+                {
+                    "x": 800.0,
+                    "y": 615.0347900390625,
+                    "z": 14.090311050415039
+                },
+                {
+                    "x": 698.7725219726563,
+                    "y": 548.4080810546875,
+                    "z": 13.542129516601563
+                }
+            ]
+        },
+        {
+            "id": "liqi_23ex_gaoguai",
+            "name": "立直棒-学霸眼镜",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 473.87445068359375,
+                    "z": 12.977331161499023
+                },
+                {
+                    "x": 903.20947265625,
+                    "y": 548.3619384765625,
+                    "z": 13.541765213012695
+                },
+                {
+                    "x": 800.0,
+                    "y": 614.9885864257813,
+                    "z": 14.08991527557373
+                },
+                {
+                    "x": 698.7753295898438,
+                    "y": 548.3619384765625,
+                    "z": 13.541765213012695
+                }
+            ]
+        },
+        {
+            "id": "liqi_23ex_qiubang",
+            "name": "立直棒-棒球英杰",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 475.0892333984375,
+                    "z": 12.98615837097168
+                },
+                {
+                    "x": 903.28466796875,
+                    "y": 549.5802612304688,
+                    "z": 13.55140495300293
+                },
+                {
+                    "x": 800.0,
+                    "y": 616.2061767578125,
+                    "z": 14.100345611572266
+                },
+                {
+                    "x": 698.7015991210938,
+                    "y": 549.5802612304688,
+                    "z": 13.55140495300293
+                }
+            ]
+        },
+        {
+            "id": "liqi_23ex_yuanjihua",
+            "name": "立直棒-霓彩路标",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 477.2910461425781,
+                    "z": 13.002189636230469
+                },
+                {
+                    "x": 903.4208374023438,
+                    "y": 551.788330078125,
+                    "z": 13.568912506103516
+                },
+                {
+                    "x": 800.0,
+                    "y": 618.4126586914063,
+                    "z": 14.119287490844727
+                },
+                {
+                    "x": 698.5680541992188,
+                    "y": 551.788330078125,
+                    "z": 13.568912506103516
+                }
+            ]
+        },
+        {
+            "id": "liqi_23wansheng",
+            "name": "立直棒-喵星棒",
+            "meshes": 20,
+            "centers": [
+                {
+                    "x": 808.0973510742188,
+                    "y": 477.5118408203125,
+                    "z": 13.003799438476563
+                },
+                {
+                    "x": 903.1113891601563,
+                    "y": 557.3480224609375,
+                    "z": 13.61319351196289
+                },
+                {
+                    "x": 792.5433959960938,
+                    "y": 618.6337890625,
+                    "z": 14.12118911743164
+                },
+                {
+                    "x": 698.2357788085938,
+                    "y": 546.637939453125,
+                    "z": 13.528146743774414
+                }
+            ]
+        },
+        {
+            "id": "liqi_24chunjie",
+            "name": "立直棒-夺笋",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 473.2563171386719,
+                    "z": 12.972844123840332
+                },
+                {
+                    "x": 903.1712646484375,
+                    "y": 547.741943359375,
+                    "z": 13.536863327026367
+                },
+                {
+                    "x": 800.0,
+                    "y": 614.3690185546875,
+                    "z": 14.084613800048828
+                },
+                {
+                    "x": 698.8128051757813,
+                    "y": 547.741943359375,
+                    "z": 13.536863327026367
+                }
+            ]
+        },
+        {
+            "id": "liqi_24summer",
+            "name": "立直棒-小鳄霸",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 477.90386962890625,
+                    "z": 13.006658554077148
+                },
+                {
+                    "x": 903.4586791992188,
+                    "y": 552.4028930664063,
+                    "z": 13.573792457580566
+                },
+                {
+                    "x": 800.0,
+                    "y": 619.0266723632813,
+                    "z": 14.124567031860352
+                },
+                {
+                    "x": 698.5308837890625,
+                    "y": 552.4028930664063,
+                    "z": 13.573792457580566
+                }
+            ]
+        },
+        {
+            "id": "liqi_24sanliou",
+            "name": "立直棒-童话绘梦",
+            "meshes": 4,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 475.4188537597656,
+                    "z": 12.988555908203125
+                },
+                {
+                    "x": 903.3050537109375,
+                    "y": 549.910888671875,
+                    "z": 13.554023742675781
+                },
+                {
+                    "x": 800.0,
+                    "y": 616.5365600585938,
+                    "z": 14.103178024291992
+                },
+                {
+                    "x": 698.681640625,
+                    "y": 549.910888671875,
+                    "z": 13.554023742675781
+                }
+            ]
+        },
+        {
+            "id": "liqi_24imas",
+            "name": "立直棒-动听之源",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 463.095458984375,
+                    "z": 12.899526596069336
+                },
+                {
+                    "x": 902.5424194335938,
+                    "y": 537.5479736328125,
+                    "z": 13.456792831420898
+                },
+                {
+                    "x": 800.0,
+                    "y": 604.1787719726563,
+                    "z": 13.997984886169434
+                },
+                {
+                    "x": 699.4295654296875,
+                    "y": 537.5479736328125,
+                    "z": 13.456792831420898
+                }
+            ]
+        },
+        {
+            "id": "liqi_24winter",
+            "name": "立直棒-立奇棒",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 474.4137268066406,
+                    "z": 12.98124885559082
+                },
+                {
+                    "x": 903.2428588867188,
+                    "y": 548.9027709960938,
+                    "z": 13.546042442321777
+                },
+                {
+                    "x": 800.0,
+                    "y": 615.5291748046875,
+                    "z": 14.094544410705566
+                },
+                {
+                    "x": 698.7425537109375,
+                    "y": 548.9027709960938,
+                    "z": 13.546042442321777
+                }
+            ]
+        },
+        {
+            "id": "liqi_25chunjie",
+            "name": "立直棒-青竹伞",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 472.0011901855469,
+                    "z": 12.963743209838867
+                },
+                {
+                    "x": 903.093505859375,
+                    "y": 546.4829711914063,
+                    "z": 13.526924133300781
+                },
+                {
+                    "x": 800.0,
+                    "y": 613.1107177734375,
+                    "z": 14.073858261108398
+                },
+                {
+                    "x": 698.8890380859375,
+                    "y": 546.4829711914063,
+                    "z": 13.526924133300781
+                }
+            ]
+        },
+        {
+            "id": "liqi_25xila",
+            "name": "立直棒-金枝神谕",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 475.7790222167969,
+                    "z": 12.99117660522461
+                },
+                {
+                    "x": 903.3272705078125,
+                    "y": 550.2720947265625,
+                    "z": 13.556884765625
+                },
+                {
+                    "x": 800.0,
+                    "y": 616.8975219726563,
+                    "z": 14.10627555847168
+                },
+                {
+                    "x": 698.6597290039063,
+                    "y": 550.2720947265625,
+                    "z": 13.556884765625
+                }
+            ]
+        },
+        {
+            "id": "liqi_25dongri",
+            "name": "立直棒-祈愿之矢",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 473.9855041503906,
+                    "z": 12.978137969970703
+                },
+                {
+                    "x": 903.2163696289063,
+                    "y": 548.4733276367188,
+                    "z": 13.542645454406738
+                },
+                {
+                    "x": 800.0,
+                    "y": 615.0999755859375,
+                    "z": 14.090868949890137
+                },
+                {
+                    "x": 698.7686157226563,
+                    "y": 548.4733276367188,
+                    "z": 13.542645454406738
+                }
+            ]
+        },
+        {
+            "id": "liqi_saki",
+            "name": "立直棒-墨西哥卷饼",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 475.9375915527344,
+                    "z": 12.992330551147461
+                },
+                {
+                    "x": 903.3370971679688,
+                    "y": 550.43115234375,
+                    "z": 13.558145523071289
+                },
+                {
+                    "x": 800.0,
+                    "y": 617.0563354492188,
+                    "z": 14.107638359069824
+                },
+                {
+                    "x": 698.650146484375,
+                    "y": 550.43115234375,
+                    "z": 13.558145523071289
+                }
+            ]
+        },
+        {
+            "id": "liqi_kuangdu",
+            "name": "立直棒-生死之剑",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 478.409912109375,
+                    "z": 13.010351181030273
+                },
+                {
+                    "x": 903.4900512695313,
+                    "y": 552.9103393554688,
+                    "z": 13.577825546264648
+                },
+                {
+                    "x": 800.0,
+                    "y": 619.5337524414063,
+                    "z": 14.128931045532227
+                },
+                {
+                    "x": 698.5001831054688,
+                    "y": 552.9103393554688,
+                    "z": 13.577825546264648
+                }
+            ]
+        },
+        {
+            "id": "liqi_akagi",
+            "name": "立直棒-命悬一线",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 475.86737060546875,
+                    "z": 12.991819381713867
+                },
+                {
+                    "x": 903.3327026367188,
+                    "y": 550.3607177734375,
+                    "z": 13.557587623596191
+                },
+                {
+                    "x": 800.0,
+                    "y": 616.9860229492188,
+                    "z": 14.107034683227539
+                },
+                {
+                    "x": 698.6544189453125,
+                    "y": 550.3607177734375,
+                    "z": 13.557587623596191
+                }
+            ]
+        },
+        {
+            "id": "liqi_kaguya",
+            "name": "立直棒-恋之反省",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 477.92218017578125,
+                    "z": 13.006792068481445
+                },
+                {
+                    "x": 903.4598388671875,
+                    "y": 552.4212036132813,
+                    "z": 13.573938369750977
+                },
+                {
+                    "x": 800.0,
+                    "y": 619.0450439453125,
+                    "z": 14.124725341796875
+                },
+                {
+                    "x": 698.5297241210938,
+                    "y": 552.4212036132813,
+                    "z": 13.573938369750977
+                }
+            ]
+        },
+        {
+            "id": "liqi_2211saki",
+            "name": "立直棒-爱心便当",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 473.0023498535156,
+                    "z": 12.971001625061035
+                },
+                {
+                    "x": 903.155517578125,
+                    "y": 547.4871826171875,
+                    "z": 13.53485107421875
+                },
+                {
+                    "x": 800.0,
+                    "y": 614.1144409179688,
+                    "z": 14.082436561584473
+                },
+                {
+                    "x": 698.8282470703125,
+                    "y": 547.4871826171875,
+                    "z": 13.53485107421875
+                }
+            ]
+        },
+        {
+            "id": "liqi_llx",
+            "name": "立直棒-骑士的钥匙",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 476.9535217285156,
+                    "z": 12.99972915649414
+                },
+                {
+                    "x": 903.3999633789063,
+                    "y": 551.4498901367188,
+                    "z": 13.566225051879883
+                },
+                {
+                    "x": 800.0,
+                    "y": 618.0744018554688,
+                    "z": 14.11638069152832
+                },
+                {
+                    "x": 698.5885009765625,
+                    "y": 551.4498901367188,
+                    "z": 13.566225051879883
+                }
+            ]
+        },
+        {
+            "id": "liqi_yly",
+            "name": "立直棒-红晖的魔杖",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 476.699462890625,
+                    "z": 12.997879028320313
+                },
+                {
+                    "x": 903.3842163085938,
+                    "y": 551.1951293945313,
+                    "z": 13.564204216003418
+                },
+                {
+                    "x": 800.0,
+                    "y": 617.8199462890625,
+                    "z": 14.1141939163208
+                },
+                {
+                    "x": 698.6039428710938,
+                    "y": 551.1951293945313,
+                    "z": 13.564204216003418
+                }
+            ]
+        },
+        {
+            "id": "liqi_24ba",
+            "name": "立直棒-大蛇比纳",
+            "meshes": 44,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 468.9408874511719,
+                    "z": 12.941604614257813
+                },
+                {
+                    "x": 902.9042358398438,
+                    "y": 543.4130859375,
+                    "z": 13.50274658203125
+                },
+                {
+                    "x": 800.0,
+                    "y": 610.0423583984375,
+                    "z": 14.047701835632324
+                },
+                {
+                    "x": 699.0747680664063,
+                    "y": 543.4130859375,
+                    "z": 13.50274658203125
+                }
+            ]
+        },
+        {
+            "id": "liqi_25hf",
+            "name": "立直棒-胜利誓约",
+            "meshes": 16,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 478.4000244140625,
+                    "z": 13.010278701782227
+                },
+                {
+                    "x": 903.4893798828125,
+                    "y": 552.9004516601563,
+                    "z": 13.577746391296387
+                },
+                {
+                    "x": 800.0,
+                    "y": 619.5237426757813,
+                    "z": 14.12884521484375
+                },
+                {
+                    "x": 698.500732421875,
+                    "y": 552.9004516601563,
+                    "z": 13.577746391296387
+                }
+            ]
+        },
+        {
+            "id": "liqi_25yh",
+            "name": "立直棒-志村新八",
+            "meshes": 40,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 468.6456298828125,
+                    "z": 12.939472198486328
+                },
+                {
+                    "x": 902.8859252929688,
+                    "y": 543.1168212890625,
+                    "z": 13.500417709350586
+                },
+                {
+                    "x": 800.0,
+                    "y": 609.7462768554688,
+                    "z": 14.045182228088379
+                },
+                {
+                    "x": 699.0926513671875,
+                    "y": 543.1168212890625,
+                    "z": 13.500417709350586
+                }
+            ]
+        },
+        {
+            "id": "liqi_26dj",
+            "name": "立直棒-黑与白",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 470.86383056640625,
+                    "z": 12.95550537109375
+                },
+                {
+                    "x": 903.0231323242188,
+                    "y": 545.342041015625,
+                    "z": 13.517928123474121
+                },
+                {
+                    "x": 800.0,
+                    "y": 611.9705200195313,
+                    "z": 14.064126968383789
+                },
+                {
+                    "x": 698.9580078125,
+                    "y": 545.342041015625,
+                    "z": 13.517928123474121
+                }
+            ]
+        },
+        {
+            "id": "liqi_25summer",
+            "name": "立直棒-绚烂烟花",
+            "meshes": 24,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 476.9346923828125,
+                    "z": 12.999591827392578
+                },
+                {
+                    "x": 903.3988037109375,
+                    "y": 551.4310302734375,
+                    "z": 13.566076278686523
+                },
+                {
+                    "x": 800.0,
+                    "y": 618.0556030273438,
+                    "z": 14.116218566894531
+                },
+                {
+                    "x": 698.5896606445313,
+                    "y": 551.4310302734375,
+                    "z": 13.566076278686523
+                }
+            ]
+        },
+        {
+            "id": "liqi_26summer",
+            "name": "立直棒-优胜猫猫奖杯",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 472.0791320800781,
+                    "z": 12.96430778503418
+                },
+                {
+                    "x": 903.098388671875,
+                    "y": 546.5611572265625,
+                    "z": 13.52754020690918
+                },
+                {
+                    "x": 800.0,
+                    "y": 613.1890258789063,
+                    "z": 14.074527740478516
+                },
+                {
+                    "x": 698.88427734375,
+                    "y": 546.5612182617188,
+                    "z": 13.52754020690918
+                }
+            ]
+        },
+        {
+            "id": "liqi_26shuiyi",
+            "name": "立直棒-墨彩喷喷",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 472.2798156738281,
+                    "z": 12.9657621383667
+                },
+                {
+                    "x": 903.1107788085938,
+                    "y": 546.762451171875,
+                    "z": 13.529129028320313
+                },
+                {
+                    "x": 800.0,
+                    "y": 613.3901977539063,
+                    "z": 14.07624626159668
+                },
+                {
+                    "x": 698.8720703125,
+                    "y": 546.762451171875,
+                    "z": 13.529129028320313
+                }
+            ]
+        },
+        {
+            "id": "liqi_26wansheng",
+            "name": "立直棒-定音之弦",
+            "meshes": 8,
+            "centers": [
+                {
+                    "x": 800.0,
+                    "y": 476.26715087890625,
+                    "z": 12.994729995727539
+                },
+                {
+                    "x": 903.3574829101563,
+                    "y": 550.7615966796875,
+                    "z": 13.560765266418457
+                },
+                {
+                    "x": 800.0,
+                    "y": 617.3866577148438,
+                    "z": 14.1104736328125
+                },
+                {
+                    "x": 698.630126953125,
+                    "y": 550.7615966796875,
+                    "z": 13.560765266418457
+                }
+            ]
+        }
+    ],
+    "androidDeviceTested": false
+}

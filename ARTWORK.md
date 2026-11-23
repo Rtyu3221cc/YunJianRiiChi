@@ -206,3 +206,13 @@ bg_nickname 的斜边和透明区域使完整图片矩形的中心不等于玩�
 ## 2026-10-20：可下载角色资源 v1
 
 女性TOP10＋汪次郎共11名角色、71套服饰（17套动态）沿用用户提供APK的原始立绘、头像和Spine 4.2骨骼；相原舞400508、福姬403807使用匹配官方固定版本的图片、骨骼和图集补齐。原始语音、表情和构图配置来自同版官方资源清单，下载地址和SHA-256见 `docs/character-resources-v1-sources.json`。新增素材位于 `unity/Assets/CharacterPacks/Source`，共享界面／运行时及一姬、二阶堂美树保留内置。未使用生成式图片替代原始角色素材或实际运行截图。
+
+## 2026-11-23：段位积分页与芙莉莲／泠星原生资源
+
+段位积分页的 12 张 RankCalc 图片与布局来自用户提供的 `Majsoul_4.0.16_MC.apk`，bundle／pathID 见 `docs/reference/november-2026/rank-ui-source.json`。四方向立直棒继续使用原模型与材质，未重绘棒体。
+
+芙莉莲、菲伦、休塔尔克、尤贝尔和泠星的 14 套外观（4 套动态）、675 条语音、64 个表情、六件联动装扮与两首 BGM 来自官方原生 9.10.532 资源快照，经用户确认有复制使用授权。完整原始画布、Spine 骨骼及分页保留；裁切来源见 illust-data 与 framing-provenance，142 个源 bundle 和 679 个音频文件的地址、实际字节与 SHA-256 见 `docs/reference/november-2026/`。三处 CDN 声明大小差异如实记录。原生特效按原粒子、网格、动画与材质参数适配当前 Unity 管线，专用 shader 和环境面视口修正见 R10 交接；预览均为实际 Unity 渲染。原 Spine 运行时许可证继续保留。
+
+## 0.6.42 视觉修正 R11
+
+联动动态皮肤改读原版 skin_version=2 的独立 spine_offset／info，不使用旧表画布值；原文与摘要位于 docs/reference/november-2026/spine-v2。段位 12 张 Sprite 恢复原始逻辑画布和 textureRectOffset，未绘制新贴图。立直棒通用 shader 移除原 shader 未读取的遗留 _Color；花田／立直材质从原生 Material 恢复 renderQueue，54 层花田逐座位核对。素材／骨骼／动画继续复用原公开包，具体出处及验证见 docs/handoff-visual-feedback-r11-2026-11-23.md。

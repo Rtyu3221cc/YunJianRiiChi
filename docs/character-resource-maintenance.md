@@ -184,3 +184,20 @@ Pop-Location
 | 手机空间不足 | 从资源设置删除可选角色；两个基础角色始终保留；先按需要下载单个角色 |
 
 发布检查通过后，在 PR／提交说明中记录：角色 key、角色 ID、新皮肤 ID、角色包版本、内容 tag、APK 版本、包大小／摘要、测试结果，以及未做的真机项目。素材出处和第三方运行时许可证继续保留，见 `ARTWORK.md` 与 `unity/Assets/ThirdParty/Spine42`。
+
+## 八、2026 年 11 月原生资源补充
+
+芙莉莲联动与泠星使用官方原生清单 9.10.532；旧 web version.json 无该批内容。角色 ID 保留原版 20000127–20000131，皮肤 ID 为 40012701–40013103 的对应子集。完整清单、音频路径、裁切来源、公开包和重建注意事项见 [R10 交接](handoff-rank-stick-november-r10-2026-11-23.md)。
+
+- 原生输入追加到 `docs/character-resource-inputs/native-2026-11.json` 并合并进 config；`assetLayout: native` 防止旧 web 路径假设。通用准备流程复用未变的原生包，不使用旧 web 提取器强制处理本批。
+- 立绘位置要取 `MyAssets/deco/illust_data/<skinID>.json`；本批旧式裁切字段为 0。所有原始 illust_data 和 source bundle／audio 摘要在 `docs/reference/november-2026/`。
+- 音频根路径是 `https://game.maj-soul.com/assetbundles/DXT/Assets/MyAssets/`，语音 `audio/sound/...`、音乐 `audio/music/...`。不要把 music 表中的路径直接拼到根而漏掉 audio 前缀。
+- 本批角色重建入口 `BuildNovemberCharacters.Run` 从保留的 CharacterPacks/Source 构建，需 `YUNJIAN_R10_REPO`。本批装扮的 `BuildNovR10` 是已执行过的首次迁移入口，迁移后不得直接重复；使用当前 addresses[].source 或隔离导入工程重建，详见交接。
+- 装扮发布复用 `character-packs.py`，加 `--kind wardrobe`。两个 11 月 Release 已公开，后续修改按新版本／新 tag 发布，不能覆盖现有 v1。0.6.41 APK 才携带新目录，公开附件不会自动更新旧 APK 的目录。
+
+## 九、R11 原生 v2 构图与旧包兼容
+
+- skin_version=2 必须使用原始 myassets/spine/<id>/<id>_spine_offset.json；旧表 spine_width／pivot 字段可能过期。prepare-character-resources 的包复用分支已应用 docs/reference/november-2026/spine-v2 快照。禁止为修正构图重复上传完全相同的骨骼包。
+- NovR10 描述的早期导出缺少材质显式队列；应用内 render-queues.json 记录源 Material customQueue／shader QUEUE 标签解析结果，在替换 shader 后恢复。未来原生导出应同时写入 hasSourceQueue／sourceQueue，且不得丢失源 shader 默认队列。
+- 同名 StaticDecoration shader 在资源包中可能是旧实现；运行时绑定应用内修正版，并保留原材质参数和队列。0.6.42 修正可直接作用于已下载的 v1 包，公开 URL 和摘要不变。
+- 详细复现与本地构建见 handoff-visual-feedback-r11-2026-11-23.md；不得把编辑器结果表述成 Android 真机验证。

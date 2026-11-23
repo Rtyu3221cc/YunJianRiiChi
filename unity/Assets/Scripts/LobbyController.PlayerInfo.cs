@@ -16,7 +16,10 @@ namespace YunJian.Riichi {
         string infoDialog="", renameText="", renameError="", radarKey="", trendKey="";
         float infoDialogStarted,trendBegan;
         Texture2D radarTexture, trendTexture;
-        Vector2 titleScroll;
+        readonly NativeScroll titleScroll = new NativeScroll();
+#if UNITY_EDITOR
+        public Action ReviewTitleInput,ReviewTitleInputApplied,ReviewTitleInputComplete;
+#endif
         readonly NativeScroll playerInfoScroll = new NativeScroll();
         [Serializable] class ProfileBorder { public string name; public float[] border; }
         [Serializable] class ProfileBorders { public ProfileBorder[] entries; }
@@ -55,15 +58,25 @@ namespace YunJian.Riichi {
             profileBorders ??= JsonUtility.FromJson<ProfileBorders>(Resources.Load<TextAsset>("Majsoul/Profile/native-art").text);
             var border=profileBorders.entries.FirstOrDefault(item=>item.name==key)?.border;
             if(border==null||border.All(value=>value==0)){GUI.DrawTexture(r,texture);return;}
-            float left=Mathf.Min(border[0],r.width/2), bottom=Mathf.Min(border[1],r.height/2);
-            float right=Mathf.Min(border[2],r.width/2), top=Mathf.Min(border[3],r.height/2);
-            float[] xs={r.x,r.x+left,r.xMax-right,r.xMax}, ys={r.y,r.y+top,r.yMax-bottom,r.yMax};
-            float[] us={0,border[0]/texture.width,1-border[2]/texture.width,1};
-            float[] vs={0,border[3]/texture.height,1-border[1]/texture.height,1};
-            for(int y=0;y<3;y++)for(int x=0;x<3;x++)
-                GUI.DrawTextureWithTexCoords(Rect.MinMaxRect(xs[x],ys[y],xs[x+1],ys[y+1]),texture,
-                    new Rect(us[x],1-vs[y+1],us[x+1]-us[x],vs[y+1]-vs[y]));
+            if(Event.current.type!=EventType.Repaint)return;
+            string id=key+":"+r.width+":"+r.height;
+            if(!profileSlices.TryGetValue(id,out var material)){
+                material=new Material(Resources.Load<Shader>("Majsoul/Wardrobe/NineSlice")){mainTexture=texture};
+                material.SetVector("_Border",new Vector4(border[0],border[1],border[2],border[3]));
+                material.SetVector("_SourceSize",new Vector4(texture.width,texture.height,0,0));
+                material.SetVector("_TargetSize",new Vector4(r.width,r.height,0,0));profileSlices[id]=material;
+            }
+            var visible=r;var uv=new Rect(0,0,1,1);
+            if(profileSliceClip.width>0){
+                visible=Rect.MinMaxRect(Mathf.Max(r.xMin,profileSliceClip.xMin),Mathf.Max(r.yMin,profileSliceClip.yMin),Mathf.Min(r.xMax,profileSliceClip.xMax),Mathf.Min(r.yMax,profileSliceClip.yMax));
+                if(visible.width<=0||visible.height<=0)return;
+                uv=new Rect((visible.x-r.x)/r.width,1-(visible.yMax-r.y)/r.height,visible.width/r.width,visible.height/r.height);
+            }
+            material.SetColor("_Tint",GUI.color);Graphics.DrawTexture(visible,texture,uv,0,0,0,0,Color.white,material);
         }
+        readonly Dictionary<string,Material> profileSlices=new Dictionary<string,Material>();Rect profileSliceClip;
+        void DisposeProfileSlices(){foreach(var material in profileSlices.Values)Destroy(material);profileSlices.Clear();}
+
         List<Rect> ProfilePortraitClips() {
             if(profilePortraitClips!=null)return profilePortraitClips;
             var mask=ProfileArt("Native/waitingroom_mask");
@@ -110,7 +123,7 @@ namespace YunJian.Riichi {
         Rect PlayerInfoBounds=>infoDialog==""?PlayerInfoFrame:InfoDialogRect;
         void PlayerInfoDismiss(){if(infoDialog!=""){infoDialog="";Cue("btn_cancel");}else CloseModal();}
         bool PlayerInfoBack(){if(Modal!=PlayerInfoModal||infoDialog=="")return false;infoDialog="";Cue("btn_cancel");return true;}
-        void OpenInfoDialog(string name){infoDialog=name;infoDialogStarted=Now;titleScroll=Vector2.zero;renameError="";if(name=="rename")renameText="";Cue("btn_appear");}
+        void OpenInfoDialog(string name){infoDialog=name;infoDialogStarted=Now;titleScroll.Offset=0;renameError="";if(name=="rename")renameText="";Cue("btn_appear");}
 
         bool InfoButton(Rect r,string value,string id,bool selected=false) {
             var visual=ControlRect(r,id,advancedStyle.buttonClickScale);
@@ -159,28 +172,22 @@ namespace YunJian.Riichi {
             ProfileSlice(ProfileRect(77.5f,51.5f,464,976),"illustFrame");
             DrawProfileIdentity();
             DrawProfileTabs();
-            DrawProfileAchievement();
             var mode=PlayerRecord.Mode(InfoTabs[infoTab],infoPlayers);
-            var view=ProfileRect(675,379.5f,1128,627);
-            ProfileSlice(ProfileRect(665,364.5f,1180,650),"PageBg");
+            var view=ProfileRect(675,299.5f,1128,707);
+            ProfileSlice(ProfileRect(665,284.5f,1180,730),"PageBg");
             const float contentHeight=655;
             playerInfoScroll.Input(view,contentHeight);
             var offset=targetOffset;
             GUI.BeginGroup(view);
             GUI.BeginGroup(new Rect(0,-playerInfoScroll.Offset,1128,contentHeight));
             targetOffset=offset+view.position-new Vector2(0,playerInfoScroll.Offset);
+            profileSliceClip=new Rect(0,playerInfoScroll.Offset,view.width,view.height);
             DrawFeaturedHand(new Rect(0,0,1128,210),mode);
             DrawStyle(new Rect(25,210,480,220),mode);
             DrawHighlights(new Rect(524.1f,210,580,220),mode);
             DrawTrend(new Rect(25,430,1075,225),mode);
-            GUI.EndGroup();GUI.EndGroup();targetOffset=offset;
+            profileSliceClip=default;GUI.EndGroup();GUI.EndGroup();targetOffset=offset;
             NativePanel.Scrollbar(view.xMax+18,view.y,view.height,playerInfoScroll.Offset,contentHeight);
-            var id=ProfileRect(1492.95f,1025,339,46);
-            ProfileSlice(id,"IDBg");
-            Label(new Rect(id.x+8,id.y,id.width-49,id.height),"我的ID："+PlayerRecord.Data.playerId,ProfileNumber(28),ProfileRgb(0xe8af71));
-            ProfileImage(new Rect(id.xMax-36,id.y+8,30,30),"Native/IconCopy");
-            if(Hit(id,"infoCopy")){GUIUtility.systemCopyBuffer=PlayerRecord.Data.playerId;ShowInfoNotice("已复制 ID");}
-            if(infoNotice!=""&&Now-infoNoticeAt<1.6f)Label(new Rect(id.x,id.y-40,id.width,35),infoNotice,NText("profile-body",24),Color.white);
             GUI.matrix=savedMatrix;GUI.color=savedColor;GUI.enabled=wasEnabled;
             if(infoDialog!="")DrawInfoDialog();
         }
@@ -192,20 +199,6 @@ namespace YunJian.Riichi {
             Image(new Rect(background.xMax-396,background.yMax-104,396,104),"Sprites/Necessary/decorate_right");
             Slice(frame,"Sprites/Necessary/frame",90,false);
         }
-        void DrawProfileAchievement() {
-            ProfileSlice(ProfileRect(665,220,1180,70),"PageBg");
-            Label(ProfileRect(675.6f,228.15f,150,53.7f),"成就：",ProfileSourceLabel(40),ProfileRgb(0x5e83af));
-            ProfileTint(ProfileRect(835,235,5,40),"Native/seperateLine2",new Color(1,1,1,.3f));
-            string[] names={"trophy_gold","trophy_sliver","trophy_copper"};
-            float[] xs={960.45f,1225.05f,1490.15f};
-            for(int i=0;i<3;i++) {
-                ProfileTint(ProfileRect(xs[i],230,52.5f,50),"Native/"+names[i],new Color(1,1,1,.55f));
-                Label(ProfileRect(xs[i]+70,230,160,50),"—",ProfileAchievementNumber(),ProfileRgb(0x73798c));
-            }
-            ProfileTint(ProfileRect(1747,228,40,54),"Native/iconGoToAchievement",new Color(1,1,1,.35f));
-            if(Hit(ProfileRect(665,220,1180,70),"infoAchievement"))ShowInfoNotice("成就统计暂不可用");
-        }
-
         void DrawProfileIdentity() {
             PlayerTitles.DrawTitle(ProfileRect(670,60,339,65),PlayerRecord.Title,text);
             ProfileSlice(ProfileRect(671.5f,131,336,76),"nameBg");
@@ -233,7 +226,7 @@ namespace YunJian.Riichi {
                 if(Hit(r,"infoPlayers"+players)&&infoPlayers!=players){infoPlayers=players;trendKey="";playerInfoScroll.Offset=0;}
             }
             for(int i=0;i<3;i++) {
-                var r=ProfileRect(i==0?694.8f:i==1?902.8f:1109.8f,i==1?295.4f:294.2f,225,76);
+                var r=ProfileRect(i==0?694.8f:i==1?902.8f:1109.8f,i==1?215.4f:214.2f,225,76);
                 ProfileSlice(r,i==infoTab?"tabInsideSelected":"tabInsideNormal");
                 Label(new Rect(r.x+21,r.y+15,174,46),InfoModeNames[i],ProfileSourceLabel(40),i==infoTab?ProfileRgb(0xedb26f):ProfileRgb(0x9ba1b2));
                 if(Hit(r,"infoTab"+i)&&infoTab!=i){infoTab=i;trendKey="";playerInfoScroll.Offset=0;}
@@ -417,10 +410,17 @@ namespace YunJian.Riichi {
             var view=ProfileRect(307.3f,296.3f,1222,671);
             const float rowHeight=99.2f;
             float total=titles.Length*rowHeight;
-            var evt=Event.current;
-            if(evt.type==EventType.MouseDrag&&view.Contains(evt.mousePosition)) {titleScroll.y=Mathf.Clamp(titleScroll.y-evt.delta.y,0,Mathf.Max(0,total-view.height));evt.Use();}
-            titleScroll=GUI.BeginScrollView(view,titleScroll,new Rect(0,0,view.width,total),false,false,GUIStyle.none,GUIStyle.none);
-            var prior=targetOffset;targetOffset+=view.position-titleScroll;
+            // The shared scroller consumes the drag release so a swipe cannot
+            // also activate the title row originally pressed beneath the finger.
+#if UNITY_EDITOR
+            ReviewTitleInput?.Invoke();
+#endif
+            titleScroll.Input(view,total);
+#if UNITY_EDITOR
+            ReviewTitleInputApplied?.Invoke();
+#endif
+            GUI.BeginGroup(view);GUI.BeginGroup(new Rect(0,-titleScroll.Offset,view.width,total));
+            var prior=targetOffset;targetOffset+=view.position-new Vector2(0,titleScroll.Offset);
             for(int i=0;i<titles.Length;i++) {
                 var entry=titles[i];var row=new Rect(0,i*rowHeight,1218,rowHeight);
                 PlayerTitles.DrawTitle(new Rect(47.52f,row.y+5.87f,314.16f,60.42f),entry.id,text);
@@ -429,8 +429,11 @@ namespace YunJian.Riichi {
                 if(PlayerRecord.Title==entry.id)ProfileImage(new Rect(1012,row.y-10.4f,151,115),"Native/using");
                 if(Hit(row,"infoTitle-"+entry.id)) {PlayerRecord.Equip(PlayerRecord.Title==entry.id?PlayerTitles.Default:entry.id);client.PublishRankProfile();}
             }
-            targetOffset=prior;GUI.EndScrollView();
+            targetOffset=prior;GUI.EndGroup();GUI.EndGroup();
             if(titles.Length==0)Label(ProfileRect(378.444f,340,1113.2f,76),"暂无已获得的称号",ProfileNumber(28),ProfileRgb(0xe8af71));
+#if UNITY_EDITOR
+            ReviewTitleInputComplete?.Invoke();
+#endif
         }
 
         void DrawStyleHelp(Rect r,GUIStyle heading){

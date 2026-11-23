@@ -8,7 +8,7 @@ const { sourceFile } = require('./wardrobe-source.cjs');
 const root = path.resolve(__dirname, '..');
 const resources = path.join(root, 'unity/Assets/Resources');
 const read = file => JSON.parse(fs.readFileSync(file, 'utf8'));
-const audit = read(path.join(root, 'docs/effect-audio-audit-2026-11-11.json'));
+const audit = read(path.join(root, 'docs/effect-audio-audit-2026-11-23.json'));
 const catalog = read(path.join(resources, 'Majsoul/Wardrobe/catalog.json'));
 const effectItems = catalog.items.filter(item => ['winEffect', 'riichiEffect'].includes(item.category));
 
@@ -30,7 +30,7 @@ test('every winning and riichi effect retains its source audio binding', () => {
     assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'), row.sha256, row.id);
     assert.ok(fs.existsSync(file + '.meta'), row.id);
   }
-  assert.equal(audit.effects.filter(row => row.cue).length, 119);
+  assert.equal(audit.effects.filter(row => row.cue).length, 121);
 });
 
 for (const platform of ['android', 'windows']) {

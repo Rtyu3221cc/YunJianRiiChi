@@ -151,6 +151,15 @@ for role in catalog['roles']:
     old=previous.get(role['key'],{})
     if old.get('available'):assert set(old['skins']).issubset(desired),'Published outfit IDs must not disappear; merge old and new input snapshots first'
     reuse=old.get('available')and set(old['skins'])==set(desired)and not args.force
+    native_inputs = [byid[sid] for sid in desired if byid[sid].get('assetLayout') == 'native']
+    if native_inputs:
+        assert reuse, 'Use the retained native import/build route for native skins; the web importer cannot rebuild them'
+        for skin in role['skins']:
+            item = byid[skin['id']]
+            if skin['dynamic'] and item.get('skin_version', 1) != 1:
+                config = json.loads((R / 'docs/reference/november-2026/spine-v2' / (str(skin['id']) + '_spine_offset.json')).read_text('utf8'))
+                for target, original in [('spineWidth', 'spine_width'), ('spineHeight', 'spine_height'), ('pivotX', 'pivot_x'), ('pivotY', 'pivot_y')]:
+                    skin[target] = config[original]
     if reuse:
         summary.append(dict(key=role['key'],name=role['name'],builtin=role['key']in BASE,skins=len(role['skins']),dynamics=sum(s['dynamic']for s in role['skins'])))
         print('Reusing published pack',role['name'],flush=True);continue

@@ -3,142 +3,1302 @@
     {
       "id": "traveler",
       "name": "无称号",
-      "description": "初入云间的牌友",
+      "description": "",
       "condition": "default",
       "value": 0,
       "sourceId": 600001,
-      "resource": "TitleIcons/notitle",
-      "priority": 1
+      "priority": 1,
+      "resource": "TitleIcons/notitle"
     },
     {
       "id": "queshi",
       "name": "原初之火",
-      "description": "任一模式段位到达雀士",
-      "condition": "rank",
-      "value": 3,
+      "description": "赠予参与过《雀魂》删档测试的朋友们",
+      "condition": "free",
+      "value": 0,
       "sourceId": 600002,
-      "resource": "TitleIcons/yuanchuzhihuo",
-      "priority": 2
+      "priority": 2,
+      "resource": "TitleIcons/yuanchuzhihuo"
     },
     {
       "id": "quejie",
       "name": "萤火之光",
-      "description": "任一模式段位到达雀杰",
-      "condition": "rank",
-      "value": 6,
+      "description": "赠予上海萤火虫会展中的幸运玩家",
+      "condition": "free",
+      "value": 0,
       "sourceId": 600003,
-      "resource": "TitleIcons/yinghuozhiguang",
-      "priority": 3
-    },
-    {
-      "id": "quehao",
-      "name": "成长之旅",
-      "description": "任一模式段位到达雀豪",
-      "condition": "rank",
-      "value": 9,
-      "sourceId": 600031,
-      "resource": "TitleIcons/achievementgroup1",
-      "priority": 20099
+      "priority": 3,
+      "resource": "TitleIcons/yinghuozhiguang"
     },
     {
       "id": "quesheng",
       "name": "最初的雀圣",
-      "description": "任一模式段位到达雀圣",
-      "condition": "rank",
-      "value": 12,
+      "description": "赠予第一位达到雀圣级别的玩家（四麻）",
+      "condition": "free",
+      "value": 0,
       "sourceId": 600004,
-      "resource": "TitleIcons/zuichuquesheng",
-      "priority": 4
-    },
-    {
-      "id": "hunTian",
-      "name": "最初的魂天",
-      "description": "任一模式段位到达魂天",
-      "condition": "rank",
-      "value": 15,
-      "sourceId": 600016,
-      "resource": "TitleIcons/zuichuhuntian",
-      "priority": 5
-    },
-    {
-      "id": "firstYakuman",
-      "name": "天选之证",
-      "description": "和出第一次役满",
-      "condition": "yakuman",
-      "value": 1,
-      "sourceId": 600034,
-      "resource": "TitleIcons/achievementgroup4",
-      "priority": 20096
-    },
-    {
-      "id": "hundred",
-      "name": "千锤百炼",
-      "description": "累计完成 100 场对局",
-      "condition": "matches",
-      "value": 100,
-      "sourceId": 600035,
-      "resource": "TitleIcons/achievementgroup5",
-      "priority": 20095
+      "priority": 4,
+      "resource": "TitleIcons/zuichuquesheng"
     },
     {
       "id": "600005",
       "name": "魂之契约者·初阶",
       "description": "与雀魂签订契约的初阶学徒",
-      "condition": "manual",
+      "condition": "free",
       "value": 0,
       "sourceId": 600005,
-      "resource": "TitleIcons/hunzhiqiyuezhe1",
-      "priority": 10001
+      "priority": 10001,
+      "resource": "TitleIcons/hunzhiqiyuezhe1"
     },
     {
       "id": "600006",
       "name": "魂之契约者·中阶",
       "description": "与雀魂签订契约的中阶学徒",
-      "condition": "manual",
+      "condition": "free",
       "value": 0,
       "sourceId": 600006,
-      "resource": "TitleIcons/hunzhiqiyuezhe2",
-      "priority": 10002
+      "priority": 10002,
+      "resource": "TitleIcons/hunzhiqiyuezhe2"
     },
     {
       "id": "600007",
       "name": "魂之契约者·高阶",
       "description": "与雀魂签订契约的高阶学徒",
-      "condition": "manual",
+      "condition": "free",
       "value": 0,
       "sourceId": 600007,
-      "resource": "TitleIcons/hunzhiqiyuezhe3",
-      "priority": 10003
+      "priority": 10003,
+      "resource": "TitleIcons/hunzhiqiyuezhe3"
     },
     {
       "id": "600008",
       "name": "魂之启迪者·初阶",
       "description": "促进了雀魂成长的初阶导师",
-      "condition": "manual",
+      "condition": "free",
       "value": 0,
       "sourceId": 600008,
-      "resource": "TitleIcons/hunzhiqidizhe1",
-      "priority": 10004
+      "priority": 10004,
+      "resource": "TitleIcons/hunzhiqidizhe1"
     },
     {
       "id": "600009",
       "name": "魂之启迪者·中阶",
       "description": "促进了雀魂成长的中阶导师",
-      "condition": "manual",
+      "condition": "free",
       "value": 0,
       "sourceId": 600009,
-      "resource": "TitleIcons/hunzhiqidizhe2",
-      "priority": 10005
+      "priority": 10005,
+      "resource": "TitleIcons/hunzhiqidizhe2"
     },
     {
       "id": "600010",
       "name": "魂之启迪者·高阶",
       "description": "促进了雀魂成长的高阶导师",
-      "condition": "manual",
+      "condition": "free",
       "value": 0,
       "sourceId": 600010,
-      "resource": "TitleIcons/hunzhiqidizhe3",
-      "priority": 10006
+      "priority": 10006,
+      "resource": "TitleIcons/hunzhiqidizhe3"
+    },
+    {
+      "id": "600011",
+      "name": "魂之缔造者·初阶",
+      "description": "参与了缔造雀魂宇宙的初阶使节",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600011,
+      "priority": 10007,
+      "resource": "TitleIcons/hunzhidizaozhe1"
+    },
+    {
+      "id": "600012",
+      "name": "魂之缔造者·中阶",
+      "description": "参与了缔造雀魂宇宙的中阶使节",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600012,
+      "priority": 10008,
+      "resource": "TitleIcons/hunzhidizaozhe2"
+    },
+    {
+      "id": "600013",
+      "name": "魂之缔造者·高阶",
+      "description": "参与了缔造雀魂宇宙的高阶使节",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600013,
+      "priority": 10009,
+      "resource": "TitleIcons/hunzhidizaozhe3"
+    },
+    {
+      "id": "600014",
+      "name": "魂之超越者",
+      "description": "超越想象的雀魂贡献者",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600014,
+      "priority": 10010,
+      "resource": "TitleIcons/hunzhichaoyuezhe"
+    },
+    {
+      "id": "600015",
+      "name": "猫粮供应商",
+      "description": "猫粮工作室的猫粮投喂者，喵~",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600015,
+      "priority": 10011,
+      "resource": "TitleIcons/maolianggongyingshang"
+    },
+    {
+      "id": "hunTian",
+      "name": "最初的魂天",
+      "description": "赠予第一位达到魂天级别的玩家（四麻）",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600016,
+      "priority": 5,
+      "resource": "TitleIcons/zuichuhuntian"
+    },
+    {
+      "id": "600017",
+      "name": "认证玩家",
+      "description": "为魂天神社做出大量贡献的玩家",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600017,
+      "priority": 6,
+      "resource": "TitleIcons/gai"
+    },
+    {
+      "id": "600018",
+      "name": "12Dora",
+      "description": "赠予与我们共经风雨的大当家",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600018,
+      "priority": 7,
+      "resource": "TitleIcons/12dora"
+    },
+    {
+      "id": "600019",
+      "name": "杆菌无敌",
+      "description": "赠予为小杆菌努力拼搏的杆菌",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600019,
+      "priority": 8,
+      "resource": "TitleIcons/ganjunwudi"
+    },
+    {
+      "id": "600020",
+      "name": "佐仓沙耶加",
+      "description": "赠予育儿里打麻将最好的蓝毛",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600020,
+      "priority": 9,
+      "resource": "TitleIcons/zuocangshayejia"
+    },
+    {
+      "id": "600021",
+      "name": "喵国大护法",
+      "description": "“这里的猫粮由我们守护！”",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600021,
+      "priority": 10012,
+      "resource": "TitleIcons/miaoguodahufa"
+    },
+    {
+      "id": "600022",
+      "name": "最初的雀圣",
+      "description": "赠予第一位达到雀圣级别的玩家（3麻）",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600022,
+      "priority": 10,
+      "resource": "TitleIcons/zuichuquesheng3"
+    },
+    {
+      "id": "600023",
+      "name": "最初的魂天",
+      "description": "赠予第一位达到魂天级别的玩家（3麻）",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600023,
+      "priority": 11,
+      "resource": "TitleIcons/zuichuhuntian3"
+    },
+    {
+      "id": "600026",
+      "name": "雀魂公認の選ばれしプレイヤーG",
+      "description": "雀魂公認の選ばれしプレイヤーG",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600026,
+      "priority": 12,
+      "resource": "TitleIcons/japan_g"
+    },
+    {
+      "id": "600027",
+      "name": "万象更新",
+      "description": "万象更新，继往开来，希望在前行路上，也能与您一直同在。",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600027,
+      "priority": 13,
+      "resource": "TitleIcons/wanxianggengxin"
+    },
+    {
+      "id": "600028",
+      "name": "试炼之道S1纪念",
+      "description": "试炼之道S1纪念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600028,
+      "priority": 30001,
+      "resource": "TitleIcons/trial"
+    },
+    {
+      "id": "600029",
+      "name": "インターハイ王者",
+      "description": "雀魂バーチャルインターハイ優勝チームに贈る称号。",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600029,
+      "priority": 40002,
+      "resource": "TitleIcons/interhigh"
+    },
+    {
+      "id": "quehao",
+      "name": "成长之旅",
+      "description": "完成成就分类「成长之旅」纪念",
+      "condition": "achievement",
+      "value": 1,
+      "sourceId": 600031,
+      "priority": 20099,
+      "resource": "TitleIcons/achievementgroup1"
+    },
+    {
+      "id": "600032",
+      "name": "连胜之道",
+      "description": "完成成就分类「连胜之道」纪念",
+      "condition": "achievement",
+      "value": 12,
+      "sourceId": 600032,
+      "priority": 20098,
+      "resource": "TitleIcons/achievementgroup2"
+    },
+    {
+      "id": "600033",
+      "name": "星罗云布",
+      "description": "完成成就分类「星罗云布」纪念",
+      "condition": "achievement",
+      "value": 3,
+      "sourceId": 600033,
+      "priority": 20097,
+      "resource": "TitleIcons/achievementgroup3"
+    },
+    {
+      "id": "firstYakuman",
+      "name": "天选之证",
+      "description": "完成成就分类「天选之证」纪念",
+      "condition": "achievement",
+      "value": 4,
+      "sourceId": 600034,
+      "priority": 20096,
+      "resource": "TitleIcons/achievementgroup4"
+    },
+    {
+      "id": "hundred",
+      "name": "千锤百炼",
+      "description": "完成成就分类「千锤百炼」纪念",
+      "condition": "achievement",
+      "value": 5,
+      "sourceId": 600035,
+      "priority": 20095,
+      "resource": "TitleIcons/achievementgroup5"
+    },
+    {
+      "id": "600036",
+      "name": "牌桌见闻",
+      "description": "完成成就分类「牌桌见闻」纪念",
+      "condition": "achievement",
+      "value": 6,
+      "sourceId": 600036,
+      "priority": 20094,
+      "resource": "TitleIcons/achievementgroup6"
+    },
+    {
+      "id": "600037",
+      "name": "良好市民",
+      "description": "完成成就分类「良好市民」纪念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600037,
+      "priority": 20093,
+      "resource": "TitleIcons/achievementgroup7"
+    },
+    {
+      "id": "600038",
+      "name": "神社贵宾",
+      "description": "完成成就分类「神社贵宾」纪念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600038,
+      "priority": 20092,
+      "resource": "TitleIcons/achievementgroup8"
+    },
+    {
+      "id": "600039",
+      "name": "森罗万象",
+      "description": "完成成就分类「森罗万象」纪念",
+      "condition": "achievement",
+      "value": 9,
+      "sourceId": 600039,
+      "priority": 20091,
+      "resource": "TitleIcons/achievementgroup9"
+    },
+    {
+      "id": "600040",
+      "name": "千客万来",
+      "description": "完成成就分类「千客万来」纪念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600040,
+      "priority": 20090,
+      "resource": "TitleIcons/achievementgroup10"
+    },
+    {
+      "id": "600041",
+      "name": "最強鴉天狗の愛弟子",
+      "description": "にじさんじ麻雀杯2021優勝記念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600041,
+      "priority": 40003,
+      "resource": "TitleIcons/24342021champion"
+    },
+    {
+      "id": "600042",
+      "name": "麒麟位2021",
+      "description": "麒麟战2021冠军纪念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600042,
+      "priority": 40004,
+      "resource": "TitleIcons/kirin"
+    },
+    {
+      "id": "600043",
+      "name": "Limited Title",
+      "description": "A reward for Mahjong Soul official tournament: Catfood Bowl - Major #Battle of Kirin winner",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600043,
+      "priority": 40005,
+      "resource": "TitleIcons/kirins1en"
+    },
+    {
+      "id": "600044",
+      "name": "花より団子",
+      "description": "にじさんじ「花鳥風月杯」優勝記念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600044,
+      "priority": 40006,
+      "resource": "TitleIcons/hanagroup"
+    },
+    {
+      "id": "600045",
+      "name": "一姬当千",
+      "description": "夏日祭-一姬当千限定称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600045,
+      "priority": 30002,
+      "resource": "TitleIcons/1jdq"
+    },
+    {
+      "id": "600046",
+      "name": "逍遥散人",
+      "description": "赠予向往自由的高叟逍遥散人",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600046,
+      "priority": 14,
+      "resource": "TitleIcons/xysr"
+    },
+    {
+      "id": "600047",
+      "name": "火龙果说电影",
+      "description": "赠予渴望步入鬼神境的火龙果说电影",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600047,
+      "priority": 15,
+      "resource": "TitleIcons/hlg"
+    },
+    {
+      "id": "600048",
+      "name": "伝説の名コンビ",
+      "description": "アカギコラボ大会優勝記念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600048,
+      "priority": 40007,
+      "resource": "TitleIcons/meiconbi"
+    },
+    {
+      "id": "600049",
+      "name": "伝説の迷コンビ",
+      "description": "アカギコラボ大会参加記念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600049,
+      "priority": 40008,
+      "resource": "TitleIcons/nazokonbi"
+    },
+    {
+      "id": "600050",
+      "name": "麒麟位2021",
+      "description": "麒麟战2021冠军纪念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600050,
+      "priority": 40009,
+      "resource": "TitleIcons/kirin"
+    },
+    {
+      "id": "600051",
+      "name": "虹懸かる右手",
+      "description": "にじさんじ麻雀杯2022優勝記念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600051,
+      "priority": 40010,
+      "resource": "TitleIcons/24342022"
+    },
+    {
+      "id": "600052",
+      "name": "斗鱼雀神杯冠军",
+      "description": "赠予斗鱼雀神杯冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600052,
+      "priority": 40011,
+      "resource": "TitleIcons/douyuchampion"
+    },
+    {
+      "id": "600053",
+      "name": "麒麟位2022",
+      "description": "麒麟战2022冠军纪念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600053,
+      "priority": 40012,
+      "resource": "TitleIcons/kirin2022"
+    },
+    {
+      "id": "600054",
+      "name": "天元北斗",
+      "description": "北斗战2022冠军纪念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600054,
+      "priority": 40013,
+      "resource": "TitleIcons/tianyuanbeidou"
+    },
+    {
+      "id": "600055",
+      "name": "麻雀スクワッド",
+      "description": "雀魂感謝杯3rd 優勝記念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600055,
+      "priority": 40014,
+      "resource": "TitleIcons/squat"
+    },
+    {
+      "id": "600056",
+      "name": "B.league S1冠军",
+      "description": "赠予哔哩哔哩第一届立直麻将联赛冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600056,
+      "priority": 40015,
+      "resource": "TitleIcons/bleagues1"
+    },
+    {
+      "id": "600064",
+      "name": "天元北斗",
+      "description": "北斗战2022冠军纪念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600064,
+      "priority": 40016,
+      "resource": "TitleIcons/tianyuanbeidou"
+    },
+    {
+      "id": "600065",
+      "name": "斗鱼雀神杯冠军",
+      "description": "赠予斗鱼雀神杯冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600065,
+      "priority": 40017,
+      "resource": "TitleIcons/douyuchampion"
+    },
+    {
+      "id": "600066",
+      "name": "みんな家族",
+      "description": "第二回花鳥風月戦優勝チーム称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600066,
+      "priority": 40018,
+      "resource": "TitleIcons/2208kazoku"
+    },
+    {
+      "id": "600067",
+      "name": "ぶいすぽ女傑",
+      "description": "ぶいすぽ雀魂女傑戦優勝チーム称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600067,
+      "priority": 40019,
+      "resource": "TitleIcons/2208joketsu"
+    },
+    {
+      "id": "600068",
+      "name": "火龙果杯总冠军",
+      "description": "赠予火龙果杯总冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600068,
+      "priority": 40020,
+      "resource": "TitleIcons/22huolongguo"
+    },
+    {
+      "id": "600069",
+      "name": "インターハイ王者",
+      "description": "雀魂バーチャルインターハイ優勝チームに贈る称号。",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600069,
+      "priority": 40021,
+      "resource": "TitleIcons/interhigh"
+    },
+    {
+      "id": "600070",
+      "name": "麒麟位2022",
+      "description": "麒麟战2022冠军纪念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600070,
+      "priority": 40022,
+      "resource": "TitleIcons/kirin2022cn"
+    },
+    {
+      "id": "600071",
+      "name": "煌めく女王の星",
+      "description": "「新春！にじさんじ麻雀杯2023」優勝賞品",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600071,
+      "priority": 40023,
+      "resource": "TitleIcons/2301nw"
+    },
+    {
+      "id": "600072",
+      "name": "闘魂杯王者",
+      "description": "「第3期闘魂杯」優勝賞品",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600072,
+      "priority": 40024,
+      "resource": "TitleIcons/2301dhb"
+    },
+    {
+      "id": "600073",
+      "name": "華風戦優勝",
+      "description": "「華風戦」優勝賞品",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600073,
+      "priority": 40025,
+      "resource": "TitleIcons/2301hfz"
+    },
+    {
+      "id": "600074",
+      "name": "麒麟位2023",
+      "description": "麒麟战2023冠军纪念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600074,
+      "priority": 40026,
+      "resource": "TitleIcons/kirin2023jp"
+    },
+    {
+      "id": "600075",
+      "name": "RMLS1总冠军",
+      "description": "赠予RML S1 总冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600075,
+      "priority": 40027,
+      "resource": "TitleIcons/2304rmls1"
+    },
+    {
+      "id": "600076",
+      "name": "雀魂インビ夏王者",
+      "description": "雀魂インビテーショナル2023夏優勝記念称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600076,
+      "priority": 40028,
+      "resource": "TitleIcons/2306is"
+    },
+    {
+      "id": "600077",
+      "name": "雀魂インビ冬将軍",
+      "description": "雀魂インビテーショナル2023冬優勝記念称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600077,
+      "priority": 40029,
+      "resource": "TitleIcons/2306iw"
+    },
+    {
+      "id": "600078",
+      "name": "喵之一手",
+      "description": "喵之一手活动纪念限定称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600078,
+      "priority": 30003,
+      "resource": "TitleIcons/2308event"
+    },
+    {
+      "id": "600079",
+      "name": "斗鱼雀神杯冠军",
+      "description": "赠予斗鱼雀神杯冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600079,
+      "priority": 40030,
+      "resource": "TitleIcons/douyuchampion"
+    },
+    {
+      "id": "600080",
+      "name": "火龙果杯总冠军",
+      "description": "赠予火龙果杯总冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600080,
+      "priority": 40031,
+      "resource": "TitleIcons/22huolongguo"
+    },
+    {
+      "id": "600081",
+      "name": "野鳥観察部",
+      "description": "第3回花鳥風月戦優勝記念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600081,
+      "priority": 40032,
+      "resource": "TitleIcons/2307_2434"
+    },
+    {
+      "id": "600082",
+      "name": "ななしサンマ王",
+      "description": "「雀魂ななしサンマ杯 ～秋の陣～」優勝記念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600082,
+      "priority": 40033,
+      "resource": "TitleIcons/2309_nanashi"
+    },
+    {
+      "id": "600083",
+      "name": "斗鱼雀神杯个人赛冠军",
+      "description": "赠予斗鱼雀神杯个人赛冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600083,
+      "priority": 40034,
+      "resource": "TitleIcons/douyuchampion2"
+    },
+    {
+      "id": "600084",
+      "name": "斗鱼鬼神杯S3",
+      "description": "斗鱼鬼神杯纪念称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600084,
+      "priority": 40035,
+      "resource": "TitleIcons/douyuguishen"
+    },
+    {
+      "id": "600085",
+      "name": "ぶいすぽの頂",
+      "description": "「ぶいすぽ雀魂女傑戦2」優勝チーム称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600085,
+      "priority": 40036,
+      "resource": "TitleIcons/2312nvjie"
+    },
+    {
+      "id": "600086",
+      "name": "麒麟位2023",
+      "description": "麒麟战2023冠军纪念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600086,
+      "priority": 40037,
+      "resource": "TitleIcons/kirin2023cn"
+    },
+    {
+      "id": "600087",
+      "name": "雀荘牌舞台",
+      "description": "「新春！にじさんじ麻雀杯2024」優勝称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600087,
+      "priority": 40038,
+      "resource": "TitleIcons/24012434"
+    },
+    {
+      "id": "600088",
+      "name": "闘魂杯王者",
+      "description": "「第5期闘魂杯」優勝賞品",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600088,
+      "priority": 40039,
+      "resource": "TitleIcons/2301dhb"
+    },
+    {
+      "id": "600089",
+      "name": "麒麟位2024",
+      "description": "麒麟戦2024優勝記念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600089,
+      "priority": 40040,
+      "resource": "TitleIcons/kirin2024jp"
+    },
+    {
+      "id": "600090",
+      "name": "四象战冠军",
+      "description": "赠予四象战冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600090,
+      "priority": 40041,
+      "resource": "TitleIcons/24sxz1"
+    },
+    {
+      "id": "600091",
+      "name": "四象战冠军",
+      "description": "赠予四象战冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600091,
+      "priority": 40042,
+      "resource": "TitleIcons/24sxz2"
+    },
+    {
+      "id": "600092",
+      "name": "四象战冠军",
+      "description": "赠予四象战冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600092,
+      "priority": 40043,
+      "resource": "TitleIcons/24sxz2"
+    },
+    {
+      "id": "600093",
+      "name": "花ノ国 戦国最強",
+      "description": "2024にじさんじ花鳥風月杯優勝チーム称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600093,
+      "priority": 40044,
+      "resource": "TitleIcons/24zgws"
+    },
+    {
+      "id": "600094",
+      "name": "青云之志",
+      "description": "青云之志活动纪念限定称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600094,
+      "priority": 30004,
+      "resource": "TitleIcons/24qyzz"
+    },
+    {
+      "id": "600095",
+      "name": "双聖戦優勝",
+      "description": "双聖戦優勝記念称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600095,
+      "priority": 40045,
+      "resource": "TitleIcons/24sszy"
+    },
+    {
+      "id": "600096",
+      "name": "820邹倚天",
+      "description": "赠与役满见证者820邹倚天",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600096,
+      "priority": 16,
+      "resource": "TitleIcons/820"
+    },
+    {
+      "id": "600097",
+      "name": "雀魂インビ夏王者",
+      "description": "雀魂インビテーショナル2024夏優勝記念称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600097,
+      "priority": 40046,
+      "resource": "TitleIcons/2306is"
+    },
+    {
+      "id": "600098",
+      "name": "限定称号",
+      "description": "S2赛季官方赛事麒麟战冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600098,
+      "priority": 40047,
+      "resource": "TitleIcons/2409qilinzhan"
+    },
+    {
+      "id": "600099",
+      "name": "四象战冠军",
+      "description": "赠予四象战冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600099,
+      "priority": 40048,
+      "resource": "TitleIcons/24sxz3"
+    },
+    {
+      "id": "600100",
+      "name": "四象战冠军",
+      "description": "赠予四象战冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600100,
+      "priority": 40049,
+      "resource": "TitleIcons/24sxz3"
+    },
+    {
+      "id": "600101",
+      "name": "神社杯S11冠军",
+      "description": "神社杯S11冠军纪念称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600101,
+      "priority": 40050,
+      "resource": "TitleIcons/24shenshebei"
+    },
+    {
+      "id": "600102",
+      "name": "豪勇無双のまつたけ",
+      "description": "ななし実りの麻雀杯優勝記念称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600102,
+      "priority": 40051,
+      "resource": "TitleIcons/24matsutake"
+    },
+    {
+      "id": "600103",
+      "name": "華風戦優勝",
+      "description": "「華風戦」優勝賞品",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600103,
+      "priority": 40052,
+      "resource": "TitleIcons/2301hfz"
+    },
+    {
+      "id": "600104",
+      "name": "Limited Title",
+      "description": "A reward for Mahjong Soul official tournament Catfood Bowl winner",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600104,
+      "priority": 40053,
+      "resource": "TitleIcons/25catfoodbowl"
+    },
+    {
+      "id": "600105",
+      "name": "MKC 2025 국사무쌍",
+      "description": "MKC 2025 대회 우승자 전용 칭호 (유효기간 1년)",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600105,
+      "priority": 40054,
+      "resource": "TitleIcons/25mkc"
+    },
+    {
+      "id": "600106",
+      "name": "四象战冠军",
+      "description": "赠予四象战冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600106,
+      "priority": 40055,
+      "resource": "TitleIcons/24sxz4"
+    },
+    {
+      "id": "600107",
+      "name": "四象战冠军",
+      "description": "赠予四象战冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600107,
+      "priority": 40056,
+      "resource": "TitleIcons/24sxz4"
+    },
+    {
+      "id": "600108",
+      "name": "麒麟位2024",
+      "description": "麒麟战2024冠军纪念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600108,
+      "priority": 40057,
+      "resource": "TitleIcons/kirin2024cn"
+    },
+    {
+      "id": "600109",
+      "name": "雀魂インビ冬将軍",
+      "description": "雀魂インビテーショナル2024冬優勝記念称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600109,
+      "priority": 40058,
+      "resource": "TitleIcons/2306iw"
+    },
+    {
+      "id": "600110",
+      "name": "ぶいすぽの覇者",
+      "description": "「ぶいすぽ雀魂女傑戦3」優勝チーム称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600110,
+      "priority": 40059,
+      "resource": "TitleIcons/25vspo"
+    },
+    {
+      "id": "600111",
+      "name": "プロ×魂天覇者",
+      "description": "「プロ × 魂天ミニリーグ」優勝チーム称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600111,
+      "priority": 40060,
+      "resource": "TitleIcons/25huntianbazhe"
+    },
+    {
+      "id": "600112",
+      "name": "喵国大将军",
+      "description": "功绩辉煌耀眼的大将军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600112,
+      "priority": 10013,
+      "resource": "TitleIcons/miaoguodajiangjun"
+    },
+    {
+      "id": "600113",
+      "name": "喵国至尊",
+      "description": "众猫仰望的至高尊者",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600113,
+      "priority": 10014,
+      "resource": "TitleIcons/miaoguozhizun"
+    },
+    {
+      "id": "600114",
+      "name": "あやまらないよ！",
+      "description": "にじさんじ麻雀杯2025優勝記念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600114,
+      "priority": 40061,
+      "resource": "TitleIcons/25njsj"
+    },
+    {
+      "id": "600115",
+      "name": "双聖戦優勝",
+      "description": "双聖戦優勝記念称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600115,
+      "priority": 40062,
+      "resource": "TitleIcons/25sszy"
+    },
+    {
+      "id": "600116",
+      "name": "触类旁通",
+      "description": "完成成就分类「触类旁通」纪念",
+      "condition": "achievement",
+      "value": 13,
+      "sourceId": 600116,
+      "priority": 20089,
+      "resource": "TitleIcons/achievementgroup13"
+    },
+    {
+      "id": "600117",
+      "name": "琳琅满目",
+      "description": "完成成就分类「琳琅满目」纪念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600117,
+      "priority": 20088,
+      "resource": "TitleIcons/achievementgroup14"
+    },
+    {
+      "id": "600118",
+      "name": "四象战冠军",
+      "description": "赠予四象战冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600118,
+      "priority": 40063,
+      "resource": "TitleIcons/24sxz1"
+    },
+    {
+      "id": "600119",
+      "name": "四象战冠军",
+      "description": "赠予四象战冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600119,
+      "priority": 40064,
+      "resource": "TitleIcons/24sxz1"
+    },
+    {
+      "id": "600120",
+      "name": "B.league S2 冠军",
+      "description": "赠予哔哩哔哩第二届立直麻将大赛冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600120,
+      "priority": 40065,
+      "resource": "TitleIcons/25bl1"
+    },
+    {
+      "id": "600121",
+      "name": "按钮亮了！",
+      "description": "赠与哔哩哔哩【按钮亮了】活动赛冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600121,
+      "priority": 40066,
+      "resource": "TitleIcons/25bl2"
+    },
+    {
+      "id": "600122",
+      "name": "麒麟位2025",
+      "description": "麒麟戦2025優勝記念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600122,
+      "priority": 40067,
+      "resource": "TitleIcons/kirin2025jp"
+    },
+    {
+      "id": "600123",
+      "name": "天元北斗",
+      "description": "北斗战2025冠军纪念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600123,
+      "priority": 40068,
+      "resource": "TitleIcons/tianyuanbeidou"
+    },
+    {
+      "id": "600124",
+      "name": "天元北斗",
+      "description": "北斗战2025冠军纪念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600124,
+      "priority": 40069,
+      "resource": "TitleIcons/tianyuanbeidou"
+    },
+    {
+      "id": "600125",
+      "name": "四象战冠军",
+      "description": "赠予四象战冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600125,
+      "priority": 40070,
+      "resource": "TitleIcons/24sxz2"
+    },
+    {
+      "id": "600126",
+      "name": "四象战冠军",
+      "description": "赠予四象战冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600126,
+      "priority": 40071,
+      "resource": "TitleIcons/24sxz2"
+    },
+    {
+      "id": "600127",
+      "name": "勇喵小队",
+      "description": "航海寻宝活动纪念限定称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600127,
+      "priority": 30005,
+      "resource": "TitleIcons/25qyzz"
+    },
+    {
+      "id": "600128",
+      "name": "双圣战冠军",
+      "description": "赠予双圣战冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600128,
+      "priority": 40072,
+      "resource": "TitleIcons/ssz_l"
+    },
+    {
+      "id": "600129",
+      "name": "双聖戦優勝",
+      "description": "双聖戦優勝記念称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600129,
+      "priority": 40073,
+      "resource": "TitleIcons/24sszy"
+    },
+    {
+      "id": "600130",
+      "name": "豪運渋川ユリ組",
+      "description": "ななし雀魂杯夏の陣優勝記念称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600130,
+      "priority": 40074,
+      "resource": "TitleIcons/25haoyun"
+    },
+    {
+      "id": "600131",
+      "name": "Limited Title",
+      "description": "A reward for Mahjong Soul official tournament Catfood Bowl - Major #Battle of Kirin S3 winner",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600131,
+      "priority": 40075,
+      "resource": "TitleIcons/2509qilinzhan"
+    },
+    {
+      "id": "600132",
+      "name": "Asaki大人",
+      "description": "赠与猪猪公主Asaki大人",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600132,
+      "priority": 17,
+      "resource": "TitleIcons/asaki"
+    },
+    {
+      "id": "600133",
+      "name": "Limited Title",
+      "description": "A reward for Mahjong Soul official tournament Catfood Bowl - Major #Battle of Kirin S3 winner",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600133,
+      "priority": 40076,
+      "resource": "TitleIcons/2509qilinzhan"
+    },
+    {
+      "id": "600134",
+      "name": "四象战冠军",
+      "description": "赠予四象战冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600134,
+      "priority": 40077,
+      "resource": "TitleIcons/24sxz3"
+    },
+    {
+      "id": "600135",
+      "name": "四象战冠军",
+      "description": "赠予四象战冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600135,
+      "priority": 40078,
+      "resource": "TitleIcons/24sxz3"
+    },
+    {
+      "id": "600136",
+      "name": "チームシリウス",
+      "description": "2025年魂天リーグ優勝記念",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600136,
+      "priority": 40079,
+      "resource": "TitleIcons/25sirius"
+    },
+    {
+      "id": "600137",
+      "name": "麻将全能王S1",
+      "description": "赠与哔哩哔哩【麻将全能王】活动赛冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600137,
+      "priority": 40080,
+      "resource": "TitleIcons/25mjqnw1"
+    },
+    {
+      "id": "600138",
+      "name": "にじLリーグ優勝",
+      "description": "にじさんじ麻雀杯 Lリーグ2025優勝チーム称号",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600138,
+      "priority": 40081,
+      "resource": "TitleIcons/25caihong1"
+    },
+    {
+      "id": "600139",
+      "name": "金古神手",
+      "description": "赠予金古杯赛事冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600139,
+      "priority": 40082,
+      "resource": "TitleIcons/25jingubei"
+    },
+    {
+      "id": "600140",
+      "name": "四象战冠军",
+      "description": "赠予四象战冠军",
+      "condition": "free",
+      "value": 0,
+      "sourceId": 600140,
+      "priority": 40083,
+      "resource": "TitleIcons/24sxz4"
     }
   ]
 }

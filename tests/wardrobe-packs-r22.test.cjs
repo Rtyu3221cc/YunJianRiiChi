@@ -32,7 +32,7 @@ test('download packs form a finite verified dependency graph on both platforms',
    if(p.builtin)continue;
    assert.equal(p.available,true);assert.match(p.sha256,/^[a-f0-9]{64}$/);assert.ok(p.bytes>0);assert.ok(p.assets.length>0);
    assert.equal(p.file,`${p.key}-v${p.version}-${c.platform}-${p.sha256.slice(0,12)}.bundle`);
-   const version=p.key.startsWith('deco-r30-')?'v2':'v1';
+   const version=p.key.startsWith('deco-nov26-')?'2026-11':p.key.startsWith('deco-r30-')?'v2':'v1';
    assert.equal(p.url,`https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/wardrobe-resources-${version}/${p.file}`);
   }
   assert.equal(new Set(c.addresses.map(a=>a.path.toLowerCase())).size,c.addresses.length);
@@ -53,7 +53,7 @@ test('optional heavy files physically leave Resources while original file GUIDs 
 });
 
 test('all mapped win sources are selectable and old scythe transforms remain intact',()=>{
- const wins=wardrobe.items.filter(i=>i.category==='winEffect');assert.equal(wins.length,63);
+ const wins=wardrobe.items.filter(i=>i.category==='winEffect');assert.equal(wins.length,64);
  for(const [id,sourceId] of [['ron_chilin',30520013],['ron_26summer',30520014],['ron_26shuiyi',30520015]]){
   const item=wins.find(i=>i.id===id);assert.equal(item.sourceItemId,sourceId);
   const pack=catalogs[0].items.find(i=>i.id===id);

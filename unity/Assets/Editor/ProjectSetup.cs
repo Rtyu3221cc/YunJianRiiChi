@@ -6,8 +6,8 @@ namespace YunJian.Riichi.Editor
 {
     [InitializeOnLoad] public static class ProjectSetup
     {
-        public const string ReleaseVersion="0.6.40";
-        public const int ReleaseCode=88;
+        public const string ReleaseVersion="0.6.42";
+        public const int ReleaseCode=90;
         static ProjectSetup() { EditorApplication.delayCall += EnsureScene; }
         static void EnsureScene()
         {
@@ -49,7 +49,7 @@ namespace YunJian.Riichi.Editor
             var graphics = new SerializedObject(graphicsAssets[0]);
             var shaders = graphics.FindProperty("m_AlwaysIncludedShaders");
             if (shaders == null) throw new System.Exception("无法读取 Always Included Shaders，请检查编辑器版本。");
-            foreach (var name in new[] { "Standard", "Unlit/Texture", "Unlit/Transparent", "Unlit/Color", "UI/Default", "YunJian/OriginalHand", "YunJian/OriginalTileFace", "YunJian/OriginalTileBody", "YunJian/OriginalTileOutline", "YunJian/ResponseGlow", "YunJian/TurnLight", "YunJian/NorthPetal", "YunJian/WinParticle", "YunJian/NativeEffectParticle", "YunJian/FateParticle", "YunJian/WardrobeEffectParticle", "YunJian/StaticDecoration", "YunJian/WardrobeParticle", "YunJian/TableCloth", "YunJian/TileShadow", "YunJian/NativeCallout", "YunJian/CharacterSpine", "YunJian/CharacterStraightAlpha", "YunJian/CharacterIntro", "YunJian/CharacterOver", "YunJian/EmoteGrayscale" })
+            foreach (var name in new[] { "Standard", "Unlit/Texture", "Unlit/Transparent", "Unlit/Color", "UI/Default", "YunJian/OriginalHand", "YunJian/OriginalTileFace", "YunJian/OriginalTileBody", "YunJian/OriginalTileOutline", "YunJian/ResponseGlow", "YunJian/TurnLight", "YunJian/NorthPetal", "YunJian/WinParticle", "YunJian/NativeEffectParticle", "YunJian/FateParticle", "YunJian/WardrobeEffectParticle", "YunJian/NovR10EffectParticle", "YunJian/StaticDecoration", "YunJian/WardrobeParticle", "YunJian/TableCloth", "YunJian/TileShadow", "YunJian/NativeCallout", "YunJian/CharacterSpine", "YunJian/CharacterStraightAlpha", "YunJian/CharacterIntro", "YunJian/CharacterOver", "YunJian/EmoteGrayscale" })
             {
                 var shader = Shader.Find(name); if (shader == null) continue;
                 bool found = false; for (int i = 0; i < shaders.arraySize; i++) if (shaders.GetArrayElementAtIndex(i).objectReferenceValue == shader) found = true;
@@ -103,14 +103,8 @@ namespace YunJian.Riichi.Editor
                 t.mipmapEnabled=false;t.npotScale=TextureImporterNPOTScale.None;t.wrapMode=TextureWrapMode.Clamp;
             }
             // Profile badges and sliced frame UVs require original PNG dimensions.
-            if(assetPath.StartsWith("Assets/Resources/Majsoul/Profile/TitleIcons/") ||
-                assetPath=="Assets/Resources/Majsoul/Profile/Native/using.png" ||
-                assetPath=="Assets/Resources/Majsoul/Profile/Native/illustFrame.png" ||
-                assetPath=="Assets/Resources/Majsoul/Profile/Native/illustBg.png" ||
-                assetPath=="Assets/Resources/Majsoul/Profile/Native/tabInsideNormal.png" ||
-                assetPath=="Assets/Resources/Majsoul/Profile/Native/tabInsideSelected.png" ||
-                assetPath=="Assets/Resources/Majsoul/Profile/Native/waitingroom_mask.png") {
-                t.mipmapEnabled=false;t.npotScale=TextureImporterNPOTScale.None;
+            if(assetPath.StartsWith("Assets/Resources/Majsoul/Profile/TitleIcons/") || assetPath.StartsWith("Assets/Resources/Majsoul/Profile/Native/")) {
+                t.mipmapEnabled=false;t.npotScale=TextureImporterNPOTScale.None;t.wrapMode=TextureWrapMode.Clamp;
             }
             if(assetPath=="Assets/Resources/Majsoul/Profile/Native/waitingroom_mask.png")t.isReadable=true;
             if(assetPath.StartsWith("Assets/Resources/Majsoul/Settings/")) {
@@ -124,6 +118,7 @@ namespace YunJian.Riichi.Editor
             if(assetPath.StartsWith("Assets/Resources/Majsoul/Actions/"))t.npotScale=TextureImporterNPOTScale.None;
             if(assetPath.StartsWith("Assets/Resources/Majsoul/Indicators/")){t.npotScale=TextureImporterNPOTScale.None;t.wrapMode=TextureWrapMode.Clamp;t.mipmapEnabled=false;}
             if(assetPath.StartsWith("Assets/Resources/Majsoul/Results/") || assetPath.StartsWith("Assets/Resources/Majsoul/Settlement/")){t.npotScale=TextureImporterNPOTScale.None;t.wrapMode=TextureWrapMode.Clamp;}
+            if(assetPath.StartsWith("Assets/Resources/Majsoul/Settlement/RankCalc/"))t.mipmapEnabled=false;
             if(assetPath=="Assets/Resources/Majsoul/Settlement/flame-detail.png")t.wrapMode=TextureWrapMode.Repeat;
             if(assetPath.StartsWith("Assets/Resources/Majsoul/TableLook/")){t.wrapMode=TextureWrapMode.Clamp;t.npotScale=TextureImporterNPOTScale.None;if(assetPath.Contains("/Sprites/"))t.mipmapEnabled=false;}
             if(assetPath.StartsWith("Assets/Resources/Majsoul/Review1012c/")){t.wrapMode=TextureWrapMode.Clamp;t.npotScale=TextureImporterNPOTScale.None;t.mipmapEnabled=false;}

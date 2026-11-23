@@ -72,8 +72,8 @@ namespace YunJian.Riichi.Editor {
             Check(c!=null&&c.delta==43&&c.promoted&&PlayerRecord.Rank(4).level==1&&PlayerRecord.Rank(4).points==0,"段位场二位 +43，初心1 升初心2");
             Check(PlayerRecord.Record(v)==c&&PlayerRecord.Mode("ranked",4).games.Count==1,"同一终局重复轮询只记一次");
             var mode=PlayerRecord.Mode("ranked",4);Check(mode.best.Exists&&mode.best.limit=="倍满"&&mode.highlights.baiman==1&&mode.totals.wins==3,"最佳一手、高光与累计统计");
-            var f=Final("review-room",2,"friend",4,1,40000);Check(PlayerRecord.Record(f)==null&&PlayerRecord.Rank(4).level==1&&PlayerRecord.Rank(4).points==0&&PlayerRecord.Mode("friend",4).games.Count==1,"友人场记录对局但不改段位");
-            var three=Final("review-room-3",1,"ranked",3,1,50000);var c3=PlayerRecord.Record(three);Check(c3!=null&&c3.delta==115&&PlayerRecord.Rank(3).level==1&&PlayerRecord.Rank(4).level==1&&PlayerRecord.Mode("ranked",3).games.Count==1,"三麻独立段位 +115");
+            var f=Final("review-room",2,"friend",4,1,40000);Check(PlayerRecord.Record(f)?.delta==95&&PlayerRecord.Rank(4).level==2&&PlayerRecord.Rank(4).points==0&&PlayerRecord.Mode("friend",4).games.Count==1,"友人场记录对局并获得段位积分");
+            var three=Final("review-room-3",1,"ranked",3,1,50000);var c3=PlayerRecord.Record(three);Check(c3!=null&&c3.delta==115&&PlayerRecord.Rank(3).level==1&&PlayerRecord.Rank(4).level==2&&PlayerRecord.Mode("ranked",3).games.Count==1,"三麻独立段位 +115");
             var style=PlayerRecord.Style(mode.totals);Check(style.attack>0&&style.defense>0&&style.speed>0&&style.attack<=100,"风格属性在 0–100 范围");
             var rich=new PlayerRecordData();rich.rank4=new RankState(12,2400);rich.peak4=12;rich.title="quesheng";
             PlayerRecord.Replace(rich);Check(PlayerRecord.Owns("queshi")&&PlayerRecord.Owns("quesheng")&&PlayerRecord.Title=="quesheng","按段位解锁称号并可佩戴");

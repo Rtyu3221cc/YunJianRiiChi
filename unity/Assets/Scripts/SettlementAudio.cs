@@ -70,6 +70,7 @@ namespace YunJian.Riichi
             if(key!=next){Reset();key=next;}
             if(!visible || suspended)return;
             float age=display.ElapsedAge;
+            if(display.ShowingRank){output.Stop();previous=age;return;}
             if(winner!=display.WinnerIndex || wasScores!=display.ShowingScores || wasFinal!=display.ShowingFinal){output.Stop();if(display.ShowingFinal)audio.ClearHandEffects();previous=-1;winner=display.WinnerIndex;wasScores=display.ShowingScores;wasFinal=display.ShowingFinal;}
             if(display.Freeze && !validation){previous=age;return;}
             bool crossed(float at)=>previous<at && age>=at;

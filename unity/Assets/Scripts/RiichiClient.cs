@@ -598,7 +598,7 @@ namespace YunJian.Riichi
                 namePlateText.fontSize=p.v.name.Length>11?9:p.v.name.Length>8?10:11;ShadowLabel(nameRect,p.v.name,namePlateText,Color.white);
                 // Players without a title show the official extendRes/title/notitle image.
                 string titleName=RankRules.TitleOf(p.v);var titleRect=new Rect(cx-187*k/2,nameRect.yMax,187*k,36*k);
-                if(string.IsNullOrEmpty(titleName))GUI.DrawTexture(titleRect,Skin("notitle"),ScaleMode.ScaleToFit);else PlayerTitles.DrawPill(new Rect(titleRect.x+titleRect.width*.08f,titleRect.y+titleRect.height*.12f,titleRect.width*.84f,titleRect.height*.76f),titleName,namePlateText);
+                if(string.IsNullOrEmpty(titleName))GUI.DrawTexture(titleRect,Skin("notitle"),ScaleMode.ScaleToFit);else PlayerTitles.DrawPill(new Rect(titleRect.x+titleRect.width*.08f,titleRect.y+titleRect.height*.12f,titleRect.width*.84f,titleRect.height*.76f),titleName,namePlateText,p.v.profile?.titleId);
             }
             if(passive)return;
             tableEmotes.Draw(State,w,h,TrySendEmote,Busy,r=>{var a=GUI.matrix.MultiplyPoint3x4(r.position);var b=GUI.matrix.MultiplyPoint3x4(new Vector3(r.xMax,r.yMax));uiButtons.Add(Rect.MinMaxRect(a.x,a.y,b.x,b.y));});

@@ -265,6 +265,24 @@ namespace YunJian.Riichi
             return root;
         }
         // The carried stick mirrors the deposited one so the hand-off is seamless.
+        Vector3 StickSlot(int seat){
+            // Centres of the four recessed tracks in the original 256px plate.
+            var dir=Quaternion.Euler(0,Angle(seat),0)*Vector3.back;
+            var pixel=Mathf.Abs(dir.x)>.5f?new Vector2(dir.x>0?232:26,128):new Vector2(128,dir.z>0?27:232);
+            return content.TransformPoint(new Vector3((pixel.x/256-.5f)*ReferenceScoreHub.Size,.105f,(.5f-pixel.y/256)*ReferenceScoreHub.Size));
+        }
+        void CenterStickInSlot(Transform stick)
+        {
+            var meshes=stick.GetComponentsInChildren<MeshRenderer>().Where(r=>r.enabled&&r.gameObject.activeInHierarchy&&!WardrobeModelVisual.IsShadow(r)).ToArray();
+            if(meshes.Length==0)return;
+            var solids=meshes.Where(r=>r.sharedMaterials.Any(m=>m!=null&&m.renderQueue<3000)).ToArray();
+            var body=solids.Length>0?solids:meshes;var b=body[0].bounds;foreach(var r in body.Skip(1))b.Encapsulate(r.bounds);
+            var target=stick.position;var eye=Camera.transform.position;
+            // A thick ornament sits above the plane. Follow the camera ray so its visible
+            // centre stays on the plate's slot instead of drifting upwards on the far side.
+            var desired=eye+(target-eye)*((b.center.y-eye.y)/(target.y-eye.y));
+            var shift=desired-b.center;shift.y=0;stick.position+=shift;
+        }
         public Transform CreateEffectStick(int seat=-1)
         {
             var root = new GameObject("Carried riichi stick").transform;
@@ -327,7 +345,7 @@ namespace YunJian.Riichi
         // The deposited riichi stick and the newest meld are the anchors that the hand
         // animations carry their object to.
         public Transform StickTarget(int seat) => stickAnchors.TryGetValue(seat, out var stick) ? stick : null;
-        public Vector3 StickPoint(int seat) { var stick = StickTarget(seat); return stick != null ? stick.position : Quaternion.Euler(0, Angle(seat), 0) * new Vector3(0, .105f, -.833f); }
+        public Vector3 StickPoint(int seat) { var stick = StickTarget(seat); return stick != null ? stick.position : StickSlot(seat); }
         // A committed nuki event carries a one-based extraction count. Older hosts
         // omit it, in which case their newest North remains a compatible target.
         public Transform NorthTarget(int seat, int extraction = 0)
@@ -613,7 +631,8 @@ namespace YunJian.Riichi
                     var stick = CreateEffectStick(i);stick.name="Riichi stick seat "+i;stick.SetParent(seat, false);
                     // The plate's lower recessed slot holds the deposited stick; it has to sit
                     // above the plate surface (hub root y = .092) instead of on the table.
-                    stick.localPosition = new Vector3(0, .105f, -.833f);
+                    stick.position = StickSlot(i);
+                    CenterStickInSlot(stick);
 
                     stickAnchors[i] = stick;
                 }

@@ -64,7 +64,7 @@ namespace YunJian.Riichi
             // Keep a small gap between the title and the player name.
             string titleName=RankRules.TitleOf(player);
             if(string.IsNullOrEmpty(titleName))BadgeImage("notitle",r.center,new Vector2(-236,64),new Vector2(263,50),u,0,.5f);
-            else{var at=r.center+new Vector2(-236,-64)*u;PlayerTitles.DrawPill(new Rect(at.x+12*u,at.y-20*u,239*u,40*u),titleName,nameStyle);}
+            else{var at=r.center+new Vector2(-236,-64)*u;PlayerTitles.DrawPill(new Rect(at.x+12*u,at.y-20*u,239*u,40*u),titleName,nameStyle,player.profile?.titleId);}
             GUI.Label(new Rect(r.center.x-209.9f*u,r.center.y-26*u,r.width*.65f,45*u),player.name,nameStyle);
         }
         static Rect RectAt(float[] d,Vector2 offset)=>new Rect(offset.x+d[0]*2/3,offset.y+d[1]*2/3,d[2]*2/3,d[3]*2/3);

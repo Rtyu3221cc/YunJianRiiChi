@@ -1,0 +1,88 @@
+{
+ "items": [
+  {
+   "id": "tablecloth_26fll",
+   "name": "桌布-绽放的苍月草",
+   "category": "cloth",
+   "sourceItemId": 308061,
+   "builtin": false,
+   "texture": "Majsoul/NativeReview/NovR10/Static/tablecloth_26fll/texture",
+   "preview": "Majsoul/NativeReview/NovR10/Static/tablecloth_26fll/preview",
+   "icon": "Majsoul/NativeReview/NovR10/Static/tablecloth_26fll/preview"
+  },
+  {
+   "id": "mjp_26fll",
+   "name": "牌背-芙莉莲的法杖",
+   "category": "tileBack",
+   "sourceItemId": 308062,
+   "builtin": false,
+   "hand": "Majsoul/NativeReview/NovR10/Static/mjp_26fll/hand",
+   "table": "Majsoul/NativeReview/NovR10/Static/mjp_26fll/table",
+   "preview": "Majsoul/NativeReview/NovR10/Static/mjp_26fll/preview",
+   "icon": "Majsoul/NativeReview/NovR10/Static/mjp_26fll/preview"
+  },
+  {
+   "id": "headframe_26fll",
+   "name": "头像框-岁月的花冠",
+   "category": "headFrame",
+   "sourceItemId": 308063,
+   "builtin": false,
+   "texture": "Majsoul/NativeReview/NovR10/Static/headframe_26fll/texture",
+   "avatarWindow": [
+    0.16875,
+    0.16875,
+    0.6625,
+    0.6625
+   ],
+   "icon": "Majsoul/NativeReview/NovR10/Static/headframe_26fll/texture"
+  },
+  {
+   "id": "ron_26fll",
+   "name": "和牌-变出花田的魔法",
+   "category": "winEffect",
+   "sourceItemId": 308058,
+   "builtin": false,
+   "icon": "Majsoul/NativeReview/NovR10/Icons/ron_26fll",
+   "nativeEffect": "NovR10/ron_26fll",
+   "cue": "ron_26fll",
+   "effect": "Majsoul/NativeReview/NovR10/ron_26fll-playback",
+   "duration": 6
+  },
+  {
+   "id": "effect_liqi_26fll",
+   "name": "立直-普通攻击魔法",
+   "category": "riichiEffect",
+   "sourceItemId": 308059,
+   "builtin": false,
+   "icon": "Majsoul/NativeReview/NovR10/Icons/effect_liqi_26fll",
+   "nativeEffect": "NovR10/effect_liqi_26fll",
+   "cue": "effect_liqi_26fll",
+   "effect": "Majsoul/NativeReview/NovR10/effect_liqi_26fll-playback",
+   "duration": 4
+  },
+  {
+   "id": "liqi_26fll",
+   "name": "立直棒-菲伦的法杖",
+   "category": "stick",
+   "sourceItemId": 308060,
+   "builtin": false,
+   "icon": "Majsoul/NativeReview/NovR10/Icons/liqi_26fll",
+   "modelPrefab": "Majsoul/NativeReview/NovR10/liqi_26fll",
+   "duration": 4
+  }
+ ],
+ "music": [
+  {
+   "id": 30600004,
+   "name": "未完诗篇",
+   "resource": "Majsoul/Audio/lobby_26wansheng",
+   "group": "lobby"
+  },
+  {
+   "id": 30610007,
+   "name": "弦上华章",
+   "resource": "Majsoul/Audio/26wansheng_duiju",
+   "group": "mj"
+  }
+ ]
+}

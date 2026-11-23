@@ -1,0 +1,1647 @@
+{
+ "effects": [
+  {
+   "sourceKey": "ron_26fll",
+   "id": "ron_26fll",
+   "category": "winEffect",
+   "group": "effect_hupai",
+   "name": "和牌-变出花田的魔法",
+   "sourceId": 308058,
+   "sargs": [
+    "1500",
+    "1"
+   ],
+   "legacy": false,
+   "iconSource": "MyAssets/deco/effect_hupai/ron_26fll/pic/ron_26fll.jpg",
+   "allPrefabs": [
+    "myassets/deco/effect_hupai/ron_26fll/3d/prefab/ron_26fll.prefab"
+   ],
+   "particleLayers": 54,
+   "prefab": "myassets/deco/effect_hupai/ron_26fll/3d/prefab/ron_26fll.prefab",
+   "nativeEffect": "NovR10/ron_26fll",
+   "icon": "Majsoul/NativeReview/NovR10/Icons/ron_26fll"
+  },
+  {
+   "sourceKey": "effect_liqi_26fll",
+   "id": "effect_liqi_26fll",
+   "category": "riichiEffect",
+   "group": "effect_lizhi",
+   "name": "立直-普通攻击魔法",
+   "sourceId": 308059,
+   "sargs": [
+    "shu",
+    "1"
+   ],
+   "legacy": false,
+   "iconSource": "MyAssets/deco/effect_lizhi/effect_liqi_26fll/pic/effect_liqi_26fll.jpg",
+   "allPrefabs": [
+    "myassets/deco/effect_lizhi/effect_liqi_26fll/3d/prefab/effect_liqi_26fll.prefab"
+   ],
+   "particleLayers": 131,
+   "prefab": "myassets/deco/effect_lizhi/effect_liqi_26fll/3d/prefab/effect_liqi_26fll.prefab",
+   "nativeEffect": "NovR10/effect_liqi_26fll",
+   "icon": "Majsoul/NativeReview/NovR10/Icons/effect_liqi_26fll"
+  },
+  {
+   "sourceKey": "liqi_26fll",
+   "id": "liqi_26fll",
+   "category": "stick",
+   "group": "lizhibang",
+   "name": "立直棒-菲伦的法杖",
+   "sourceId": 308060,
+   "sargs": [],
+   "legacy": false,
+   "iconSource": "MyAssets/deco/lizhibang/liqi_26fll/pic/liqi_26fll.jpg",
+   "allPrefabs": [
+    "myassets/deco/lizhibang/liqi_26fll/3d/prefab/liqi_26fll.prefab"
+   ],
+   "prefab": "myassets/deco/lizhibang/liqi_26fll/3d/prefab/liqi_26fll.prefab",
+   "nativeEffect": "NovR10/liqi_26fll",
+   "icon": "Majsoul/NativeReview/NovR10/Icons/liqi_26fll"
+  }
+ ],
+ "unsupported": [
+  {
+   "kind": "material",
+   "name": "fulilian_ron_001",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex",
+    "_Mask2Tex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_002",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_Mask2Tex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_002",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_Mask2Tex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_001",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex",
+    "_Mask2Tex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_002",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_Mask2Tex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_003",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_Mask2Tex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_006",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveMaskTex",
+    "_DissolveTex",
+    "_DistortMaskTex",
+    "_DistortTex",
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_007",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveMaskTex",
+    "_DissolveTex",
+    "_Distort2Tex",
+    "_DistortMaskTex",
+    "_DistortTex",
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_009",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_010",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_012",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_014",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_016",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_017",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_018",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_018",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_018",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_019",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_020",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_021",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_022",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_017",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_022",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_023",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_023",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_023",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_021",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_024",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_Mask2Tex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_025",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_026",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_027",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_028",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_028",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_029",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_030",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_031",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_DistortTex",
+    "_MainTex",
+    "_Mask2Tex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_032",
+   "shader": "FizzFX/Standard",
+   "textures": []
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_017",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_033",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_034",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "fulilian_ron_035",
+   "shader": "FizzFX/Standard",
+   "textures": []
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_002",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_003",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_005",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_006",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_007",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_008",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_009",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_010",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_012",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_014",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_003",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_005",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_006",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_007",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_008",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_012",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_014",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_009",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_010",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_003",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_005",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_006",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_007",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_008",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_012",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_014",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_003",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_005",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_006",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_007",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_008",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_012",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_014",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_009",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_010",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_003",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_005",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_006",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_007",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_008",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_012",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_014",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_003",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_005",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_006",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_007",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_008",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_012",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_014",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_003",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_005",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_006",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_007",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_008",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_012",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_014",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_003",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_005",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_006",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_007",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_008",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_012",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_014",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_003",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_005",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_006",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_007",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_008",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_012",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_014",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_003",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_004",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_005",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_006",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_007",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_008",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_011",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_012",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_013",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_014",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_015",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_017",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_018",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_019",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_020",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_021",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DissolveTex",
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_009",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_010",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "effect_liqi_fulilian_025",
+   "shader": "FizzFX/Standard",
+   "textures": [
+    "_DistortTex",
+    "_MainTex",
+    "_Mask2Tex",
+    "_MaskTex"
+   ]
+  },
+  {
+   "kind": "component",
+   "effect": "liqi_26fll",
+   "node": "riichistick",
+   "type": "BoxCollider"
+  },
+  {
+   "kind": "material",
+   "name": "riichistick_d",
+   "shader": "Catfood/Cartoon",
+   "textures": [
+    "_MainTex"
+   ]
+  },
+  {
+   "kind": "material",
+   "name": "yingzi_d",
+   "shader": "Catfood/Additive Transparent",
+   "textures": [
+    "_MainTex"
+   ]
+  }
+ ]
+}

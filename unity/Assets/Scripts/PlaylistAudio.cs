@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,6 +6,12 @@ using UnityEngine;
 
 namespace YunJian.Riichi
 {
+    public sealed class RiichiMusicMix {
+        readonly float[] from=new float[4],weights=new float[4];int target=-1;float began;
+        public bool Uses(int seat)=>seat==target;
+        public float[] Sample(float now){float t=Mathf.Clamp01((now-began)/PlaylistAudio.FadeSeconds);t=t*t*(3-2*t);for(int i=0;i<4;i++)weights[i]=Mathf.Sqrt(Mathf.Lerp(from[i]*from[i],i==target?1:0,t));return weights;}
+        public void Target(int seat,float now){Sample(now);Array.Copy(weights,from,4);target=seat;began=now;}
+    }
     public sealed class PlaylistAudio : MonoBehaviour
     {
         public const float FadeSeconds = 2;
@@ -19,8 +26,20 @@ namespace YunJian.Riichi
         readonly Dictionary<string, List<int>> selected = new Dictionary<string, List<int>>();
         readonly Dictionary<string, bool> random = new Dictionary<string, bool>();
         readonly Dictionary<int, AudioClip> clips = new Dictionary<int, AudioClip>();
-        AudioSource[] channels; AudioSource audition,riichi;string riichiKey;
-        public bool RiichiPlaying=>riichi!=null&&riichi.isPlaying;
+        AudioSource[] channels,riichiChannels; AudioSource audition;string riichiKey,riichiRequested;
+        readonly string[] riichiResources=new string[4];readonly RiichiMusicMix riichiMix=new RiichiMusicMix();int riichiRequest;
+        public float[] RiichiVolumes=>riichiChannels.Select(x=>x.volume).ToArray();
+        public string RiichiTrack=>riichiKey;
+        // Public accepted declaration order survives the bounded audio event list.
+        public static int LatestRiichi(RoomView view){
+            if(view?.players==null)return -1;
+            int seat=-1,order=0;
+            for(int i=0;i<view.players.Length;i++)if(view.players[i].riichi>0&&view.players[i].riichiOrder>order){order=view.players[i].riichiOrder;seat=i;}
+            // Compatibility for old hosts: prefer the last accepted stick event.
+            if(seat<0)foreach(var e in (view.audioEvents??new PublicSound[0]).Where(e=>e.kind=="riichi-stick").OrderBy(e=>e.id))if(e.seat>=0&&e.seat<view.players.Length&&view.players[e.seat].riichi>0)seat=e.seat;
+            return seat;
+        }
+        public bool RiichiPlaying=>riichiChannels!=null&&riichiChannels.Any(x=>x.isPlaying);
         public bool ExternalAudition {get;set;}
         public bool ContextVoicePlaying {get;set;}
         // The voice page refreshes this every frame it is the visible page. If a
@@ -53,7 +72,9 @@ namespace YunJian.Riichi
             Active = this; AppPreferences.Load();
             Tracks = JsonUtility.FromJson<MusicCatalog>(Resources.Load<TextAsset>("Majsoul/Settings/music").text).tracks;
             channels = new[] { gameObject.AddComponent<AudioSource>(), gameObject.AddComponent<AudioSource>() };
-            audition = gameObject.AddComponent<AudioSource>();riichi=gameObject.AddComponent<AudioSource>();riichi.playOnAwake=false;riichi.loop=true;riichi.spatialBlend=0;
+            audition = gameObject.AddComponent<AudioSource>();
+            riichiChannels=Enumerable.Range(0,4).Select(_=>gameObject.AddComponent<AudioSource>()).ToArray();
+            foreach(var source in riichiChannels){source.playOnAwake=false;source.loop=true;source.spatialBlend=0;source.volume=0;}
             foreach (var s in channels.Concat(new[] { audition })) { s.playOnAwake = false; s.spatialBlend = 0; s.loop = false; s.volume = 0; }
             foreach (var group in new[] { "lobby", "mj" }) {
                 var valid = Tracks.Where(t => t.group == group).Select(t => t.id).ToArray();
@@ -89,17 +110,40 @@ namespace YunJian.Riichi
             UpdateRiichi();UpdateDuck(Time.unscaledDeltaTime);RefreshVolumes();
             foreach(var channel in channels)if(channel.clip!=null){var track=Tracks.FirstOrDefault(t=>clips.TryGetValue(t.id,out var clip)&&clip==channel.clip);if(track!=null)WardrobePackService.Touch(track.resource);}
             if(audition.clip!=null&&AuditionId!=0)WardrobePackService.Touch(Tracks.First(t=>t.id==AuditionId).resource);
-            if(riichi.clip!=null&&client.State!=null)WardrobePackService.Touch(WardrobeRuntime.Item(client.State,client.State.you,"music").audio);
+            for(int i=0;i<4;i++)if(riichiChannels[i].clip!=null&&riichiChannels[i].isPlaying)WardrobePackService.Touch(riichiResources[i]);
             var source = channels[activeChannel];
             if(!loading&&!fading&&!roundPaused&&(source.clip==null||!WardrobePackService.AssetAvailable(Tracks.FirstOrDefault(t=>t.id==CurrentId)?.resource??""))){int next=Next(Group);if(next!=0||CurrentId!=0)SwitchTo(next);}
             if (!loading && !fading && source.clip != null && source.isPlaying && source.clip.length - source.time <= FadeSeconds) SwitchTo(Next(Group));
         }
         void UpdateRiichi(){
-            var view=client.State;bool play=client.LobbyPlaying&&view!=null&&(view.phase=="play"||view.phase=="reaction")&&view.you>=0&&view.you<view.players.Length&&view.players[view.you].riichi>0;
-            string next=play?view.audioRoom+":"+view.handSeq+":"+WardrobeRuntime.Item(view,view.you,"music").id:null;
-            if(roundEnvelope.Held&&RoundMusicGain>0&&riichiKey!=null)next=riichiKey;
-            if(next!=riichiKey){riichi.Stop();riichiKey=next;if(play){riichi.clip=WardrobePackService.Asset<AudioClip>(WardrobeRuntime.Item(view,view.you,"music").audio);if(riichi.clip!=null)riichi.Play();}}
-            riichi.volume=AppPreferences.Gain(1)*RoundMusicGain;
+            var view=client.State;int seat=LatestRiichi(view);
+            bool play=client.LobbyPlaying&&view!=null&&(view.phase=="play"||view.phase=="reaction")&&seat>=0;
+            string next=play?view.audioRoom+":"+view.handSeq+":"+seat+":"+view.players[seat].riichiOrder:null;
+            if(roundEnvelope.Held&&RoundMusicGain>0)next=riichiRequested;
+            if(next!=riichiRequested){
+                riichiRequested=next;int serial=++riichiRequest;
+                if(next==null){riichiKey=null;riichiMix.Target(-1,RoundNow);}
+                else {var music=WardrobeRuntime.Item(view,seat,"music");StartCoroutine(LoadRiichi(next,seat,music.audio,serial));}
+            }
+            var weights=riichiMix.Sample(RoundNow);
+            for(int i=0;i<4;i++){
+                // Identical tracks stay phase-aligned and do not gain loudness while
+                // ownership moves to a later declarer using the same selection.
+                float sum=Enumerable.Range(0,4).Where(j=>riichiChannels[j].clip!=null&&riichiChannels[j].clip==riichiChannels[i].clip).Sum(j=>weights[j]);
+                riichiChannels[i].volume=weights[i]/Mathf.Max(1,sum)*AppPreferences.Gain(1)*RoundMusicGain;
+                if(weights[i]<=0&&!riichiMix.Uses(i)&&riichiChannels[i].clip!=null){riichiChannels[i].Stop();riichiChannels[i].clip=null;}
+            }
+        }
+        IEnumerator LoadRiichi(string key,int seat,string resource,int serial){
+            // Keep the previous player's track audible until the next clip is ready.
+            AudioClip clip;
+            clip=WardrobePackService.Asset<AudioClip>(resource);
+            if(clip==null){if(serial==riichiRequest)riichiRequested=null;yield break;}
+            if(clip.loadState==AudioDataLoadState.Unloaded)clip.LoadAudioData();
+            while(clip.loadState==AudioDataLoadState.Loading){yield return null;if(serial!=riichiRequest)yield break;}
+            if(serial!=riichiRequest||clip.loadState==AudioDataLoadState.Failed)yield break;
+            var source=riichiChannels[seat];var same=riichiChannels.FirstOrDefault(x=>x!=source&&x.clip==clip&&x.isPlaying);float position=same!=null?same.time:0;source.Stop();source.clip=clip;source.volume=0;source.time=position;source.Play();
+            if(suspended)source.Pause();riichiResources[seat]=resource;riichiKey=key;riichiMix.Target(seat,RoundNow);
         }
         public void ApplyPlaylist() {
             StopAudition();
@@ -154,7 +198,7 @@ namespace YunJian.Riichi
             audition.volume = AppPreferences.Gain(1); if (audition.clip != null) { audition.UnPause(); if (!audition.isPlaying) audition.Play(); }
         }
         public void StopAudition() { audition.Stop(); AuditionId = 0; }
-        void OnApplicationPause(bool pause) { suspended = pause; foreach (var s in channels.Concat(new[] { audition,riichi })) { if (pause) s.Pause(); else if(!roundPaused||s==audition)s.UnPause(); } }
+        void OnApplicationPause(bool pause) { suspended = pause; foreach (var s in channels.Concat(riichiChannels).Concat(new[] { audition })) { if (pause) s.Pause(); else if(!roundPaused||s==audition)s.UnPause(); } }
         void OnDestroy() { if (Active == this) Active = null; }
     }
 }

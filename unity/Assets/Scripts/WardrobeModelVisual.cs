@@ -18,9 +18,11 @@ namespace YunJian.Riichi {
         public void Initialize(WardrobeItem item,float length){
             if(!string.IsNullOrEmpty(item.modelPrefab)){
                 var prefab=WardrobePackService.Asset<GameObject>(item.modelPrefab);if(prefab==null)throw new InvalidOperationException("Missing wardrobe model "+item.id);WardrobePackService.Lease(item.modelPrefab,gameObject);
-                var instance=Instantiate(prefab,transform,false).transform;
-                foreach(var r in instance.GetComponentsInChildren<MeshRenderer>(true))if(r.name.ToLowerInvariant().Contains("shadow"))r.gameObject.SetActive(false);
-                Normalize(instance,length);motions=instance.GetComponentsInChildren<NativeEffectMotion>(true);began=Time.unscaledTime;
+                var fit=new GameObject("Stick fit").transform;fit.SetParent(transform,false);
+                var instance=Instantiate(prefab,fit,false).transform;
+                RestoreModelShaders(instance);
+                foreach(var r in instance.GetComponentsInChildren<MeshRenderer>(true))if(IsShadow(r))r.gameObject.SetActive(false);
+                Normalize(fit,length);motions=instance.GetComponentsInChildren<NativeEffectMotion>(true);began=Time.unscaledTime;
                 foreach(var ps in instance.GetComponentsInChildren<ParticleSystem>(true)){var main=ps.main;main.scalingMode=ParticleSystemScalingMode.Hierarchy;ps.Play(false);}
                 return;
             }
@@ -38,19 +40,47 @@ namespace YunJian.Riichi {
             // Original models use different long axes; a deposited stick lies across X.
             Normalize(content,length);
         }
+        void RestoreModelShaders(Transform instance){
+            var shader=Resources.Load<Shader>("Majsoul/Wardrobe/StaticDecoration");
+            foreach(var renderer in instance.GetComponentsInChildren<MeshRenderer>(true)){
+                var surfaces=renderer.sharedMaterials;
+                for(int i=0;i<surfaces.Length;i++){
+                    if(surfaces[i]==null||surfaces[i].shader.name!="YunJian/StaticDecoration")continue;
+                    // Published packs can carry an older embedded shader. Use
+                    // the current app's implementation while preserving values.
+                    var copy=new Material(surfaces[i]){shader=shader};copy.renderQueue=surfaces[i].renderQueue;materials.Add(copy);surfaces[i]=copy;
+                }
+                renderer.sharedMaterials=surfaces;
+            }
+        }
+        // Some source nodes have their body/shadow names interchanged. Materials
+        // identify the actual shadow; node names alone can hide the complete stick.
+        public static bool IsShadow(MeshRenderer renderer){
+            var surfaces=renderer.sharedMaterials;if(surfaces.Length==0)return false;
+            if(surfaces.All(m=>m!=null&&m.name.IndexOf("shadow",StringComparison.OrdinalIgnoreCase)>=0))return true;
+            // The original star wand names its transparent shadow "yinzi" and
+            // its material "Material #73". It must not enlarge the fitting bounds.
+            return renderer.name=="yinzi"&&surfaces.All(m=>m!=null&&m.shader.name=="YunJian/StaticDecoration");
+        }
         static void Normalize(Transform content,float length){var bounds=Bounds(content);var size=bounds.size;if(size.y>size.x&&size.y>size.z)content.localRotation=Quaternion.Euler(0,0,90);else if(size.z>size.x)content.localRotation=Quaternion.Euler(0,90,0);bounds=Bounds(content);content.localScale*=length/Mathf.Max(.001f,bounds.size.x);bounds=Bounds(content);content.localPosition-=new Vector3(bounds.center.x,bounds.min.y,bounds.center.z);}
         static Bounds Bounds(Transform root){
-            bool first=true,firstSolid=true;var b=new Bounds(Vector3.zero,Vector3.one);var solidBounds=new Bounds();
-            foreach(var mf in root.GetComponentsInChildren<MeshFilter>()){
-                var renderer=mf.GetComponent<MeshRenderer>();if(renderer==null||!renderer.enabled||mf.sharedMesh==null)continue;
-                bool solid=renderer.sharedMaterials.Any(m=>m!=null&&m.renderQueue<3000);
-                var bounds=mf.sharedMesh.bounds;
-                for(int i=0;i<8;i++){var p=bounds.center+Vector3.Scale(bounds.extents,new Vector3((i&1)==0?-1:1,(i&2)==0?-1:1,(i&4)==0?-1:1));p=root.parent.InverseTransformPoint(mf.transform.TransformPoint(p));if(first){b=new Bounds(p,Vector3.zero);first=false;}else b.Encapsulate(p);if(solid){if(firstSolid){solidBounds=new Bounds(p,Vector3.zero);firstSolid=false;}else solidBounds.Encapsulate(p);}}
+            var filters=root.GetComponentsInChildren<MeshFilter>().Where(f=>f.sharedMesh!=null&&f.GetComponent<MeshRenderer>()?.enabled==true).ToArray();
+            var body=filters.Where(f=>f.GetComponent<MeshRenderer>().sharedMaterials.Any(m=>m!=null&&(m.renderQueue<3000||m.shader.name=="YunJian/StaticDecoration"||m.shader.name.StartsWith("Unlit/",StringComparison.Ordinal)))).ToArray();
+            // Transparent glass is still body geometry. Particle/glow planes
+            // must not shrink it, even if their bounds are several times wider.
+            if(body.Length>0)filters=body;
+            bool first=true,firstSolid=true;var bounds=new Bounds(Vector3.zero,Vector3.one);var solids=new Bounds();
+            foreach(var filter in filters){
+                var local=filter.sharedMesh.bounds;bool solid=filter.GetComponent<MeshRenderer>().sharedMaterials.Any(m=>m!=null&&m.renderQueue<3000);
+                for(int i=0;i<8;i++){
+                    var point=local.center+Vector3.Scale(local.extents,new Vector3((i&1)==0?-1:1,(i&2)==0?-1:1,(i&4)==0?-1:1));
+                    point=root.parent.InverseTransformPoint(filter.transform.TransformPoint(point));
+                    if(first){bounds=new Bounds(point,Vector3.zero);first=false;}else bounds.Encapsulate(point);
+                    if(solid){if(firstSolid){solids=new Bounds(point,Vector3.zero);firstSolid=false;}else solids.Encapsulate(point);}
+                }
             }
-            // Source shadows/glows may be much larger than the actual stick.
-            // Fit and centre its solid body; preserve the authored decoration ratios.
-            float full=Mathf.Max(b.size.x,Mathf.Max(b.size.y,b.size.z)),body=Mathf.Max(solidBounds.size.x,Mathf.Max(solidBounds.size.y,solidBounds.size.z));
-            return firstSolid||body<full*.4f?b:solidBounds;
+            float all=Mathf.Max(bounds.size.x,Mathf.Max(bounds.size.y,bounds.size.z)),opaque=Mathf.Max(solids.size.x,Mathf.Max(solids.size.y,solids.size.z));
+            return firstSolid||opaque<all*.4f?bounds:solids;
         }
         public void Sample(float age){foreach(var motion in motions??new NativeEffectMotion[0])motion.Sample(age);}
         void Update()=>Sample(Time.unscaledTime-began);

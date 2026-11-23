@@ -177,7 +177,7 @@ namespace YunJian.Riichi
             validationCutInBegan=-1;
 #endif
             riichiVisual?.StopVisuals();EndTsumoTopple();
-            Finish(); FinishCall(); EndImpact(); EndNorthEffects(); EndWinEffects(); winningBursts.Clear();firedBursts.Clear();riichiCalls.Clear();winCutIn.Reset();cutIns.Clear();ronLead=null; ClearQueuedHands(); callEvents.Clear(); room = null; cursor = 0;spokenEvent=-1; last = Time.unscaledTime;
+            Finish(); FinishCall(); EndImpact(); EndNorthEffects(); EndWinEffects(); winningBursts.Clear();firedBursts.Clear();riichiCalls.Clear();winCutIn.Reset();cutIns.Clear(); ClearQueuedHands(); callEvents.Clear(); room = null; cursor = 0;spokenEvent=-1; last = Time.unscaledTime;
         }
         public void Accept(RoomView view)
         {
@@ -187,8 +187,8 @@ namespace YunJian.Riichi
             bool stale = Time.unscaledTime-last >= 8; last = Time.unscaledTime;
             var fresh = (view.audioEvents ?? new PublicSound[0]).Where(e => e.id > cursor).OrderBy(e => e.id).ToArray();
             cursor = Math.Max(cursor, view.audioSeq);
-            if (stale) { Finish(); FinishCall(); EndNorthEffects(); EndWinEffects(); ClearQueuedHands(); callEvents.Clear(); return; }
-            if(view.phase!="result" && !ShowWinPresentation)winningBursts.Clear();firedBursts.Clear();
+            if (stale) { Finish(); FinishCall(); EndNorthEffects(); EndWinEffects();winCutIn.Reset();cutIns.Clear();winningBursts.Clear();firedBursts.Clear(); ClearQueuedHands(); callEvents.Clear(); return; }
+            if(view.phase!="result" && !ShowWinPresentation){winningBursts.Clear();firedBursts.Clear();}
             // A newly received win is queued behind unfinished discard/declaration hands.
             foreach (var item in fresh)
             {
@@ -474,7 +474,7 @@ namespace YunJian.Riichi
         void SpawnWin(PublicSound item,float now)
         {
             if(string.IsNullOrEmpty(item.tile))return;
-            string key=item.from+":"+item.winSource+":"+item.tile;
+            string key=table.Client.State.handSeq+":"+item.seat+":"+item.from+":"+item.winSource+":"+item.tile;
             if(!winningBursts.Add(key))return;
             var effect=new GameObject("Original winning tile effect "+key).AddComponent<WinTileEffect>();effect.transform.SetParent(transform,false);
             var choice=WardrobeRuntime.Item(table.Client.State,item.seat,"winEffect");
@@ -485,7 +485,7 @@ namespace YunJian.Riichi
             float hold=effect.PlaybackDuration;if(effect.SourceResultDelay.HasValue){float lead=2;if(item.kind=="tsumo"){var hand=WardrobeRuntime.Item(table.Client.State,item.seat,"hand");lead=2.8f-SourcePlaybackContracts.HandAction(hand,"Zimo").release-.1f;}hold=Mathf.Max(0,lead)+effect.SourceResultDelay.Value;}winResultReadyAt=Mathf.Max(winResultReadyAt,effect.StartedAt+hold);
             winEffects.Add(effect);SpawnedWinEffects++;
             if(!SuppressShouts&&yakumanCinematic==null){
-                var detail=YakumanCinematic.Select(table.Client.State);
+                var detail=YakumanCinematic.Select(table.Client.State,item.seat);
                 if(detail!=null){var action=new PublicSound{seat=detail.seat,from=detail.from,tile=detail.tile,kind=detail.ron?"ron":"tsumo",winSource=detail.winSource};yakumanCinematic=new YakumanCinematic();yakumanCinematic.Play(table,detail,action);yakumanStartedAt=effect.StartedAt+2+(effect.SourceResultDelay??0);winResultReadyAt=Mathf.Max(winResultReadyAt,yakumanStartedAt+YakumanCinematic.Duration);}
             }
         }
@@ -560,11 +560,10 @@ namespace YunJian.Riichi
             impact.rotation = Quaternion.LookRotation(impact.position - table.Camera.transform.position, Vector3.up);
         }
         // Multiple ron (一炮多响.mp4): every winner on the same discard shouts 和 at
-        // once, then each 满贯-or-better winner gets a cut-in in turn, then one win
-        // effect plays on the tile, using the first winner's choice.
+        // once. Each winner then gets their own cut-in, equipped effect and
+        // cinematic in committed event order before settlement can open.
         readonly Queue<PublicSound> cutIns=new Queue<PublicSound>();
         readonly List<PublicSound> winShouts=new List<PublicSound>();
-        PublicSound ronLead;
         void BeginCall(PublicSound item) { call=item; callStarted=Time.unscaledTime;
 #if UNITY_EDITOR
             validationCallBegan=ValidationTime;
@@ -573,7 +572,6 @@ namespace YunJian.Riichi
             if(!IsWin(item))return;
             winShouts.Add(item);
             if(item.kind=="ron"){
-                ronLead=item;
                 while(callEvents.Count>0&&callEvents.Peek().kind=="ron"&&callEvents.Peek().from==item.from&&callEvents.Peek().tile==item.tile){
                     var other=callEvents.Dequeue();winShouts.Add(other);
                     if(!SuppressShouts&&other.id!=spokenEvent){spokenEvent=other.id;GetComponent<RoleVoice>()?.QueuePresented(room,other);}
@@ -605,7 +603,8 @@ namespace YunJian.Riichi
             float elapsed=HandAge;
             if(current?.kind=="tsumo"&&elapsed>=tsumoPlan.cue&&!tsumoSoundPlayed)PlayLandingSound();
             if (current!=null && elapsed >= PlayLength) { CompleteHandoff(); Finish(); }
-            if(cutIns.Count>0 && CallAge>=1.05f && !winCutIn.Active){
+            if(cutIns.Count>0 && CallAge>=1.05f && !winCutIn.Active && (cutIns.Peek().kind!="ron" || !WinEffectPlaying && yakumanCinematic==null && (ValidationFreeze?ValidationTime:Time.unscaledTime)>=winResultReadyAt)){
+                if(cutIns.Peek().kind=="ron")EndWinEffects();
                 var w=cutIns.Dequeue();
                 var view=GetComponent<RiichiClient>().State;bool banner=WinCutIn.Eligible(view,w.seat);
                 var players=view?.players;
@@ -614,8 +613,7 @@ namespace YunJian.Riichi
 #if UNITY_EDITOR
                 if(ValidationSequentialClock){at=ValidationTime;if(banner){validationCutInBegan=ValidationTime;winCutIn.Freeze=true;winCutIn.FrozenAge=0;}}
 #endif
-                // The shared tile's single burst follows the last cut-in.
-                if(cutIns.Count==0&&ronLead!=null){SpawnWin(ronLead,at+(banner?WinCutIn.Duration+.18f:0));ronLead=null;}
+                if(w.kind=="ron")SpawnWin(w,at+(banner?WinCutIn.Duration+.18f:0));
             }
             if (call!=null && CallAge >= 1.05f) FinishCall();
             if (current==null || motion==null || clip==null) return;
@@ -677,7 +675,7 @@ namespace YunJian.Riichi
 #if UNITY_EDITOR
         public void ValidationPlay(int seat,string kind,string tile=null,bool riichi=false,int riverIndex=0)
         {
-            Finish();FinishCall();winCutIn.Reset();cutIns.Clear();ronLead=null;EndNorthEffects();EndWinEffects();winningBursts.Clear();firedBursts.Clear();ClearQueuedHands();callEvents.Clear();ValidationFreeze=true;ValidationTime=.28f;
+            Finish();FinishCall();winCutIn.Reset();cutIns.Clear();EndNorthEffects();EndWinEffects();winningBursts.Clear();firedBursts.Clear();ClearQueuedHands();callEvents.Clear();ValidationFreeze=true;ValidationTime=.28f;
             Begin(new PublicSound {seat=seat,kind=kind,tile=tile,riichi=riichi,riverIndex=riverIndex});
             if (CallArt(kind)!=null) BeginCall(new PublicSound {seat=seat,kind=kind,tile=tile,riichi=riichi});
         }

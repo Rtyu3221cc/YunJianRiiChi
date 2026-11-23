@@ -18,6 +18,7 @@ namespace YunJian.Riichi {
   public const float SceneAt=2.15f,Duration=SceneAt+8;
   static string Canonical(string name){switch(name){case "緑一色":return "绿一色";case "清老頭":return "清老头";case "国士無双":return "国士无双";case "国士無双十三面":return "国士无双十三面";case "四槓子":return "四杠子";case "九蓮宝燈":return "九莲宝灯";case "純正九蓮宝燈":return "纯正九莲宝灯";case "四暗刻単騎":return "四暗刻单骑";default:return name;}}
   public static Plan Resolve(WinDetail detail){if(detail?.yaku==null||!detail.yaku.Any(y=>y?.yakuman>0)&&!(detail.score?.damanguan>0))return null;return Plans.Where(p=>detail.yaku.Any(y=>y!=null&&Canonical(y.name)==p.name&&(y.yakuman>0||detail.score?.damanguan>0))).OrderBy(p=>p.priority).FirstOrDefault();}
+  public static WinDetail Select(RoomView view,int seat)=> (view?.result?.details??Array.Empty<WinDetail>()).FirstOrDefault(d=>d.seat==seat&&Resolve(d)!=null);
   public static WinDetail Select(RoomView view){return(view?.result?.details??Array.Empty<WinDetail>()).Where(d=>Resolve(d)!=null).OrderBy(d=>d.seat==view.you?-1:(d.seat-view.you+view.n)%view.n).FirstOrDefault();}
   public static string[] HandTiles(WinDetail detail){
    var tiles=(detail.tiles??Array.Empty<string>()).ToList();var melds=detail.melds??Array.Empty<string>();int expected=13-melds.Length*3;

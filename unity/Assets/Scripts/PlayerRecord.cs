@@ -20,6 +20,9 @@ namespace YunJian.Riichi {
         public string playerId = "", title = "";
         public RankState rank4 = new RankState(), rank3 = new RankState();
         public int peak4, peak3;
+        public int lobbyRankPlayers = 4;
+        public List<string> pendingTitles = new List<string>();
+        public List<TitleCounter> titleProgress = new List<TitleCounter>();
         public List<string> owned = new List<string>();
         public List<string> processed = new List<string>();
         public List<ModeRecord> modes = new List<ModeRecord>();
@@ -47,6 +50,8 @@ namespace YunJian.Riichi {
             if (!PreviewOnly) Save();
         }
         static void Normalize(PlayerRecordData d) {
+            d.pendingTitles ??= new List<string>();d.titleProgress ??= new List<TitleCounter>();
+            if(d.lobbyRankPlayers!=3&&d.lobbyRankPlayers!=4)d.lobbyRankPlayers=4;
             d.rank4 ??= new RankState(); d.rank3 ??= new RankState(); d.owned ??= new List<string>(); d.processed ??= new List<string>(); d.modes ??= new List<ModeRecord>();
             foreach (var m in d.modes) { m.games ??= new List<MatchEntry>(); m.totals ??= new ModeTotals(); if (m.totals.places == null || m.totals.places.Length < 4) m.totals.places = new int[4]; m.best ??= new BestHand(); m.highlights ??= new HighlightCounts(); }
             if (string.IsNullOrEmpty(d.playerId) || d.playerId.Length != 9 || !d.playerId.All(char.IsDigit)) d.playerId = NewId();
@@ -56,17 +61,21 @@ namespace YunJian.Riichi {
         }
         static string NewId() { var r = new System.Random(Guid.NewGuid().GetHashCode()); return (r.Next(1, 10) * 100000000 + r.Next(0, 100000000)).ToString(); }
         static void Save() { if (PreviewOnly) return; PlayerPrefs.SetString(PrefKey, JsonUtility.ToJson(data)); PlayerPrefs.Save(); }
-        static void Unlock(PlayerRecordData d) { foreach (var t in PlayerTitles.All) if (!d.owned.Contains(t.id) && PlayerTitles.Earned(t, d)) d.owned.Add(t.id); }
+        static void Unlock(PlayerRecordData d,bool notify=false) { foreach (var t in PlayerTitles.All) if (!d.owned.Contains(t.id) && PlayerTitles.Earned(t, d)){d.owned.Add(t.id);if(notify&&t.condition=="achievement"&&!d.pendingTitles.Contains(t.id))d.pendingTitles.Add(t.id);} }
+        public static string PendingTitle=>Data.pendingTitles.FirstOrDefault(id=>PlayerTitles.Find(id)!=null);
+        public static void AcknowledgeTitle(string id){if(Data.pendingTitles.Remove(id))Save();}
 
         // Used by editor previews and validation; never persisted while PreviewOnly.
         public static void Replace(PlayerRecordData value) { data = value ?? new PlayerRecordData(); Normalize(data); LastChange = null; LastMatchKey = ""; Save(); Changed?.Invoke(); }
 
+        public static int LobbyRankPlayers=>Data.lobbyRankPlayers;
+        public static void ToggleLobbyRank(){Data.lobbyRankPlayers=Data.lobbyRankPlayers==3?4:3;Save();Changed?.Invoke();}
         public static RankState Rank(int n) => n == 3 ? Data.rank3 : Data.rank4;
         public static string Title => Data.title;
         public static string TitleName => PlayerTitles.NameOf(Data.title);
         public static bool Owns(string id) => Data.owned.Contains(id);
         public static void Equip(string id) { if (!Owns(id) || Data.title == id) return; Data.title = id; Save(); Changed?.Invoke(); }
-        public static PlayerRankProfile Profile => new PlayerRankProfile { set = true, rank4 = Data.rank4.level, rank3 = Data.rank3.level, title = TitleName };
+        public static PlayerRankProfile Profile => new PlayerRankProfile { set = true, rank4 = Data.rank4.level, rank3 = Data.rank3.level, title = TitleName, titleId = Title };
         public static ModeRecord Mode(string category, int n, bool create = false) {
             var m = Data.modes.FirstOrDefault(x => x.category == category && x.n == n);
             if (m == null && create) { m = new ModeRecord { category = category, n = n }; Data.modes.Add(m); }
@@ -90,7 +99,7 @@ namespace YunJian.Riichi {
             if (stats?.best != null && stats.best.Exists && (!mode.best.Exists || Better(stats.best, mode.best))) mode.best = stats.best;
             if (stats?.highlights != null) { var h = mode.highlights; var s = stats.highlights; h.yakuman += s.yakuman; h.kazoe += s.kazoe; h.sanbaiman += s.sanbaiman; h.baiman += s.baiman; h.nagashi += s.nagashi; h.doubleRiichi += s.doubleRiichi; }
             RankChange change = null;
-            if (entry.ranked) {
+            if (category == "ranked" || category == "friend") {
                 var rank = n == 3 ? data.rank3 : data.rank4;
                 bool allSoul = RankRules.Soul(rank.level) && res.standings.Where(s => s.seat != v.you).All(s => !s.bot && s.seat < (v.players?.Length ?? 0) && v.players[s.seat].profile != null && v.players[s.seat].profile.set && RankRules.Soul(n == 3 ? v.players[s.seat].profile.rank3 : v.players[s.seat].profile.rank4));
                 change = RankRules.Apply(rank, me.place, me.score, n, rounds, start, allSoul);
@@ -99,7 +108,7 @@ namespace YunJian.Riichi {
             }
             mode.games.Add(entry); if (mode.games.Count > KeepGames) mode.games.RemoveRange(0, mode.games.Count - KeepGames);
             data.processed.Add(key); if (data.processed.Count > KeepProcessed) data.processed.RemoveRange(0, data.processed.Count - KeepProcessed);
-            Unlock(data);
+            TitleAchievements.Record(data,v,me,category,n,rounds);Unlock(data,true);
             LastMatchKey = key; LastChange = change; LastCategory = category;
             Save(); Changed?.Invoke();
             return change;

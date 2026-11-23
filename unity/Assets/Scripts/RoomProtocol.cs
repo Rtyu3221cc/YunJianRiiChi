@@ -40,7 +40,7 @@ namespace YunJian.Riichi
         // Published by the player's own device; bots and old clients leave set=false.
         public PlayerRankProfile profile;
         public bool bot, auto, ready, online, takeoverMask;
-        public int score, wind, riichi, nuki, count;
+        public int score, wind, riichi, riichiOrder, nuki, count;
         public string[] melds = new string[0];
         public RiverTile[] river = new RiverTile[0];
     }
@@ -57,10 +57,10 @@ namespace YunJian.Riichi
     [Serializable] public class ResultView { public string title; public int[] delta; public bool matchOver, repeat; public WinDetail[] details; public bool draw, abort; public DrawDetail abortHand; public DrawDetail[] drawDetails = new DrawDetail[0];
         // Present only on the terminal result of a match.
         public StandingView[] standings = new StandingView[0]; public ResultRules rules; }
-    [Serializable] public class PlayerRankProfile { public bool set; public int rank4, rank3; public string title; }
+    [Serializable] public class PlayerRankProfile { public bool set; public int rank4, rank3; public string title,titleId; }
     [Serializable] public class ResultRules { public int n, rounds, start, initialDealer; public string category; }
     [Serializable] public class StandingView { public int seat, place, score; public bool bot; public SeatStats stats; }
-    [Serializable] public class SeatStats { public int hands, wins, tsumo, dealIns, riichi, calls, winTurns, winPoints, ura; public BestHand best; public HighlightCounts highlights; }
+    [Serializable] public class SeatStats { public int hands, wins, tsumo, dealIns, riichi, calls, winTurns, winPoints, ura; public BestHand best; public HighlightCounts highlights; public TitleCounter[] titleFacts; }
     [Serializable] public class HighlightCounts { public int yakuman, kazoe, sanbaiman, baiman, nagashi, doubleRiichi; }
     // A JSON null deserializes as an empty instance; an empty winning tile means none.
     [Serializable] public class BestHand { public string[] tiles = new string[0], melds = new string[0]; public string tile, limit; public bool ron; public YakuDetail[] yaku = new YakuDetail[0]; public int fanshu, fu, damanguan, defen;
@@ -77,14 +77,14 @@ namespace YunJian.Riichi
         public string character; public int skin;public bool randomCharacters;public CharacterChoice[] characterPool;
         public int emoji;public bool randomBotAppearance;public CharacterChoice[] botCharacters;
         public bool randomBotWardrobe;public WardrobeChoices[] botWardrobes;
-        public int resourceProtocol=1,setupRevision;public string resourceStatus;public string[] fallbackCharacters,fallbackWardrobes;public ResourceShareRequest resourceShare;
+        public int resourceProtocol=1,setupRevision,resourceProgress;public string resourceStatus;public string[] fallbackCharacters,fallbackWardrobes;public ResourceShareRequest resourceShare;
         public int version, n, rounds, seat, handSeq;
         public int idleSeconds=120;
         public bool red = true, bots, fillBots, lobbyFlow, ready, enabled, userActive, present=true;
     }
     [Serializable] public class HostConfig { public string host, error; public string[] addresses; public bool ready; }
     [Serializable] public class ResourcePeer {public string name,address,ticket;public int port,seat;public string[] hashes=new string[0];}
-    [Serializable] public class ResourcePeerState {public int seat;public string state;public string[] fallbackCharacters,fallbackWardrobes;}
+    [Serializable] public class ResourcePeerState {public int seat,progress;public string state;public string[] fallbackCharacters,fallbackWardrobes;}
     // Downloaded wardrobe ids of one category, offered to the host for AI outfits.
     [Serializable] public class WardrobeChoices {public string category;public string[] ids;}
     [Serializable] public class ResourceSetupView {public int revision;public long createdAt;public bool ready;public CharacterChoice[] choices;public WardrobeLoadout[] wardrobes;public ResourcePeerState[] players;}
