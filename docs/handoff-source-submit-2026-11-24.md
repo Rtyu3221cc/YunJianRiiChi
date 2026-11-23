@@ -22,4 +22,7 @@
 
 ## 提交结果
 
-准备提交并推送，完成后记录代码提交 SHA 与远端核对结果。包含后续交接记录的最终 HEAD 以 `git log -1` 为准。
+- 代码提交：[`4d46a74da88583dd734bf747d9896229b2323a2c`](https://github.com/Rtyu3221cc/YunJianRiiChi/commit/4d46a74da88583dd734bf747d9896229b2323a2c)，共 2,087 个文件，已快进推送到 `origin/main`。
+- GitHub 连接器已验证远端 main 为该 SHA，完整提交树为 `4cd5933637d7b57a3a65b84ee04caf2189465283`，与本地一致。
+- 逐文件核对暂存内容与清单及原始 Git blob；所有 2,087 项字节一致。差异空白检查的 4,779 条提示全部来自 Unity 自动生成的 `.meta/.mat/.asset/.prefab` 空字段，保留源序列化字节；手写源代码没有空白提示。
+- 此次完成后仅剩原有旧 APK 删除和未选历史产物；未清理或还原它们。README 与本交接补充另作记录提交并同步 main，最终 HEAD 以 `git log -1` 为准。
