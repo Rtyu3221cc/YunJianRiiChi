@@ -1,0 +1,1915 @@
+{
+  "version": "0.6.45",
+  "versionCode": 93,
+  "checkedAtTokyo": "2026-11-25T01:34:45+09:00",
+  "apk": {
+    "file": "yunjian-riichi-unity-0.6.45.apk",
+    "bytes": 373566474,
+    "sha256": "15dfcb0bf52cea1f5e4ec6b2872afba3c08f5ba17e9572390b6f6c0b00bf73a1",
+    "v1": true,
+    "v2": true,
+    "independentV1": true,
+    "certificateSHA256": "d1d8e506c6d3b62e9610dce294c07008057318fa9bafae702fb8b01f35f0dc2f",
+    "alignment16KB": true
+  },
+  "publicationCheckoutTests": {
+    "node": {
+      "tests": 227,
+      "passed": 227,
+      "failed": 0
+    },
+    "python": {
+      "tests": 14,
+      "passed": 14
+    }
+  },
+  "unityR15": {
+    "checks": 903,
+    "groups": {
+      "final-review": 435,
+      "final-wide-review": 435,
+      "cache-regression": 33
+    },
+    "androidDeviceTested": false,
+    "twoDeviceTested": false
+  },
+  "apkContentChecks": {
+    "audio": {
+      "localPhoneTestOnly": true,
+      "version": "0.6.45",
+      "versionCode": 93,
+      "apk": {
+        "file": "yunjian-riichi-unity-0.6.45.apk",
+        "bytes": 373566474,
+        "sha256": "15dfcb0bf52cea1f5e4ec6b2872afba3c08f5ba17e9572390b6f6c0b00bf73a1",
+        "v1": true,
+        "v2": true,
+        "independentV1": true,
+        "certificateSHA256": "d1d8e506c6d3b62e9610dce294c07008057318fa9bafae702fb8b01f35f0dc2f",
+        "alignment16KB": true
+      },
+      "embeddedNewEffectAudio": [
+        "win-default",
+        "effect_liqi_saki",
+        "effect_liqi_kuangdu",
+        "effect_liqi_akagi",
+        "effect_liqi_kaguya",
+        "effect_liqi_2211saki",
+        "effect_liqi_llx",
+        "effect_liqi_yly",
+        "effect_liqi_24ba",
+        "effect_liqi_25hf",
+        "effect_liqi_25yh",
+        "effect_liqi_26dj",
+        "ron_chilin",
+        "ron_26summer",
+        "ron_26shuiyi",
+        "effect_liqi_23wansheng",
+        "effect_liqi_23winter",
+        "effect_liqi_24chunjie",
+        "effect_liqi_24haidao",
+        "effect_liqi_24summer",
+        "effect_liqi_nanfenghua",
+        "effect_liqi_24imas",
+        "effect_liqi_24winter",
+        "effect_liqi_25summer",
+        "effect_liqi_25dongri",
+        "effect_liqi_26chunjie",
+        "effect_liqi_chilin",
+        "effect_liqi_26shuiyi",
+        "effect_liqi_feichangshitai",
+        "effect_liqi_mofashaonv",
+        "effect_liqi_20chunjie",
+        "effect_liqi_szx",
+        "effect_liqi_xhzy",
+        "effect_liqi_nws",
+        "effect_liqi_jd",
+        "effect_liqi_hl",
+        "effect_liqi_music",
+        "effect_liqi_21chunjie",
+        "effect_liqi_21cyber",
+        "effect_liqi_21magic",
+        "effect_liqi_21zhounian",
+        "effect_liqi_xiyuansi",
+        "effect_liqi_21winter",
+        "effect_liqi_22chunjie",
+        "effect_liqi_22rpg",
+        "effect_liqi_beiyuan",
+        "effect_liqi_22summer",
+        "effect_liqi_23wenquan",
+        "effect_liqi_23rpg",
+        "effect_liqi_dongcheng"
+      ],
+      "baseVoiceFiles": 327,
+      "currentHostInputs": true,
+      "currentCatalogs": true,
+      "characterHandResources": 547,
+      "asunaSourceMaterials": true,
+      "androidDeviceTested": false
+    },
+    "feature": {
+      "localPhoneTestOnly": true,
+      "version": "0.6.45",
+      "versionCode": 93,
+      "manifestVersion": "0.6.45",
+      "manifestVersionCode": 93,
+      "apk": "yunjian-riichi-unity-0.6.45.apk",
+      "bytes": 373566474,
+      "sha256": "15dfcb0bf52cea1f5e4ec6b2872afba3c08f5ba17e9572390b6f6c0b00bf73a1",
+      "cinematicAssets": 7728,
+      "sweepColourScenes": [
+        "fan_chunzhengjiulianbaodeng",
+        "fan_jiulianbaodeng",
+        "fan_qinglaotou",
+        "fan_qinglaotou18",
+        "fan_ziyise",
+        "fan_ziyise18"
+      ],
+      "profileResources": 193,
+      "compiledRuntime": [
+        "YakumanCinematic",
+        "TileCenter",
+        "HandTiles",
+        "NativeWinningTileQueue",
+        "MatchIntroduction",
+        "RankRules",
+        "PlayerRecord",
+        "PlayerTitles",
+        "DrawPlayerInfo",
+        "DrawRankTable",
+        "DrawTitleBook",
+        "FinalRankBand",
+        "PublishRankProfile",
+        "StandingView",
+        "PlayerRankProfile"
+      ],
+      "androidDeviceTested": false
+    },
+    "profile": {
+      "apk": "yunjian-riichi-unity-0.6.45.apk",
+      "bytes": 373566474,
+      "sha256": "15dfcb0bf52cea1f5e4ec6b2872afba3c08f5ba17e9572390b6f6c0b00bf73a1",
+      "profileTextures": [
+        {
+          "resource": "TitleIcons/12dora.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/1jdq.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/2208joketsu.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/2208kazoku.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/22huolongguo.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/2301dhb.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/2301hfz.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/2301nw.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/2304rmls1.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/2306is.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/2306iw.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/2307_2434.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/2308event.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/2309_nanashi.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/2312nvjie.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/24012434.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/2409qilinzhan.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/24342021champion.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/24342022.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/24matsutake.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/24qyzz.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/24shenshebei.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/24sszy.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/24sxz1.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/24sxz2.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/24sxz3.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/24sxz4.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/24zgws.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/2509qilinzhan.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/25bl1.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/25bl2.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/25caihong1.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/25catfoodbowl.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/25haoyun.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/25huntianbazhe.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/25jingubei.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/25mjqnw1.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/25mkc.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/25njsj.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/25qyzz.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/25sirius.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/25sszy.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/25vspo.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/820.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/achievementgroup1.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/achievementgroup10.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/achievementgroup13.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/achievementgroup14.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/achievementgroup2.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/achievementgroup3.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/achievementgroup4.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/achievementgroup5.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/achievementgroup6.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/achievementgroup7.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/achievementgroup8.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/achievementgroup9.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/asaki.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/bleagues1.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/douyuchampion.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/douyuchampion2.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/douyuguishen.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/gai.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/ganjunwudi.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/hanagroup.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/hlg.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/hunzhichaoyuezhe.png",
+          "width": 338,
+          "height": 64,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/hunzhidizaozhe1.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/hunzhidizaozhe2.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/hunzhidizaozhe3.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/hunzhiqidizhe1.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/hunzhiqidizhe2.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/hunzhiqidizhe3.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/hunzhiqiyuezhe1.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/hunzhiqiyuezhe2.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/hunzhiqiyuezhe3.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/interhigh.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/japan_g.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/kirin.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/kirin2022.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/kirin2022cn.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/kirin2023cn.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/kirin2023jp.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/kirin2024cn.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/kirin2024jp.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/kirin2025jp.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/kirins1en.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/maolianggongyingshang.png",
+          "width": 339,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/meiconbi.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/miaoguodahufa.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/miaoguodajiangjun.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/miaoguozhizun.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/nazokonbi.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/notitle.png",
+          "width": 338,
+          "height": 64,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/squat.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/ssz_l.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/tianyuanbeidou.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/trial.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/wanxianggengxin.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/xysr.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/yinghuozhiguang.png",
+          "width": 338,
+          "height": 66,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/yuanchuzhihuo.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/zuichuhuntian.png",
+          "width": 338,
+          "height": 66,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/zuichuhuntian3.png",
+          "width": 338,
+          "height": 66,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/zuichuquesheng.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/zuichuquesheng3.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "TitleIcons/zuocangshayejia.png",
+          "width": 338,
+          "height": 65,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/1.png",
+          "width": 160,
+          "height": 160,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/2.png",
+          "width": 160,
+          "height": 160,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/3.png",
+          "width": 160,
+          "height": 160,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/4.png",
+          "width": 160,
+          "height": 160,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/5.png",
+          "width": 160,
+          "height": 160,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/6.png",
+          "width": 160,
+          "height": 160,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/7.png",
+          "width": 160,
+          "height": 160,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/bg-exp.png",
+          "width": 124,
+          "height": 15,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/bigHuBg2.png",
+          "width": 840,
+          "height": 150,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/bigHubg3.png",
+          "width": 840,
+          "height": 150,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/ClassTitleBg.png",
+          "width": 242,
+          "height": 28,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/emptyBg.png",
+          "width": 60,
+          "height": 60,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/emptyCat.png",
+          "width": 101,
+          "height": 75,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/IconCopy.png",
+          "width": 30,
+          "height": 30,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/IconEdit.png",
+          "width": 50,
+          "height": 50,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/iconGoToAchievement.png",
+          "width": 40,
+          "height": 54,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/iconHelp.png",
+          "width": 50,
+          "height": 50,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/iconInfo3.png",
+          "width": 100,
+          "height": 208,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/iconInfo4.png",
+          "width": 100,
+          "height": 208,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/IDBg.png",
+          "width": 54,
+          "height": 46,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/illustBg.png",
+          "width": 304,
+          "height": 650,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/illustFrame.png",
+          "width": 120,
+          "height": 120,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/nameBg.png",
+          "width": 78,
+          "height": 76,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/PageBg.png",
+          "width": 60,
+          "height": 60,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/pop2_close.png",
+          "width": 44,
+          "height": 43,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/radarBg.png",
+          "width": 160,
+          "height": 160,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/rankexp.png",
+          "width": 258,
+          "height": 15,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/seperateLine1.png",
+          "width": 4,
+          "height": 20,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/seperateLine2.png",
+          "width": 5,
+          "height": 20,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/smallButtonBg.png",
+          "width": 50,
+          "height": 50,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/tabBgNormal.png",
+          "width": 100,
+          "height": 208,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/tabBgSelected.png",
+          "width": 100,
+          "height": 208,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/tabInsideNormal.png",
+          "width": 75,
+          "height": 75,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/tabInsideSelected.png",
+          "width": 75,
+          "height": 75,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/trendBtnAdd.png",
+          "width": 40,
+          "height": 40,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/trendBtnAddGray.png",
+          "width": 40,
+          "height": 40,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/trendBtnMinus.png",
+          "width": 40,
+          "height": 40,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/trendBtnMinusGray.png",
+          "width": 40,
+          "height": 40,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/trendPoint.png",
+          "width": 10,
+          "height": 10,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/trendPointCat.png",
+          "width": 36,
+          "height": 36,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/trophy_copper.png",
+          "width": 105,
+          "height": 100,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/trophy_gold.png",
+          "width": 105,
+          "height": 100,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/trophy_sliver.png",
+          "width": 105,
+          "height": 100,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/using.png",
+          "width": 130,
+          "height": 99,
+          "mipCount": 1,
+          "readable": false
+        },
+        {
+          "resource": "Native/waitingroom_mask.png",
+          "width": 100,
+          "height": 100,
+          "mipCount": 1,
+          "readable": true
+        }
+      ],
+      "sourceAchievementFont": true,
+      "portraitMaskRuntime": true,
+      "editorFixtureExcluded": true,
+      "androidDeviceTested": false
+    },
+    "rank-content": {
+      "version": "0.6.45",
+      "versionCode": 93,
+      "bytes": 373566474,
+      "sha256": "15dfcb0bf52cea1f5e4ec6b2872afba3c08f5ba17e9572390b6f6c0b00bf73a1",
+      "currentRuntimeAndCatalogs": [
+        "ToggleLobbyRank",
+        "RankAnimationEnd",
+        "RankDisplayState",
+        "CenterStickInSlot",
+        "IsShadow",
+        "FitNovemberEnvironment",
+        "LatestRiichi",
+        "NativeScroll",
+        "TitleAchievements",
+        "RestoreModelShaders",
+        "SourceRenderQueue",
+        "CharacterDirectory/catalog.json",
+        "CharacterDirectory/packs-android.json",
+        "WardrobeDirectory/packs-android.json",
+        "Characters/framing.json",
+        "Characters/voice-directory.json",
+        "Settings/music.json",
+        "Wardrobe/catalog.json",
+        "Actions/playback-contracts.json",
+        "Settlement/RankCalc/layout.json",
+        "Profile/titles.json",
+        "NativeReview/NovR10/render-queues.json",
+        "current compiled StaticDecoration GLES3/Vulkan"
+      ],
+      "textures": [
+        {
+          "name": "expbar.png",
+          "width": 112,
+          "height": 277
+        },
+        {
+          "name": "expbar_base.png",
+          "width": 112,
+          "height": 277
+        },
+        {
+          "name": "expbar_base2.png",
+          "width": 112,
+          "height": 277
+        },
+        {
+          "name": "expbar_full.png",
+          "width": 112,
+          "height": 277
+        },
+        {
+          "name": "exp_line.png",
+          "width": 180,
+          "height": 10
+        },
+        {
+          "name": "rank_bg.png",
+          "width": 245,
+          "height": 228
+        },
+        {
+          "name": "rank_down.png",
+          "width": 89,
+          "height": 48
+        },
+        {
+          "name": "rank_down_arrow.png",
+          "width": 71,
+          "height": 50
+        },
+        {
+          "name": "star_down.png",
+          "width": 66,
+          "height": 38
+        },
+        {
+          "name": "star_down_arrow.png",
+          "width": 58,
+          "height": 42
+        },
+        {
+          "name": "upgrade.png",
+          "width": 64,
+          "height": 38
+        },
+        {
+          "name": "upgrade_arrow.png",
+          "width": 58,
+          "height": 42
+        },
+        {
+          "name": "skin_using.png",
+          "width": 67,
+          "height": 69
+        }
+      ],
+      "newRoles": 5,
+      "newSkins": 14,
+      "optionalIllustrationsExcluded": true,
+      "novemberPortableShader": true,
+      "shaderLocation": {
+        "parts": [
+          "assets/bin/Data/globalgamemanagers.assets.split0",
+          "assets/bin/Data/globalgamemanagers.assets.split1",
+          "assets/bin/Data/globalgamemanagers.assets.split2"
+        ],
+        "platforms": [
+          9,
+          18
+        ],
+        "compiledBytes": 16538,
+        "name": "YunJian/NovR10EffectParticle"
+      },
+      "editorFixturesExcluded": true,
+      "androidDeviceTested": false
+    },
+    "room-feedback": {
+      "version": "0.6.45",
+      "versionCode": 93,
+      "checks": 40,
+      "passed": [
+        "DrawRoomCustomization",
+        "OpenRoomCustomization",
+        "RoomCustomizationLayout",
+        "RoleBorder",
+        "urgentDisplayQueue",
+        "VisualVersion",
+        "WarmSelectedIllustrations",
+        "homeDisplayedSkin",
+        "DrawTitleRect",
+        "RoomCustomization/layout.json",
+        "CharacterHands/catalog.json",
+        "Characters/native-fonts.json",
+        "hand_youbeier_1/Dapai",
+        "hand_youbeier_1/LiQiPai",
+        "hand_youbeier_1/LiZhi",
+        "hand_youbeier_1/Fulu",
+        "hand_youbeier_1/Zimo",
+        "hand_youbeier_2/Dapai",
+        "hand_youbeier_2/LiQiPai",
+        "hand_youbeier_2/LiZhi",
+        "hand_youbeier_2/Fulu",
+        "hand_youbeier_2/Zimo",
+        "hand_youbeier_3/Dapai",
+        "hand_youbeier_3/LiQiPai",
+        "hand_youbeier_3/LiZhi",
+        "hand_youbeier_3/Fulu",
+        "hand_youbeier_3/Zimo",
+        "hand_youbeier_4/Dapai",
+        "hand_youbeier_4/LiQiPai",
+        "hand_youbeier_4/LiZhi",
+        "hand_youbeier_4/Fulu",
+        "hand_youbeier_4/Zimo",
+        "current source font Lobby/Fonts/brush.ttf",
+        "current source font Characters/Fonts/character-name-brush.ttf",
+        "Custom2/CustomView compiled for GLES3 and Vulkan",
+        "original Ubel material 24a043adc38a6c7dd5cc",
+        "original Ubel material 2f7ba0aec5b0099c608a",
+        "original Ubel material 53a9a42dd7329eac67d0",
+        "original Ubel material 84215050db1411174179",
+        "original Ubel material d867d9b04ca6202ef8dd"
+      ],
+      "originalUiTextures": [
+        {
+          "file": "Resources/Majsoul/RoomCustomization/bbg-22323826.png",
+          "width": 10,
+          "height": 10
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/bf_popout-250ddf2d.png",
+          "width": 40,
+          "height": 40
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/bf_unlock-2a05f54e.png",
+          "width": 37,
+          "height": 36
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/bf_unlock1-355bb9c3.png",
+          "width": 126,
+          "height": 30
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/bg-27942a83.png",
+          "width": 300,
+          "height": 100
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/bg_bgm-8162dd68.png",
+          "width": 20,
+          "height": 229
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/bg_black-edfbb9f1.png",
+          "width": 10,
+          "height": 10
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/bg_bound-1743b3fd.png",
+          "width": 256,
+          "height": 256
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/bg_container-33989112.png",
+          "width": 241,
+          "height": 208
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/bg_head_normal2-86ab9db9.png",
+          "width": 276,
+          "height": 256
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/bg_head_qy1-510b72fa.png",
+          "width": 228,
+          "height": 228
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/bg_head_qy2-f3f07449.png",
+          "width": 276,
+          "height": 256
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/bg_urhead_qy-dbb4cd46.png",
+          "width": 277,
+          "height": 262
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/bighead-39828c9f.png",
+          "width": 256,
+          "height": 256
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/bound_selected-9161a5b3.png",
+          "width": 16,
+          "height": 16
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/btn_bright-d76aaeb6.png",
+          "width": 246,
+          "height": 79
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/btn_close-1a4d4db2.png",
+          "width": 42,
+          "height": 42
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/btn_close-bffafdfd.png",
+          "width": 51,
+          "height": 100
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/btn_rand_bg-f24c51bb.png",
+          "width": 110,
+          "height": 40
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/button_light-4d10e1b3.png",
+          "width": 162,
+          "height": 92
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/choose-22d060e4.png",
+          "width": 90,
+          "height": 138
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/decorate_left-802bc0d3.png",
+          "width": 247,
+          "height": 107
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/decorate_right-55c20125.png",
+          "width": 396,
+          "height": 104
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/dress_up_change_name_button-302e5ca5.png",
+          "width": 34,
+          "height": 35
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/dress_up_check_button-a0b6819c.png",
+          "width": 74,
+          "height": 74
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/dress_up_group_name_bottom-7eb3d172.png",
+          "width": 643,
+          "height": 64
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/dress_up_preview_black-47fbbfd2.png",
+          "width": 4,
+          "height": 4
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/en_bg_head_normal1-240fd1b0.png",
+          "width": 228,
+          "height": 228
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/en_bg_head_qy2-5cbbdaf7.png",
+          "width": 256,
+          "height": 310
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/en_light-3153591e.png",
+          "width": 256,
+          "height": 310
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/frame-44c81f71.png",
+          "width": 337,
+          "height": 332
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/inputbox-339a0bfb.png",
+          "width": 46,
+          "height": 34
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/kuangbg-b2e1513e.png",
+          "width": 10,
+          "height": 10
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/kuangbound-58db114f.png",
+          "width": 180,
+          "height": 180
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/light2-59513ec1.png",
+          "width": 277,
+          "height": 257
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/line-a597531a.png",
+          "width": 10,
+          "height": 3
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/liqibgm_0-838497a5.png",
+          "width": 170,
+          "height": 170
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/mark_selected-bb09304b.png",
+          "width": 50,
+          "height": 50
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/mark_unselected-65029f4c.png",
+          "width": 50,
+          "height": 50
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/mode_confirm-f7d27f17.png",
+          "width": 67,
+          "height": 69
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/noinfo-44fdceff.png",
+          "width": 120,
+          "height": 120
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/scrollBgVertical-502f985e.png",
+          "width": 9,
+          "height": 20
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/ScrollHandlerVertical-7538347b.png",
+          "width": 9,
+          "height": 20
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/select_corner-b92fc1d4.png",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/slot_desktop-bcaf0e52.png",
+          "width": 170,
+          "height": 170
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/slot_effect_tip-6a442395.png",
+          "width": 170,
+          "height": 170
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/slot_hand-761ea87c.png",
+          "width": 170,
+          "height": 170
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/slot_head_frame-56ae6fdc.png",
+          "width": 170,
+          "height": 170
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/slot_hule-3046c596.png",
+          "width": 170,
+          "height": 170
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/slot_liqi-a20aa1d0.png",
+          "width": 170,
+          "height": 170
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/slot_liqibang-cb186b17.png",
+          "width": 170,
+          "height": 170
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/slot_mjpface-1fe96a8e.png",
+          "width": 170,
+          "height": 170
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/sm-chosen-7a51f66e.png",
+          "width": 39,
+          "height": 39
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/smallhead-dc531724.png",
+          "width": 256,
+          "height": 256
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/ss_slidebar-5d3d3bf4.png",
+          "width": 6,
+          "height": 10
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/ss_slidebtn-35102df0.png",
+          "width": 34,
+          "height": 34
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/star_btn-d9763190.png",
+          "width": 69,
+          "height": 49
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/star_l-b16c930e.png",
+          "width": 45,
+          "height": 45
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/tab_bright-185f7b56.png",
+          "width": 182,
+          "height": 102
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/tab_bright2-8f1de6a7.png",
+          "width": 284,
+          "height": 84
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/tab_gray-9df27f55.png",
+          "width": 182,
+          "height": 102
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/tab_gray-fca546e8.png",
+          "width": 182,
+          "height": 102
+        },
+        {
+          "file": "Resources/Majsoul/RoomCustomization/tab_gray3-bef33326.png",
+          "width": 284,
+          "height": 84
+        },
+        {
+          "file": "Resources/Majsoul/Profile/TitleIcons/notitle.png",
+          "width": 338,
+          "height": 64
+        },
+        {
+          "file": "Resources/Majsoul/TableLook/Sprites/notitle.png",
+          "width": 338,
+          "height": 64
+        }
+      ],
+      "specialHands": 22,
+      "UbelDirections": 4,
+      "UbelClips": 20,
+      "editorFixturesExcluded": true,
+      "androidDeviceTested": false,
+      "bytes": 373566474,
+      "sha256": "15dfcb0bf52cea1f5e4ec6b2872afba3c08f5ba17e9572390b6f6c0b00bf73a1"
+    },
+    "bot-room": {
+      "version": "0.6.45",
+      "versionCode": 93,
+      "checks": 14,
+      "passed": [
+        "compiled BotLevel",
+        "compiled BotDifficultyName",
+        "compiled aiLevel",
+        "compiled CommandBusy",
+        "compiled FlushCharacterSelection",
+        "compiled CharacterPackFingerprint",
+        "compiled SynchronizeRoomVisuals",
+        "compiled StartupRoomSkins",
+        "compiled WarmRoomInterface",
+        "editor review fixtures excluded",
+        "exact current engine.js",
+        "exact current ai.js",
+        "exact current client.js",
+        "native 185x63 computer label, no mipmaps"
+      ],
+      "editorFixturesExcluded": true,
+      "androidDeviceTested": false,
+      "bytes": 373566474,
+      "sha256": "15dfcb0bf52cea1f5e4ec6b2872afba3c08f5ba17e9572390b6f6c0b00bf73a1"
+    },
+    "ui-polish": {
+      "version": "0.6.45",
+      "versionCode": 93,
+      "checks": 8,
+      "passed": [
+        "DrawWardrobeItems",
+        "DrawWardrobePresetList",
+        "DrawWardrobePresetName",
+        "DrawWardrobePresetUse",
+        "VerticalCharacterLabel",
+        "ScoreSlot",
+        "Physical",
+        "read-only preset UI and editor probes excluded"
+      ],
+      "sourceSHA256": {
+        "LobbyController.WardrobeShared.cs": "b1198583de7bf7c13349355cca1f5093872ace941218b17af4833f5b6a01a1e4",
+        "LobbyController.Wardrobe.cs": "00d210453afd6f4e6346d60dc6cf8f3cfa1922b1cd3a8e44226ef9ca68e3458a",
+        "LobbyController.Dorm.cs": "ec553665b42e271d687a0d0035f048f279fc8c254b5d96a96e21301760584eab",
+        "LobbyController.RoomCustomization.cs": "21af8d4ddcfd1c7f0e0268b8bab10bb0fc48dff4068a04cfba4ee9647b5b0cd8",
+        "NativeReviewLayout.cs": "76c5d6cf8b674d8b7b3e6754f1b7609c7a2be1d6393a2a00907b5320b5ebc67d",
+        "ResultPresentation.cs": "86436bf54a003ef53b0d6820ee11f3b7ad7fe23bdc9e981a6c603db276be44f3"
+      },
+      "bytes": 373566474,
+      "sha256": "15dfcb0bf52cea1f5e4ec6b2872afba3c08f5ba17e9572390b6f6c0b00bf73a1",
+      "androidDeviceTested": false
+    }
+  },
+  "previews": [
+    {
+      "file": "角色名字与宿舍房间装扮统一.mp4",
+      "frames": 360,
+      "fps": 20,
+      "seconds": 18.0,
+      "width": 1920,
+      "height": 1080,
+      "allFramesDecoded": true,
+      "bytes": 1693604,
+      "sha256": "df34e3b8bfc19137b51077c2f7b66029290574c0bec22bd1459573f22d383eb5"
+    },
+    {
+      "file": "三人结算-实际方位与点数流向.mp4",
+      "frames": 480,
+      "fps": 20,
+      "seconds": 24.0,
+      "width": 1920,
+      "height": 1080,
+      "allFramesDecoded": true,
+      "bytes": 2346506,
+      "sha256": "8363d81d27567affaec3e6481bd702b53bd0536ec86d17a9dee2f17a7a8d1dee"
+    }
+  ],
+  "sourceScan": {
+    "files": 344,
+    "bytes": 51229059,
+    "credentialsPassed": true,
+    "exactIndexBytes": true,
+    "excludedOldApkDeletes": true
+  },
+  "whitespaceReview": {
+    "paths": [
+      "unity/Assets/Resources/Majsoul/CharacterHands/Materials/24a043adc38a6c7dd5cc.mat",
+      "unity/Assets/Resources/Majsoul/CharacterHands/Materials/24a043adc38a6c7dd5cc.mat.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/Materials/2f7ba0aec5b0099c608a.mat",
+      "unity/Assets/Resources/Majsoul/CharacterHands/Materials/2f7ba0aec5b0099c608a.mat.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/Materials/53a9a42dd7329eac67d0.mat",
+      "unity/Assets/Resources/Majsoul/CharacterHands/Materials/53a9a42dd7329eac67d0.mat.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/Materials/84215050db1411174179.mat",
+      "unity/Assets/Resources/Majsoul/CharacterHands/Materials/84215050db1411174179.mat.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/Materials/d867d9b04ca6202ef8dd.mat",
+      "unity/Assets/Resources/Majsoul/CharacterHands/Materials/d867d9b04ca6202ef8dd.mat.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/Meshes/1ad1bcf9ecd64df22ee4.asset",
+      "unity/Assets/Resources/Majsoul/CharacterHands/Meshes/1ad1bcf9ecd64df22ee4.asset.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/Textures/0d8bfcc8d9e46f97c862.png.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/Textures/2b673ba019871bf635bb.png.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/Textures/301daab7a9bf1f40f833.png.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/Textures/3844138aa421e4878451.png.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/Textures/567655324fe36ec363f8.png.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/Textures/5fc3a512edc6cdb802dc.png.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/Textures/640e34696d17c4fd2ee2.png.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/Textures/857536b9cad1fed138f3.png.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/Textures/a983c0dd9c99584f68e6.png.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/Textures/cfdc28707344b4cab0c8.png.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_1-Dapai.json.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_1-Fulu.json.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_1-LiQiPai.json.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_1-LiZhi.json.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_1-Zimo.json.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_1.prefab.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_2-Dapai.json.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_2-Fulu.json.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_2-LiQiPai.json.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_2-LiZhi.json.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_2-Zimo.json.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_2.prefab.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_3-Dapai.json.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_3-Fulu.json.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_3-LiQiPai.json.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_3-LiZhi.json.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_3-Zimo.json.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_3.prefab.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_4-Dapai.json.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_4-Fulu.json.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_4-LiQiPai.json.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_4-LiZhi.json.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_4-Zimo.json.meta",
+      "unity/Assets/Resources/Majsoul/CharacterHands/hand_youbeier/hand_youbeier_4.prefab.meta",
+      "unity/Assets/Resources/Majsoul/Lobby/Sprites/Create/room_create_computer_text.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/ScrollHandlerVertical-7538347b.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/bbg-22323826.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/bf_popout-250ddf2d.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/bf_unlock-2a05f54e.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/bf_unlock1-355bb9c3.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/bg-27942a83.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/bg_bgm-8162dd68.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/bg_black-edfbb9f1.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/bg_bound-1743b3fd.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/bg_container-33989112.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/bg_head_normal2-86ab9db9.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/bg_head_qy1-510b72fa.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/bg_head_qy2-f3f07449.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/bg_urhead_qy-dbb4cd46.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/bighead-39828c9f.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/bound_selected-9161a5b3.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/btn_bright-d76aaeb6.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/btn_close-1a4d4db2.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/btn_close-bffafdfd.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/btn_rand_bg-f24c51bb.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/button_light-4d10e1b3.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/choose-22d060e4.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/decorate_left-802bc0d3.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/decorate_right-55c20125.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/dress_up_change_name_button-302e5ca5.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/dress_up_check_button-a0b6819c.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/dress_up_group_name_bottom-7eb3d172.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/dress_up_preview_black-47fbbfd2.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/en_bg_head_normal1-240fd1b0.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/en_bg_head_qy2-5cbbdaf7.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/en_light-3153591e.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/frame-44c81f71.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/inputbox-339a0bfb.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/kuangbg-b2e1513e.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/kuangbound-58db114f.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/layout.json.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/light2-59513ec1.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/line-a597531a.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/liqibgm_0-838497a5.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/mark_selected-bb09304b.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/mark_unselected-65029f4c.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/mode_confirm-f7d27f17.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/noinfo-44fdceff.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/scrollBgVertical-502f985e.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/select_corner-b92fc1d4.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/slot_desktop-bcaf0e52.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/slot_effect_tip-6a442395.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/slot_hand-761ea87c.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/slot_head_frame-56ae6fdc.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/slot_hule-3046c596.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/slot_liqi-a20aa1d0.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/slot_liqibang-cb186b17.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/slot_mjpface-1fe96a8e.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/sm-chosen-7a51f66e.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/smallhead-dc531724.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/ss_slidebar-5d3d3bf4.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/ss_slidebtn-35102df0.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/star_btn-d9763190.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/star_l-b16c930e.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/tab_bright-185f7b56.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/tab_bright2-8f1de6a7.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/tab_gray-9df27f55.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/tab_gray-fca546e8.png.meta",
+      "unity/Assets/Resources/Majsoul/RoomCustomization/tab_gray3-bef33326.png.meta"
+    ],
+    "preserveOriginalBytes": true
+  }
+}

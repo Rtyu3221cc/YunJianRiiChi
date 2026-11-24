@@ -17,7 +17,7 @@ namespace YunJian.Riichi.Editor {
         [Serializable] class Variant {public string name;public Node[] nodes;public Animation[] animations;}
         [Serializable] class Animation {public string name,action,bundle;public float duration;public int owner;}
         [Serializable] class Node {public string name,mesh;public int parent,rootBone;public int[] bones;public string[] materials;public float[] position,rotation,scale;public bool active,skinned,shadow,enabled;}
-        [Serializable] class Mat {public string key,name,texture,sourceShader;public float[] tint,scale,offset;public bool transparent,brdf;public Tex[] textures;public Scalar[] floats;public Tint[] colors;}
+        [Serializable] class Mat {public string key,name,texture,sourceShader;public float[] tint,scale,offset;public bool transparent,brdf;public int brdfMode;public Tex[] textures;public Scalar[] floats;public Tint[] colors;}
         [Serializable] class Tex {public string name,file;public bool srgb,mipmaps;public int filter,wrap;}
         [Serializable] class Scalar {public string name;public float value;}
         [Serializable] class Tint {public string name;public float[] value;}
@@ -40,9 +40,9 @@ namespace YunJian.Riichi.Editor {
             if(!row.brdf){material.SetFloat("_SourceBRDF",0);return;}
             // Texture reimport can reload dependent materials; finish imports
             // before assigning any material properties.
-            material.SetFloat("_SourceBRDF",1);foreach(var entry in row.textures)if(!string.IsNullOrEmpty(entry.file))material.SetTexture(entry.name,AssetDatabase.LoadAssetAtPath<Texture2D>(Folder+"Textures/"+Path.GetFileName(entry.file)));
+            material.SetFloat("_SourceBRDF",row.brdfMode>0?row.brdfMode:1);foreach(var entry in row.textures)if(!string.IsNullOrEmpty(entry.file))material.SetTexture(entry.name,AssetDatabase.LoadAssetAtPath<Texture2D>(Folder+"Textures/"+Path.GetFileName(entry.file)));
             foreach(var entry in row.floats)if(material.HasProperty(entry.name))material.SetFloat(entry.name,entry.value);
-            foreach(var entry in row.colors)if(material.HasProperty(entry.name)){var c=entry.value;if(entry.name=="_SpecDirection2")material.SetVector(entry.name,new Vector4(-c[0],c[1],-c[2],c[3]));else material.SetColor(entry.name,new Color(c[0],c[1],c[2],c[3]));}
+            foreach(var entry in row.colors)if(material.HasProperty(entry.name)){var c=entry.value;if(entry.name=="_SpecDirection2"||entry.name=="_RampDirection")material.SetVector(entry.name,new Vector4(-c[0],c[1],-c[2],c[3]));else material.SetColor(entry.name,new Color(c[0],c[1],c[2],c[3]));}
             material.SetVector("_HandLightDir",TableLook.LightDirection);material.SetColor("_HandLightColor",TableLook.LightColor);
         }
         public static void RepairMaterials(){
@@ -60,7 +60,7 @@ namespace YunJian.Riichi.Editor {
             }AssetDatabase.SaveAssets();Debug.Log("CHARACTER HAND SHADOW PREFABS FIXED "+changed);EditorApplication.Exit(0);
         }
         public static void Run(){
-            string repo=Environment.GetEnvironmentVariable("YUNJIAN_HAND_REPO")??Path.GetFullPath("..");source=repo+"/build/character-hands-r37/source/";output=repo+"/build/character-hands-r37/";
+            string repo=Environment.GetEnvironmentVariable("YUNJIAN_HAND_REPO")??Path.GetFullPath("..");source=Environment.GetEnvironmentVariable("YUNJIAN_HAND_SOURCE")??repo+"/build/character-hands-r37/source/";output=Environment.GetEnvironmentVariable("YUNJIAN_HAND_OUTPUT")??repo+"/build/character-hands-r37/";
             Directory.CreateDirectory(Folder);Directory.CreateDirectory(Folder+"Textures");Directory.CreateDirectory(Folder+"Meshes");Directory.CreateDirectory(Folder+"Materials");
             foreach(var file in Directory.GetFiles(source+"textures","*.png"))File.Copy(file,Folder+"Textures/"+Path.GetFileName(file),true);
             AssetDatabase.Refresh();var manifest=JsonUtility.FromJson<Manifest>(File.ReadAllText(source+"manifest.json"));
@@ -78,6 +78,7 @@ namespace YunJian.Riichi.Editor {
                 material.color=new Color(row.tint[0],row.tint[1],row.tint[2],row.tint[3]);material.mainTextureScale=new Vector2(row.scale[0],row.scale[1]);material.mainTextureOffset=new Vector2(row.offset[0],row.offset[1]);SourceMaterial(material,row);string dest=Folder+"Materials/"+row.key+".mat";SaveAsset(material,dest);materials[row.key]=AssetDatabase.LoadAssetAtPath<Material>(dest);
             }
             var catalog=new List<Binding>();
+            if(Environment.GetEnvironmentVariable("YUNJIAN_HAND_MERGE")=="1"&&File.Exists(Folder+"catalog.json"))catalog.AddRange(JsonUtility.FromJson<Catalog>(File.ReadAllText(Folder+"catalog.json")).hands.Where(h=>!manifest.hands.Any(n=>n.key==h.key)));
             foreach(var hand in manifest.hands){
                 Directory.CreateDirectory(Folder+hand.key);var paths=new List<string>();
                 foreach(var variant in hand.variants){

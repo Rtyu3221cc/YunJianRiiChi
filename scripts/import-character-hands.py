@@ -98,10 +98,11 @@ def main():
                        sourceShader=resolve(obj, raw['m_Shader']).read_typetree()['m_ParsedForm']['m_Name'])
             # Asuna's grey albedo is authored for FxBRDF2, not an unlit surface.
             # Keep the other hand shaders unchanged until each is adapted.
-            if hand['res_name'] == 'hand_yasina' and row['sourceShader'] == 'FizzFX/FxBRDF2':
+            if (hand['res_name'] == 'hand_yasina' and row['sourceShader'] == 'FizzFX/FxBRDF2') or (hand['res_name'] == 'hand_youbeier' and row['sourceShader'] in ['FizzFX/FxBRDF_Custom2', 'FizzFX/FxBRDF_CustomView']):
                 row['brdf'] = True
+                row['brdfMode'] = {'FizzFX/FxBRDF_Custom2': 2, 'FizzFX/FxBRDF_CustomView': 3}.get(row['sourceShader'], 1)
                 row['textures'] = []
-                for name in ['_MainTex', '_BumpMap', '_ORMMap', '_RampMap', '_MatCapTex']:
+                for name in ['_MainTex', '_BumpMap', '_ORMMap', '_RampMap', '_MatCapTex', '_RampMask', '_RimMaskMap']:
                     image = resolve(obj, tex.get(name, {}).get('m_Texture'))
                     if image is None:
                         continue

@@ -1,0 +1,333 @@
+{
+  "generatedTokyo": "2026-11-24 16:00",
+  "node": {
+    "passCount": 227,
+    "failCount": 0,
+    "log": "build/bot-difficulty-r13/node-final.txt"
+  },
+  "python": {
+    "passCount": 14
+  },
+  "unity": {
+    "botDifficulty": {
+      "checks": 63,
+      "passed": [
+        "simple is selected by default",
+        "two native computer controls are drawn",
+        "original computer label keeps native dimensions",
+        "normal option changes the actual room setting",
+        "create serializes mode and difficulty 3/1",
+        "create serializes mode and difficulty 3/2",
+        "create serializes mode and difficulty 4/1",
+        "create serializes mode and difficulty 4/2",
+        "advanced-off follows native default simple difficulty",
+        "actual server room difficulty deserializes 3/1",
+        "computer rank is visible 3/1",
+        "computer fixed rank has three stars 3/1",
+        "native computer rank badge exists 3/1",
+        "computer cannot inherit a human rank or title",
+        "computer rank is visible 3/1",
+        "computer fixed rank has three stars 3/1",
+        "native computer rank badge exists 3/1",
+        "computer cannot inherit a human rank or title",
+        "human published rank is preserved 3/1",
+        "match introduction includes all computer ranks 3/1",
+        "actual server room difficulty deserializes 3/2",
+        "computer rank is visible 3/2",
+        "computer fixed rank has three stars 3/2",
+        "native computer rank badge exists 3/2",
+        "computer cannot inherit a human rank or title",
+        "computer rank is visible 3/2",
+        "computer fixed rank has three stars 3/2",
+        "native computer rank badge exists 3/2",
+        "computer cannot inherit a human rank or title",
+        "human published rank is preserved 3/2",
+        "match introduction includes all computer ranks 3/2",
+        "actual server room difficulty deserializes 4/1",
+        "computer rank is visible 4/1",
+        "computer fixed rank has three stars 4/1",
+        "native computer rank badge exists 4/1",
+        "computer cannot inherit a human rank or title",
+        "computer rank is visible 4/1",
+        "computer fixed rank has three stars 4/1",
+        "native computer rank badge exists 4/1",
+        "computer cannot inherit a human rank or title",
+        "computer rank is visible 4/1",
+        "computer fixed rank has three stars 4/1",
+        "native computer rank badge exists 4/1",
+        "computer cannot inherit a human rank or title",
+        "human published rank is preserved 4/1",
+        "match introduction includes all computer ranks 4/1",
+        "actual server room difficulty deserializes 4/2",
+        "computer rank is visible 4/2",
+        "computer fixed rank has three stars 4/2",
+        "native computer rank badge exists 4/2",
+        "computer cannot inherit a human rank or title",
+        "computer rank is visible 4/2",
+        "computer fixed rank has three stars 4/2",
+        "native computer rank badge exists 4/2",
+        "computer cannot inherit a human rank or title",
+        "computer rank is visible 4/2",
+        "computer fixed rank has three stars 4/2",
+        "native computer rank badge exists 4/2",
+        "computer cannot inherit a human rank or title",
+        "human published rank is preserved 4/2",
+        "match introduction includes all computer ranks 4/2",
+        "human auto-play retains its own ranks",
+        "video encoded"
+      ]
+    },
+    "cacheModes": {
+      "cold": {
+        "report": {
+          "checks": 31,
+          "passed": [
+            "startup preload finishes",
+            "room customization interface preloads behind startup cover",
+            "selected room illustration is loaded before first room entry",
+            "only changed or unverified packs require SHA 4",
+            "unchanged installed pack fingerprints are reused 0",
+            "all four real bundle room illustrations load",
+            "visible room character resources stay pinned",
+            "customization enabled while idle",
+            "background poll keeps customization available",
+            "poll keeps identical gold button pixels",
+            "background poll keeps customization available",
+            "poll keeps identical gold button pixels",
+            "background poll keeps customization available",
+            "poll keeps identical gold button pixels",
+            "real command still blocks conflicting changes",
+            "real command uses disabled button",
+            "customization opens during a background poll",
+            "selection made during poll is queued",
+            "queued selection publishes once after poll",
+            "resource preparation cancels stale queued character changes",
+            "leaving room releases room-owned pins",
+            "unchanged file fingerprint is reused",
+            "changed modification time invalidates fingerprint",
+            "changed-time file remains valid after rehash",
+            "rehash refreshes the fingerprint",
+            "changed length invalidates fingerprint",
+            "corrupt verification cache is rejected",
+            "wrong install receipt is rejected",
+            "verified legacy install receipt migrates without rehash",
+            "changed catalog digest invalidates cache",
+            "video encoded"
+          ]
+        },
+        "trace": {
+          "warm": false,
+          "changed": false,
+          "fullHashes": 4,
+          "verificationHits": 0,
+          "bundleLoadsBeforeRoom": 1,
+          "bundleLoadsAfterRoom": 4,
+          "startupSeconds": 3.0499963760375977,
+          "roomSeconds": 0.7868762016296387
+        }
+      },
+      "warm": {
+        "report": {
+          "checks": 33,
+          "passed": [
+            "startup preload finishes",
+            "room customization interface preloads behind startup cover",
+            "selected room illustration is loaded before first room entry",
+            "only changed or unverified packs require SHA 0",
+            "unchanged installed pack fingerprints are reused 4",
+            "last room illustrations are all ready before first room entry",
+            "all four real bundle room illustrations load",
+            "visible room character resources stay pinned",
+            "first room visit after restart opens no additional bundles",
+            "customization enabled while idle",
+            "background poll keeps customization available",
+            "poll keeps identical gold button pixels",
+            "background poll keeps customization available",
+            "poll keeps identical gold button pixels",
+            "background poll keeps customization available",
+            "poll keeps identical gold button pixels",
+            "real command still blocks conflicting changes",
+            "real command uses disabled button",
+            "customization opens during a background poll",
+            "selection made during poll is queued",
+            "queued selection publishes once after poll",
+            "resource preparation cancels stale queued character changes",
+            "leaving room releases room-owned pins",
+            "unchanged file fingerprint is reused",
+            "changed modification time invalidates fingerprint",
+            "changed-time file remains valid after rehash",
+            "rehash refreshes the fingerprint",
+            "changed length invalidates fingerprint",
+            "corrupt verification cache is rejected",
+            "wrong install receipt is rejected",
+            "verified legacy install receipt migrates without rehash",
+            "changed catalog digest invalidates cache",
+            "video encoded"
+          ]
+        },
+        "trace": {
+          "warm": true,
+          "changed": false,
+          "fullHashes": 0,
+          "verificationHits": 4,
+          "bundleLoadsBeforeRoom": 4,
+          "bundleLoadsAfterRoom": 4,
+          "startupSeconds": 2.899435520172119,
+          "roomSeconds": 0.6890811920166016
+        }
+      },
+      "changed": {
+        "report": {
+          "checks": 33,
+          "passed": [
+            "startup preload finishes",
+            "room customization interface preloads behind startup cover",
+            "selected room illustration is loaded before first room entry",
+            "only changed or unverified packs require SHA 1",
+            "unchanged installed pack fingerprints are reused 3",
+            "last room illustrations are all ready before first room entry",
+            "all four real bundle room illustrations load",
+            "visible room character resources stay pinned",
+            "first room visit after restart opens no additional bundles",
+            "customization enabled while idle",
+            "background poll keeps customization available",
+            "poll keeps identical gold button pixels",
+            "background poll keeps customization available",
+            "poll keeps identical gold button pixels",
+            "background poll keeps customization available",
+            "poll keeps identical gold button pixels",
+            "real command still blocks conflicting changes",
+            "real command uses disabled button",
+            "customization opens during a background poll",
+            "selection made during poll is queued",
+            "queued selection publishes once after poll",
+            "resource preparation cancels stale queued character changes",
+            "leaving room releases room-owned pins",
+            "unchanged file fingerprint is reused",
+            "changed modification time invalidates fingerprint",
+            "changed-time file remains valid after rehash",
+            "rehash refreshes the fingerprint",
+            "changed length invalidates fingerprint",
+            "corrupt verification cache is rejected",
+            "wrong install receipt is rejected",
+            "verified legacy install receipt migrates without rehash",
+            "changed catalog digest invalidates cache",
+            "video encoded"
+          ]
+        },
+        "trace": {
+          "warm": true,
+          "changed": true,
+          "fullHashes": 1,
+          "verificationHits": 3,
+          "bundleLoadsBeforeRoom": 4,
+          "bundleLoadsAfterRoom": 4,
+          "startupSeconds": 2.9466500282287598,
+          "roomSeconds": 0.6444287300109863
+        }
+      }
+    }
+  },
+  "actualCreateRequests": {
+    "requests": [
+      {
+        "n": 3,
+        "rounds": 2,
+        "aiLevel": 1,
+        "red": true,
+        "lobbyFlow": true
+      },
+      {
+        "n": 3,
+        "rounds": 2,
+        "aiLevel": 2,
+        "red": true,
+        "lobbyFlow": true
+      },
+      {
+        "n": 4,
+        "rounds": 2,
+        "aiLevel": 1,
+        "red": true,
+        "lobbyFlow": true
+      },
+      {
+        "n": 4,
+        "rounds": 2,
+        "aiLevel": 2,
+        "red": true,
+        "lobbyFlow": true
+      }
+    ]
+  },
+  "engineRequestReplay": {
+    "source": "final-review/create-requests.json",
+    "checks": 4,
+    "results": [
+      {
+        "n": 3,
+        "aiLevel": 1,
+        "computers": 2,
+        "pass": true
+      },
+      {
+        "n": 3,
+        "aiLevel": 2,
+        "computers": 2,
+        "pass": true
+      },
+      {
+        "n": 4,
+        "aiLevel": 1,
+        "computers": 3,
+        "pass": true
+      },
+      {
+        "n": 4,
+        "aiLevel": 2,
+        "computers": 3,
+        "pass": true
+      }
+    ]
+  },
+  "previews": [
+    {
+      "file": "电脑难度-高级设置与三四人段位.mp4",
+      "frames": 400,
+      "fps": 20,
+      "seconds": 20.0,
+      "width": 1920,
+      "height": 1080,
+      "allFramesDecoded": true,
+      "bytes": 3593874,
+      "sha256": "a710aaf8c4ff70851d385126ca10bd54db66971042f912f7acaa80d94a6e0b56"
+    },
+    {
+      "file": "房间准备-按钮稳定与启动预热.mp4",
+      "frames": 480,
+      "fps": 20,
+      "seconds": 24.0,
+      "width": 1920,
+      "height": 1080,
+      "allFramesDecoded": true,
+      "bytes": 4931180,
+      "sha256": "c9116bed56c2d051bacc09915110de454510297fab56453a25849ad95b8b438a"
+    }
+  ],
+  "sourceSHA256": {
+    "app/src/main/assets/engine.js": "84ea2b8fe46b474549ea9a3af90e1707e84de7100d47ded6e9abe5b524209e88",
+    "app/src/main/assets/ai.js": "3a772adac6a87a164ea3d02b5d7e020703006584553ef9ac5da288d6fc0ab0c2",
+    "app/src/main/assets/client.js": "2300a6c0e0593d083600d296bc0643e6fe4bd7df0cca40d087741dddf15be295",
+    "unity/Assets/Scripts/CharacterPackFingerprint.cs": "730eab974f5f418664c8e2203c33ea1ec5141ca9ff82482c5dec05403b55c158",
+    "unity/Assets/Scripts/CharacterPackService.cs": "b436eb82cf6c92b5d14b971d7b10595c630fe4a5219299d4d6c412e5cf8b703d",
+    "unity/Assets/Scripts/LobbyController.cs": "2e5f521cd66a4f650a561d44925cc1237e4973256194016fd7ee80d5e9757fd8",
+    "unity/Assets/Scripts/LobbyController.Preload.cs": "3aa1c723f6a7542524d730392a8fc6d4a1f4da81395721cf8b9dad2cca6dad3e",
+    "unity/Assets/Scripts/LobbyController.RoomCharacters.cs": "c682536a0b66a34c4b2f6398ce65b1d34a5fff56f726bb4dedeb9d4b2771f3d3",
+    "unity/Assets/Scripts/LobbyController.RoomCustomization.cs": "b66f7ab3e5f2b3e5607cc4344b857eaa809163b442cf5129552e4e2893ddd42d",
+    "unity/Assets/Scripts/RoomCustomizationLayout.cs": "3d59578ba164da2ca39ff8354ae64e3162e3131ca73ea289604eeb94d655ebe6",
+    "unity/Assets/Scripts/RiichiClient.cs": "e6ea8a5a6da53d072b2969c073199c0000fca7f570e281f44f97536634dcb86b",
+    "unity/Assets/Scripts/RankRules.cs": "5316039bd8112418f98747b2eadde55af0670f762f7b42a233c032850526e9fb",
+    "unity/Assets/Scripts/RoomProtocol.cs": "0d3ea9cf58ef9ab8a3573d41f4964668b30065f6dc9ba93bf26d4bdb54304194"
+  },
+  "androidDeviceTested": false
+}

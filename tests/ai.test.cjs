@@ -1,7 +1,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict');
 globalThis.Majiang=require('../app/src/main/assets/core.js');
 const AI=require('../app/src/main/assets/ai.js'),{Room,tiles,norm}=require('../app/src/main/assets/engine.js');
-function create(n=4,bots=true){const r=new Room('secret');const v=r.dispatch({op:'create',host:'secret',name:'Human',n,rounds:1,bots});assert(v.ok,v.error);return r}
+function create(n=4,bots=true){const r=new Room('secret');const v=r.dispatch({op:'create',host:'secret',name:'Human',n,rounds:1,bots,aiLevel:2});assert(v.ok,v.error);return r}
 // AI strategy fixtures skip the real-time presentation wait; its boundary is checked below.
 function op(r,op,extra={}){const out=r.dispatch({op,token:r.s.players[0].token,version:r.s.version,...extra});if(op==='start'&&out.ok){r.s.matchOpeningUntil=0;r.s.roundOpeningUntil=0;}return out}
 function fastTick(r){let now=Date.now();r._aiNow=()=>now;let out=r.tick();if(out.waitMs){now+=out.waitMs;out=r.tick();}return out;}

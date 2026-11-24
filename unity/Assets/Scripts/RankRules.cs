@@ -27,10 +27,12 @@ namespace YunJian.Riichi {
         static readonly string[] badgeKeys={"fish","queshi","quejie","quehao","quesheng","huntian"};
         static readonly System.Collections.Generic.Dictionary<string,Texture2D> badges=new System.Collections.Generic.Dictionary<string,Texture2D>();
         public static Texture2D Badge(int level,int n){string key=(n==3?"sanma_":"sima_")+badgeKeys[Tier(level)];if(!badges.TryGetValue(key,out var t))badges[key]=t=Resources.Load<Texture2D>("Majsoul/Profile/Rank/"+key);return t;}
-        // Ranks of other seats are only what their devices published; bots have none.
-        public static bool Known(PlayerView p)=>p!=null&&!p.bot&&p.profile!=null&&p.profile.set;
-        public static int Level(PlayerView p,int n)=>Known(p)?(n==3?p.profile.rank3:p.profile.rank4):0;
-        public static string TitleOf(PlayerView p)=>Known(p)?p.profile.title??"":"";
+        // Humans publish ranks; computer ranks are fixed per room difficulty.
+        public static bool Known(PlayerView p)=>p!=null&&(p.bot||p.profile!=null&&p.profile.set);
+        public static int BotLevel(int aiLevel)=>aiLevel==2?5:2;
+        public static string BotDifficultyName(int aiLevel)=>aiLevel==2?"普通":"简单";
+        public static int Level(PlayerView p,int n)=>p?.bot==true?BotLevel(p.aiLevel):Known(p)?(n==3?p.profile.rank3:p.profile.rank4):0;
+        public static string TitleOf(PlayerView p)=>Known(p)&&!p.bot?p.profile.title??"":"";
         public static bool Soul(int level)=>level>=SoulLevel;
         public static int Tier(int level)=>Soul(level)?5:Mathf.Clamp(level,0,14)/3;
         public static int Stars(int level)=>Soul(level)?0:level%3+1;

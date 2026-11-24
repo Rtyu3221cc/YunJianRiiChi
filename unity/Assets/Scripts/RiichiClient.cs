@@ -16,6 +16,7 @@ namespace YunJian.Riichi
         public int SelectedIndex { get; private set; } = -1;
         public bool RiichiMode { get; private set; }
         public bool Busy { get; private set; }
+        public bool CommandBusy=>Busy&&!requestIsPoll;
         string endpoint = "http://127.0.0.1:8765", token = "", secret = "", nickname = "旅人", pin = "", recovery = "";
         string message = "", page = "home", addresses = "", hostError = "";
         int players = 3, rounds = 1, generation;
@@ -82,6 +83,10 @@ namespace YunJian.Riichi
         bool validationSession;
 
 #if UNITY_EDITOR
+        public bool ValidationCaptureRequests;
+        public readonly List<RequestBody> ValidationRequests=new List<RequestBody>();
+        public sealed class HudReviewRow {public int seat;public Rect frame,name,title;}
+        public readonly List<HudReviewRow> ReviewHudRows=new List<HudReviewRow>();
         public bool ValidationTableOnly;
         public bool SessionPreviewOnly;
         public void BeginLobbyValidation(string hostSecret)
@@ -209,6 +214,9 @@ namespace YunJian.Riichi
             if(req.op=="create"||req.op=="join"||req.op=="character"){CharacterRoster.FillRequest(req);req.wardrobe=WardrobeLoadout.Local();req.profile=PlayerRecord.Profile;}
             else if(req.op=="profile")req.profile=PlayerRecord.Profile;
             if(req.op=="create"||req.op=="addBot"||req.op=="fillBots"||req.fillBots)CharacterRoster.FillBotRequest(req);
+#if UNITY_EDITOR
+            if(ValidationCaptureRequests){ValidationRequests.Add(req);success?.Invoke();yield break;}
+#endif
             if (!ValidEndpoint(endpoint)) {if(req.op=="action")RestoreSubmittedHand(); message = "请输入局域网 IPv4 地址，端口固定为 8765"; yield break; }
             if(active&&pendingUserActivity){req.userActive=true;pendingUserActivity=false;}
             Busy = true;requestIsPoll=poll;
@@ -254,7 +262,13 @@ namespace YunJian.Riichi
                 success?.Invoke();
             }
         }
-        public void PublishCharacterSelection(){if(active&&State?.phase=="lobby"&&!Busy)StartCoroutine(Send(new RequestBody{op="character"}));}
+        bool characterSelectionDirty;
+        public void PublishCharacterSelection(){if(active&&State?.phase=="lobby"&&State.resourceSetup==null){characterSelectionDirty=true;FlushCharacterSelection();}}
+        void FlushCharacterSelection(){
+            if(!characterSelectionDirty)return;
+            if(!active||State?.phase!="lobby"||State.resourceSetup!=null){characterSelectionDirty=false;return;}
+            if(!Busy){characterSelectionDirty=false;StartCoroutine(Send(new RequestBody{op="character"}));}
+        }
         // Rank and title shown to the other seats; refreshed after each recorded match.
         bool profileDirty;
         public void PublishRankProfile(){profileDirty=true;}
@@ -300,6 +314,7 @@ namespace YunJian.Riichi
         void OnDisable(){CancelHandDrag(false);ResetWaitPress();}
         void Update()
         {
+            FlushCharacterSelection();
             tableEmotes.TickPointer();
             tableEmotes.Observe(State);
             if(wardrobeSelectionRevision!=WardrobeSelection.Revision){wardrobeSelectionRevision=WardrobeSelection.Revision;resourceSelectionDirty=true;}
@@ -409,12 +424,12 @@ namespace YunJian.Riichi
 #endif
             generation++;token=PlayerPrefs.GetString("riichi.token:"+endpoint,"");
         }
-        public void LobbyCreate(int count,int length,bool useRed,string category,int idleSeconds=120)
+        public void LobbyCreate(int count,int length,bool useRed,string category,int idleSeconds=120,int aiLevel=1)
         {
             if(Busy)return;
             if(string.IsNullOrWhiteSpace(nickname)){message="请先在个人设置中填写昵称";return;}
             UseLocalHost();players=count;rounds=length;red=useRed;
-            StartCoroutine(Send(new RequestBody{op="create",host=secret,name=nickname,n=count,rounds=length,idleSeconds=idleSeconds,red=useRed,category=category,lobbyFlow=true}));
+            StartCoroutine(Send(new RequestBody{op="create",host=secret,name=nickname,n=count,rounds=length,idleSeconds=idleSeconds,aiLevel=aiLevel,red=useRed,category=category,lobbyFlow=true}));
         }
         public void LobbyRecover(){if(Busy)return;UseLocalHost();StartCoroutine(Send(new RequestBody{op="recoverHost",host=secret}));}
         public void LobbyJoin(string address,string code,string restore)
@@ -583,22 +598,29 @@ namespace YunJian.Riichi
             var band=new Rect(ox + 23*k, oy + 186*k, 290*k, 51*k);GUI.DrawTexture(band, Skin("bg_type"), ScaleMode.StretchToFill);
             string mode=State.lobby?.category=="ranked"?"段位场":State.lobby?.category=="competition"?"比赛场":"友人场";
             ShadowLabel(new Rect(band.center.x - 309*k/2, band.y, 309*k, band.height), mode+" · " + (State.n == 3 ? "三人" : "四人") + (State.rounds == 1 ? "东" : State.rounds==4?"整庄":"南"), roomCaption, new Color(.91f, .686f, .443f));
+#if UNITY_EDITOR
+            ReviewHudRows.Clear();
+#endif
             foreach (var p in State.players.Select((v, i) => new { v, i }))
             {
                 int seat = table.RelativeSeat(p.i);
                 Vector2 anchor = TableEmotes.PortraitAnchor(seat,State.n,w,h);
                 bool turn = State.turn == p.i;
-                bool customFrame=WardrobeRuntime.Item(State,p.i,"headFrame")?.id!="headframe_default";
+                var equippedFrame=WardrobeRuntime.Item(State,p.i,"headFrame");bool customFrame=equippedFrame!=null&&equippedFrame.id!="headframe_default";
                 GUI.DrawTexture(customFrame?new Rect(anchor.x-1,anchor.y-1,64,64):new Rect(anchor.x,anchor.y,62,62),table.Portrait(p.v),ScaleMode.ScaleAndCrop);
                 PortraitFrame(new Rect(anchor.x - 3, anchor.y - 3, 68, 68), turn,p.i);
                 if(p.v.takeoverMask)NativeTakeoverBadge.Draw(new Rect(anchor.x,anchor.y,62,62));
                 // UI_DesktopInfo container_name: bg_name_1 180x30 x.9, label 32pt x.7 x.9;
                 // title 208x40 x.9 directly below. Same .55 canvas factor as the dora panel.
-                float cx=anchor.x+31;var nameRect=new Rect(cx-162*k/2,anchor.y+66,162*k,27*k);GUI.DrawTexture(nameRect,Skin("bg_name_1"),ScaleMode.StretchToFill);
+                float cx=anchor.x+31;var frameBounds=customFrame?WardrobeCatalog.AvatarFrameRect(new Rect(anchor.x,anchor.y,62,62),equippedFrame):new Rect(anchor.x-3,anchor.y-3,68,68);
+                float nameTop=Mathf.Max(anchor.y+66,frameBounds.yMax+2*k);var nameRect=new Rect(cx-162*k/2,nameTop,162*k,27*k);GUI.DrawTexture(nameRect,Skin("bg_name_1"),ScaleMode.StretchToFill);
                 namePlateText.fontSize=p.v.name.Length>11?9:p.v.name.Length>8?10:11;ShadowLabel(nameRect,p.v.name,namePlateText,Color.white);
                 // Players without a title show the official extendRes/title/notitle image.
                 string titleName=RankRules.TitleOf(p.v);var titleRect=new Rect(cx-187*k/2,nameRect.yMax,187*k,36*k);
-                if(string.IsNullOrEmpty(titleName))GUI.DrawTexture(titleRect,Skin("notitle"),ScaleMode.ScaleToFit);else PlayerTitles.DrawPill(new Rect(titleRect.x+titleRect.width*.08f,titleRect.y+titleRect.height*.12f,titleRect.width*.84f,titleRect.height*.76f),titleName,namePlateText,p.v.profile?.titleId);
+#if UNITY_EDITOR
+                ReviewHudRows.Add(new HudReviewRow{seat=p.i,frame=frameBounds,name=nameRect,title=titleRect});
+#endif
+                if(string.IsNullOrEmpty(titleName))PlayerTitles.DrawTitle(titleRect,PlayerTitles.Default,namePlateText);else PlayerTitles.DrawPill(titleRect,titleName,namePlateText,p.v.profile?.titleId);
             }
             if(passive)return;
             tableEmotes.Draw(State,w,h,TrySendEmote,Busy,r=>{var a=GUI.matrix.MultiplyPoint3x4(r.position);var b=GUI.matrix.MultiplyPoint3x4(new Vector3(r.xMax,r.yMax));uiButtons.Add(Rect.MinMaxRect(a.x,a.y,b.x,b.y));});

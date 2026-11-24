@@ -1,0 +1,1495 @@
+[
+  {
+    "name": "m_yingzi",
+    "shader": "Catfood/Additive Transparent Hand",
+    "floats": [
+      [
+        "_AlbedoIntensity",
+        1.0
+      ],
+      [
+        "_AlphaBlend",
+        1.0
+      ],
+      [
+        "_AlphaScale",
+        1.0
+      ],
+      [
+        "_AlphaTest",
+        0.0
+      ],
+      [
+        "_BumpScale",
+        1.0
+      ],
+      [
+        "_Cull",
+        2.0
+      ],
+      [
+        "_Cutoff",
+        0.5
+      ],
+      [
+        "_DetailNormalMapScale",
+        1.0
+      ],
+      [
+        "_DstBlend",
+        10.0
+      ],
+      [
+        "_GlossMapScale",
+        1.0
+      ],
+      [
+        "_Glossiness",
+        0.8999999761581421
+      ],
+      [
+        "_GlossyReflections",
+        1.0
+      ],
+      [
+        "_Lighting",
+        0.0
+      ],
+      [
+        "_Metallic",
+        0.0
+      ],
+      [
+        "_Mode",
+        2.0
+      ],
+      [
+        "_OcclusionStrength",
+        1.0
+      ],
+      [
+        "_Parallax",
+        0.019999999552965164
+      ],
+      [
+        "_RenderQueue",
+        2.0
+      ],
+      [
+        "_Shininess",
+        0.078125
+      ],
+      [
+        "_SmoothnessTextureChannel",
+        0.0
+      ],
+      [
+        "_SpecularHighlights",
+        1.0
+      ],
+      [
+        "_SpecularSource",
+        0.0
+      ],
+      [
+        "_SrcBlend",
+        5.0
+      ],
+      [
+        "_UVSec",
+        0.0
+      ],
+      [
+        "_ZTest",
+        2.0
+      ],
+      [
+        "_ZWrite",
+        0.0
+      ]
+    ],
+    "colors": [
+      [
+        "_Color",
+        {
+          "r": 1.0,
+          "g": 1.0,
+          "b": 1.0,
+          "a": 1.0
+        }
+      ],
+      [
+        "_EmissionColor",
+        {
+          "r": 0.0,
+          "g": 0.0,
+          "b": 0.0,
+          "a": 1.0
+        }
+      ],
+      [
+        "_SpecColor",
+        {
+          "r": 0.08235294371843338,
+          "g": 0.003921568859368563,
+          "b": 0.08235294371843338,
+          "a": 1.0
+        }
+      ],
+      [
+        "_Tint",
+        {
+          "r": 1.0,
+          "g": 1.0,
+          "b": 1.0,
+          "a": 1.0
+        }
+      ]
+    ],
+    "textures": [
+      {
+        "slot": "_MainTex",
+        "name": "yingzi_d",
+        "size": [
+          256,
+          64
+        ]
+      }
+    ]
+  },
+  {
+    "name": "m_skin_1234",
+    "shader": "FizzFX/FxBRDF_Custom2",
+    "floats": [
+      [
+        "_BumpScale",
+        1.0
+      ],
+      [
+        "_CUBERMAP",
+        1.0
+      ],
+      [
+        "_CubeStrength",
+        1.6399999856948853
+      ],
+      [
+        "_Cutoff",
+        0.5
+      ],
+      [
+        "_DetailNormalMapScale",
+        1.0
+      ],
+      [
+        "_DstBlend",
+        0.0
+      ],
+      [
+        "_GlossMapScale",
+        1.0
+      ],
+      [
+        "_Glossiness",
+        0.5
+      ],
+      [
+        "_GlossyReflections",
+        1.0
+      ],
+      [
+        "_LightStrength",
+        1.0
+      ],
+      [
+        "_Metallic",
+        0.0
+      ],
+      [
+        "_Mode",
+        0.0
+      ],
+      [
+        "_NormalScale",
+        1.0
+      ],
+      [
+        "_OcclusionStrength",
+        1.0
+      ],
+      [
+        "_OutlineBounds",
+        0.03999999910593033
+      ],
+      [
+        "_Parallax",
+        0.019999999552965164
+      ],
+      [
+        "_RAMP_ON",
+        1.0
+      ],
+      [
+        "_RampOffset",
+        0.0
+      ],
+      [
+        "_RimIntensity",
+        1.4600000381469727
+      ],
+      [
+        "_RimLightEffect",
+        0.0
+      ],
+      [
+        "_RimPower",
+        0.11999999731779099
+      ],
+      [
+        "_RimSoftness",
+        0.9020000100135803
+      ],
+      [
+        "_SmoothnessTextureChannel",
+        0.0
+      ],
+      [
+        "_SpecMetalScale",
+        0.6000000238418579
+      ],
+      [
+        "_SpecMetalScale2",
+        1.5
+      ],
+      [
+        "_SpecularHighlights",
+        1.0
+      ],
+      [
+        "_SrcBlend",
+        1.0
+      ],
+      [
+        "_StylizedStrength",
+        1.0
+      ],
+      [
+        "_UVSec",
+        0.0
+      ],
+      [
+        "_ZWrite",
+        1.0
+      ]
+    ],
+    "colors": [
+      [
+        "_BaseColor",
+        {
+          "r": 1.0,
+          "g": 1.0,
+          "b": 1.0,
+          "a": 1.0
+        }
+      ],
+      [
+        "_Color",
+        {
+          "r": 1.0,
+          "g": 1.0,
+          "b": 1.0,
+          "a": 1.0
+        }
+      ],
+      [
+        "_EmissionColor",
+        {
+          "r": 0.0,
+          "g": 0.0,
+          "b": 0.0,
+          "a": 1.0
+        }
+      ],
+      [
+        "_OutlineColor",
+        {
+          "r": 0.3153637647628784,
+          "g": 0.16278208792209625,
+          "b": 0.19329838454723358,
+          "a": 1.0
+        }
+      ],
+      [
+        "_RampDirection",
+        {
+          "r": 0.30000001192092896,
+          "g": 0.8299999833106995,
+          "b": -0.14000000059604645,
+          "a": 1.0
+        }
+      ],
+      [
+        "_RimColor",
+        {
+          "r": 0.43721339106559753,
+          "g": 0.7466392517089844,
+          "b": 0.8382748961448669,
+          "a": 1.0
+        }
+      ],
+      [
+        "_SpecDirection2",
+        {
+          "r": 1.5700000524520874,
+          "g": 2.259999990463257,
+          "b": -5.510000228881836,
+          "a": 1.0
+        }
+      ],
+      [
+        "_SpecMetalColor",
+        {
+          "r": 1.0,
+          "g": 1.0,
+          "b": 1.0,
+          "a": 1.0
+        }
+      ],
+      [
+        "_SpecMetalColor2",
+        {
+          "r": 1.0,
+          "g": 0.9272236824035645,
+          "b": 0.8665767908096313,
+          "a": 1.0
+        }
+      ]
+    ],
+    "textures": [
+      {
+        "slot": "_BumpMap",
+        "name": "hand_nm",
+        "size": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "slot": "_MainTex",
+        "name": "hand_d",
+        "size": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "slot": "_MatCapTex",
+        "name": "matcap_2",
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "slot": "_ORMMap",
+        "name": "hand_orm",
+        "size": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "slot": "_RampMap",
+        "name": "rmp_skin_1234",
+        "size": [
+          512,
+          4
+        ]
+      },
+      {
+        "slot": "_RampMask",
+        "name": "hand_rumpmask",
+        "size": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "slot": "_RimMaskMap",
+        "name": "hand_mask_02",
+        "size": [
+          1024,
+          1024
+        ]
+      }
+    ]
+  },
+  {
+    "name": "m_cloth_1",
+    "shader": "FizzFX/FxBRDF_CustomView",
+    "floats": [
+      [
+        "_BumpScale",
+        1.0
+      ],
+      [
+        "_CUBERMAP",
+        1.0
+      ],
+      [
+        "_CubeStrength",
+        1.6399999856948853
+      ],
+      [
+        "_Cutoff",
+        0.5
+      ],
+      [
+        "_DetailNormalMapScale",
+        1.0
+      ],
+      [
+        "_DstBlend",
+        0.0
+      ],
+      [
+        "_GlossMapScale",
+        1.0
+      ],
+      [
+        "_Glossiness",
+        0.5
+      ],
+      [
+        "_GlossyReflections",
+        1.0
+      ],
+      [
+        "_LightStrength",
+        1.0
+      ],
+      [
+        "_Metallic",
+        0.0
+      ],
+      [
+        "_Mode",
+        0.0
+      ],
+      [
+        "_NormalScale",
+        1.0
+      ],
+      [
+        "_OcclusionStrength",
+        1.0
+      ],
+      [
+        "_OutlineBounds",
+        0.07000000029802322
+      ],
+      [
+        "_Parallax",
+        0.019999999552965164
+      ],
+      [
+        "_RAMP_ON",
+        1.0
+      ],
+      [
+        "_RampOffset",
+        0.0
+      ],
+      [
+        "_RimIntensity",
+        3.5
+      ],
+      [
+        "_RimLightEffect",
+        0.0
+      ],
+      [
+        "_RimPower",
+        0.2800000011920929
+      ],
+      [
+        "_RimSoftness",
+        0.9300000071525574
+      ],
+      [
+        "_SmoothnessTextureChannel",
+        0.0
+      ],
+      [
+        "_SpecMetalScale",
+        1.0
+      ],
+      [
+        "_SpecMetalScale2",
+        1.5
+      ],
+      [
+        "_SpecularHighlights",
+        1.0
+      ],
+      [
+        "_SrcBlend",
+        1.0
+      ],
+      [
+        "_StylizedStrength",
+        1.0
+      ],
+      [
+        "_UVSec",
+        0.0
+      ],
+      [
+        "_ViewRampStrength",
+        1.0
+      ],
+      [
+        "_ViewRampWidth",
+        0.5
+      ],
+      [
+        "_ZWrite",
+        1.0
+      ]
+    ],
+    "colors": [
+      [
+        "_BaseColor",
+        {
+          "r": 1.0,
+          "g": 1.0,
+          "b": 1.0,
+          "a": 1.0
+        }
+      ],
+      [
+        "_Color",
+        {
+          "r": 1.0,
+          "g": 1.0,
+          "b": 1.0,
+          "a": 1.0
+        }
+      ],
+      [
+        "_EmissionColor",
+        {
+          "r": 0.0,
+          "g": 0.0,
+          "b": 0.0,
+          "a": 1.0
+        }
+      ],
+      [
+        "_OutlineColor",
+        {
+          "r": 0.29019609093666077,
+          "g": 0.11764704436063766,
+          "b": 0.13000698387622833,
+          "a": 1.0
+        }
+      ],
+      [
+        "_RampDirection",
+        {
+          "r": 1.5,
+          "g": 1.2699999809265137,
+          "b": -2.5,
+          "a": 1.0
+        }
+      ],
+      [
+        "_RimColor",
+        {
+          "r": 0.8262035846710205,
+          "g": 0.8613080978393555,
+          "b": 0.8975740671157837,
+          "a": 1.0
+        }
+      ],
+      [
+        "_SpecDirection2",
+        {
+          "r": 2.240000009536743,
+          "g": 2.700000047683716,
+          "b": -5.920000076293945,
+          "a": 1.0
+        }
+      ],
+      [
+        "_SpecMetalColor",
+        {
+          "r": 0.9366576075553894,
+          "g": 0.9805669784545898,
+          "b": 1.0,
+          "a": 1.0
+        }
+      ],
+      [
+        "_SpecMetalColor2",
+        {
+          "r": 0.7964959144592285,
+          "g": 0.8677966594696045,
+          "b": 1.0,
+          "a": 1.0
+        }
+      ]
+    ],
+    "textures": [
+      {
+        "slot": "_BumpMap",
+        "name": "hand_nm",
+        "size": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "slot": "_MainTex",
+        "name": "hand_d",
+        "size": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "slot": "_MatCapTex",
+        "name": "matcap_2",
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "slot": "_ORMMap",
+        "name": "hand_orm",
+        "size": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "slot": "_RampMap",
+        "name": "rmp_cloth_13",
+        "size": [
+          512,
+          4
+        ]
+      },
+      {
+        "slot": "_RimMaskMap",
+        "name": "hand_mask_01",
+        "size": [
+          1024,
+          1024
+        ]
+      }
+    ]
+  },
+  {
+    "name": "m_cloth_3",
+    "shader": "FizzFX/FxBRDF_CustomView",
+    "floats": [
+      [
+        "_BumpScale",
+        1.0
+      ],
+      [
+        "_CUBERMAP",
+        1.0
+      ],
+      [
+        "_CubeStrength",
+        1.6399999856948853
+      ],
+      [
+        "_Cutoff",
+        0.5
+      ],
+      [
+        "_DetailNormalMapScale",
+        1.0
+      ],
+      [
+        "_DstBlend",
+        0.0
+      ],
+      [
+        "_GlossMapScale",
+        1.0
+      ],
+      [
+        "_Glossiness",
+        0.5
+      ],
+      [
+        "_GlossyReflections",
+        1.0
+      ],
+      [
+        "_LightStrength",
+        1.0
+      ],
+      [
+        "_Metallic",
+        0.0
+      ],
+      [
+        "_Mode",
+        0.0
+      ],
+      [
+        "_NormalScale",
+        1.0
+      ],
+      [
+        "_OcclusionStrength",
+        1.0
+      ],
+      [
+        "_OutlineBounds",
+        0.07000000029802322
+      ],
+      [
+        "_Parallax",
+        0.019999999552965164
+      ],
+      [
+        "_RAMP_ON",
+        1.0
+      ],
+      [
+        "_RampOffset",
+        0.0
+      ],
+      [
+        "_RimIntensity",
+        3.0
+      ],
+      [
+        "_RimLightEffect",
+        0.0
+      ],
+      [
+        "_RimPower",
+        0.3499999940395355
+      ],
+      [
+        "_RimSoftness",
+        0.8999999761581421
+      ],
+      [
+        "_SmoothnessTextureChannel",
+        0.0
+      ],
+      [
+        "_SpecMetalScale",
+        1.0
+      ],
+      [
+        "_SpecMetalScale2",
+        1.5
+      ],
+      [
+        "_SpecularHighlights",
+        1.0
+      ],
+      [
+        "_SrcBlend",
+        1.0
+      ],
+      [
+        "_StylizedStrength",
+        1.0
+      ],
+      [
+        "_UVSec",
+        0.0
+      ],
+      [
+        "_ViewRampStrength",
+        1.0
+      ],
+      [
+        "_ViewRampWidth",
+        0.5
+      ],
+      [
+        "_ZWrite",
+        1.0
+      ]
+    ],
+    "colors": [
+      [
+        "_BaseColor",
+        {
+          "r": 1.0,
+          "g": 1.0,
+          "b": 1.0,
+          "a": 1.0
+        }
+      ],
+      [
+        "_Color",
+        {
+          "r": 1.0,
+          "g": 1.0,
+          "b": 1.0,
+          "a": 1.0
+        }
+      ],
+      [
+        "_EmissionColor",
+        {
+          "r": 0.0,
+          "g": 0.0,
+          "b": 0.0,
+          "a": 1.0
+        }
+      ],
+      [
+        "_OutlineColor",
+        {
+          "r": 0.29019609093666077,
+          "g": 0.11764704436063766,
+          "b": 0.13000698387622833,
+          "a": 1.0
+        }
+      ],
+      [
+        "_RampDirection",
+        {
+          "r": -1.8300000429153442,
+          "g": 0.6200000047683716,
+          "b": 1.2899999618530273,
+          "a": 1.0
+        }
+      ],
+      [
+        "_RimColor",
+        {
+          "r": 0.8262035846710205,
+          "g": 0.8613080978393555,
+          "b": 0.8975740671157837,
+          "a": 1.0
+        }
+      ],
+      [
+        "_SpecDirection2",
+        {
+          "r": -1.1699999570846558,
+          "g": -0.1899999976158142,
+          "b": 1.1699999570846558,
+          "a": 1.0
+        }
+      ],
+      [
+        "_SpecMetalColor",
+        {
+          "r": 0.9366576075553894,
+          "g": 0.9805669784545898,
+          "b": 1.0,
+          "a": 1.0
+        }
+      ],
+      [
+        "_SpecMetalColor2",
+        {
+          "r": 0.7964959144592285,
+          "g": 0.8677966594696045,
+          "b": 1.0,
+          "a": 1.0
+        }
+      ]
+    ],
+    "textures": [
+      {
+        "slot": "_BumpMap",
+        "name": "hand_nm",
+        "size": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "slot": "_MainTex",
+        "name": "hand_d",
+        "size": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "slot": "_MatCapTex",
+        "name": "matcap_2",
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "slot": "_ORMMap",
+        "name": "hand_orm",
+        "size": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "slot": "_RampMap",
+        "name": "rmp_cloth_13",
+        "size": [
+          512,
+          4
+        ]
+      },
+      {
+        "slot": "_RimMaskMap",
+        "name": "hand_mask_02",
+        "size": [
+          1024,
+          1024
+        ]
+      }
+    ]
+  },
+  {
+    "name": "m_cloth_2",
+    "shader": "FizzFX/FxBRDF_CustomView",
+    "floats": [
+      [
+        "_BumpScale",
+        1.0
+      ],
+      [
+        "_CUBERMAP",
+        1.0
+      ],
+      [
+        "_CubeStrength",
+        1.6399999856948853
+      ],
+      [
+        "_Cutoff",
+        0.5
+      ],
+      [
+        "_DetailNormalMapScale",
+        1.0
+      ],
+      [
+        "_DstBlend",
+        0.0
+      ],
+      [
+        "_GlossMapScale",
+        1.0
+      ],
+      [
+        "_Glossiness",
+        0.5
+      ],
+      [
+        "_GlossyReflections",
+        1.0
+      ],
+      [
+        "_LightStrength",
+        1.0
+      ],
+      [
+        "_Metallic",
+        0.0
+      ],
+      [
+        "_Mode",
+        0.0
+      ],
+      [
+        "_NormalScale",
+        1.0
+      ],
+      [
+        "_OcclusionStrength",
+        1.0
+      ],
+      [
+        "_OutlineBounds",
+        0.07000000029802322
+      ],
+      [
+        "_Parallax",
+        0.019999999552965164
+      ],
+      [
+        "_RAMP_ON",
+        1.0
+      ],
+      [
+        "_RampOffset",
+        0.0
+      ],
+      [
+        "_RimIntensity",
+        2.5999999046325684
+      ],
+      [
+        "_RimLightEffect",
+        0.0
+      ],
+      [
+        "_RimPower",
+        0.3700000047683716
+      ],
+      [
+        "_RimSoftness",
+        0.9300000071525574
+      ],
+      [
+        "_SmoothnessTextureChannel",
+        0.0
+      ],
+      [
+        "_SpecMetalScale",
+        1.0
+      ],
+      [
+        "_SpecMetalScale2",
+        1.5
+      ],
+      [
+        "_SpecularHighlights",
+        1.0
+      ],
+      [
+        "_SrcBlend",
+        1.0
+      ],
+      [
+        "_StylizedStrength",
+        1.0
+      ],
+      [
+        "_UVSec",
+        0.0
+      ],
+      [
+        "_ViewRampStrength",
+        1.0
+      ],
+      [
+        "_ViewRampWidth",
+        0.5
+      ],
+      [
+        "_ZWrite",
+        1.0
+      ]
+    ],
+    "colors": [
+      [
+        "_BaseColor",
+        {
+          "r": 1.0,
+          "g": 1.0,
+          "b": 1.0,
+          "a": 1.0
+        }
+      ],
+      [
+        "_Color",
+        {
+          "r": 1.0,
+          "g": 1.0,
+          "b": 1.0,
+          "a": 1.0
+        }
+      ],
+      [
+        "_EmissionColor",
+        {
+          "r": 0.0,
+          "g": 0.0,
+          "b": 0.0,
+          "a": 1.0
+        }
+      ],
+      [
+        "_OutlineColor",
+        {
+          "r": 0.29019609093666077,
+          "g": 0.11764704436063766,
+          "b": 0.13000698387622833,
+          "a": 1.0
+        }
+      ],
+      [
+        "_RampDirection",
+        {
+          "r": 1.5,
+          "g": 1.0199999809265137,
+          "b": -0.2199999988079071,
+          "a": 1.0
+        }
+      ],
+      [
+        "_RimColor",
+        {
+          "r": 0.8262035846710205,
+          "g": 0.8613080978393555,
+          "b": 0.8975740671157837,
+          "a": 1.0
+        }
+      ],
+      [
+        "_SpecDirection2",
+        {
+          "r": 0.7099999785423279,
+          "g": 1.0800000429153442,
+          "b": -0.2199999988079071,
+          "a": 1.0
+        }
+      ],
+      [
+        "_SpecMetalColor",
+        {
+          "r": 0.9366576075553894,
+          "g": 0.9805669784545898,
+          "b": 1.0,
+          "a": 1.0
+        }
+      ],
+      [
+        "_SpecMetalColor2",
+        {
+          "r": 0.7964959144592285,
+          "g": 0.8677966594696045,
+          "b": 1.0,
+          "a": 1.0
+        }
+      ]
+    ],
+    "textures": [
+      {
+        "slot": "_BumpMap",
+        "name": "hand_nm",
+        "size": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "slot": "_MainTex",
+        "name": "hand_d",
+        "size": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "slot": "_MatCapTex",
+        "name": "matcap_2",
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "slot": "_ORMMap",
+        "name": "hand_orm",
+        "size": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "slot": "_RampMap",
+        "name": "rmp_cloth_24",
+        "size": [
+          512,
+          4
+        ]
+      },
+      {
+        "slot": "_RimMaskMap",
+        "name": "hand_mask_02",
+        "size": [
+          1024,
+          1024
+        ]
+      }
+    ]
+  },
+  {
+    "name": "m_cloth_4",
+    "shader": "FizzFX/FxBRDF_CustomView",
+    "floats": [
+      [
+        "_BumpScale",
+        1.0
+      ],
+      [
+        "_CUBERMAP",
+        1.0
+      ],
+      [
+        "_CubeStrength",
+        1.6399999856948853
+      ],
+      [
+        "_Cutoff",
+        0.5
+      ],
+      [
+        "_DetailNormalMapScale",
+        1.0
+      ],
+      [
+        "_DstBlend",
+        0.0
+      ],
+      [
+        "_GlossMapScale",
+        1.0
+      ],
+      [
+        "_Glossiness",
+        0.5
+      ],
+      [
+        "_GlossyReflections",
+        1.0
+      ],
+      [
+        "_LightStrength",
+        1.0
+      ],
+      [
+        "_Metallic",
+        0.0
+      ],
+      [
+        "_Mode",
+        0.0
+      ],
+      [
+        "_NormalScale",
+        1.0
+      ],
+      [
+        "_OcclusionStrength",
+        1.0
+      ],
+      [
+        "_OutlineBounds",
+        0.07000000029802322
+      ],
+      [
+        "_Parallax",
+        0.019999999552965164
+      ],
+      [
+        "_RAMP_ON",
+        1.0
+      ],
+      [
+        "_RampOffset",
+        0.0
+      ],
+      [
+        "_RimIntensity",
+        2.299999952316284
+      ],
+      [
+        "_RimLightEffect",
+        0.0
+      ],
+      [
+        "_RimPower",
+        0.3700000047683716
+      ],
+      [
+        "_RimSoftness",
+        0.9300000071525574
+      ],
+      [
+        "_SmoothnessTextureChannel",
+        0.0
+      ],
+      [
+        "_SpecMetalScale",
+        1.0
+      ],
+      [
+        "_SpecMetalScale2",
+        1.5
+      ],
+      [
+        "_SpecularHighlights",
+        1.0
+      ],
+      [
+        "_SrcBlend",
+        1.0
+      ],
+      [
+        "_StylizedStrength",
+        1.0
+      ],
+      [
+        "_UVSec",
+        0.0
+      ],
+      [
+        "_ViewRampStrength",
+        1.0
+      ],
+      [
+        "_ViewRampWidth",
+        0.5
+      ],
+      [
+        "_ZWrite",
+        1.0
+      ]
+    ],
+    "colors": [
+      [
+        "_BaseColor",
+        {
+          "r": 1.0,
+          "g": 1.0,
+          "b": 1.0,
+          "a": 1.0
+        }
+      ],
+      [
+        "_Color",
+        {
+          "r": 1.0,
+          "g": 1.0,
+          "b": 1.0,
+          "a": 1.0
+        }
+      ],
+      [
+        "_EmissionColor",
+        {
+          "r": 0.0,
+          "g": 0.0,
+          "b": 0.0,
+          "a": 1.0
+        }
+      ],
+      [
+        "_OutlineColor",
+        {
+          "r": 0.29019609093666077,
+          "g": 0.11764704436063766,
+          "b": 0.13000698387622833,
+          "a": 1.0
+        }
+      ],
+      [
+        "_RampDirection",
+        {
+          "r": -2.5,
+          "g": 2.059999942779541,
+          "b": -0.8100000023841858,
+          "a": 1.0
+        }
+      ],
+      [
+        "_RimColor",
+        {
+          "r": 0.8262035846710205,
+          "g": 0.8613080978393555,
+          "b": 0.8975740671157837,
+          "a": 1.0
+        }
+      ],
+      [
+        "_SpecDirection2",
+        {
+          "r": -0.9800000190734863,
+          "g": 1.1100000143051147,
+          "b": -0.18000000715255737,
+          "a": 1.0
+        }
+      ],
+      [
+        "_SpecMetalColor",
+        {
+          "r": 0.9366576075553894,
+          "g": 0.9805669784545898,
+          "b": 1.0,
+          "a": 1.0
+        }
+      ],
+      [
+        "_SpecMetalColor2",
+        {
+          "r": 0.7964959144592285,
+          "g": 0.8677966594696045,
+          "b": 1.0,
+          "a": 1.0
+        }
+      ]
+    ],
+    "textures": [
+      {
+        "slot": "_BumpMap",
+        "name": "hand_nm",
+        "size": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "slot": "_MainTex",
+        "name": "hand_d",
+        "size": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "slot": "_MatCapTex",
+        "name": "matcap_2",
+        "size": [
+          256,
+          256
+        ]
+      },
+      {
+        "slot": "_ORMMap",
+        "name": "hand_orm",
+        "size": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "slot": "_RampMap",
+        "name": "rmp_cloth_24",
+        "size": [
+          512,
+          4
+        ]
+      },
+      {
+        "slot": "_RimMaskMap",
+        "name": "hand_mask_02",
+        "size": [
+          1024,
+          1024
+        ]
+      }
+    ]
+  }
+]

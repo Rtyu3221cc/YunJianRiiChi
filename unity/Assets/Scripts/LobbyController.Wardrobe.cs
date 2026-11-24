@@ -26,7 +26,7 @@ namespace YunJian.Riichi {
         const float DressPitch=130,DressViewTop=250,DressViewHeight=672,DressRowWidth=638;
         const float DormPanelTop=146.8f,DormPanelHeight=892;
         // Preset slots form a column left of the panel; column and panel are centred together.
-        const float DressPresetColumn=124,DressPresetGap=18,DressPresetPitch=86,DressPresetHeight=74;
+        const float DressPresetColumn=229,DressPresetGap=18,DressPresetPitch=105.42f,DressPresetHeight=102;
         float DressX=>Mathf.Round((width-(1660+DressPresetColumn+DressPresetGap))/2)+DressPresetColumn+DressPresetGap;
         static string DownloadCardProgress(float progress){
             if(progress>=1)return "校验中";
@@ -176,65 +176,22 @@ namespace YunJian.Riichi {
             }
             dressSliceClip=Rect.zero;targetOffset=offset;GUI.EndGroup();
             var rail=new Rect(x+754,DressViewTop+12,6.4f,DressViewHeight-24);CImage(rail,"ss_slidebar");CImage(new Rect(rail.center.x-17,rail.y+dressScroll.y/(total-viewport.height)*(rail.height-34),34,34),"ss_slidebtn");
-            var pane=new Rect(x+797,DormPanelTop+39,816,DormPanelHeight-73);WSlice(pane,"bf_popout");var category=dressCategories.First(c=>c.key==dressCategory);var entries=DressEntries();
-            Label(new Rect(pane.x+42,pane.y+15,460,70),category.name,CText(39,TextAnchor.MiddleLeft,true),CharacterGold);WImage(new Rect(pane.x+36,pane.y+91,pane.width-72,2),"line");
-            if(entries.Length>0&&DressCanPreview(dressCategory)){WImage(new Rect(pane.xMax-104,pane.y+18,60,60),"dress_up_check_button");if(Hit(new Rect(pane.xMax-112,pane.y+10,76,76),"dress-eye"))ToggleDressEye();}
-            if(entries.Length==0){WImage(new Rect(pane.center.x-88,pane.center.y-69,176,138),"noinfo",ScaleMode.ScaleToFit);return;}
-            if(dressEye){DrawDressPreview(pane,Draft(dressCategory));return;}
-            var itemView=new Rect(pane.x+26,pane.y+112,pane.width-62,pane.height-136);float itemHeight=Mathf.Max(itemView.height,22+(Mathf.CeilToInt(entries.Length/4f)-1)*182+143);
-            DressItemRail(itemView,itemHeight);DragCharacterPane(dressItemDrag,itemView,new Vector2(itemView.width,itemHeight),ref dressItemScroll,false);
-            GUI.BeginGroup(itemView);offset=targetOffset;targetOffset+=itemView.position;
-            for(int i=0;i<entries.Length;i++){
-                var item=entries[i];var card=new Rect(33+i%4*178,11+i/4*182-dressItemScroll.y,143,143);if(card.yMax<0||card.y>itemView.height)continue;CImage(card,"kuangbg");DressImage(new Rect(card.x+3,card.y+3,card.width-6,card.height-6),item.icon,ScaleMode.ScaleAndCrop);CImage(card,"kuangbound");
-                if(DraftId(dressCategory)!=null&&Draft(dressCategory)?.id==item.id)DressCorners(new Rect(card.x-5,card.y-5,card.width+10,card.height+10));
-                bool installed=WardrobePackService.Installed(item.id);
-                if(!installed){
-                    var service=WardrobePackService.Instance;
-                    string status;
-                    if(service.TryGetItemDownloadProgress(item.id,out float progress))status=DownloadCardProgress(progress);
-                    else if(service.ItemQueued(item.id))status="等待下载";
-                    else status="下载 "+CharacterResourceUi.Size(WardrobePackService.DownloadBytes(new[]{item.id}));
-                    DownloadCardBand(card,status);
-                }
-                if(Hit(new Rect(card.x-5,card.y-5,card.width+10,card.height+10),"dress-item-"+item.id)){
-                    if(installed)EquipDressItem(dressCategory,item.id);
-                    else{string categoryKey=dressCategory;WardrobeResourceUi.Current.Ask(item.id,id=>{EquipDressItem(categoryKey,id);dressItemScroll=Vector2.zero;});}
-                }
-                if(dressCategory=="hand")Label(new Rect(card.x-15,card.yMax+6,card.width+30,38),item.name,WardrobeNameText(25),CharacterGold);
-            }
-            targetOffset=offset;GUI.EndGroup();
+            var pane=new Rect(x+797,DormPanelTop+39,816,DormPanelHeight-73);WSlice(pane,"bf_popout");
+            DrawWardrobeItems(pane,ref dressItemScroll,dressItemDrag,"dress-item-","dress-eye",false);
         }
-        // Preset slots stand in a column left of the panel. Each slot is an
-        // editable outfit: picking a slot shows and edits it; "使用" under the
-        // category list wears it. The worn slot carries a gold bar.
         string dressPresetNotice;float dressPresetNoticeAt=-10;
         void DressPresetNotice(string text){dressPresetNotice=text;dressPresetNoticeAt=Now;}
         void DrawDressPresets(float x){
-            int viewed=DressPreset,active=WardrobePresets.Active;float column=x-DressPresetGap-DressPresetColumn;
-            for(int i=0;i<WardrobePresets.Count;i++){
-                var r=new Rect(column,DormPanelTop+22+i*DressPresetPitch,DressPresetColumn,DressPresetHeight);bool selected=i==viewed;
-                WSlice(r,"bf_popout");if(selected)DressCorners(new Rect(r.x-3,r.y-3,r.width+6,r.height+6));
-                Label(r,(i+1).ToString(),CText(32,TextAnchor.MiddleCenter,true),selected?CharacterGold:new Color(.68f,.66f,.62f));
-                if(i==active)Tint(new Rect(r.x+12,r.y+16,5,r.height-32),CharacterGold);
-                if(Hit(r,"dress-preset-"+i)&&i!=viewed){StopDressPreview();dressEye=false;LoadPresetDraft(i);Cue("btn_click");}
-            }
-            var title=new Rect(x+51,DormPanelTop+30,712,60);Label(title,WardrobePresets.Name(viewed),CText(32,TextAnchor.MiddleCenter,true),CharacterGold);
-            WImage(new Rect(x+51,DressViewTop-10,712,2),"line");
-            var use=new Rect(x+401-110,DressViewTop+DressViewHeight+14,220,62);bool wearing=viewed==active;
-            WSlice(use,"bf_popout",wearing?.8f:0);Label(use,wearing?"使用中":"使用",CText(30,TextAnchor.MiddleCenter,true),wearing?new Color(.6f,.6f,.62f):CharacterGold);
-            if(!wearing&&Hit(use,"dress-preset-use")){
-                int skipped=WardrobePresets.Use(viewed);StopDressPreview();dressEye=false;LoadPresetDraft(viewed);
-                // The button turning into 使用中 already confirms it; speak only when items were skipped.
-                if(skipped>0)DressPresetNotice(skipped+" 件未下载的装扮保持原样。");Cue("btn_click");
-            }
-            if(dressPresetNotice!=null&&Now-dressPresetNoticeAt<3){var c=GUI.color;GUI.color=new Color(c.r,c.g,c.b,c.a*Mathf.Clamp01((3-(Now-dressPresetNoticeAt))/.4f));Label(new Rect(x+51,use.yMax+2,712,28),dressPresetNotice,CText(21,TextAnchor.MiddleCenter),new Color(.9f,.9f,.94f));GUI.color=c;}
+            DrawWardrobePresetList(new Rect(x-DressPresetGap-DressPresetColumn,DormPanelTop+22,DressPresetColumn,DormPanelHeight-44),ref dormPresetScroll,dormPresetDrag,"dress-preset-");
+            DrawWardrobePresetName(new Rect(x+51,DormPanelTop+30,712,60));WImage(new Rect(x+51,DressViewTop-10,712,2),"line");
+            DrawWardrobePresetUse(new Rect(x+401-110,DressViewTop+DressViewHeight+14,220,62),"dress-preset-use",false);
         }
-        void DressItemRail(Rect view,float content){
+        void DressItemRail(Rect view,float content,ref Vector2 scroll){
             float max=Mathf.Max(0,content-view.height);if(max<=0)return;var rail=new Rect(view.xMax+7,view.y+6,6.4f,view.height-12);var hit=new Rect(rail.x-17,rail.y-8,40,rail.height+16);var ev=Event.current;int control=GUIUtility.GetControlID("dress-item-rail".GetHashCode(),FocusType.Passive);
-            float top=rail.y+Mathf.Clamp01(dressItemScroll.y/max)*(rail.height-34);
+            float top=rail.y+Mathf.Clamp01(scroll.y/max)*(rail.height-34);
             if(GUI.enabled&&ev.type==EventType.MouseDown&&hit.Contains(ev.mousePosition)){dressItemRailDragging=true;dressItemRailGrab=Mathf.Abs(ev.mousePosition.y-top-17)<25?ev.mousePosition.y-top:17;GUIUtility.hotControl=control;}
-            if(dressItemRailDragging){if(ev.type==EventType.MouseDown||ev.type==EventType.MouseDrag){dressItemScroll.y=max*Mathf.Clamp01((ev.mousePosition.y-rail.y-dressItemRailGrab)/(rail.height-34));ev.Use();}else if(ev.rawType==EventType.MouseUp){dressItemRailDragging=false;GUIUtility.hotControl=0;ev.Use();}}
-            CImage(rail,"ss_slidebar");CImage(new Rect(rail.center.x-17,rail.y+Mathf.Clamp01(dressItemScroll.y/max)*(rail.height-34),34,34),"ss_slidebtn");
+            if(dressItemRailDragging){if(ev.type==EventType.MouseDown||ev.type==EventType.MouseDrag){scroll.y=max*Mathf.Clamp01((ev.mousePosition.y-rail.y-dressItemRailGrab)/(rail.height-34));ev.Use();}else if(ev.rawType==EventType.MouseUp){dressItemRailDragging=false;GUIUtility.hotControl=0;ev.Use();}}
+            CImage(rail,"ss_slidebar");CImage(new Rect(rail.center.x-17,rail.y+Mathf.Clamp01(scroll.y/max)*(rail.height-34),34,34),"ss_slidebtn");
         }
         void DrawDressPreview(Rect pane,WardrobeItem item){
             var area=new Rect(pane.x+24,pane.y+110,pane.width-48,pane.height-132);

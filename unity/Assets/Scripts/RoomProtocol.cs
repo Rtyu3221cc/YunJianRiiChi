@@ -13,6 +13,7 @@ namespace YunJian.Riichi
         public int handSeq,matchSeq; public long dealtAt,matchStartedAt;
         // Only this viewer's initial deal order; never part of PlayerView.
         public string[] openingHand = new string[0];
+        public int aiLevel;
         public int version, you, n, rounds, round, dealer, honba, sticks, turn, remaining, audioSeq, yakumanIndicator, idleSeconds;
         public bool host, furiten;
         public LobbyRoomView lobby;
@@ -36,8 +37,8 @@ namespace YunJian.Riichi
     {
         public WardrobeLoadout wardrobe;
         public string name, avatar, autoReason, character;
-        public int skin;
-        // Published by the player's own device; bots and old clients leave set=false.
+        public int skin,aiLevel;
+        // Humans publish a local profile. Bot ranks are derived from aiLevel.
         public PlayerRankProfile profile;
         public bool bot, auto, ready, online, takeoverMask;
         public int score, wind, riichi, riichiOrder, nuki, count;
@@ -79,7 +80,7 @@ namespace YunJian.Riichi
         public bool randomBotWardrobe;public WardrobeChoices[] botWardrobes;
         public int resourceProtocol=1,setupRevision,resourceProgress;public string resourceStatus;public string[] fallbackCharacters,fallbackWardrobes;public ResourceShareRequest resourceShare;
         public int version, n, rounds, seat, handSeq;
-        public int idleSeconds=120;
+        public int idleSeconds=120,aiLevel=1;
         public bool red = true, bots, fillBots, lobbyFlow, ready, enabled, userActive, present=true;
     }
     [Serializable] public class HostConfig { public string host, error; public string[] addresses; public bool ready; }

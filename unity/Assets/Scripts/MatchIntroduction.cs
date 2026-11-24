@@ -55,7 +55,7 @@ namespace YunJian.Riichi
             // UI_FightBegin/container_name: native label 45 px; rank scale .55.
             var rank=r.center+new Vector2(-283,-9)*u;
             BadgeImage("rank_bg",rank,new Vector2(-127.5f,126.5f),new Vector2(245,228),.55f*u,0,1);
-            // Published rank of a human seat; AI seats keep the empty rank disc.
+            // Computer ranks are fixed; human ranks come from the published profile.
             if(RankRules.Known(player)){
                 int level=RankRules.Level(player,players);var badge=RankRules.Badge(level,players);var at=rank+new Vector2(3.9f,-10.6f)*.55f*u;float size=160*.55f*u;
                 if(badge!=null)GUI.DrawTexture(new Rect(at.x-size/2,at.y-size/2,size,size),badge,ScaleMode.ScaleToFit);

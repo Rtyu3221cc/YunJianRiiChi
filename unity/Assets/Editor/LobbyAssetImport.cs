@@ -10,7 +10,7 @@ namespace YunJian.Riichi.Editor
         void OnPreprocessTexture()
         {
             var t=(TextureImporter)assetImporter;
-            if(!assetPath.StartsWith("Assets/Resources/Majsoul/Lobby/")){
+            if(!assetPath.StartsWith("Assets/Resources/Majsoul/Lobby/")&&!assetPath.StartsWith("Assets/Resources/Majsoul/RoomCustomization/")){
                 // Adding a postprocessor makes Unity reimport existing assets.
                 // Preserve their saved presets instead of letting the legacy
                 // folder defaults silently alter the 0.5.39 table resources.

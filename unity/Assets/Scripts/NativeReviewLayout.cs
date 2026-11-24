@@ -14,7 +14,7 @@ namespace YunJian.Riichi {
   }
   static Placements Score=>score??(score=JsonUtility.FromJson<Placements>(Resources.Load<TextAsset>("Majsoul/NativeReview/score-layout").text));
   public static Placement Arrow(int from,int to)=>Score.arrows.First(a=>a.name==from.ToString()+to);
-  public static int ScoreSlot(int relative,int n)=>n==3&&relative==2?3:relative;
+  public static int ScoreSlot(int relative,int n)=>Physical(relative,n);
   public static Rect ScoreRect(int relative,int n){var p=Score.cards.First(c=>c.name=="player_"+ScoreSlot(relative,n));return new Rect(640+p.position[0]*2/3,360-p.position[1]*2/3,p.size[0]*2/3,p.size[1]*2/3);}
   public static Vector2 ArrowCenter(Placement p)=>new Vector2(670+p.position[0]*2/3,415.33333f-p.position[1]*2/3);
   [Serializable] class ClipVector {public float x,y,z;}

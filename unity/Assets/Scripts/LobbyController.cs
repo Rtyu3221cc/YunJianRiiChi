@@ -18,6 +18,7 @@ namespace YunJian.Riichi
         public int Rounds { get; private set; }=2;
         public int IdleSeconds { get; private set; }=120;
         public bool Red { get; private set; }=true;
+        public int AiLevel { get; private set; }=1;
         public bool Advanced { get; private set; }
         public string Modal { get; private set; }="";
         public bool OverlayActive=>Modal!="";
@@ -102,9 +103,9 @@ namespace YunJian.Riichi
         }
         void Update()
         {
-            if(client==null)return;discovery.Publish(client.State);
+            if(client==null)return;discovery.Publish(client.State);SynchronizeRoomVisuals();
             TickCharacterPages();
-            if(dormOpen&&dormView==DormView.Wardrobe&&dressEye)TickWardrobePreview();
+            if((dormOpen&&dormView==DormView.Wardrobe||roomCustomizationOpen&&roomDressTab)&&dressEye)TickWardrobePreview();
             TickDressTable();
             UpdateQrFlow();
             if(modalClosing&&Now-closeStarted>=.15f){Modal="";modalClosing=false;}
@@ -241,10 +242,10 @@ namespace YunJian.Riichi
         bool Hit(Rect r,string id,bool enabled=true)
         {
             var a=GUI.matrix.MultiplyPoint3x4(new Vector3(r.x+targetOffset.x,r.y+targetOffset.y));var b=GUI.matrix.MultiplyPoint3x4(new Vector3(r.xMax+targetOffset.x,r.yMax+targetOffset.y));targets[id]=Rect.MinMaxRect(a.x,a.y,b.x,b.y);
-            bool was=GUI.enabled;GUI.enabled=was&&enabled&&!client.Busy&&!Searching;
+            bool was=GUI.enabled;GUI.enabled=was&&enabled&&!client.CommandBusy&&!Searching;
             bool result=GUI.Button(r,GUIContent.none,GUIStyle.none);GUI.enabled=was;
 #if UNITY_EDITOR
-            if(validationPress==id&&was&&enabled&&!client.Busy&&!Searching){result=true;validationPress=null;}
+            if(validationPress==id&&was&&enabled&&!client.CommandBusy&&!Searching){result=true;validationPress=null;}
 #endif
             if(result)Cue("btn_click");return result;
         }
@@ -305,9 +306,10 @@ namespace YunJian.Riichi
                 float alpha=intro;
                 if(goingHome){GUI.enabled=false;alpha*=1-Mathf.SmoothStep(0,1,(Now-homeOutStarted)/.1666667f);}
                 GUI.color=new Color(c.r,c.g,c.b,c.a*alpha);GUI.enabled&=alpha>=1;DrawCreate(intro);GUI.color=c;
-            }else DrawRoom();
+            }else{GUI.enabled&=!roomCustomizationOpen;DrawRoom();}
             GUI.enabled=enabled;
             sakura.Draw(new Rect(bleedLeft,0,bleedWidth,1080),Now);
+            if(roomCustomizationOpen)DrawRoomCustomization();
             if(sortOpen)DrawCharacterSort();
             if(roleOpen||roleClosing){GUI.enabled=enabled&&!roleClosing;DrawRoleSelection();GUI.enabled=enabled;}
             if(modal){GUI.enabled=enabled&&!modalClosing;DrawModal();}
@@ -492,7 +494,7 @@ namespace YunJian.Riichi
             float panelHeight=Advanced?700:454;
             var region=new Rect(bleedLeft,195,bleedWidth,panelHeight);Tint(region,new Color(.04f,.04f,.09f,.57f));
             Image(new Rect(bleedLeft,182,bleedWidth,10),"Sprites/Room/room_info_line1");Image(new Rect(bleedLeft,195+panelHeight,bleedWidth,10),"Sprites/Room/room_info_line1");
-            float content=Advanced?479+8*advancedStyle.rowHeight+20:400;var view=new Rect(width/2-760,210,1520,panelHeight-45);
+            float content=Advanced?479+9*advancedStyle.rowHeight+20:400;var view=new Rect(width/2-760,210,1520,panelHeight-45);
             float max=Mathf.Max(0,content-view.height);int scrollId=GUIUtility.GetControlID(410131,FocusType.Passive);var ev=Event.current;
             if(ev.type==EventType.MouseDown&&view.Contains(ev.mousePosition)){scrollPress=ev.mousePosition;scrollDragging=false;}
             if(ev.type==EventType.MouseDrag&&max>0&&(scrollDragging||view.Contains(scrollPress)&&Mathf.Abs(ev.mousePosition.y-scrollPress.y)>12)){
@@ -518,8 +520,8 @@ namespace YunJian.Riichi
             if(Button(new Rect(x+270,318,245,82),"开启","advancedOn",Advanced))Advanced=true;
             if(Advanced){
                 AdvancedDivider(x+270+122.5f);
-                string[] keys={"room_create_start_point_text","room_create_point_text","room_create_jifei_text","room_create_guyi_text","room_create_hongbaopai_text","room_create_shiduan_text","room_create_fanfu_text","room_create_tip_text"};
-                float[] labelWidths={195,256,191,195,186,189,188,191};
+                string[] keys={"room_create_start_point_text","room_create_point_text","room_create_jifei_text","room_create_guyi_text","room_create_hongbaopai_text","room_create_shiduan_text","room_create_fanfu_text","room_create_tip_text","room_create_computer_text"};
+                float[] labelWidths={195,256,191,195,186,189,188,191,185};
                 for(int i=0;i<keys.Length;i++){
                     float y=479+i*advancedStyle.rowHeight;
                     Image(new Rect(290-labelWidths[i],y+13,labelWidths[i],66),"Sprites/Create/"+keys[i],ScaleMode.ScaleToFit);
@@ -532,8 +534,8 @@ namespace YunJian.Riichi
                         string desc=i==0?"标准规则：四人25000点，三人35000点":"标准规则：四人30000点，三人40000点\nAll Last 未达目标时按当前规则延长";
                         Label(new Rect(x+advancedStyle.numberWidth+28,y,810,100),desc,descriptionText,new Color(.87f,.87f,.87f));
                     }else{
-                        string key=i==2?"bust":i==3?"ancient":i==4?"red":i==5?"kuitan":i==6?"minimum":"hints";
-                        string[] labels=i==4?new[]{"无赤",Players==3?"2赤":"3赤",Players==3?"3赤":"4赤"}:i==6?new[]{"一番缚","二番缚","四番缚"}:new[]{"关闭","开启"};
+                        string key=i==2?"bust":i==3?"ancient":i==4?"red":i==5?"kuitan":i==6?"minimum":i==7?"hints":"ai";
+                        string[] labels=i==8?new[]{"简单","普通"}:i==4?new[]{"无赤",Players==3?"2赤":"3赤",Players==3?"3赤":"4赤"}:i==6?new[]{"一番缚","二番缚","四番缚"}:new[]{"关闭","开启"};
                         int fixedChoice=i==3||i==6?0:i==4?(Red?1:0):1;
                         DrawAdvancedChoices(x,y,key,labels,fixedChoice);
                         if(i==5||i==7){
@@ -546,7 +548,7 @@ namespace YunJian.Riichi
             GUI.EndScrollView();
             targetOffset=Vector2.zero;
             if(max>0){Image(new Rect(view.xMax-10,view.y,8,view.height),"Sprites/Necessary/match_scroll_bg");Image(new Rect(view.xMax-10,view.y+(view.height-view.height*view.height/content)*scroll.y/max,8,view.height*view.height/content),"Sprites/Necessary/match_scroll_btn");}
-            if(Gold(new Rect(width/2-147.5f,Advanced?941.5f:699.5f,295,105),"创建","create"))client.LobbyCreate(Players,Rounds,Red,Category,IdleSeconds);
+            if(Gold(new Rect(width/2-147.5f,Advanced?941.5f:699.5f,295,105),"创建","create"))client.LobbyCreate(Players,Rounds,Red,Category,IdleSeconds,Advanced?AiLevel:1);
             GUI.matrix=matrix;
         }
         Rect ControlRect(Rect bounds,string id,float peak)
@@ -560,6 +562,7 @@ namespace YunJian.Riichi
         void ControlLabel(Rect visual,Rect bounds,string value,GUIStyle style,Color? color=null){var scaled=new GUIStyle(style){fontSize=Mathf.RoundToInt(style.fontSize*visual.width/bounds.width)};Label(visual,value,scaled,color);}
         int AdvancedChoice(string key,int fallback)
         {
+            if(key=="ai")return AiLevel-1;
 #if UNITY_EDITOR
             if(DesignPreviewInteractions&&designChoices.TryGetValue(key,out int value))return value;
 #endif
@@ -579,6 +582,7 @@ namespace YunJian.Riichi
                 string id="advanced-"+key+"-"+i;var r=new Rect(x+i*(advancedStyle.optionWidth+13),y,advancedStyle.optionWidth,advancedStyle.optionHeight);
                 var visual=ControlRect(r,id,advancedStyle.clickScale);Image(visual,"Sprites/Create/room_rule_option_"+(i==selected?"select":"unselect"));ControlLabel(visual,r,labels[i],optionText,i==selected?new Color(.12f,.07f,.02f):Color.white);
                 if(!Hit(r,id))continue;Pulse(id);
+                if(key=="ai"){AiLevel=i+1;continue;}
 #if UNITY_EDITOR
                 if(DesignPreviewInteractions){designChoices[key]=i;continue;}
 #endif
@@ -612,7 +616,7 @@ namespace YunJian.Riichi
                 if(i<state.players.Length){
                     var p=state.players[i];DrawRoomCharacter(new Rect(r.x+13.2f*cardScale,r.y+20.5f*cardScale,350.9f*cardScale,743.9f*cardScale),p,i);
                     Image(r,"Sprites/Main/frame_gold");
-                    if(i==0)Image(new Rect(r.x+28*cardScale,r.y+24*cardScale,107*cardScale,100*cardScale),"Sprites/Room/roomowner",ScaleMode.ScaleToFit);
+                    if(i==0)Image(new Rect(r.xMax-135*cardScale,r.y+24*cardScale,107*cardScale,100*cardScale),"Sprites/Room/roomowner",ScaleMode.ScaleToFit);
                     if(p.ready)Image(new Rect(r.x+150*cardScale,r.y+512*cardScale,213*cardScale,158*cardScale),"Sprites/Main/ready",ScaleMode.ScaleToFit);
                     if(!p.online&&!p.bot)RoomCentered(new Rect(r.x+15,r.y+500*cardScale,r.width-30,70),"重连中",new GUIStyle(descriptionText){fontSize=28},new Color(1,.7f,.4f));
                     DrawRoomName(r,p,cardScale);
@@ -630,13 +634,15 @@ namespace YunJian.Riichi
                 }
             }
             DrawRoomRules(rulesX,state);
-            var start=new Rect(width/2-147.5f,959.9f,295,105);
+            var start=new Rect(width/2+40,959.9f,295,105);
+            var customize=new Rect(width/2-325,959.9f,295,105);
             if(state.host){if(RoomActionButton(start,"开始","start",CanStart))client.LobbyCommand("start");}
             else{bool ready=state.players.ElementAtOrDefault(state.you)?.ready??false;if(RoomActionButton(start,ready?"取消准备":"准备","ready",true))client.LobbyReady(!ready);}
             // A folded start-resource prompt reopens from a twin of the start button, on its row.
             // Room input is disabled while a preparation exists; this one button stays live.
             var resources=GetComponent<ResourceRoomCoordinator>();
-            if(resources!=null&&resources.PromptFolded&&Modal==""){bool input=GUI.enabled;GUI.enabled=true;if(RoomActionButton(new Rect(start.x-start.width-40,start.y,start.width,start.height),"资源准备","resource-reopen",true))resources.Unfold();GUI.enabled=input;}
+            if(resources!=null&&resources.PromptFolded&&Modal==""){bool input=GUI.enabled;GUI.enabled=true;if(RoomActionButton(customize,"资源准备","resource-reopen",true))resources.Unfold();GUI.enabled=input;}
+            else if(RoomActionButton(customize,"调整装扮","room-customize",RoomCustomizationAllowed))OpenRoomCustomization();
         }
         void RoomCentered(Rect r,string value,GUIStyle style,Color color,float lift=0)
         {r.y-=lift;Label(r,value,style,color);}
@@ -675,17 +681,17 @@ namespace YunJian.Riichi
             GUI.BeginGroup(new Rect(card.x,card.y+673*scale,496.8f*scale,98*scale));
             Image(new Rect(0,0,496.8f*scale,105.6f*scale),"Sprites/Common/namebg");GUI.EndGroup();
             var rankBg=Resources.Load<Texture2D>("Majsoul/Review1012c/rank_bg");if(rankBg!=null)GUI.DrawTexture(new Rect(card.x-13.44f*scale,card.y+667.06f*scale,117.6f*scale,109.44f*scale),rankBg,ScaleMode.ScaleToFit);
-            // Published rank and title of a human seat; AI seats show neither.
+            // Human published ranks and the fixed computer rank share native badge art.
             int players=client.State?.n??4;
             if(RankRules.Known(player)){
                 int level=RankRules.Level(player,players);var badge=RankRules.Badge(level,players);if(badge!=null)GUI.DrawTexture(new Rect(card.x+11.23f*scale,card.y+684.29f*scale,76.8f*scale,76.8f*scale),badge,ScaleMode.ScaleToFit);
                 if(!RankRules.Soul(level)){int stars=RankRules.Stars(level);var slots=new[]{new Rect(card.x-17.52f*scale,card.y+716.02f*scale,32.16f*scale,30.72f*scale),new Rect(card.x+2.18f*scale,card.y+743.19f*scale,22.51f*scale,21.5f*scale),new Rect(card.x+22.2f*scale,card.y+756.34f*scale,16.08f*scale,15.36f*scale)};for(int i=0;i<3;i++)Image(slots[i],"Sprites/Necessary/"+(i<stars?"star":"starbg"));}
             }
             var titleRect=new Rect(card.x+91.8f*scale,card.y+640*scale,263.64f*scale,50.7f*scale);string titleName=RankRules.TitleOf(player);
-            if(string.IsNullOrEmpty(titleName)){var noTitle=Resources.Load<Texture2D>("Majsoul/TableLook/Sprites/notitle");if(noTitle!=null)GUI.DrawTexture(titleRect,noTitle,ScaleMode.ScaleToFit,true);}
-            else PlayerTitles.DrawPill(new Rect(titleRect.x+8*scale,titleRect.y+5*scale,titleRect.width-16*scale,titleRect.height-10*scale),titleName,text,player.profile?.titleId);
+            if(string.IsNullOrEmpty(titleName))PlayerTitles.DrawTitle(titleRect,PlayerTitles.Default,text);
+            else PlayerTitles.DrawPill(titleRect,titleName,text,player.profile?.titleId);
             var nameStyle=new GUIStyle(text){fontSize=Mathf.RoundToInt(28.8f*scale),alignment=TextAnchor.MiddleLeft,wordWrap=false,clipping=TextClipping.Clip};
-            string name=player.bot?"电脑（简单）":player.name;var bounds=new Rect(card.x+97.2f*scale,card.y+705.1f*scale,283.8f*scale,34.92f*scale);
+            string name=player.bot?"电脑（"+RankRules.BotDifficultyName(player.aiLevel)+"）":player.name;var bounds=new Rect(card.x+97.2f*scale,card.y+705.1f*scale,283.8f*scale,34.92f*scale);
             float pixels=nameStyle.CalcSize(new GUIContent(name)).x;if(pixels>bounds.width)nameStyle.fontSize=Mathf.FloorToInt(nameStyle.fontSize*bounds.width/pixels);
             Label(bounds,name,nameStyle,Color.white);
         }
@@ -709,8 +715,8 @@ namespace YunJian.Riichi
             Label(new Rect(x+5,225,ruleWidth-10,35),state.rounds==1?"东风":state.rounds==4?"整庄":"半庄",secondary,muted);
             Label(new Rect(x+5,262,ruleWidth-10,35),state.idleSeconds==0?"无限制":"两分接管",secondary,muted);
             RoomRuleLine(new Rect(x+3,307,252,13),false);RoomRuleLine(new Rect(x+3,907,252,13),true);
-            string[] labels={"初始点数","一位必要点数","击飞","赤宝牌数量","古役","食断","番缚","便捷提示"};
-            string[] values={(state.n==3?35000:25000).ToString(),(state.n==3?40000:30000).ToString(),"开启",state.lobby?.red==false?"无赤牌":state.n==3?"2赤":"3赤","关闭","开启","一番缚","开启"};
+            string[] labels={"初始点数","一位必要点数","击飞","赤宝牌数量","古役","食断","番缚","便捷提示","电脑"};
+            string[] values={(state.n==3?35000:25000).ToString(),(state.n==3?40000:30000).ToString(),"开启",state.lobby?.red==false?"无赤牌":state.n==3?"2赤":"3赤","关闭","开启","一番缚","开启",RankRules.BotDifficultyName(state.aiLevel)};
             var view=new Rect(x,328,ruleWidth,566);float content=labels.Length*78;float max=content-view.height;int id=GUIUtility.GetControlID(101420,FocusType.Passive);var ev=Event.current;
             if(ev.type==EventType.MouseDown&&view.Contains(ev.mousePosition)){roomRulePress=ev.mousePosition;roomRuleDragging=false;}
             if(ev.type==EventType.MouseDrag&&(roomRuleDragging||view.Contains(roomRulePress)&&Mathf.Abs(ev.mousePosition.y-roomRulePress.y)>10)){roomRuleDragging=true;GUIUtility.hotControl=id;roomRuleScroll.y=Mathf.Clamp(roomRuleScroll.y-ev.delta.y,0,max);ev.Use();}
@@ -979,7 +985,7 @@ namespace YunJian.Riichi
             Image(canvas,"Sprites/RulePages/"+(three?"sanren":"siren"),ScaleMode.ScaleToFit);
         }
         void OnApplicationPause(bool paused){if(paused){sounds?.Stop();music?.Pause();CancelSearch();}}
-        void OnDestroy(){DisposeProfileSlices();DisposeWardrobe();characterArt.Dispose();DisposeQrFlow();CancelSearch();discovery.Dispose();}
+        void OnDestroy(){ReleaseRoomVisualPins();roomDressLayout?.Dispose();DisposeProfileSlices();DisposeWardrobe();characterArt.Dispose();DisposeQrFlow();CancelSearch();discovery.Dispose();}
 #if UNITY_EDITOR
         public float DesignPreviewClock=-1;
         public Rect DesignPreviewSafeArea;

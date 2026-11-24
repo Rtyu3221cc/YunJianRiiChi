@@ -1,0 +1,50 @@
+{
+  "lua": [
+    {
+      "path": "luabyte/lua/ui/ui_creatroom.lua.bytes",
+      "sha256": "de0c1f02cf899282d7b2a4073d9eed56dd0c15591581c650c5c0882f0b943398",
+      "bundle": "7296"
+    },
+    {
+      "path": "luabyte/lua/tools.lua.bytes",
+      "sha256": "b162eb05f89387bfc55d38330c2b7a7bce8dc390e93677983ccfebb6bf0e9b53",
+      "bundle": "7401"
+    }
+  ],
+  "label": {
+    "output": "room_create_computer_text.png",
+    "bundle": "assets/Android/$0qqs7$z0kyy08ol$h_779brfcwidxvwvhhj2wrnnpv1-ttvl_b5a2a359aedc25f09856.majset",
+    "pathID": 5746565426592787432,
+    "sha256": "7fe64b49e32f52f952088961d1590cae62c448735d768608a3fb6eba11e79a89",
+    "size": [
+      185,
+      63
+    ]
+  },
+  "excerpts": [
+    {
+      "file": "create.lua",
+      "source": "S.mode.detail_rule.ai_level",
+      "text": "me_add=0 end;S.mode.detail_rule.can_jifei=self.selectdata['jifei']==0;S.mode.detail_rule.ai_level=self.selectdata[\"ailevel\"]+1;if self.selectdata['moshi']==1 then S.mode.detail_rule.have_zimosun=self.selectdata['zimosun']==0 end;if T<10 then S.mode.detail_rule.guyi_mode=self.selectdata[\"guyi_mode\"]if self.selectdata[\"guyi_mode\"]==1 then S.mode.detail_rule.enable_renhe=2 end end;S.mode.detail_rule.open_hand=self.selectdata[\"open_hand\"]if self.settings.is_xuezhan then S.mode.detail_rule.xuezhandaodi=1;S.mode.detail_rule.huansanzhang=1 end;self.btn_create.interactable=false;self.locking=true;S=GameUtility.SetClientV"
+    },
+    {
+      "file": "create.lua",
+      "source": "LobbyNetMgr.SendRequest('Lobby','createRoom'",
+      "text": "tring(S)LogTool.Info('CreateRoom','createRoom request: '..tostring(S))LobbyNetMgr.SendRequest('Lobby','createRoom',S,function(V,W)self.locking=false;if V or W.error and W.error.code~=0 then UIMgr.Inst:ShowUI(UI_ErrorInfo.className,nil,{errorType=UI_ErrorInfo.ErrorType.NetWork,method='createRoom',error=V,res=W})else LogTool.Info('CreateRoom','createRoom request: '..tostring(W))UIMgr.Inst:CloseUIByClassName(UI_CreatRoom.className)UI_FriendRoom.Inst:UpdateData(W.room)TimeMgr.Delay(0.2,function()UIMgr.Inst:ShowUI(UI_FriendRoom.className,nil,{from=GameUtility.EFriendRoomOpenType.CreatRoom})end)end end)TimeMgr.Delay(0."
+    },
+    {
+      "file": "tools.lua",
+      "source": "function Tools.get_robot_data",
+      "text": "el=0,exp=0,views={},skin=di.init_skin,is_upgraded=false}return aI end;function Tools.get_robot_data(dk)local aI={}local dl=Tools.StrOfLocalization(2003)if dk==1 then dl=Tools.StrOfLocalization(2003)elseif dk==2 then dl=Tools.StrOfLocalization(2004)end;aI.is_ai=true;aI.nickname=dl;aI.avatar_id=400101;aI.account_id=0;aI.level={id=10101}aI.level3={id=20101}aI.level3.id=20101;aI.character={charid=200001,level=0,exp=0,views={},skin=400101,is_upgraded=false}return aI end;function Tools.GetRobotDataNew(dk,dm)local aI=Tools.get_robot_data(dk)aI.character=dm;aI.avatar_id=aI.character.skin;return aI end;function Tools.UTF8"
+    }
+  ],
+  "configuration": {
+    "simple": 1,
+    "normal": 2
+  },
+  "localStrategy": "Basic shanten/yaku versus public-tile ukeire and riichi defense; not the original server decision model.",
+  "requestedRankOverride": {
+    "simple": "初心3",
+    "normal": "雀士3"
+  }
+}

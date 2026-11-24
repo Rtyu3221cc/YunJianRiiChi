@@ -32,11 +32,15 @@ namespace YunJian.Riichi {
         static string memoRoot;
         static readonly Dictionary<string,UnityEngine.Object> displayAssets=new Dictionary<string,UnityEngine.Object>();
         readonly Queue<string> displayQueue=new Queue<string>();
+        readonly Queue<string> urgentDisplayQueue=new Queue<string>();readonly HashSet<string> urgentDisplay=new HashSet<string>();
+        static readonly Dictionary<string,int> visualVersions=new Dictionary<string,int>();static int visualSerial,visualDefault;
+        public static int VisualVersion(string owner)=>owner!=null&&visualVersions.TryGetValue(owner,out int version)?version:visualDefault;
         readonly HashSet<string> displayPending=new HashSet<string>();
         readonly Dictionary<string,Type> displayTypes=new Dictionary<string,Type>();
         bool displayLoading;
 #if UNITY_EDITOR
-        public static int ReviewDiskChecks,ReviewSyncBundleLoads,ReviewAsyncBundleLoads;
+        public static int ReviewDiskChecks,ReviewSyncBundleLoads,ReviewAsyncBundleLoads,ReviewFullHashChecks,ReviewVerificationCacheHits;
+        public static readonly List<string> ReviewDisplayOrder=new List<string>();
 #endif
         readonly Queue<CharacterPackRecord> queue=new Queue<CharacterPackRecord>();
         readonly HashSet<string> queued=new HashSet<string>();
@@ -67,7 +71,7 @@ namespace YunJian.Riichi {
         // Verified in this session; verification does not retain every pack in RAM.
         public static bool Ready(string key)=>Installed(key)&&(Protected(key)||ready.Contains(key));
         public static void Touch(string relative){string key=Owner(relative);if(key!=null&&bundles.ContainsKey(key))lastFrame[key]=Time.frameCount;}
-        static void ReleaseCached(string key){if(bundles.TryGetValue(key,out var b)&&b!=null)b.Unload(true);bundles.Remove(key);lastFrame.Remove(key);cachedBytes.Remove(key);cachedAssets.Remove(key);foreach(var address in displayAssets.Where(p=>Owner(p.Key)==key).Select(p=>p.Key).ToArray())displayAssets.Remove(address);}
+        static void ReleaseCached(string key){visualVersions[key]=++visualSerial;if(bundles.TryGetValue(key,out var b)&&b!=null)b.Unload(true);bundles.Remove(key);lastFrame.Remove(key);cachedBytes.Remove(key);cachedAssets.Remove(key);foreach(var address in displayAssets.Where(p=>Owner(p.Key)==key).Select(p=>p.Key).ToArray())displayAssets.Remove(address);}
         static void TrimCache(){
             while(bundles.Count>BundleLimit||cachedBytes.Values.Sum()>CacheBudget){
                 string active=CharacterRoster.Active.character,dorm=CharacterRoster.Dorm.key;
@@ -75,8 +79,10 @@ namespace YunJian.Riichi {
                 if(key==null)break;ReleaseCached(key);Revision++;
             }
         }
-        void LateUpdate(){TrimCache();if(!displayLoading&&displayQueue.Count>0)StartCoroutine(LoadDisplayAsset());}
+        void LateUpdate(){TrimCache();if(!displayLoading){string next=NextDisplay();if(next!=null)StartCoroutine(LoadDisplayAsset(next));}}
+        string NextDisplay(){while(urgentDisplayQueue.Count>0){string next=urgentDisplayQueue.Dequeue();if(displayPending.Contains(next))return next;}while(displayQueue.Count>0){string next=displayQueue.Dequeue();if(displayPending.Contains(next))return next;}return null;}
         static void RejectPack(CharacterPackRecord p,AssetBundle bundle){
+            visualVersions[p.key]=++visualSerial;
             if(bundle!=null)bundle.Unload(true);bundles.Remove(p.key);lastFrame.Remove(p.key);cachedBytes.Remove(p.key);cachedAssets.Remove(p.key);ready.Remove(p.key);
             string receipt=FilePath(p)+".ok";if(File.Exists(receipt))File.Delete(receipt);
             if(Instance!=null)Instance.Results[p.key]="加载失败，可重新下载";Notify();
@@ -114,15 +120,19 @@ namespace YunJian.Riichi {
         static void TrackAsset(string owner,UnityEngine.Object asset){if(!cachedAssets.TryGetValue(owner,out var ids))cachedAssets[owner]=ids=new HashSet<UnityEngine.Object>();if(ids.Add(asset)){long bytes=asset is Texture2D texture?(long)texture.width*texture.height*4:asset is AudioClip clip?(long)clip.samples*clip.channels*4:0;cachedBytes[owner]=(cachedBytes.TryGetValue(owner,out long size)?size:0)+bytes;}}
         // UI requests return immediately. The single queue bounds disk/texture
         // upload work and gives the entrance transition a frame before loading.
-        public static T DisplayAsset<T>(string relative)where T:UnityEngine.Object {
+        public static T DisplayAsset<T>(string relative,bool priority=false)where T:UnityEngine.Object {
             string owner=Owner(relative);if(owner==null||Protected(owner)||Instance==null||!Application.isPlaying||CharacterRoster.PreviewOnly&&!RespectPreviewAvailability)return Asset<T>(relative);
             Touch(relative);if(displayAssets.TryGetValue(relative,out var cached)&&cached!=null)return cached as T;
             if(!Installed(owner))return null;
-            if(Instance.displayPending.Add(relative)){Instance.displayTypes[relative]=typeof(T);Instance.displayQueue.Enqueue(relative);}return null;
+            if(Instance.displayPending.Add(relative)){Instance.displayTypes[relative]=typeof(T);Instance.displayQueue.Enqueue(relative);}
+            if(priority&&Instance.urgentDisplay.Add(relative))Instance.urgentDisplayQueue.Enqueue(relative);return null;
         }
         public static bool DisplayPending(string relative)=>Instance!=null&&Instance.displayPending.Contains(relative);
-        IEnumerator LoadDisplayAsset(){
-            displayLoading=true;string relative=displayQueue.Dequeue(),owner=Owner(relative);var p=Find(owner);Pin(owner);var priority=Application.backgroundLoadingPriority;Application.backgroundLoadingPriority=UnityEngine.ThreadPriority.Low;
+        IEnumerator LoadDisplayAsset(string relative){
+#if UNITY_EDITOR
+            ReviewDisplayOrder.Add(relative);
+#endif
+            displayLoading=true;string owner=Owner(relative);var p=Find(owner);Pin(owner);var priority=Application.backgroundLoadingPriority;Application.backgroundLoadingPriority=urgentDisplay.Contains(relative)?UnityEngine.ThreadPriority.Normal:UnityEngine.ThreadPriority.Low;
             try{
                 if(!Installed(owner))yield break;
                 if(displayAssets.TryGetValue(relative,out var existing)&&existing!=null)yield break;
@@ -137,7 +147,7 @@ namespace YunJian.Riichi {
                 lastFrame[owner]=Time.frameCount;
                 var request=bundle.LoadAssetAsync(relative.ToLowerInvariant(),displayTypes[relative]);yield return request;
                 if(request.asset!=null){displayAssets[relative]=request.asset;TrackAsset(owner,request.asset);}
-            }finally{Application.backgroundLoadingPriority=priority;Unpin(owner);displayPending.Remove(relative);displayTypes.Remove(relative);displayLoading=false;}
+            }finally{Application.backgroundLoadingPriority=priority;Unpin(owner);displayPending.Remove(relative);displayTypes.Remove(relative);urgentDisplay.Remove(relative);displayLoading=false;}
         }
         static string Extension<T>(string relative){if(typeof(T)==typeof(Texture2D))return ".png";if(typeof(T)==typeof(AudioClip))return ".mp3";if(relative.EndsWith("/skeleton"))return ".bytes";if(relative.EndsWith("/atlas")||relative.EndsWith("/info"))return ".txt";return ".json";}
         public static Texture2D Thumbnail(string key){var p=Find(key);return p==null?null:Resources.Load<Texture2D>("Majsoul/CharacterDirectory/Avatars/"+p.id);}
@@ -151,7 +161,15 @@ namespace YunJian.Riichi {
         }
         public static void DeleteAll(){foreach(var p in All.Where(p=>!p.builtin))Delete(p.key,out _);}
         void Awake(){if(Instance!=null&&Instance!=this){Destroy(this);return;}Instance=this;Ensure();Directory.CreateDirectory(Root);gameObject.AddComponent<CharacterResourceOverlay>();StartCoroutine(ValidateInstalled());}
-        IEnumerator ValidateInstalled(){foreach(var p in All.Where(p=>!p.builtin&&p.available&&Installed(p.key)).ToArray()){string path=FilePath(p);var task=Task.Run(()=>HashFile(path));while(!task.IsCompleted)yield return null;if(!Installed(p.key))continue;if(task.IsFaulted||task.Result!=p.sha256){ready.Remove(p.key);ReleaseCached(p.key);File.Delete(path+".ok");Notify();}else ready.Add(p.key);yield return null;}}
+        IEnumerator ValidateInstalled(){foreach(var p in All.Where(p=>!p.builtin&&p.available&&Installed(p.key)).ToArray()){string path=FilePath(p);if(CharacterPackFingerprint.Current(p,path)){
+#if UNITY_EDITOR
+ReviewVerificationCacheHits++;
+#endif
+ready.Add(p.key);yield return null;continue;}
+#if UNITY_EDITOR
+ReviewFullHashChecks++;
+#endif
+var task=Task.Run(()=>HashFile(path));while(!task.IsCompleted)yield return null;if(!Installed(p.key))continue;if(task.IsFaulted||task.Result!=p.sha256){ready.Remove(p.key);ReleaseCached(p.key);File.Delete(path+".ok");Notify();}else {CharacterPackFingerprint.Remember(p,path);ready.Add(p.key);}yield return null;}}
         public void Download(string key,string source=null){var p=Find(key);if(p==null||p.builtin||!p.available||Installed(key)||!queued.Add(key))return;if(source!=null)sourceUrls[key]=source;queue.Enqueue(p);if(!processing)StartCoroutine(ProcessQueue());}
         readonly Dictionary<string,string> sourceUrls=new Dictionary<string,string>();
         public void DownloadGroup(bool recommended){foreach(var p in All.Where(p=>p.available&&!p.builtin&&(!recommended||p.recommended)))Download(p.key);}
@@ -177,14 +195,14 @@ namespace YunJian.Riichi {
                 Stage="加载资源";var load=AssetBundle.LoadFromFileAsync(final);yield return load;if(load.assetBundle==null){File.Delete(final);Error="资源包与当前客户端不兼容";Stage="加载失败";yield break;}
                 if(!HasPortrait(p,load.assetBundle)){load.assetBundle.Unload(true);File.Delete(final);Error="资源包缺少角色头像，未安装";Stage="加载失败";yield break;}
                 load.assetBundle.Unload(true);
-                File.WriteAllText(final+".ok.tmp",p.sha256);if(File.Exists(final+".ok"))File.Replace(final+".ok.tmp",final+".ok",null);else File.Move(final+".ok.tmp",final+".ok");ready.Add(p.key);Notify();Stage="已安装";yield break;
+                File.WriteAllText(final+".ok.tmp",p.sha256);if(File.Exists(final+".ok"))File.Replace(final+".ok.tmp",final+".ok",null);else File.Move(final+".ok.tmp",final+".ok");CharacterPackFingerprint.Remember(p,final);ready.Add(p.key);Notify();Stage="已安装";yield break;
             }
             Error="下载源不支持续传，请重试";
         }
         public static bool StartupSeen=>File.Exists(Path.Combine(Root,"startup-seen"));
         public static void MarkStartupSeen(){Directory.CreateDirectory(Root);File.WriteAllText(Path.Combine(Root,"startup-seen"),"1");}
         void OnDestroy(){request?.Abort();request?.Dispose();if(Instance==this)Instance=null;}
-        public static void ResetForReview(){foreach(var b in bundles.Values)if(b!=null)b.Unload(true);bundles.Clear();bundleLoads.Clear();ready.Clear();lastFrame.Clear();cachedBytes.Clear();cachedAssets.Clear();displayAssets.Clear();pins.Clear();owners.Clear();catalog=null;RefreshInstalledCache();Revision++;}
+        public static void ResetForReview(){visualVersions.Clear();visualDefault=++visualSerial;if(Instance!=null){Instance.displayQueue.Clear();Instance.urgentDisplayQueue.Clear();Instance.displayPending.Clear();Instance.displayTypes.Clear();Instance.urgentDisplay.Clear();}foreach(var b in bundles.Values)if(b!=null)b.Unload(true);bundles.Clear();bundleLoads.Clear();ready.Clear();lastFrame.Clear();cachedBytes.Clear();cachedAssets.Clear();displayAssets.Clear();pins.Clear();owners.Clear();catalog=null;RefreshInstalledCache();Revision++;}
 #if UNITY_EDITOR
         public static int ReviewLoadedBundles=>bundles.Count;
         [Serializable] sealed class EditorBuildPlan {public string output;}

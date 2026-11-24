@@ -34,14 +34,24 @@ namespace YunJian.Riichi {
             if(nativeCharacterFonts==null)nativeCharacterFonts=JsonUtility.FromJson<NativeCharacterFonts>(Resources.Load<TextAsset>("Majsoul/Characters/native-fonts").text);
             var entry=nativeCharacterFonts.fonts.First(f=>f.key==key);string resource=entry.resource.EndsWith("/fengyucumaokai")?"Majsoul/Lobby/Fonts/brush":entry.resource;if(!nativeCharacterFontCache.TryGetValue(resource,out var font))nativeCharacterFontCache[resource]=font=Resources.Load<Font>(resource);return new GUIStyle(text){font=font,fontSize=size,alignment=align,wordWrap=wrap};
         }
+#if UNITY_EDITOR
+        public sealed class VerticalNameReview {public Rect rect;public int size;public float step;}
+        public readonly Dictionary<string,VerticalNameReview> ReviewVerticalNames=new Dictionary<string,VerticalNameReview>();
+#endif
         void VerticalCharacterLabel(Rect r,string value,int size,float pitch,Color color){
+            // Fit both glyph size and pitch; longer names keep a gap between glyphs.
+            size=Mathf.Max(1,Mathf.Min(size,Mathf.FloorToInt(r.height/Mathf.Max(1,value.Length)*.9f)));
             var style=CharacterNameText(size);style.wordWrap=false;style.clipping=TextClipping.Overflow;
-            float step=Mathf.Min(pitch,r.height/Mathf.Max(1,value.Length)),cell=size*2;
+            float step=Mathf.Min(pitch,(r.height-size)/Mathf.Max(1,value.Length-1)),cell=size*2;
+#if UNITY_EDITOR
+            if(Event.current.type==EventType.Repaint)ReviewVerticalNames[value]=new VerticalNameReview{rect=r,size=size,step=step};
+#endif
             for(int i=0;i<value.Length;i++)Label(new Rect(r.x,r.center.y+(i-(value.Length-1)*.5f)*step-cell/2,r.width,cell),value[i].ToString(),style,color);
         }
         float PageDuration=>.33333334f;
         void CharacterHeader(string title){ReturnHeader(title);}
         void TickCharacterPages(){
+            WarmSelectedIllustrations();
             if(dormLeaving&&Now-dormCloseBegan>=.25f){dormOpen=false;dormLeaving=false;}
             if(pageMoving&&Now-pageBegan>=PageDuration)pageMoving=false;
             if(sortClosing&&Now-sortCloseBegan>=.18f){sortOpen=false;sortClosing=false;}
@@ -66,6 +76,7 @@ namespace YunJian.Riichi {
         void CloseRoleSelection(){roleClosing=true;roleOpen=false;roleClosed=Now;Cue("btn_cancel");}
         void SetDormPage(DormView page){if(page==dormView)return;if(page!=DormView.Info)StopCharacterVoicePreview();if(dormView==DormView.Skins&&page!=DormView.Skins&&BrowsingSkin.id!=CurrentOutfit.id){previousIllustration=BrowsingSkin;previousSkinBegan=Now;}outgoingDorm=dormView;dormView=page;pageBegan=Now;pageMoving=true;appreciationDragging=zoomDragging=skinDragging=false;infoPointerPending=infoPointerDragging=infoRailDragging=false;skinWasDragged=false;skinPressedCard=-1;Cue("btn_appear");}
         bool CharacterBack(){
+            if(roomCustomizationOpen){CloseRoomCustomization();return true;}
             if(dormOpen&&dormView==DormView.Wardrobe&&dressEye){dressEye=false;StopDressPreview();return true;}
             if(homeIllustrationEditing){CloseLobbyIllustrationEditor(false);return true;}
             if(sortOpen){CloseCharacterSort(false);return true;}
@@ -82,8 +93,13 @@ namespace YunJian.Riichi {
         Rect DormPortrait(CharacterSkin skin){float w=1400*IllustrationAspect(CharacterRoster.Find("yiji").skins[0]);return CharacterFraming.FrameRect(skin.id,"B0",new Rect(width*.315f-w/2,130,w,1400),out _);}
         Rect AppreciatePortrait(CharacterSkin skin){var r=DormPortrait(skin);r.width*=appreciationZoom;r.height*=appreciationZoom;r.x=width*.45f-r.width/2+appreciationPan.x;r.y=100+(1080-r.height)*.35f+appreciationPan.y;return r;}
         static Rect InterpolateRect(Rect a,Rect b,float p)=>new Rect(Mathf.Lerp(a.x,b.x,p),Mathf.Lerp(a.y,b.y,p),Mathf.Lerp(a.width,b.width,p),Mathf.Lerp(a.height,b.height,p));
+        CharacterSkin homeDisplayedSkin;
         void DrawHomeCharacter(Rect original){
-            var active=CharacterRoster.Active;var skin=CharacterRoster.Skin(active.character,active.skin);var pose=homeIllustrationEditing?homeDraft:LobbyIllustrationSettings.Get(skin.id);
+            var active=CharacterRoster.Active;var skin=CharacterRoster.Skin(active.character,active.skin);
+            // Keep the last drawable illustration until the new still arrives.
+            // Selection and network state change immediately; the visual never blanks.
+            if(characterArt.Art(skin,Now)!=null)homeDisplayedSkin=skin;else if(homeDisplayedSkin!=null)skin=homeDisplayedSkin;
+            var pose=homeIllustrationEditing?homeDraft:LobbyIllustrationSettings.Get(skin.id);
             float w=1400*IllustrationAspect(CharacterRoster.Find("yiji").skins[0]);
             var r=CharacterFraming.FrameRect(skin.id,"A0",new Rect(original.center.x-w/2,130,w,1400),out bool flip);var anchor=new Vector2(original.center.x,130);r.position=anchor+(r.position-anchor)*pose.scale+new Vector2(pose.x,pose.y);r.size*=pose.scale;characterArt.Draw(r,skin,Now,flip);
         }

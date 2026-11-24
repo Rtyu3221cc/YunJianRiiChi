@@ -47,7 +47,8 @@ with ZipFile(apk) as archive:
         assert b'yingz' in metadata, 'Missing final projected hand shadow guard'
         hand_root = ROOT / 'unity/Assets/Resources/Majsoul/CharacterHands'
         hand_catalog = json.loads((hand_root / 'catalog.json').read_text(encoding='utf-8'))
-        assert len(hand_catalog['hands']) == 21 and sum(len(h['variants']) for h in hand_catalog['hands']) == 51
+        expected_hands, expected_variants = (22, 55) if code >= 91 else (21, 51)
+        assert len(hand_catalog['hands']) == expected_hands and sum(len(h['variants']) for h in hand_catalog['hands']) == expected_variants
         hand_resources = [f for f in hand_root.rglob('*') if f.is_file() and f.suffix != '.meta']
         for file in hand_resources:
             assert 'assets/bin/Data/' + guid(file) in names, f'Missing embedded hand asset: {file.name}'

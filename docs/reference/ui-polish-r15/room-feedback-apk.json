@@ -1,0 +1,381 @@
+{
+  "version": "0.6.45",
+  "versionCode": 93,
+  "checks": 40,
+  "passed": [
+    "DrawRoomCustomization",
+    "OpenRoomCustomization",
+    "RoomCustomizationLayout",
+    "RoleBorder",
+    "urgentDisplayQueue",
+    "VisualVersion",
+    "WarmSelectedIllustrations",
+    "homeDisplayedSkin",
+    "DrawTitleRect",
+    "RoomCustomization/layout.json",
+    "CharacterHands/catalog.json",
+    "Characters/native-fonts.json",
+    "hand_youbeier_1/Dapai",
+    "hand_youbeier_1/LiQiPai",
+    "hand_youbeier_1/LiZhi",
+    "hand_youbeier_1/Fulu",
+    "hand_youbeier_1/Zimo",
+    "hand_youbeier_2/Dapai",
+    "hand_youbeier_2/LiQiPai",
+    "hand_youbeier_2/LiZhi",
+    "hand_youbeier_2/Fulu",
+    "hand_youbeier_2/Zimo",
+    "hand_youbeier_3/Dapai",
+    "hand_youbeier_3/LiQiPai",
+    "hand_youbeier_3/LiZhi",
+    "hand_youbeier_3/Fulu",
+    "hand_youbeier_3/Zimo",
+    "hand_youbeier_4/Dapai",
+    "hand_youbeier_4/LiQiPai",
+    "hand_youbeier_4/LiZhi",
+    "hand_youbeier_4/Fulu",
+    "hand_youbeier_4/Zimo",
+    "current source font Lobby/Fonts/brush.ttf",
+    "current source font Characters/Fonts/character-name-brush.ttf",
+    "Custom2/CustomView compiled for GLES3 and Vulkan",
+    "original Ubel material 24a043adc38a6c7dd5cc",
+    "original Ubel material 2f7ba0aec5b0099c608a",
+    "original Ubel material 53a9a42dd7329eac67d0",
+    "original Ubel material 84215050db1411174179",
+    "original Ubel material d867d9b04ca6202ef8dd"
+  ],
+  "originalUiTextures": [
+    {
+      "file": "Resources/Majsoul/RoomCustomization/bbg-22323826.png",
+      "width": 10,
+      "height": 10
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/bf_popout-250ddf2d.png",
+      "width": 40,
+      "height": 40
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/bf_unlock-2a05f54e.png",
+      "width": 37,
+      "height": 36
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/bf_unlock1-355bb9c3.png",
+      "width": 126,
+      "height": 30
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/bg-27942a83.png",
+      "width": 300,
+      "height": 100
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/bg_bgm-8162dd68.png",
+      "width": 20,
+      "height": 229
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/bg_black-edfbb9f1.png",
+      "width": 10,
+      "height": 10
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/bg_bound-1743b3fd.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/bg_container-33989112.png",
+      "width": 241,
+      "height": 208
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/bg_head_normal2-86ab9db9.png",
+      "width": 276,
+      "height": 256
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/bg_head_qy1-510b72fa.png",
+      "width": 228,
+      "height": 228
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/bg_head_qy2-f3f07449.png",
+      "width": 276,
+      "height": 256
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/bg_urhead_qy-dbb4cd46.png",
+      "width": 277,
+      "height": 262
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/bighead-39828c9f.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/bound_selected-9161a5b3.png",
+      "width": 16,
+      "height": 16
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/btn_bright-d76aaeb6.png",
+      "width": 246,
+      "height": 79
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/btn_close-1a4d4db2.png",
+      "width": 42,
+      "height": 42
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/btn_close-bffafdfd.png",
+      "width": 51,
+      "height": 100
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/btn_rand_bg-f24c51bb.png",
+      "width": 110,
+      "height": 40
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/button_light-4d10e1b3.png",
+      "width": 162,
+      "height": 92
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/choose-22d060e4.png",
+      "width": 90,
+      "height": 138
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/decorate_left-802bc0d3.png",
+      "width": 247,
+      "height": 107
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/decorate_right-55c20125.png",
+      "width": 396,
+      "height": 104
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/dress_up_change_name_button-302e5ca5.png",
+      "width": 34,
+      "height": 35
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/dress_up_check_button-a0b6819c.png",
+      "width": 74,
+      "height": 74
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/dress_up_group_name_bottom-7eb3d172.png",
+      "width": 643,
+      "height": 64
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/dress_up_preview_black-47fbbfd2.png",
+      "width": 4,
+      "height": 4
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/en_bg_head_normal1-240fd1b0.png",
+      "width": 228,
+      "height": 228
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/en_bg_head_qy2-5cbbdaf7.png",
+      "width": 256,
+      "height": 310
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/en_light-3153591e.png",
+      "width": 256,
+      "height": 310
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/frame-44c81f71.png",
+      "width": 337,
+      "height": 332
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/inputbox-339a0bfb.png",
+      "width": 46,
+      "height": 34
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/kuangbg-b2e1513e.png",
+      "width": 10,
+      "height": 10
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/kuangbound-58db114f.png",
+      "width": 180,
+      "height": 180
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/light2-59513ec1.png",
+      "width": 277,
+      "height": 257
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/line-a597531a.png",
+      "width": 10,
+      "height": 3
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/liqibgm_0-838497a5.png",
+      "width": 170,
+      "height": 170
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/mark_selected-bb09304b.png",
+      "width": 50,
+      "height": 50
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/mark_unselected-65029f4c.png",
+      "width": 50,
+      "height": 50
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/mode_confirm-f7d27f17.png",
+      "width": 67,
+      "height": 69
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/noinfo-44fdceff.png",
+      "width": 120,
+      "height": 120
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/scrollBgVertical-502f985e.png",
+      "width": 9,
+      "height": 20
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/ScrollHandlerVertical-7538347b.png",
+      "width": 9,
+      "height": 20
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/select_corner-b92fc1d4.png",
+      "width": 44,
+      "height": 44
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/slot_desktop-bcaf0e52.png",
+      "width": 170,
+      "height": 170
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/slot_effect_tip-6a442395.png",
+      "width": 170,
+      "height": 170
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/slot_hand-761ea87c.png",
+      "width": 170,
+      "height": 170
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/slot_head_frame-56ae6fdc.png",
+      "width": 170,
+      "height": 170
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/slot_hule-3046c596.png",
+      "width": 170,
+      "height": 170
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/slot_liqi-a20aa1d0.png",
+      "width": 170,
+      "height": 170
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/slot_liqibang-cb186b17.png",
+      "width": 170,
+      "height": 170
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/slot_mjpface-1fe96a8e.png",
+      "width": 170,
+      "height": 170
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/sm-chosen-7a51f66e.png",
+      "width": 39,
+      "height": 39
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/smallhead-dc531724.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/ss_slidebar-5d3d3bf4.png",
+      "width": 6,
+      "height": 10
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/ss_slidebtn-35102df0.png",
+      "width": 34,
+      "height": 34
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/star_btn-d9763190.png",
+      "width": 69,
+      "height": 49
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/star_l-b16c930e.png",
+      "width": 45,
+      "height": 45
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/tab_bright-185f7b56.png",
+      "width": 182,
+      "height": 102
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/tab_bright2-8f1de6a7.png",
+      "width": 284,
+      "height": 84
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/tab_gray-9df27f55.png",
+      "width": 182,
+      "height": 102
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/tab_gray-fca546e8.png",
+      "width": 182,
+      "height": 102
+    },
+    {
+      "file": "Resources/Majsoul/RoomCustomization/tab_gray3-bef33326.png",
+      "width": 284,
+      "height": 84
+    },
+    {
+      "file": "Resources/Majsoul/Profile/TitleIcons/notitle.png",
+      "width": 338,
+      "height": 64
+    },
+    {
+      "file": "Resources/Majsoul/TableLook/Sprites/notitle.png",
+      "width": 338,
+      "height": 64
+    }
+  ],
+  "specialHands": 22,
+  "UbelDirections": 4,
+  "UbelClips": 20,
+  "editorFixturesExcluded": true,
+  "androidDeviceTested": false,
+  "bytes": 373566474,
+  "sha256": "15dfcb0bf52cea1f5e4ec6b2872afba3c08f5ba17e9572390b6f6c0b00bf73a1"
+}

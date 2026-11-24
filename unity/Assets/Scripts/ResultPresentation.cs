@@ -19,6 +19,9 @@ namespace YunJian.Riichi
         public bool ShowingRank=>rankPage;
 #if UNITY_EDITOR
         public int EquippedAvatarFramesDrawn {get;private set;}
+        public sealed class ScoreCardReview {public int seat,slot;public Rect rect;}
+        public readonly List<ScoreCardReview> ReviewScoreCards=new List<ScoreCardReview>();
+        public readonly List<Vector2Int> ReviewScoreArrows=new List<Vector2Int>();
 #endif
         GUIStyle text, number, roundText; Font font;
         [Serializable] sealed class FinalItem {public string name;public float[] rect;public float fontSize;}
@@ -38,7 +41,7 @@ namespace YunJian.Riichi
         {
             string next=v.audioRoom+":"+v.matchSeq+":"+v.handSeq+":"+v.round+":"+v.honba+":"+v.result?.title+":"+string.Join(",",v.result?.delta??new int[0]);
             if(next==key)return;
-            limitFire.Dispose();key=next;winner=0;drawStage=v.result!=null && v.result.draw && ((!v.result.abort && (v.result.drawDetails?.Length??0)>0) || v.result.title=="九种九牌");
+            limitFire.Dispose();key=next;winner=0;drawStage=v.result!=null && v.result.draw && ((!v.result.abort && (v.result.drawDetails?.Length??0)>0) || v.result.abort);
             finalPage=false;rankPage=false;scores=!drawStage && (v.result?.details==null || v.result.details.Length==0);started=Time.unscaledTime;skipped=0;
         }
         float RevealEnd(WinDetail d) => SettlementAudio.Sequence(d).end;
@@ -277,7 +280,7 @@ namespace YunJian.Riichi
             var center=TableCenter(table);
             string title=v.result.title=="九种九牌"?"jiuzhongjiupai":v.result.title=="荒牌流局"?"huangpailiuju":null;
             if(title!=null){DrawTitleRect=TableIndicators.CenteredImageRect(title,center,title=="huangpailiuju"?360:308);TableIndicators.Image(title,DrawTitleRect);}
-            else Label(new Rect(center.x-205,center.y-55,410,110),v.result.title,42,gold);
+            else {DrawTitleRect=new Rect(center.x-205,center.y-55,410,110);Label(DrawTitleRect,v.result.title,42,gold);}
             GUI.color=old;
             if(age<.7f || v.result.abort)return;
             foreach(var d in v.result.drawDetails){
@@ -304,9 +307,11 @@ namespace YunJian.Riichi
         public static float RankAt(int players,int rank)=>2.7f+(players-rank)*.36f;
         public static float ScoreEnd(int players)=>RankAt(players,1)+.6f;
         public bool RankVisible(RoomView v,int seat)=>Age<2.45f || Age>=RankAt(v.n,Rank(v,seat,false));
-        static Vector2 Center(int relative,int n) => relative==0?new Vector2(640,570):relative==n-1?new Vector2(400,364):relative==1&&n==4?new Vector2(900,364):n==3?new Vector2(900,364):new Vector2(640,164);
         void Arrow(int from,int to,int n,float alpha)
         {
+#if UNITY_EDITOR
+            ReviewScoreArrows.Add(new Vector2Int(NativeReviewLayout.ScoreSlot(from,n),NativeReviewLayout.ScoreSlot(to,n)));
+#endif
             var matrix=GUI.matrix;var old=GUI.color;GUI.color=new Color(1,1,1,alpha);
             var source=NativeReviewLayout.Arrow(NativeReviewLayout.ScoreSlot(from,n),NativeReviewLayout.ScoreSlot(to,n));var center=NativeReviewLayout.ArrowCenter(source);var q=new Quaternion(source.rotation[0],source.rotation[1],source.rotation[2],source.rotation[3]);
             GUI.matrix=matrix*Matrix4x4.TRS(new Vector3(center.x,center.y,0),Quaternion.Euler(0,0,-q.eulerAngles.z),new Vector3(source.scale[0],source.scale[1],1));
@@ -321,6 +326,9 @@ namespace YunJian.Riichi
         }
         void Scores(RoomView v,TableRenderer table)
         {
+#if UNITY_EDITOR
+            ReviewScoreCards.Clear();ReviewScoreArrows.Clear();
+#endif
             // Original score-change title uses a brush font, not the action/result title.
             roundText.normal.textColor=gold;GUI.Label(new Rect(425,30,430,44),"东南西北"[Mathf.Clamp(v.round/v.n,0,3)]+(v.round%v.n+1).ToString()+"局  "+v.honba+"本场",roundText);
             if(Age>.3f){
@@ -334,6 +342,9 @@ namespace YunJian.Riichi
             }
             for(int seat=0;seat<v.n;seat++){
                 int relative=(seat-v.you+v.n)%v.n;Rect r=NativeReviewLayout.ScoreRect(relative,v.n);Vector2 c=r.center;
+#if UNITY_EDITOR
+                ReviewScoreCards.Add(new ScoreCardReview{seat=seat,slot=NativeReviewLayout.ScoreSlot(relative,v.n),rect=r});
+#endif
                 var cardMatrix=GUI.matrix;
                 Image("scorechange_bg",r);
                 Rect head=new Rect(r.x+219,r.y-23,85,85);

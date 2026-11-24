@@ -58,7 +58,7 @@ namespace YunJian.Riichi {
         public static void RemovePoolCharacter(string key){Load();prefs.pool=prefs.pool.Where(c=>c.character!=key).ToArray();Save();}
         public static void ClearPool(){Load();prefs.pool=new CharacterChoice[0];Save();}
         public static Texture2D Texture(string relative){CharacterPackService.Touch(relative);if(!textures.TryGetValue(relative,out var t)||t==null){t=CharacterPackService.Asset<Texture2D>(relative);if(t!=null)textures[relative]=t;}return t;}
-        public static Texture2D DisplayTexture(string relative)=>CharacterPackService.DisplayAsset<Texture2D>(relative);
+        public static Texture2D DisplayTexture(string relative,bool priority=false)=>CharacterPackService.DisplayAsset<Texture2D>(relative,priority);
         public static Texture2D ListPortrait(CharacterDefinition role,int skin){
             // Most cells show the initial outfit; its bundled 160px portrait is
             // enough for the grid and never opens the optional character pack.

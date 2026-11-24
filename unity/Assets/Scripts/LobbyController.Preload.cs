@@ -14,7 +14,7 @@ namespace YunJian.Riichi {
     // Afterwards the outfit page's font, chrome and icons are warmed in the
     // background (all built-in resources, no pack files).
     public sealed partial class LobbyController {
-        bool wardrobeWarm,wardrobeWarming,startupCover;float startupCoverEnd=-1;GUIStyle startupCoverText;
+        bool wardrobeWarm,wardrobeWarming,startupCover,roomInterfaceWarming,roomInterfaceWarm;float startupCoverEnd=-1;GUIStyle startupCoverText;
         const float StartupCoverFade=.35f,StartupCoverLimit=8f;
         static readonly Color SplashColor=new Color(.1216f,.1216f,.1255f);
         public bool StartupPreloadDone{get;private set;}
@@ -24,12 +24,14 @@ namespace YunJian.Riichi {
         IEnumerator StartupPreload(){
             float began=Time.realtimeSinceStartup;
             var active=CharacterRoster.Active;var home=CharacterRoster.Skin(active.character,active.skin);
+            var roomSkins=StartupRoomSkins(home.id);PinStartupRoomVisuals(roomSkins);StartCoroutine(WarmRoomInterface());
             LobbyIllustrationSettings.Get(home.id);CharacterFraming.FrameRect(home.id,"A0",new Rect(0,0,100,100),out _);
             string background=WardrobeSelection.Get("lobbyBackground")?.texture;
             // Pack assets arrive asynchronously; keep asking until the art is drawable.
             while(Time.realtimeSinceStartup-began<StartupCoverLimit){
                 WardrobeCatalog.Texture(background);characterArt.Art(home,Now);
-                if(characterArt.Ready(home))break;yield return null;
+                bool cardsReady=true;foreach(int skin in roomSkins)if(CharacterRoster.DisplayTexture(CharacterFraming.CardPath(skin),true)==null)cardsReady=false;
+                if(characterArt.Ready(home)&&cardsReady&&roomInterfaceWarm)break;yield return null;
             }
             var dorm=CurrentOutfit;CharacterFraming.FrameRect(dorm.id,"B0",new Rect(0,0,100,100),out _);
             if(startupCover){
@@ -52,6 +54,30 @@ namespace YunJian.Riichi {
                 GUI.color=new Color(1,1,1,a);GUI.Label(new Rect(0,Screen.height*.84f,Screen.width,Screen.height*.08f),"正在加载"+new string('·',1+Mathf.FloorToInt(Time.unscaledTime*2.5f)%3),startupCoverText);
             }
             GUI.color=color;GUI.matrix=matrix;
+        }
+        int warmedActiveSkin,warmedDormSkin,illustrationWarmSerial;
+        void WarmSelectedIllustrations(){
+            var active=CharacterRoster.Active;var skin=CharacterRoster.Skin(active.character,active.skin);
+            int dorm=dormOpen?(dormView==DormView.Skins?BrowsingSkin.id:CurrentOutfit.id):0;
+            if(warmedActiveSkin==skin.id&&warmedDormSkin==dorm)return;
+            warmedActiveSkin=skin.id;warmedDormSkin=dorm;StartCoroutine(WarmIllustration(skin,++illustrationWarmSerial));
+        }
+        IEnumerator WarmIllustration(CharacterSkin skin,int serial){
+            float limit=Time.realtimeSinceStartup+8;
+            while(serial==illustrationWarmSerial&&Time.realtimeSinceStartup<limit){
+                CharacterRoster.DisplayTexture(CharacterFraming.CardPath(skin.id),true);characterArt.Art(skin,Now);if(dormOpen)characterArt.Art(dormView==DormView.Skins?BrowsingSkin:CurrentOutfit,Now);
+                if(characterArt.Ready(skin)&&(!dormOpen||characterArt.Ready(dormView==DormView.Skins?BrowsingSkin:CurrentOutfit)))yield break;
+                yield return null;
+            }
+        }
+        IEnumerator WarmRoomInterface(){
+            if(roomInterfaceWarming||roomInterfaceWarm)yield break;roomInterfaceWarming=true;
+            roomDressLayout??=new RoomCustomizationLayout();yield return roomDressLayout.Preload();
+            Resources.Load<Font>("Majsoul/Characters/Fonts/character-name-brush");
+            foreach(var role in CharacterRoster.Ordered(installedOnly:true).Take(9)){CharacterRoster.ListPortrait(role,CharacterRoster.BattleSkin(role.key));yield return null;}
+            var active=CharacterRoster.Active;var selected=CharacterRoster.Find(active.character);
+            foreach(var skin in selected.skins.OrderBy(s=>s.id==active.skin?0:1).Take(6)){CharacterRoster.DisplayTexture("Skins/"+skin.id+"/bighead",true);yield return null;}
+            roomInterfaceWarm=roomDressLayout.Warm;roomInterfaceWarming=false;
         }
         IEnumerator WarmWardrobe(){
             if(wardrobeWarm||wardrobeWarming)yield break;wardrobeWarming=true;

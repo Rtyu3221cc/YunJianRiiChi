@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 24a043adc38a6c7dd5cc
+  m_Shader: {fileID: 4800000, guid: 984a45c9bcdd422a83054276b13c3876, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 2800000, guid: d3945be91fed0ee4e8bf90c9ad18e73d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: b0eec2b9df6037342b672ffbad77aa4b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MatCapTex:
+        m_Texture: {fileID: 2800000, guid: 8d8b9baeb825df44bbb8391b298b4deb, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ORMMap:
+        m_Texture: {fileID: 2800000, guid: 1b5e8d9e016a69d459f2118ae76535ab, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RampMap:
+        m_Texture: {fileID: 2800000, guid: 3c6a6b2a9a3cc534da4922b2dbb1b068, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RampMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RimMaskMap:
+        m_Texture: {fileID: 2800000, guid: ad72729da1d3f9644a58ebe30af1cef1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _CUBERMAP: 1
+    - _CubeStrength: 1.64
+    - _LightStrength: 1
+    - _NormalScale: 1
+    - _RAMP_ON: 1
+    - _RampOffset: 0
+    - _RimIntensity: 3
+    - _RimPower: 0.35
+    - _RimSoftness: 0.9
+    - _SourceBRDF: 3
+    - _SpecMetalScale: 1
+    - _SpecMetalScale2: 1.5
+    - _ViewRampStrength: 1
+    - _ViewRampWidth: 0.5
+    m_Colors:
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _HandLightColor: {r: 1.5411766, g: 1.5411766, b: 1.5411766, a: 1.6}
+    - _HandLightDir: {r: 0, g: 0.893769, b: 0.44852746, a: 0}
+    - _RampDirection: {r: 1.83, g: 0.62, b: -1.29, a: 1}
+    - _RimColor: {r: 0.8262036, g: 0.8613081, b: 0.89757407, a: 1}
+    - _SpecDirection2: {r: 1.17, g: -0.19, b: -1.17, a: 1}
+    - _SpecMetalColor: {r: 0.9366576, g: 0.980567, b: 1, a: 1}
+    - _SpecMetalColor2: {r: 0.7964959, g: 0.86779666, b: 1, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

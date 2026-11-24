@@ -44,6 +44,7 @@ namespace YunJian.Riichi {
             }
             Persist();
         }
+        public static void Rename(int i,string name){Load();if(i<0||i>=Count||string.IsNullOrWhiteSpace(name))return;store.slots[i].name=name.Trim().Substring(0,Math.Min(12,name.Trim().Length));Persist();}
         public static void Set(int i, string category, string id) {
             Load(); if (i < 0 || i >= Count) return;
             var field = typeof(WardrobeLoadout).GetField(category); if (field == null) return;

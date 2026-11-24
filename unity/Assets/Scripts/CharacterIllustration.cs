@@ -91,38 +91,40 @@ namespace YunJian.Riichi {
         static void DestroyObject(UnityEngine.Object value){if(Application.isPlaying)UnityEngine.Object.Destroy(value);else UnityEngine.Object.DestroyImmediate(value);}
         sealed class Composite:IDisposable {public RenderTexture pma,result;public Material over,straight;public Composite(int w,int h){pma=new RenderTexture(w,h,0,RenderTextureFormat.ARGB32);result=new RenderTexture(w,h,0,RenderTextureFormat.ARGB32);pma.Create();result.Create();over=new Material(Shader.Find("YunJian/CharacterOver"));straight=new Material(Shader.Find("YunJian/CharacterStraightAlpha"));}public void Dispose(){pma.Release();result.Release();DestroyObject(pma);DestroyObject(result);DestroyObject(over);DestroyObject(straight);}}
         readonly Dictionary<int,Composite> composites=new Dictionary<int,Composite>();
-        public bool Animate=true;int packRevision=-1;bool lastDynamic=true;
+        public bool Animate=true;bool lastDynamic=true;readonly Dictionary<int,int> skinVersions=new Dictionary<int,int>();
+        void DisposeSkin(int id){if(dynamics.TryGetValue(id,out var parts)){foreach(var part in parts)part.Dispose();dynamics.Remove(id);}usedFrames.Remove(id);skinVersions.Remove(id);if(composites.TryGetValue(id,out var c)){c.Dispose();composites.Remove(id);}}
         public bool AnimationEnabled=>Animate&&AppPreferences.DynamicOutfits;
         public Texture Art(CharacterSkin skin,float now){
             bool enabled=AppPreferences.DynamicOutfits;if(lastDynamic!=enabled){Dispose();lastDynamic=enabled;}
-            CharacterPackService.Touch("Skins/"+skin.id+"/full");
-            if(packRevision!=CharacterPackService.Revision){Dispose();packRevision=CharacterPackService.Revision;}
-            var still=CharacterRoster.DisplayTexture("Skins/"+skin.id+"/full");
-            if(!skin.dynamic||!AnimationEnabled||still==null)return still;
+            string full="Skins/"+skin.id+"/full",owner=CharacterPackService.Owner(full);CharacterPackService.Touch(full);
+            int version=CharacterPackService.VisualVersion(owner);
+            if(skinVersions.TryGetValue(skin.id,out int previous)&&previous!=version)DisposeSkin(skin.id);
+            var still=CharacterRoster.DisplayTexture(full,true);
+            if(!skin.dynamic||!AnimationEnabled)return still;
             usedFrames[skin.id]=Time.frameCount;
             if(!dynamics.TryGetValue(skin.id,out var parts)){
-                while(dynamics.Count>=4){int old=usedFrames.Where(p=>p.Key!=skin.id&&p.Value<Time.frameCount&&dynamics.ContainsKey(p.Key)).OrderBy(p=>p.Value).Select(p=>p.Key).DefaultIfEmpty(-1).First();if(old<0)break;foreach(var part in dynamics[old])part.Dispose();dynamics.Remove(old);usedFrames.Remove(old);if(composites.TryGetValue(old,out var obsoleteComposite)){obsoleteComposite.Dispose();composites.Remove(old);}}
-                // A failed pack can invalidate its receipt while this frame still
-                // holds the old outfit. Leave the frame drawable during fallback.
-                bool prepared=true;
+                // Queue the skeletons and atlas pages alongside the still. Old
+                // thumbnail work must not hold the selected outfit behind it.
+                bool prepared=still!=null;
                 foreach(string part in skin.parts){
-                    var atlas=CharacterPackService.DisplayAsset<TextAsset>(part+"/atlas");var skeleton=CharacterPackService.DisplayAsset<TextAsset>(part+"/skeleton");
+                    var atlas=CharacterPackService.DisplayAsset<TextAsset>(part+"/atlas",true);var skeleton=CharacterPackService.DisplayAsset<TextAsset>(part+"/skeleton",true);
                     if(atlas==null||skeleton==null){prepared=false;continue;}
-                    foreach(string line in atlas.text.Split('\n'))if(line.Trim().EndsWith(".png")&&CharacterRoster.DisplayTexture(part+"/"+Path.GetFileNameWithoutExtension(line.Trim()))==null)prepared=false;
+                    foreach(string line in atlas.text.Split('\n'))if(line.Trim().EndsWith(".png")&&CharacterRoster.DisplayTexture(part+"/"+Path.GetFileNameWithoutExtension(line.Trim()),true)==null)prepared=false;
                 }
                 if(!prepared)return still;
-                parts=skin.parts.Select(p=>new Part(p,skin)).ToArray();dynamics[skin.id]=parts;
+                while(dynamics.Count>=4){int old=usedFrames.Where(p=>p.Key!=skin.id&&p.Value<Time.frameCount&&dynamics.ContainsKey(p.Key)).OrderBy(p=>p.Value).Select(p=>p.Key).DefaultIfEmpty(-1).First();if(old<0)break;DisposeSkin(old);}
+                parts=skin.parts.Select(p=>new Part(p,skin)).ToArray();dynamics[skin.id]=parts;skinVersions[skin.id]=version;
             }
-            if(parts.Length==0)return CharacterRoster.Texture("Skins/"+skin.id+"/full");if(parts.Length==1)return parts[0].Draw(now);var first=parts[0].Draw(now);if(!composites.TryGetValue(skin.id,out var composite))composites[skin.id]=composite=new Composite(first.width,first.height);var previous=RenderTexture.active;RenderTexture.active=composite.pma;GL.Clear(true,true,Color.clear);foreach(var part in parts)Graphics.Blit(part.Draw(now),composite.pma,composite.over);Graphics.Blit(composite.pma,composite.result,composite.straight);RenderTexture.active=previous;return composite.result;
+            if(parts.Length==0)return still;if(parts.Length==1)return parts[0].Draw(now);var first=parts[0].Draw(now);if(!composites.TryGetValue(skin.id,out var composite))composites[skin.id]=composite=new Composite(first.width,first.height);var active=RenderTexture.active;RenderTexture.active=composite.pma;GL.Clear(true,true,Color.clear);foreach(var part in parts)Graphics.Blit(part.Draw(now),composite.pma,composite.over);Graphics.Blit(composite.pma,composite.result,composite.straight);RenderTexture.active=active;return composite.result;
         }
         // True once Art() would draw the final picture: the still, or the animated
         // parts when dynamic outfits are on.
         public bool Ready(CharacterSkin skin){
             if(CharacterRoster.DisplayTexture("Skins/"+skin.id+"/full")==null)return false;
-            return !skin.dynamic||!AnimationEnabled||dynamics.ContainsKey(skin.id);
+            return !skin.dynamic||!AnimationEnabled||dynamics.ContainsKey(skin.id)&&skinVersions.TryGetValue(skin.id,out int version)&&version==CharacterPackService.VisualVersion(CharacterPackService.Owner("Skins/"+skin.id+"/full"));
         }
         public void Play(CharacterSkin skin,string name){if(dynamics.TryGetValue(skin.id,out var parts))foreach(var p in parts)p.Play(name);}
         public void Draw(Rect rect,CharacterSkin skin,float now,bool flip=false){if(Event.current.type!=EventType.Repaint)return;var t=Art(skin,now);if(t==null)return;var matrix=GUI.matrix;if(flip)GUIUtility.ScaleAroundPivot(new Vector2(-1,1),rect.center);GUI.DrawTexture(rect,t,ScaleMode.ScaleToFit,true);GUI.matrix=matrix;}
-        public void Dispose(){foreach(var parts in dynamics.Values)foreach(var p in parts)p.Dispose();dynamics.Clear();usedFrames.Clear();foreach(var c in composites.Values)c.Dispose();composites.Clear();}
+        public void Dispose(){foreach(var parts in dynamics.Values)foreach(var p in parts)p.Dispose();dynamics.Clear();usedFrames.Clear();skinVersions.Clear();foreach(var c in composites.Values)c.Dispose();composites.Clear();}
     }
 }

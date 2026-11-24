@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 
 namespace YunJian.Riichi {
@@ -8,10 +11,34 @@ namespace YunJian.Riichi {
 #if UNITY_EDITOR
         public readonly Dictionary<int,bool> ReviewRoomCardReady=new Dictionary<int,bool>();
 #endif
+        [Serializable] sealed class RoomWarmPlan {public int[] skins=new int[0];}
+        readonly HashSet<string> roomVisualPins=new HashSet<string>();string roomWarmSignature;readonly HashSet<string> startupVisualPins=new HashSet<string>();float startupVisualPinUntil;
+        string RoomWarmPath=>Path.Combine(CharacterPackService.Root,"room-preview-plan-v1.json");
+        int[] StartupRoomSkins(int selected){
+            var ids=new List<int>{selected};try{if(File.Exists(RoomWarmPath))ids.AddRange(JsonUtility.FromJson<RoomWarmPlan>(File.ReadAllText(RoomWarmPath)).skins??new int[0]);}catch(Exception){}
+            return ids.Distinct().Where(id=>CharacterRoster.All.Any(r=>CharacterRoster.Available(r.key)&&r.skins.Any(s=>s.id==id))).Take(4).ToArray();
+        }
+        void PinStartupRoomVisuals(int[] ids){
+            startupVisualPinUntil=Time.realtimeSinceStartup+30;
+            foreach(int id in ids){var role=CharacterRoster.All.FirstOrDefault(r=>r.skins.Any(s=>s.id==id));if(role!=null&&startupVisualPins.Add(role.key))CharacterPackService.Pin(role.key);}
+        }
+        void ReleaseStartupVisualPins(){foreach(string key in startupVisualPins)CharacterPackService.Unpin(key);startupVisualPins.Clear();}
+        void ReleaseRoomVisualPins(){foreach(string key in roomVisualPins)CharacterPackService.Unpin(key);roomVisualPins.Clear();ReleaseStartupVisualPins();}
+        void SynchronizeRoomVisuals(){
+            var room=client.State;var roles=room?.phase=="lobby"?room.players.Where(p=>p!=null&&CharacterRoster.Available(p.character)).Select(p=>p.character).Distinct().ToArray():new string[0];
+            foreach(string key in roomVisualPins.Where(key=>!roles.Contains(key)).ToArray()){CharacterPackService.Unpin(key);roomVisualPins.Remove(key);}
+            foreach(string key in roles)if(roomVisualPins.Add(key))CharacterPackService.Pin(key);
+            if(startupVisualPins.Count>0&&(room?.phase=="lobby"||client.LobbyPlaying||Time.realtimeSinceStartup>=startupVisualPinUntil))ReleaseStartupVisualPins();
+            if(room?.phase!="lobby")return;
+            var ready=room.players.Select(p=>CharacterRoster.Skin(p.character,p.skin).id).Distinct().Where(id=>CharacterRoster.DisplayTexture(CharacterFraming.CardPath(id),true)!=null).Take(4).ToArray();
+            if(ready.Length==0)return;string signature=string.Join(",",ready);if(signature==roomWarmSignature)return;roomWarmSignature=signature;
+            if(CharacterRoster.PreviewOnly&&CharacterPackService.RootOverride==null)return;
+            try{Directory.CreateDirectory(CharacterPackService.Root);File.WriteAllText(RoomWarmPath,JsonUtility.ToJson(new RoomWarmPlan{skins=ready}));}catch(IOException){}catch(UnauthorizedAccessException){}
+        }
         void DrawRoomCharacter(Rect area,PlayerView player,int seat){
             int id=CharacterRoster.Skin(player.character,player.skin).id;
             if(!roomCharacterSkins.TryGetValue(seat,out int previous)||previous!=id){roomCharacterSkins[seat]=id;roomCharacterReady.Remove(seat);}
-            var image=CharacterRoster.DisplayTexture(CharacterFraming.CardPath(id));
+            var image=CharacterRoster.DisplayTexture(CharacterFraming.CardPath(id),true);
 #if UNITY_EDITOR
             ReviewRoomCardReady[seat]=image!=null;
 #endif
