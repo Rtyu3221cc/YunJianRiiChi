@@ -1,10 +1,11 @@
 <!-- publish-0645-current -->
-# 当前进度：0.6.45源码与APK发布（Codex，2026-11-25 01:28 东京时间）
+# 当前进度：0.6.45源码与APK已发布（Codex，2026-11-25 01:39 东京时间）
 
-- 用户本次明确要求“上传至GITHUB包括安装包发布在release里”，授权提交并推送本轮R12–R15代码到main，并创建unity-0.6.45 Release上传APK、校验与预览附件；本次授权取代此前暂不上传的限制。
-- 发布目标为[Rtyu3221cc/YunJianRiiChi](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/tag/unity-0.6.45)，0.6.45 / 93，测试版Release。APK373,566,474字节，SHA-256 `15dfcb0bf52cea1f5e4ec6b2872afba3c08f5ba17e9572390b6f6c0b00bf73a1`，已完成签名与七组包内容检查；Android真机／双机未测。
-- 使用独立发布副本，保留旧发布副本和共享工程中的原有改动。只提交显式清单内的源码、必要素材／meta、交接、证据和R12–R15最终预览；APK放Release，不入Git。旧APK删除、其他历史产物和本机缓存不纳入。
-- 正在复核发布副本Node／Python测试、凭据扫描与APK完整性；随后推送、上传并用GitHub附件大小／摘要和远端提交核对，不重复下载已发布附件。最终状态见本轮发布交接。
+- 用户本次明确要求“上传至GITHUB包括安装包发布在release里”，授权提交并推送R12–R15代码到main及公开APK；本次授权取代此前暂不上传的限制。
+- [unity-0.6.45测试版Release](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/tag/unity-0.6.45)已公开，功能源码／标签提交`30ec71deaeaa56efe5884b41d4e57419fac5e409`，345个显式清单文件已推送。随后仅补充发布结果文档，最终main以`git log -1`为准。
+- APK0.6.45 / 93，373,566,474字节，SHA-256`15dfcb0bf52cea1f5e4ec6b2872afba3c08f5ba17e9572390b6f6c0b00bf73a1`；GitHub附件大小和digest匹配，远端提交／标签／README已核对，未重新下载已上传附件。
+- 发布副本Node227／Python14通过；既有R15 Unity903及APK七组内容、v1/v2／独立API23 v1／原证书／16KB对齐通过。Android真机／双机仍未测。
+- Release附件仅APK，校验、预览和交接随源码；保留两份旧APK删除、未选历史产物和旧发布副本，没有重发资源包。详细记录见[发布交接](docs/handoff-release-0.6.45-2026-11-25.md)。下一步手机覆盖安装和双机同步验证。
 
 ---
 

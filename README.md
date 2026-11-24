@@ -3,7 +3,7 @@
 
 ## Unity 0.6.45 · 房间装扮、电脑难度与三麻结算修正
 
-[下载APK与校验文件](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/tag/unity-0.6.45) · [本轮预览](dist/previews/2026-11-25-ui-polish-r15/README.md) · [发布交接](docs/handoff-release-0.6.45-2026-11-25.md)
+[下载APK](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/tag/unity-0.6.45) · [SHA-256](dist/SHA256-yunjian-riichi-unity-0.6.45.txt) · [本轮预览](dist/previews/2026-11-25-ui-polish-r15/README.md) · [发布交接](docs/handoff-release-0.6.45-2026-11-25.md)
 
 本版包含房间角色／装扮切换与统一布局、原版称号和姓名字体、尤贝尔专属手型、四风连打提示、简单／普通电脑及固定段位、启动预热与资源缓存，以及三人场结算方位修正。版本0.6.45 / 93，沿用原包名与签名，可覆盖安装旧版；角色／装扮资源继续复用现有下载目录。
 

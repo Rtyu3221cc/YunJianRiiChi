@@ -13,6 +13,8 @@
 
 验证：两种比例及缓存／轮询回归共903项Unity检查通过，全部127个角色名字和三／四人所有视角均覆盖；发布副本重新运行Node227项、Python14项。APK的v1／v2、独立API23 v1解析、原证书和16KB对齐，以及七组实际包内容检查通过。Android真机、触控和双机联机未测。随机装扮池仍未实现。
 
-角色／装扮继续复用已有GitHub资源包，本次不重复发布资源包。附件含APK、SHA-256、综合验证报告，以及两支本轮预览；完整源码由本Release标签对应提交提供。
+角色／装扮继续复用已有GitHub资源包，本次不重复发布资源包。本Release附件为APK；SHA-256见下方，验证记录与预览随源码提供。完整源码由本Release标签对应提交提供。
 
 APK SHA-256：`15dfcb0bf52cea1f5e4ec6b2872afba3c08f5ba17e9572390b6f6c0b00bf73a1`
+
+源码提交：[30ec71de](https://github.com/Rtyu3221cc/YunJianRiiChi/commit/30ec71deaeaa56efe5884b41d4e57419fac5e409)

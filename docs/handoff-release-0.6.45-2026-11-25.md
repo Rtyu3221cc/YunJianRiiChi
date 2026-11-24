@@ -10,4 +10,15 @@
 
 本地APK373,566,474字节，SHA-256 `15dfcb0bf52cea1f5e4ec6b2872afba3c08f5ba17e9572390b6f6c0b00bf73a1`。七组实际包核验及v1/v2、独立API23 v1、原证书与16KB对齐通过。Android真机、双机待测。功能和实景验证详见[R15交接](handoff-ui-polish-r15-2026-11-25.md)及[R13/R14交接](handoff-bot-room-r13-r14-2026-11-24.md)。
 
-本文件在发布核对完成后补记源码提交、附件和远端核验结果。
+## 发布完成（2026-11-25 01:39 东京时间）
+
+- 源码提交：[`30ec71de`](https://github.com/Rtyu3221cc/YunJianRiiChi/commit/30ec71deaeaa56efe5884b41d4e57419fac5e409)，345个显式清单文件，已正常推送main。Release标签`unity-0.6.45`精确指向此提交；随后只补充本发布记录的文档提交，当前main以`git log -1`为准。
+- Release已公开，测试版标记开启：[安装包下载](https://github.com/Rtyu3221cc/YunJianRiiChi/releases/download/unity-0.6.45/yunjian-riichi-unity-0.6.45.apk)。附件仅APK；SHA文本、综合检查及两支R15预览随源码提供。
+- GitHub返回大小373,566,474字节、状态uploaded、SHA-256与本地逐字节检查一致，远端main／标签和GitHub连接器读取README均已核对。没有重新下载已上传附件。
+- 发布副本重新运行Node227／Python14全部通过；R15两比例／缓存回归903项，实际APK七组内容检查与v1/v2／独立API23 v1／原证书／16KB对齐通过。APK与测试输入未改，不重复打包。
+- 保留共享工作区原有两份旧APK删除、历史未选产物和旧发布副本；未纳入提交。没有重发角色／装扮包或修改资源目录的URL／摘要。
+- 原始核对记录见[preflight.json](reference/release-0.6.45/preflight.json)及[publication.json](reference/release-0.6.45/publication.json)。Release标签对应功能源码，后续文档提交仅记录发布结果。
+
+## 下一步
+
+Android真机覆盖安装、房间角色／装扮触控切换、首次启动缓存、三麻结算与双机同步仍待实测。随机装扮池仍未实现。完整构建方式、Saber暂存覆盖边界及R12–R15细节见各轮交接。
